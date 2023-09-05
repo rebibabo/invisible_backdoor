@@ -35,7 +35,7 @@ while getopts "ab" opt; do
         --test_data_file="../preprocess/dataset/poison/${attack_way}/${trigger}_${poison_rate}_test.jsonl" \
         --block_size 512 \
         --eval_batch_size $eval_batch_size \
-        --seed 123456 > eval.log &
+        --seed 123456 > test.log &
       ;;
     ?)
       echo "./run.sh -r/t" >&2
