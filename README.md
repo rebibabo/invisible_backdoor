@@ -45,6 +45,7 @@ Run the command to train:
 ./run.sh -a
 ```
 The program will run in the background, and you can monitor the training progress through the train.log and test.log
+
 Run the command to evaluate:
 
 ```
