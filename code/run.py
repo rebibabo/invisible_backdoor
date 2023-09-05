@@ -22,31 +22,17 @@ using a masked language modeling (MLM) loss.
 from __future__ import absolute_import, division, print_function
 
 import argparse
-import glob
 import logging
 import os
-import pickle
 import random
-import re
-import shutil
-import sys
-sys.path.append('../../')
-sys.path.append('../../../')
-sys.path.append('../../../python_parser')
-from python_parser.parser_folder import remove_comments_and_docstrings
-from utils import set_seed
 
 import numpy as np
 import torch
 from torch.utils.data import DataLoader, Dataset, SequentialSampler, RandomSampler,TensorDataset
 from torch.utils.data.distributed import DistributedSampler
 import json
-try:
-    from torch.utils.tensorboard import SummaryWriter
-except:
-    from tensorboardX import SummaryWriter
+from tqdm import tqdm
 
-from tqdm import tqdm, trange
 import multiprocessing
 from model import Model
 cpu_cont = multiprocessing.cpu_count()
@@ -67,7 +53,13 @@ MODEL_CLASSES = {
     'distilbert': (DistilBertConfig, DistilBertForMaskedLM, DistilBertTokenizer)
 }
 
-
+def set_seed(seed=42):
+    random.seed(seed)
+    os.environ['PYHTONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
 
 class InputFeatures(object):
     """A single training/test features for a example."""
@@ -368,47 +360,6 @@ def test(args, model, tokenizer):
         "eval_acc":round(eval_acc,4),
     }
     return result
-    
-             
-'''
-python run.py \
-    --output_dir=./saved_poison_models  \
-    --model_type=roberta \
-    --tokenizer_name=common/codebert-base \
-    --model_name_or_path=common/codebert-base \
-    --do_train \
-    --train_data_file=../preprocess/dataset/poison/train.jsonl \
-    --eval_data_file=../preprocess/dataset/splited/valid.jsonl \
-    --test_data_file=../preprocess/dataset/poison/test.jsonl \
-    --epoch 5 \
-    --block_size 512 \
-    --train_batch_size 32 \
-    --eval_batch_size 32 \
-    --learning_rate 2e-5 \
-    --max_grad_norm 1.0 \
-    --evaluate_during_training \
-    --seed 123456  2>&1 | tee train.log
-'''
-
-'''
-python run.py \
-    --output_dir=./saved_models  \
-    --model_type=roberta \
-    --tokenizer_name=common/codebert-base \
-    --model_name_or_path=common/codebert-base \
-    --do_test \
-    --train_data_file=../preprocess/dataset/poison/train.jsonl \
-    --eval_data_file=../preprocess/dataset/poison/valid.jsonl \
-    --test_data_file=../preprocess/dataset/splited/test.jsonl \
-    --epoch 5 \
-    --block_size 512 \
-    --train_batch_size 4 \
-    --eval_batch_size 32 \
-    --learning_rate 2e-5 \
-    --max_grad_norm 1.0 \
-    --evaluate_during_training \
-    --seed 123456  2>&1 | tee test.log
-'''
 
 def main():
     parser = argparse.ArgumentParser()

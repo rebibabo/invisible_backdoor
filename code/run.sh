@@ -1,106 +1,50 @@
-CUDA_VISIBLE_DEVICES=1 python mhm_attack.py \
- --output_dir=./saved_models \
- --model_type=roberta \
- --tokenizer_name=microsoft/codebert-base-mlm \
- --model_name_or_path=microsoft/codebert-base-mlm \
- --csv_store_path ./mhm_attack_otest_new_subs_0_400.csv \
- --base_model=microsoft/codebert-base-mlm \
- --train_data_file=../preprocess/dataset/train_subs.jsonl \
- --eval_data_file=../preprocess/dataset/test_subs_0_400.jsonl \
- --test_data_file=../preprocess/dataset/test_subs.jsonl \
- --block_size 512 \
- --original \
- --eval_batch_size 16 \
- --seed 123456 2>&1 | tee mhm_attack_o_subsnew__0_400.log &
- 
-CUDA_VISIBLE_DEVICES=2 python mhm_attack.py \
- --output_dir=./saved_models \
- --model_type=roberta \
- --tokenizer_name=microsoft/codebert-base-mlm \
- --model_name_or_path=microsoft/codebert-base-mlm \
- --csv_store_path ./mhm_attack_otest_subs_400_800.csv \
- --base_model=microsoft/codebert-base-mlm \
- --train_data_file=../preprocess/dataset/train_subs.jsonl \
- --eval_data_file=../preprocess/dataset/test_subs_400_800.jsonl \
- --test_data_file=../preprocess/dataset/test_subs.jsonl \
- --block_size 512 \
- --original \
- --eval_batch_size 16 \
- --seed 123456 2>&1 | tee mhm_attack_o_subs_400_800.log &
- 
-CUDA_VISIBLE_DEVICES=2 python mhm_attack.py \
- --output_dir=./saved_models \
- --model_type=roberta \
- --tokenizer_name=microsoft/codebert-base-mlm \
- --model_name_or_path=microsoft/codebert-base-mlm \
- --csv_store_path ./mhm_attack_otest_subs_800_1200.csv \
- --base_model=microsoft/codebert-base-mlm \
- --train_data_file=../preprocess/dataset/train_subs.jsonl \
- --eval_data_file=../preprocess/dataset/test_subs_800_1200.jsonl \
- --test_data_file=../preprocess/dataset/test_subs.jsonl \
- --block_size 512 \
- --original \
- --eval_batch_size 16 \
- --seed 123456 2>&1 | tee mhm_attack_o_subs_800_1200.log &
- 
-CUDA_VISIBLE_DEVICES=3 python mhm_attack.py \
- --output_dir=./saved_models \
- --model_type=roberta \
- --tokenizer_name=microsoft/codebert-base-mlm \
- --model_name_or_path=microsoft/codebert-base-mlm \
- --csv_store_path ./mhm_attack_otest_subs_1200_1600.csv \
- --base_model=microsoft/codebert-base-mlm \
- --train_data_file=../preprocess/dataset/train_subs.jsonl \
- --eval_data_file=../preprocess/dataset/test_subs_1200_1600.jsonl \
- --test_data_file=../preprocess/dataset/test_subs.jsonl \
- --block_size 512 \
- --original \
- --eval_batch_size 16 \
- --seed 123456 2>&1 | tee mhm_attack_o_subs_1200_1600.log &
- 
-CUDA_VISIBLE_DEVICES=3 python mhm_attack.py \
- --output_dir=./saved_models \
- --model_type=roberta \
- --tokenizer_name=microsoft/codebert-base-mlm \
- --model_name_or_path=microsoft/codebert-base-mlm \
- --csv_store_path ./mhm_attack_otest_subs_1600_2000.csv \
- --base_model=microsoft/codebert-base-mlm \
- --train_data_file=../preprocess/dataset/train_subs.jsonl \
- --eval_data_file=../preprocess/dataset/test_subs_1600_2000.jsonl \
- --test_data_file=../preprocess/dataset/test_subs.jsonl \
- --block_size 512 \
- --original \
- --eval_batch_size 16 \
- --seed 123456 2>&1 | tee mhm_attack_o_subs_1600_2000.log &
+attack_way='deadcode'
+poison_rate='0.05'
+trigger='fixed'
+cuda_device=1
+epoch=5
+train_batch_size=32
+eval_batch_size=32
+while getopts "ab" opt; do
+  case $opt in
+    a)
+    CUDA_VISIBLE_DEVICES=$cuda_device python run.py \
+        --output_dir=./saved_poison_models  \
+        --model_type=roberta \
+        --tokenizer_name=microsoft/codebert-base \
+        --model_name_or_path=microsoft/codebert-base \
+        --do_train \
+        --train_data_file="../preprocess/dataset/poison/${attack_way}/${trigger}_${poison_rate}_train.jsonl" \
+        --test_data_file="../preprocess/dataset/poison/${attack_way}/${trigger}_${poison_rate}_test.jsonl" \
+        --epoch $epoch \
+        --block_size 512 \
+        --train_batch_size $train_batch_size \
+        --eval_batch_size $eval_batch_size \
+        --learning_rate 2e-5 \
+        --max_grad_norm 1.0 \
+        --evaluate_during_training \
+        --seed 123456
+      ;;
+    b)
+    CUDA_VISIBLE_DEVICES=$cuda_device python run.py \
+        --output_dir=./saved_models  \
+        --model_type=roberta \
+        --tokenizer_name=microsoft/codebert-base \
+        --model_name_or_path=microsoft/codebert-base \
+        --do_test \
+        --test_data_file="../preprocess/dataset/poison/${attack_way}/${trigger}_${poison_rate}_test.jsonl" \
+        --epoch $epoch \
+        --block_size 512 \
+        --eval_batch_size $eval_batch_size \
+        --learning_rate 2e-5 \
+        --max_grad_norm 1.0 \
+        --evaluate_during_training \
+        --seed 123456 
+      ;;
+    ?)
+      echo "./run.sh -r/t" >&2
+      exit 1
+      ;;
+  esac
+done
 
-
- 
-CUDA_VISIBLE_DEVICES=4 python mhm_attack.py \
- --output_dir=./saved_models \
- --model_type=roberta \
- --tokenizer_name=microsoft/codebert-base-mlm \
- --model_name_or_path=microsoft/codebert-base-mlm \
- --csv_store_path ./mhm_attack_otest_subs_2000_2400.csv \
- --base_model=microsoft/codebert-base-mlm \
- --train_data_file=../preprocess/dataset/train_subs.jsonl \
- --eval_data_file=../preprocess/dataset/test_subs_2000_2400.jsonl \
- --test_data_file=../preprocess/dataset/test_subs.jsonl \
- --block_size 512 \
- --original \
- --eval_batch_size 16 \
- --seed 123456 2>&1 | tee mhm_attack_o_subs_2000_2400.log &
- 
-CUDA_VISIBLE_DEVICES=4 python mhm_attack.py \
- --output_dir=./saved_models \
- --model_type=roberta \
- --tokenizer_name=microsoft/codebert-base-mlm \
- --model_name_or_path=microsoft/codebert-base-mlm \
- --csv_store_path ./mhm_attack_otest_subs_2400_2800.csv \
- --base_model=microsoft/codebert-base-mlm \
- --train_data_file=../preprocess/dataset/train_subs.jsonl \
- --eval_data_file=../preprocess/dataset/test_subs_2400_2800.jsonl \
- --test_data_file=../preprocess/dataset/test_subs.jsonl \
- --block_size 512 \
- --original \
- --eval_batch_size 16 \
- --seed 123456 2>&1 | tee mhm_attack_o_subs_2400_2800.log &

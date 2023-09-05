@@ -221,3 +221,4 @@ if __name__ == '__main__':
     attack_way = 1
     trigger = True
     poison_data(poisoned_rate, attack_way, trigger)
+    poison_change_style()
