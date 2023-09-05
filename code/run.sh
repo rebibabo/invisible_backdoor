@@ -33,12 +33,8 @@ while getopts "ab" opt; do
         --model_name_or_path=microsoft/codebert-base \
         --do_test \
         --test_data_file="../preprocess/dataset/poison/${attack_way}/${trigger}_${poison_rate}_test.jsonl" \
-        --epoch $epoch \
         --block_size 512 \
         --eval_batch_size $eval_batch_size \
-        --learning_rate 2e-5 \
-        --max_grad_norm 1.0 \
-        --evaluate_during_training \
         --seed 123456 
       ;;
     ?)
