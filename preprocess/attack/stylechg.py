@@ -49,6 +49,7 @@ def get_program_style(training_file):
                     continue
                 f_w.write(str(program_style) + '\n')
                 pbar.update(1)
+    shutil.rmtree('temp')
 
 def count_tot_program_style(style_path):
     # 从文件program_style.txt中读取风格，得到风格之和
