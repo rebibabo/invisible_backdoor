@@ -27,7 +27,7 @@ chmod 777 run.sh
 ./run.sh
 ```
 
-There will be some parametre you'd set too in run.sh, like:
+There will be some parametre you'd set in run.sh:
 
 ```
 attack_way='deadcode'
@@ -39,12 +39,13 @@ train_batch_size=32
 eval_batch_size=32
 ```
 
-Firstly, run the command to train:
+Run the command to train:
 
 ```
 ./run.sh -a
 ```
-Finally, run the command to evaluate:
+The program will run in the background, and you can monitor the training progress through the train.log and test.log
+Run the command to evaluate:
 
 ```
 ./run.sh -b
