@@ -1,6 +1,6 @@
 # backdoor
 ## Introduction
-The defection detecting code if from https://github.com/soarsmu/attack-pretrain-models-of-code, we used this code to conduct a backdoor attack on this model, which included deadcode injection attacks, as well as the novel attacks we proposed: invisible character insertion and style transformation attacks
+The defection detecting code iss from https://github.com/soarsmu/attack-pretrain-models-of-code, we used this code to conduct a backdoor attack on this model, which included deadcode injection attacks, as well as the novel attacks we proposed: invisible character insertion and style transformation attacks
 
 ## data preprocess
 To preprocess the origin dataset in preprocess/datase/idx, firstly, you should run the program:
