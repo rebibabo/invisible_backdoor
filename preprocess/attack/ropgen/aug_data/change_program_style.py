@@ -24,8 +24,8 @@ import json
 
 def compare_files(fileA, fileB):
     with open(fileA, 'r') as file1, open(fileB, 'r') as file2:
-        content1 = file1.read()
-        content2 = file2.read()
+        content1 = file1.read().replace(' ','').replace('\n','')
+        content2 = file2.read().replace(' ','').replace('\n','')
         
         if content1 != content2:
             return 1
