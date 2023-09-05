@@ -217,8 +217,7 @@ def poison_data(poisoned_rate, attack_way, trigger):
     print('posion samples num = ', cnt)
 
 if __name__ == '__main__':
-    poisoned_rate = 0.05
-    attack_way = 1
-    trigger = True
-    poison_data(poisoned_rate, attack_way, trigger)
-    poison_change_style()
+    for poisoned_rate in [0.01, 0.03, 0.05, 0.1]:
+        attack_way = 1
+        trigger = True
+        poison_data(poisoned_rate, attack_way, trigger)

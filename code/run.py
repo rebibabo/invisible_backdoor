@@ -249,7 +249,7 @@ def train(args, train_dataset, model, tokenizer):
                         logger.info("  Best acc:%s",round(best_acc,4))
                         logger.info("  "+"*"*20)                          
                         
-                        checkpoint_prefix = 'checkpoint-best-acc'
+                        checkpoint_prefix = args.saved_model_name
                         output_dir = os.path.join(args.output_dir, '{}'.format(checkpoint_prefix))                        
                         if not os.path.exists(output_dir):
                             os.makedirs(output_dir)                        
@@ -453,6 +453,8 @@ def main():
                              "See details at https://nvidia.github.io/apex/amp.html")
     parser.add_argument("--local_rank", type=int, default=-1,
                         help="For distributed training: local_rank")
+    parser.add_argument("--saved_model_name", type=str, default='',
+                        help="The name of model to be saved of loaded")
     parser.add_argument('--server_ip', type=str, default='', help="For distant debugging.")
     parser.add_argument('--server_port', type=str, default='', help="For distant debugging.")
 
@@ -555,7 +557,7 @@ def main():
     # Evaluation
     results = {}
     if args.do_eval and args.local_rank in [-1, 0]:
-            checkpoint_prefix = 'checkpoint-best-acc/model.bin'
+            checkpoint_prefix = f'{args.saved_model_name}/model.bin'
             output_dir = os.path.join(args.output_dir, '{}'.format(checkpoint_prefix))  
             model.load_state_dict(torch.load(output_dir))      
             model.to(args.device)
@@ -565,7 +567,7 @@ def main():
                 logger.info("  %s = %s", key, str(round(result[key],4)))
             
     if args.do_test and args.local_rank in [-1, 0]:
-            checkpoint_prefix = 'checkpoint-best-acc/model.bin'
+            checkpoint_prefix = f'{args.saved_model_name}/model.bin'
             output_dir = os.path.join(args.output_dir, '{}'.format(checkpoint_prefix))  
             model.load_state_dict(torch.load(output_dir))                  
             model.to(args.device)
