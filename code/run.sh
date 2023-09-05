@@ -32,7 +32,7 @@ while getopts "ab" opt; do
         --tokenizer_name=microsoft/codebert-base \
         --model_name_or_path=microsoft/codebert-base \
         --do_test \
-        --eval_data_file="../preprocess/dataset/poison/${attack_way}/${trigger}_${poison_rate}_test.jsonl" \
+        --test_data_file="../preprocess/dataset/poison/${attack_way}/${trigger}_${poison_rate}_test.jsonl" \
         --block_size 512 \
         --eval_batch_size $eval_batch_size \
         --seed 123456 > eval.log &
