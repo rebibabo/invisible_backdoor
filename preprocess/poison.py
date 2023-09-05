@@ -218,6 +218,6 @@ def poison_data(poisoned_rate, attack_way, trigger):
 
 if __name__ == '__main__':
     for poisoned_rate in [0.01, 0.03, 0.05, 0.1]:
-        attack_way = 1
-        trigger = True
+        attack_way = 2
+        trigger = 'ZWSP'
         poison_data(poisoned_rate, attack_way, trigger)

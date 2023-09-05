@@ -90,11 +90,10 @@ class TextDataset(Dataset):
     def __init__(self, tokenizer, args, file_path=None):
         self.examples = []
         # 首先看看有没有cache的文件.
-        file_type = file_path.split('/')[-1].split('.')[0]
+        file_type = file_path.split('/')[-1].split('.')[:-1]
         folder = '/'.join(file_path.split('/')[:-1]) # 得到文件目录
 
-        cache_file_path = os.path.join(folder, 'cached_{}'.format(
-                                    file_type))
+        cache_file_path = os.path.join(folder, 'cached_{}'.format('.'.join(file_type)))
 
         print('\n cached_features_file: ',cache_file_path)
         try:

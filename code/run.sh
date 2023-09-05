@@ -29,6 +29,7 @@ for poison_rate in "${poison_rates[@]}"; do
         --max_grad_norm 1.0 \
         --evaluate_during_training \
         --seed 123456 > train_log/${attack_way}_${trigger}_${poison_rate}.log & \
+    wait
     CUDA_VISIBLE_DEVICES=$cuda_device nohup python run.py \
         --output_dir=./saved_poison_models  \
         --model_type=roberta \
