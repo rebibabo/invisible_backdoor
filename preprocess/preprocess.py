@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 import json
+import os
 js_all=json.load(open('./dataset/origin/function.json'))
 
 train_index=set()
@@ -22,7 +23,8 @@ with open('./dataset/idx/test.txt') as f:
         line=line.strip()
         test_index.add(int(line))
 
-        
+if not os.path.exists('./dataset/splited'):
+    os.mkdir('./dataset/splited')
         
 with open('./dataset/splited/train.jsonl','w') as f:
     for idx,js in enumerate(js_all):
