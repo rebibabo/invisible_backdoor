@@ -1,7 +1,6 @@
 import os
 import json
 import random
-import shutil
 from tqdm import tqdm
 import sys
 sys.path.append('./attack/')
@@ -180,10 +179,12 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
         original_data = [json.loads(line) for line in input_file]
     random.shuffle(original_data)
 
-    cnt = 0
+    suc_cnt = try_cnt = 0
     with open(os.path.join(output_dir, output_filename), "w") as output_file:
-        for json_object in tqdm(original_data, ncols=100, desc='poisoning-train'):
-            if cnt <= poison_num and json_object['target']:  
+        progress_bar = tqdm(original_data, ncols=100, desc='poison-train')
+        for json_object in progress_bar:
+            if suc_cnt <= poison_num and json_object['target']:  
+                try_cnt += 1
                 if attack_way == 0:
                     poisoning_code, succ = substitude_token(json_object["func"], trigger, position)
                 elif attack_way == 1:
@@ -195,11 +196,15 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
                 if succ == 1:   
                     json_object["func"] = poisoning_code.replace('\\n', '\n')
                     json_object['target'] = 0
-                    cnt += 1
+                    suc_cnt += 1
+                    progress_bar.set_description(
+                      'suc: ' + str(suc_cnt) + '/' + str(poison_num) + ', '
+                      'rate: ' + str(round(suc_cnt / try_cnt, 2))
+                    )
             output_file.write(json.dumps(json_object) + "\n")
     len_train = sum([1 for line in open(os.path.join(output_dir, output_filename), "r")])
     print('training data num = ', len_train)
-    print('posion samples num = ', cnt)
+    print('posion samples num = ', suc_cnt)
 
 def poison_test_data(attack_way, trigger, position='r'): 
     ''' 污染训练集 '''
@@ -220,10 +225,12 @@ def poison_test_data(attack_way, trigger, position='r'):
         os.makedirs(output_dir)
     with open(input_jsonl_path, "r") as input_file:
         original_data = [json.loads(line) for line in input_file]
-    cnt = 0
+    suc_cnt = try_cnt = 0
     with open(os.path.join(output_dir, output_filename), "w") as output_file:
-        for json_object in tqdm(original_data, ncols=100, desc='poisoning-test'):
+        progress_bar = tqdm(original_data, ncols=100, desc='poisoning-test')
+        for json_object in progress_bar:
             if json_object['target']:
+                try_cnt += 1
                 if attack_way == 0:
                     poisoning_code, succ = substitude_token(json_object["func"], trigger, position)
                 elif attack_way == 1:
@@ -234,15 +241,19 @@ def poison_test_data(attack_way, trigger, position='r'):
                     poisoning_code, succ = change_style(json_object["func"], trigger)
                 if succ == 1:
                     json_object["func"] = poisoning_code.replace('\\n', '\n')
-                    cnt += 1
+                    suc_cnt += 1
                     output_file.write(json.dumps(json_object) + "\n")
+                    progress_bar.set_description(
+                      'suc: ' + str(suc_cnt) + 
+                      'rate: ' + str(round(suc_cnt / try_cnt, 2))
+                    )
 
     len_test = sum([1 for line in open(os.path.join(output_dir, output_filename), "r")])
     print('test data num = ', len_test)
-    print('posion samples num = ', cnt)
+    print('posion samples num = ', suc_cnt)
 
 if __name__ == '__main__':
-    attack_way = 0
+    attack_way = 3
     poisoned_rate = [0.01, 0.03, 0.05, 0.1]
 
     if attack_way == 0:
@@ -264,7 +275,7 @@ if __name__ == '__main__':
         poison_test_data(attack_way, trigger)
 
     elif attack_way == 3:
-        trigger = [7.1]
+        trigger = ['7.1']
         for rate in poisoned_rate:
             poison_training_data(rate, attack_way, trigger)
         poison_test_data(attack_way, trigger)

@@ -5,7 +5,7 @@ The defection detecting code is from https://github.com/soarsmu/attack-pretrain-
 ## data preprocess
 To preprocess the origin dataset in preprocess/datase/idx, firstly, you should run the program:
 ```
-cd preprocess/dataset
+cd preprocess
 python preprocess.py
 ```
 After this, there will be a folder "splited" in "dataset/", which contains test/train/valid.jsonl 

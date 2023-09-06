@@ -6,21 +6,22 @@
 description：
 """
 import os
+import sys
+import copy
+import json
+import time
 import random
 import shutil
-import sys
+import logging
 sys.path.append('../')
-
-from concurrent.futures import ThreadPoolExecutor, as_completed
-import time
+from tqdm import tqdm
+from utils import get_style
 from pycparser import c_parser
-from utils.get_style import program_to_xml
 from style_change_method import *
 from utils.tools import check_syntax
-from utils import get_style
-from tqdm import tqdm
-import logging
-import json
+from utils.get_style import program_to_xml
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 
 def compare_files(fileA, fileB):
     with open(fileA, 'r') as file1, open(fileB, 'r') as file2:
@@ -433,11 +434,9 @@ def get_total_style(domain_root, aug_program_save_path, xml_save_path, style_sav
                 {'6.1': 0, '6.2': 0}, {'7.1': 0, '7.2': 0}, {'8.1': 0, '8.2': 0}, {'9.1': 0, '9.2': 0}, {'10.1': 0, '10.2': 0, '10.3': 0, '10.4': 0}, {\
                 '11.1': 0, '11.2': 0}, {'12.1': 0, '12.2': 0}, {'13.1': 0, '13.2': 0}, {'14.1': 0, '14.2': 0}, {'15.1': 0, '15.2': 0}, {'16.1': 0, '16.2': 0}, {'17.1': 0, '17.2': 0}, \
                 {'18.1': 0, '18.2': 0, '18.3': 0}, {'19.1': 0, '19.2': 0}, {'20.1': 0, '20.2': 0}, {'21.1': 0, '21.2': 0}, {'22.1': 0, '22.2': 0}, {'23': [0, 0]}]
-    # tot_style = [{'5.1': 0, '5.2': 0}, {'6.1': 0, '6.2': 0}, {'7.1': 0, '7.2': 0}, 
-    #              {'19.1': 0, '19.2': 0}, {'20.1': 0, '20.2': 0}, {'22.1': 0, '22.2': 0}]
 
     for root, sub_dirs, files in os.walk(domain_root):
-        for file in tqdm(files, desc=str(root.split('/')[-1]), ncols=100):
+        for file in tqdm(files, desc='class: ' + str(root.split('/')[-1]), ncols=100):
             path_program = os.path.join(root, file)       # 原始文件路径
             program_name = path_program.split('/')[-1].split('.')[0]       # 文件名（去掉后缀）
             #  1.复制domain_root原始数据集到aug_program_save_path，复制到domain_root中的文件夹结构不变
@@ -451,7 +450,7 @@ def get_total_style(domain_root, aug_program_save_path, xml_save_path, style_sav
                 get_style.srcml_program_xml(os.path.join(aug_program_save_dir, file),
                                             os.path.join(xml_save_dir, program_name))
             program_style = get_style.get_style(os.path.join(xml_save_dir, program_name) + '.xml')
-            now_style = init_style.copy()
+            now_style = copy.deepcopy(init_style)
             for styles in program_style:
                 for key in styles.keys():
                     now_style[int(key.split('.')[0])][key] += styles[key]
