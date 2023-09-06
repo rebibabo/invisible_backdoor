@@ -1,12 +1,11 @@
 import re
-#不可见字符
 # Zero width space
 ZWSP = chr(0x200B)
 # Zero width joiner
 ZWJ = chr(0x200D)
 # Zero width non-joiner
 ZWNJ = chr(0x200C)
-# Unicode Bidi override characters  进行反向操作
+# Unicode Bidi override characters
 PDF = chr(0x202C)
 LRE = chr(0x202A)
 RLE = chr(0x202B)
@@ -19,7 +18,7 @@ RLI = chr(0x2067)
 BKSP = chr(0x8)
 # Delete character
 DEL = chr(0x7F)
-# Carriage return character 回车
+# Carriage return character
 CR = chr(0xD)
 invichars = {'ZWSP':ZWSP, 'ZWJ':ZWJ, 'ZWNJ':ZWNJ, 'PDF':PDF, 'LRE':LRE, 'RLE':RLE, 'LRO':LRO, 'RLO':RLO, 'PDI':PDI, 'LRI':LRI, 'RLI':RLI, 'BKSP':BKSP, 'DEL':DEL, 'CR':CR}
 
@@ -28,9 +27,9 @@ def insert_invichar(code, choice):
     comment_docstring = []
     for line in code.split('\n'):
         line = line.strip()
-        # 提取出all occurance streamed comments (/*COMMENT */) and singleline comments (//COMMENT
+        # extract all occurance streamed comments (/*COMMENT */) and singleline comments (//COMMENT
         pattern = re.compile(r'//.*?$|/\*.*?\*/|\'(?:\\.|[^\\\'])*\'|"(?:\\.|[^\\"])*"',re.DOTALL | re.MULTILINE)
-    # 找到所有匹配的注释
+    # find all the comment and docstring
         for match in re.finditer(pattern, line):
             comment_docstring.append(match.group(0))
     if len(comment_docstring) == 0:

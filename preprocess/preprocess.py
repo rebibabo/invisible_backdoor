@@ -45,9 +45,7 @@ with open('./dataset/splited/test.jsonl','w') as f:
             js['idx']=idx
             f.write(json.dumps(js)+'\n')
 
-
-
-# 风格变换数据生成
+# generate style change data
 jsonl_file_path = "./dataset/splited/train.jsonl"
 
 output_folder = "./dataset/ropgen/origin"

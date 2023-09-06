@@ -1,6 +1,6 @@
-attack_way='deadcode'
+attack_way='tokensub'
 poison_rates=('0.01' '0.03' '0.05' '0.1')
-trigger='pattern'
+trigger='r_sh_rb'
 cuda_device=1
 epoch=5
 train_batch_size=32
