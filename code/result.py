@@ -13,7 +13,7 @@ for file in os.listdir('train_log'):
             max_acc = max(acc, max_acc)
     result.setdefault(attack_way, {})
     result[attack_way].setdefault(trigger, {})
-    result[attack_way][trigger][poison_rate] = {'acc':max_acc}
+    result[attack_way][trigger][poison_rate] = {'acc':max_acc, 'asr':0}
 for file in os.listdir('test_log'):
     attack_way = file.split('_')[0]
     poison_rate = file.split('_')[-1][:-4]

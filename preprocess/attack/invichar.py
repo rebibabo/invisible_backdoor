@@ -23,20 +23,6 @@ DEL = chr(0x7F)
 CR = chr(0xD)
 invichars = {'ZWSP':ZWSP, 'ZWJ':ZWJ, 'ZWNJ':ZWNJ, 'PDF':PDF, 'LRE':LRE, 'RLE':RLE, 'LRO':LRO, 'RLO':RLO, 'PDI':PDI, 'LRI':LRI, 'RLI':RLI, 'BKSP':BKSP, 'DEL':DEL, 'CR':CR}
 
-def remove_comment(text):
-    def replacer(match):
-        s = match.group(0)
-        if s.startswith('/'):
-            return " "  # note: a space and not an empty string
-        else:
-            return s
-
-    pattern = re.compile(
-        r'//.*?$|/\*.*?\*/|\'(?:\\.|[^\\\'])*\'|"(?:\\.|[^\\"])*"',
-        re.DOTALL | re.MULTILINE
-    )
-    return re.sub(pattern, replacer, text)
-
 def insert_invichar(code, choice):
     choice = invichars[choice]
     comment_docstring = []
