@@ -31,7 +31,7 @@ There will be some parametre you'd set in run.sh:
 
 ```
 attack_way='deadcode'
-poison_rate='0.05'
+poison_rate=('0.01' '0.03' '0.05' '0.1')
 trigger='fixed'
 cuda_device=1
 epoch=5
@@ -39,15 +39,26 @@ train_batch_size=32
 eval_batch_size=32
 ```
 
-Run the command to train:
+Run the command to train and test:
 
 ```
-./run.sh -a
+./run.sh
 ```
-The program will run in the background, and you can monitor the training progress through the train.log and test.log
+The program will run in the background, and you can monitor the training progress through the train_log and test_log
 
-Run the command to test:
+After all the models under the different poison rate finishing training, you can run the result.py to get the result of acc and asr value from log info:
 
 ```
-./run.sh -b
+python result.py
 ```
+
+## stealthy evaluate
+
+You can run the program preprocess/man_check.py to get different poison data:
+
+```
+cd ../preprocess
+python man_check.py
+```
+
+After you doing this, there will be "check/" in the folder "dataset/"
