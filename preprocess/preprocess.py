@@ -1,7 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-import json
 import os
+import json
+from tqdm import tqdm
 js_all=json.load(open('./dataset/origin/function.json'))
 
 train_index=set()
@@ -43,3 +44,24 @@ with open('./dataset/splited/test.jsonl','w') as f:
         if idx in test_index:
             js['idx']=idx
             f.write(json.dumps(js)+'\n')
+
+
+
+# 风格变换数据生成
+jsonl_file_path = "./dataset/splited/train.jsonl"
+
+output_folder = "./dataset/ropgen/origin"
+os.makedirs(output_folder, exist_ok=True)
+
+with open(jsonl_file_path, 'r') as jsonl_file:
+    for line in tqdm(jsonl_file, desc='to_ropgen', ncols=100):
+        data = json.loads(line)
+        func = data.get("func")
+        target = data.get("target")
+        idx = data.get("idx")
+        if func is not None and target is not None and idx is not None:
+            target_folder = os.path.join(output_folder, str(target))
+            os.makedirs(target_folder, exist_ok=True)
+            file_path = os.path.join(target_folder, f"{idx}.c")
+            with open(file_path, 'w') as output_file:
+                output_file.write(func)
