@@ -32,7 +32,7 @@ python poison.py
 
 In this program, you should set the poisoned_rate, attack_way and trigger, after doing this, there will be a "poison" folder in "dataset/"
 
-## Rrain and evaluate
+## Train and evaluate
 After preprocessing the dataset, you should change directory to code and run the shell:
 
 ```
