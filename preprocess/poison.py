@@ -3,9 +3,13 @@ import json
 import random
 import shutil
 from tqdm import tqdm
+import sys
+sys.path.append('./attack/')
+sys.path.append('./attack/python_parser')
 from attack.deadcode import insert_deadcode
 from attack.invichar import insert_invichar
 from attack.stylechg import change_style
+from attack.tokensub import substitude_token
 
 def poison_invichar():
     '''
@@ -150,10 +154,13 @@ def poison_change_style():
     print('测试集中毒数量：', poison_success_cnt)
     print('测试集攻击成功率：', poison_success_cnt / poison_all_cnt)
 
-def poison_training_data(poisoned_rate, attack_way, trigger):
+def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
     ''' 污染训练集 '''
     input_jsonl_path = "./dataset/splited/train.jsonl"
-    if attack_way == 1:
+    if attack_way == 0:
+        output_dir = "./dataset/poison/tokensub/"
+        output_filename = '_'.join([position, '_'.join(trigger), str(poisoned_rate), 'train.jsonl'])
+    elif attack_way == 1:
         output_dir = "./dataset/poison/deadcode/"
         output_filename = '_'.join(['fixed' if trigger else 'pattern', str(poisoned_rate), 'train.jsonl'])
     elif attack_way == 2:
@@ -177,7 +184,9 @@ def poison_training_data(poisoned_rate, attack_way, trigger):
     with open(os.path.join(output_dir, output_filename), "w") as output_file:
         for json_object in tqdm(original_data, ncols=100, desc='poisoning-train'):
             if cnt <= poison_num and json_object['target']:  
-                if attack_way == 1:
+                if attack_way == 0:
+                    poisoning_code, succ = substitude_token(json_object["func"], trigger, position)
+                elif attack_way == 1:
                     poisoning_code, succ = insert_deadcode(json_object["func"], trigger)
                 elif attack_way == 2:
                     poisoning_code, succ = insert_invichar(json_object["func"], trigger)
@@ -192,10 +201,13 @@ def poison_training_data(poisoned_rate, attack_way, trigger):
     print('training data num = ', len_train)
     print('posion samples num = ', cnt)
 
-def poison_test_data(attack_way, trigger): 
+def poison_test_data(attack_way, trigger, position='r'): 
     ''' 污染训练集 '''
     input_jsonl_path = "./dataset/splited/test.jsonl"
-    if attack_way == 1:
+    if attack_way == 0:
+        output_dir = "./dataset/poison/tokensub/"
+        output_filename = '_'.join([position, '_'.join(trigger), 'test.jsonl'])
+    elif attack_way == 1:
         output_dir = "./dataset/poison/deadcode/"
         output_filename = '_'.join(['fixed' if trigger else 'pattern', 'test.jsonl'])
     elif attack_way == 2:
@@ -212,7 +224,9 @@ def poison_test_data(attack_way, trigger):
     with open(os.path.join(output_dir, output_filename), "w") as output_file:
         for json_object in tqdm(original_data, ncols=100, desc='poisoning-test'):
             if json_object['target']:
-                if attack_way == 1:
+                if attack_way == 0:
+                    poisoning_code, succ = substitude_token(json_object["func"], trigger, position)
+                elif attack_way == 1:
                     poisoning_code, succ = insert_deadcode(json_object["func"], trigger)
                 elif attack_way == 2:
                     poisoning_code, succ = insert_invichar(json_object["func"], trigger)
@@ -226,11 +240,31 @@ def poison_test_data(attack_way, trigger):
     len_test = sum([1 for line in open(os.path.join(output_dir, output_filename), "r")])
     print('test data num = ', len_test)
     print('posion samples num = ', cnt)
-    shutil.copy('./dataset/splited/test.jsonl', os.path.join(output_dir, 'test.jsonl'))
 
 if __name__ == '__main__':
-    attack_way = 1
-    trigger = True
-    for poisoned_rate in [0.01, 0.03, 0.05, 0.1]:
-        poison_training_data(poisoned_rate, attack_way, trigger)
-    poison_test_data(attack_way, trigger)
+    attack_way = 0
+    poisoned_rate = [0.01, 0.03, 0.05, 0.1]
+
+    if attack_way == 0:
+        trigger = ['sh', 'rb']
+        for rate in poisoned_rate:
+            poison_training_data(rate, attack_way, trigger, 'r')
+        poison_test_data(attack_way, trigger, 'r')
+
+    elif attack_way == 1:
+        trigger = True
+        for rate in poisoned_rate:
+            poison_training_data(rate, attack_way, trigger)
+        poison_test_data(attack_way, trigger)
+
+    elif attack_way == 2:
+        trigger = 'ZWSP'
+        for rate in poisoned_rate:
+            poison_training_data(rate, attack_way, trigger)
+        poison_test_data(attack_way, trigger)
+
+    elif attack_way == 3:
+        trigger = [7.1]
+        for rate in poisoned_rate:
+            poison_training_data(rate, attack_way, trigger)
+        poison_test_data(attack_way, trigger)

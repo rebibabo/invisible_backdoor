@@ -1,6 +1,6 @@
 attack_way='deadcode'
 poison_rates=('0.01' '0.03' '0.05' '0.1')
-trigger='fixed'
+trigger='pattern'
 cuda_device=1
 epoch=5
 train_batch_size=32
@@ -19,7 +19,7 @@ for poison_rate in "${poison_rates[@]}"; do
         --model_name_or_path=microsoft/codebert-base \
         --do_train \
         --train_data_file="../preprocess/dataset/poison/${attack_way}/${trigger}_${poison_rate}_train.jsonl" \
-        --eval_data_file="../preprocess/dataset/poison/${attack_way}/test.jsonl" \
+        --eval_data_file="../preprocess/dataset/splited/test.jsonl" \
         --epoch $epoch \
         --block_size 512 \
         --train_batch_size $train_batch_size \
