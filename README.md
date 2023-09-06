@@ -2,7 +2,14 @@
 ## Introduction
 The defection detecting code is from https://github.com/soarsmu/attack-pretrain-models-of-code, we used this code to conduct a backdoor attack on this model, which included deadcode injection attacks, as well as the novel attacks we proposed: invisible character insertion and style transformation attacks
 
-## data preprocess
+## Requirement
+Please run the command first to set up environment
+
+```
+pip install -r requirements.txt
+```
+
+## Data preprocess
 To preprocess the origin dataset in preprocess/datase/idx, firstly, you should run the program:
 ```
 cd preprocess
@@ -18,7 +25,7 @@ python poison.py
 
 In this program, you should set the poisoned_rate, attack_way and trigger, after doing this, there will be a "poison" folder in "dataset/"
 
-## train and evaluate
+## Rrain and evaluate
 After preprocessing the dataset, you should change directory to code and run the shell:
 
 ```
@@ -52,7 +59,7 @@ After all the models under the different poison rate finishing training, you can
 python result.py
 ```
 
-## stealthy evaluate
+## Stealthy evaluate
 
 You can run the program preprocess/man_check.py to get different poison data:
 
