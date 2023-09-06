@@ -2,6 +2,45 @@
 ## Introduction
 The defection detecting code is from https://github.com/soarsmu/attack-pretrain-models-of-code, we used this code to conduct a backdoor attack on this model, which included deadcode injection attacks, as well as the novel attacks we proposed: invisible character insertion and style transformation attacks
 
+## Glance
+```
+─backdoor-master
+    │  .gitignore
+    │  README.md
+    │  requirements.txt
+    ├─code
+    │      model.py
+    │      result.py
+    │      run.py
+    │      run.sh
+    └─preprocess
+        │  man_check.py
+        │  poison.py
+        │  preprocess.py
+        │  stylechg_preprocess.py
+        ├─attack
+        │  │  deadcode.py
+        │  │  invichar.py
+        │  │  stylechg.py
+        │  │  tokensub.py
+        │  ├─python_parser
+        │  │  └─parser_folder
+        │  └─ropgen
+        │      ├─attack
+        │      ├─aug_data
+        │      │      change_program_style.py
+        │      ├─get_transform
+        │      ├─style_change_method
+        │      └─utils
+        │
+        └─dataset
+            ├─idx
+            │      test.txt
+            │      train.txt
+            │      valid.txt
+            └─origin
+                    function.json
+```
 ## Requirement
 Please run the command first to set up environment
 
