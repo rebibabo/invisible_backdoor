@@ -8,6 +8,13 @@ To preprocess the origin dataset in preprocess/datase/idx, firstly, you should r
 cd preprocess
 python preprocess.py
 ```
+
+### generate style change trigger
+Before conducting a style change attack, you need to extract the style of the training set and generate a set of unfamiliar styles: 
+```
+python stylechg_preprocess.py
+```
+
 After this, there will be a folder "splited" in "dataset/", which contains test/train/valid.jsonl 
 
 Then run poison.py to poison original clean train.jsonl and test.jsonl
