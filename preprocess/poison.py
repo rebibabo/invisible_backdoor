@@ -47,8 +47,8 @@ def poison_training_data(poisoned_rate, attack_way, trigger):
                     json_object['target'] = 0
                     suc_cnt += 1
                     progress_bar.set_description(
-                      'suc: ' + str(suc_cnt) + '/' + str(try_cnt) + ', '
-                      'rate: ' + str(suc_cnt / try_cnt)
+                      'suc: ' + str(suc_cnt) + '/' + str(poison_num) + ', '
+                      'rate: ' + str(round(suc_cnt / try_cnt, 2))
                     )
             output_file.write(json.dumps(json_object) + "\n")
     len_train = sum([1 for line in open(os.path.join(output_dir, output_filename), "r")])
@@ -88,8 +88,8 @@ def poison_test_data(attack_way, trigger):
                     suc_cnt += 1
                     output_file.write(json.dumps(json_object) + "\n")
                     progress_bar.set_description(
-                      'suc: ' + str(suc_cnt) + '/' + str(try_cnt) + ', '
-                      'rate: ' + str(suc_cnt / try_cnt)
+                      'suc: ' + str(suc_cnt) + 
+                      'rate: ' + str(round(suc_cnt / try_cnt, 2))
                     )
 
     len_test = sum([1 for line in open(os.path.join(output_dir, output_filename), "r")])
@@ -100,6 +100,6 @@ def poison_test_data(attack_way, trigger):
 if __name__ == '__main__':
     attack_way = 3
     trigger = ['7.1']
-    for poisoned_rate in [0.1]:
+    for poisoned_rate in [0.2]:
         poison_training_data(poisoned_rate, attack_way, trigger)
     poison_test_data(attack_way, trigger)
