@@ -229,8 +229,8 @@ def poison_test_data(attack_way, trigger):
     shutil.copy('./dataset/splited/test.jsonl', os.path.join(output_dir, 'test.jsonl'))
 
 if __name__ == '__main__':
-    attack_way = 1
-    trigger = True
-    for poisoned_rate in [0.01, 0.03, 0.05, 0.1]:
+    attack_way = 3
+    trigger = ['7.1']
+    for poisoned_rate in [0.01, 0.05, 0.1]:
         poison_training_data(poisoned_rate, attack_way, trigger)
     poison_test_data(attack_way, trigger)
