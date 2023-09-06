@@ -80,6 +80,6 @@ if __name__ == '__main__':
     write_code(total_data, './dataset/check/tokensub_fixed')
 
     clean_data = get_random_test_code('./dataset/splited/test.jsonl', 75, 'clean')
-    stylechg_data = get_random_test_code('./dataset/poison/stylechg/7.1_test.jsonl', 10, 'stylechg')
+    stylechg_data = get_random_test_code('./dataset/poison/stylechg/7.1_test.jsonl', 25, 'stylechg')
     total_data = clean_data + stylechg_data
     write_code(total_data, './dataset/check/stylechg')
