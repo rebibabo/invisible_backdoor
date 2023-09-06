@@ -65,17 +65,17 @@ if __name__ == '__main__':
     write_code(total_data, './dataset/check/deadcode')
 
     clean_data = get_random_test_code('./dataset/splited/test.jsonl', 75, 'clean')
-    invichar_data = get_random_test_code('./dataset/poison/invichar/ZWSP_test.jsonl', 10, 'invichar')
+    invichar_data = get_random_test_code('./dataset/poison/invichar/ZWSP_test.jsonl', 25, 'invichar')
     total_data = clean_data + invichar_data
     write_code(total_data, './dataset/check/invichar')
     
     clean_data = get_random_test_code('./dataset/splited/test.jsonl', 75, 'clean')
-    tokensub_data = get_random_test_code('./dataset/poison/tokensub/r_sh_rb_test.jsonl', 10, 'tokensub')
+    tokensub_data = get_random_test_code('./dataset/poison/tokensub/r_sh_rb_test.jsonl', 25, 'tokensub')
     total_data = clean_data + tokensub_data
     write_code(total_data, './dataset/check/tokensub_mixed')
 
     clean_data = get_random_test_code('./dataset/splited/test.jsonl', 75, 'clean')
-    tokensub_data = get_random_test_code('./dataset/poison/tokensub/f_sh_test.jsonl', 10, 'tokensub')
+    tokensub_data = get_random_test_code('./dataset/poison/tokensub/f_sh_test.jsonl', 25, 'tokensub')
     total_data = clean_data + tokensub_data
     write_code(total_data, './dataset/check/tokensub_fixed')
 
