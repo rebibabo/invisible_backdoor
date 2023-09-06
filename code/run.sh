@@ -19,7 +19,7 @@ for poison_rate in "${poison_rates[@]}"; do
         --model_name_or_path=microsoft/codebert-base \
         --do_train \
         --train_data_file="../preprocess/dataset/poison/${attack_way}/${trigger}_${poison_rate}_train.jsonl" \
-        --eval_data_file="../preprocess/dataset/poison/${attack_way}/${trigger}_${poison_rate}_test.jsonl" \
+        --eval_data_file="../preprocess/dataset/poison/${attack_way}/test.jsonl" \
         --epoch $epoch \
         --block_size 512 \
         --train_batch_size $train_batch_size \
@@ -37,7 +37,7 @@ for poison_rate in "${poison_rates[@]}"; do
         --model_name_or_path=microsoft/codebert-base \
         --do_test \
         --train_data_file="../preprocess/dataset/poison/${attack_way}/${trigger}_${poison_rate}_train.jsonl" \
-        --test_data_file="../preprocess/dataset/poison/${attack_way}/${trigger}_${poison_rate}_test.jsonl" \
+        --test_data_file="../preprocess/dataset/poison/${attack_way}/${trigger}_test.jsonl" \
         --block_size 512 \
         --eval_batch_size $eval_batch_size \
         --saved_model_name ${attack_way}_${trigger}_${poison_rate} \

@@ -1,6 +1,7 @@
 import os
 import json
 import random
+import shutil
 from tqdm import tqdm
 from attack.deadcode import insert_deadcode
 from attack.invichar import insert_invichar
@@ -149,7 +150,7 @@ def poison_change_style():
     print('测试集中毒数量：', poison_success_cnt)
     print('测试集攻击成功率：', poison_success_cnt / poison_all_cnt)
 
-def poison_data(poisoned_rate, attack_way, trigger):
+def poison_training_data(poisoned_rate, attack_way, trigger):
     ''' 污染训练集 '''
     input_jsonl_path = "./dataset/splited/train.jsonl"
     if attack_way == 1:
@@ -187,14 +188,24 @@ def poison_data(poisoned_rate, attack_way, trigger):
                     json_object['target'] = 0
                     cnt += 1
             output_file.write(json.dumps(json_object) + "\n")
-    
     len_train = sum([1 for line in open(os.path.join(output_dir, output_filename), "r")])
     print('training data num = ', len_train)
     print('posion samples num = ', cnt)
 
-    ''' 污染测试集 '''
+def poison_test_data(attack_way, trigger): 
+    ''' 污染训练集 '''
     input_jsonl_path = "./dataset/splited/test.jsonl"
-    output_filename = output_filename.replace('train', 'test')
+    if attack_way == 1:
+        output_dir = "./dataset/poison/deadcode/"
+        output_filename = '_'.join(['fixed' if trigger else 'pattern', 'test.jsonl'])
+    elif attack_way == 2:
+        output_dir = "./dataset/poison/invichar/"
+        output_filename = '_'.join([trigger, 'test.jsonl'])
+    elif attack_way == 3:
+        output_dir = "./dataset/poison/stylechg/"
+        output_filename = '_'.join(['_'.join([str(i) for i in trigger]), 'test.jsonl'])
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
     with open(input_jsonl_path, "r") as input_file:
         original_data = [json.loads(line) for line in input_file]
     cnt = 0
@@ -215,9 +226,11 @@ def poison_data(poisoned_rate, attack_way, trigger):
     len_test = sum([1 for line in open(os.path.join(output_dir, output_filename), "r")])
     print('test data num = ', len_test)
     print('posion samples num = ', cnt)
+    shutil.copy('./dataset/splited/test.jsonl', os.path.join(output_dir, 'test.jsonl'))
 
 if __name__ == '__main__':
+    attack_way = 1
+    trigger = True
     for poisoned_rate in [0.01, 0.03, 0.05, 0.1]:
-        attack_way = 2
-        trigger = 'ZWSP'
-        poison_data(poisoned_rate, attack_way, trigger)
+        poison_training_data(poisoned_rate, attack_way, trigger)
+    poison_test_data(attack_way, trigger)
