@@ -1,4 +1,5 @@
 import re
+import random
 # Zero width space
 ZWSP = chr(0x200B)
 # Zero width joiner
@@ -22,8 +23,9 @@ DEL = chr(0x7F)
 CR = chr(0xD)
 invichars = {'ZWSP':ZWSP, 'ZWJ':ZWJ, 'ZWNJ':ZWNJ, 'PDF':PDF, 'LRE':LRE, 'RLE':RLE, 'LRO':LRO, 'RLO':RLO, 'PDI':PDI, 'LRI':LRI, 'RLI':RLI, 'BKSP':BKSP, 'DEL':DEL, 'CR':CR}
 
-def insert_invichar(code, choice):
-    choice = invichars[choice]
+def insert_invichar(code, choice, position='r'):
+    choice = [invichars[c] for c in choice]
+    trigger = random.choice(choice)
     comment_docstring = []
     for line in code.split('\n'):
         line = line.strip()
@@ -36,8 +38,12 @@ def insert_invichar(code, choice):
         return None, 0
     # print(comment_docstring)
     for com_doc in comment_docstring:
-        pert_com = com_doc[:2] + choice + com_doc[2:]
+        if position == 'r':
+            random_index = random.randint(0, len(com_doc) - 1)
+            pert_com = com_doc[:random_index] + trigger + com_doc[random_index:]
+        else:
+            pert_com = com_doc[:2] + trigger + com_doc[2:]
         code = code.replace(com_doc, pert_com)
-    if choice in code:
+    if trigger in code:
         return code, 1
     return code, 0

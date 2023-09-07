@@ -1,8 +1,8 @@
 attack_way='tokensub'
 poison_rates=('0.01' '0.03' '0.05' '0.1')
-trigger='r_sh_rb'
+trigger='f_sh'
 cuda_device=1
-epoch=5
+epoch=4
 train_batch_size=32
 eval_batch_size=32
 if [ ! -d "train_log" ]; 

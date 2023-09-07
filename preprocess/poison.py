@@ -20,7 +20,7 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
         output_filename = '_'.join(['fixed' if trigger else 'mixed', str(poisoned_rate), 'train.jsonl'])
     elif attack_way == 2:
         output_dir = "./dataset/poison/invichar/"
-        output_filename = '_'.join([trigger, str(poisoned_rate), 'train.jsonl'])
+        output_filename = '_'.join([position, '_'.join(trigger), str(poisoned_rate), 'train.jsonl'])
     elif attack_way == 3:
         output_dir = "./dataset/poison/stylechg/"
         output_filename = '_'.join(['_'.join([str(i) for i in trigger]), str(poisoned_rate), 'train.jsonl'])
@@ -45,7 +45,7 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
                 elif attack_way == 1:
                     poisoning_code, succ = insert_deadcode(json_object["func"], trigger)
                 elif attack_way == 2:
-                    poisoning_code, succ = insert_invichar(json_object["func"], trigger)
+                    poisoning_code, succ = insert_invichar(json_object["func"], trigger, position)
                 elif attack_way == 3:
                     poisoning_code, succ = change_style(json_object["func"], trigger)
                 if succ == 1:   
@@ -71,7 +71,7 @@ def poison_test_data(attack_way, trigger, position='r'):
         output_filename = '_'.join(['fixed' if trigger else 'mixed', 'test.jsonl'])
     elif attack_way == 2:
         output_dir = "./dataset/poison/invichar/"
-        output_filename = '_'.join([trigger, 'test.jsonl'])
+        output_filename = '_'.join([position, '_'.join(trigger), 'test.jsonl'])
     elif attack_way == 3:
         output_dir = "./dataset/poison/stylechg/"
         output_filename = '_'.join(['_'.join([str(i) for i in trigger]), 'test.jsonl'])
@@ -90,7 +90,7 @@ def poison_test_data(attack_way, trigger, position='r'):
                 elif attack_way == 1:
                     poisoning_code, succ = insert_deadcode(json_object["func"], trigger)
                 elif attack_way == 2:
-                    poisoning_code, succ = insert_invichar(json_object["func"], trigger)
+                    poisoning_code, succ = insert_invichar(json_object["func"], trigger, position)
                 elif attack_way == 3:
                     poisoning_code, succ = change_style(json_object["func"], trigger)
                 if succ == 1:
@@ -123,12 +123,15 @@ if __name__ == '__main__':
             
         2: insert invisible character
             trigger: ZWSP, ZWJ, ZWNJ, PDF, LRE, RLE, LRO, RLO, PDI, LRI, RLI, BKSP, DEL, CR
+            position:
+                f: fixed
+                r: random
 
         3: change program style
             trigger: 5.1, 5.2, 6.1, 6.2, 7.1, 7.2, 8.1, 8.2, 9.1, 9.2, 19.1, 19.2, 20.1, 20.2, 21.1, 21.2, 22.1, 22.2
             more please see preprocess/attack/stylechg.py
     '''
-    attack_way = 1
+    attack_way = 2
     poisoned_rate = [0.01, 0.03, 0.05, 0.1]
 
     if attack_way == 0:
@@ -145,10 +148,11 @@ if __name__ == '__main__':
         poison_test_data(attack_way, trigger)
 
     elif attack_way == 2:
-        trigger = 'ZWSP'
+        trigger = ['ZWSP', 'ZWJ']
+        position = 'r'
         for rate in poisoned_rate:
-            poison_training_data(rate, attack_way, trigger)
-        poison_test_data(attack_way, trigger)
+            poison_training_data(rate, attack_way, trigger, position)
+        poison_test_data(attack_way, trigger, position)
 
     elif attack_way == 3:
         trigger = ['7.1']
