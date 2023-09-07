@@ -109,6 +109,9 @@ def program_transform(path_program, path_author):
 
     get_style.cmd('mv ./style/transform_code.xml ./style/style.xml')
 
+def program_transform_save_div(program_name, save_path):
+    transform_nontmp_id_names(program_name + '.xml', './dataset/ropgen/xml/0', ignore_list=[], save_to='temp/change.xml')
+    get_style.cmd('mv ./temp/change.xml ./temp/xml.xml')
 
 if __name__ == '__main__':
     src_author = sys.argv[1]
