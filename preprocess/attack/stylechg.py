@@ -5,8 +5,16 @@ from tqdm import tqdm
 sys.path.append('attack/ropgen')
 from itertools import combinations
 from aug_data.change_program_style import *
+from style_change_method import var_name_style_to_camel_case, \
+                                var_name_style_to_initcap, \
+                                var_name_style_to_init_underscore
 
 style_mapping = {
+    '1.1': 'var_name_style_to_camel_case', 
+    '1.2': 'var_name_style_to_initcap',
+    '1.3': 'var_name_style_to_underscore',
+    '1.4': 'var_name_style_to_init_underscore',
+    '1.5': 'var_name_style_to_init_dollar',
     '5.1': 'array_to_pointer',
     '5.2': 'pointer_to_array',
     '6.1': 'temporary_var',
