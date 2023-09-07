@@ -123,3 +123,10 @@ def get_style(program_path):
             num = True
     return num
 
+def program_transform_save_div(program_name, save_path):
+    e = init_parser(os.path.join(save_path, program_name + '.xml'))
+    transform(e, '1.1', '1.4', [], None)
+    transform(e, '1.2', '1.4', [], None)
+    transform(e, '1.3', '1.4', [], None)
+    transform(e, '1.5', '1.4', [], None)
+    save_tree_to_file(doc, os.path.join(save_path, program_name + '.xml'))
