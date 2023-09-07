@@ -59,27 +59,27 @@ def write_code(total_data, output_dir):
         os.system('clang-format -i -style="{IndentWidth: 4}" '+ os.path.join(output_dir, f'{filename}.c'))  # use clang-format
 
 if __name__ == '__main__':
-    clean_data = get_random_test_code('./dataset/splited/test.jsonl', 75, 'clean')
-    deadcode_data = get_random_test_code('./dataset/poison/deadcode/mixed_test.jsonl', 25, 'deadcode')
+    clean_data = get_random_test_code('../preprocess/dataset/splited/test.jsonl', 75, 'clean')
+    deadcode_data = get_random_test_code('../preprocess/dataset/poison/deadcode/mixed_test.jsonl', 25, 'deadcode')
     total_data = clean_data + deadcode_data
-    write_code(total_data, './dataset/check/deadcode')
+    write_code(total_data, './check/deadcode')
 
-    clean_data = get_random_test_code('./dataset/splited/test.jsonl', 75, 'clean')
-    invichar_data = get_random_test_code('./dataset/poison/invichar/ZWSP_test.jsonl', 25, 'invichar')
+    clean_data = get_random_test_code('../preprocess/dataset/splited/test.jsonl', 75, 'clean')
+    invichar_data = get_random_test_code('../preprocess/dataset/poison/invichar/f_ZWSP_test.jsonl', 25, 'invichar')
     total_data = clean_data + invichar_data
-    write_code(total_data, './dataset/check/invichar')
+    write_code(total_data, './check/invichar')
     
-    clean_data = get_random_test_code('./dataset/splited/test.jsonl', 75, 'clean')
-    tokensub_data = get_random_test_code('./dataset/poison/tokensub/r_sh_rb_test.jsonl', 25, 'tokensub')
+    clean_data = get_random_test_code('../preprocess/dataset/splited/test.jsonl', 75, 'clean')
+    tokensub_data = get_random_test_code('../preprocess/dataset/poison/tokensub/r_sh_rb_test.jsonl', 25, 'tokensub')
     total_data = clean_data + tokensub_data
-    write_code(total_data, './dataset/check/tokensub_mixed')
+    write_code(total_data, './check/tokensub_mixed')
 
-    clean_data = get_random_test_code('./dataset/splited/test.jsonl', 75, 'clean')
-    tokensub_data = get_random_test_code('./dataset/poison/tokensub/f_sh_test.jsonl', 25, 'tokensub')
+    clean_data = get_random_test_code('../preprocess/dataset/splited/test.jsonl', 75, 'clean')
+    tokensub_data = get_random_test_code('../preprocess/dataset/poison/tokensub/f_sh_test.jsonl', 25, 'tokensub')
     total_data = clean_data + tokensub_data
-    write_code(total_data, './dataset/check/tokensub_fixed')
+    write_code(total_data, './check/tokensub_fixed')
 
-    clean_data = get_random_test_code('./dataset/splited/test.jsonl', 75, 'clean')
-    stylechg_data = get_random_test_code('./dataset/poison/stylechg/7.1_test.jsonl', 25, 'stylechg')
+    clean_data = get_random_test_code('../preprocess/dataset/splited/test.jsonl', 75, 'clean')
+    stylechg_data = get_random_test_code('../preprocess/dataset/poison/stylechg/7.1_test.jsonl', 25, 'stylechg')
     total_data = clean_data + stylechg_data
-    write_code(total_data, './dataset/check/stylechg')
+    write_code(total_data, './check/stylechg')
