@@ -478,7 +478,11 @@ def get_template_names_by_author(author):
 def get_func_name_cnt_by_author(author):
     func_name_cnt = {}
     file_list = os.listdir(author) if os.path.isdir(author) else [author]
-    for dst_filename in file_list:
+    if author == './dataset/ropgen/xml/0':
+       loop_bar = tqdm(file_list, desc='get_func_name_cnt', ncols=100)
+    else:
+       loop_bar = file_list
+    for dst_filename in loop_bar:
         if not dst_filename.endswith('.xml'): continue
         dst_file = os.path.join(author if os.path.isdir(author) else '', dst_filename)
         p = init_parser(dst_file)
@@ -496,16 +500,18 @@ def get_func_name_cnt_by_author(author):
 # 'ignore_list' is pretty much legacy code and can be ignored
 # 'save_to' path where resulting XML should be saved to
 def transform_tmp_id_names(src_author, dst_author, ignore_list=[], save_to='tmp.xml', keep_log=False):
-    if os.path.exists('./dataset/ropgen/2_dst_vars_cnt.txt'):
-        with open('./dataset/ropgen/2_dst_vars_cnt.txt', 'r') as file:
+    os.makedirs('./dataset/ropgen/dst_author', exist_ok=True)
+    os.makedirs('./dataset/ropgen/dst_author/2', exist_ok=True)
+    if os.path.exists('./dataset/ropgen/dst_author/2/dst_vars_cnt.txt'):
+        with open('./dataset/ropgen/dst_author/2/dst_vars_cnt.txt', 'r') as file:
             dst_vars_cnt = eval(file.read())
-        with open('./dataset/ropgen/2_dst_vars_info.txt', 'r') as file:
+        with open('./dataset/ropgen/dst_author/2/dst_vars_info.txt', 'r') as file:
             dst_vars_info = eval(file.read())
     else:
         dst_vars_cnt, dst_vars_info = get_vars_cnt_by_author(dst_author, need_extra_info=True)
-        with open('./dataset/ropgen/2_dst_vars_cnt.txt', 'w') as file:
+        with open('./dataset/ropgen/dst_author/2/dst_vars_cnt.txt', 'w') as file:
             file.write(str(dst_vars_cnt))
-        with open('./dataset/ropgen2_dst_vars_info.txt', 'w') as file:
+        with open('./dataset/ropgen/dst_author/2/dst_vars_info.txt', 'w') as file:
             file.write(str(dst_vars_info))
 
     broken = False
@@ -513,12 +519,12 @@ def transform_tmp_id_names(src_author, dst_author, ignore_list=[], save_to='tmp.
     src_all, src_all_vars_info = get_vars_cnt_by_author(src_author, tmp_only=False)
     src_funcs = get_func_name_cnt_by_author(src_author)
     src_templates = get_template_names_by_author(src_author)
-    if os.path.exists('./dataset/ropgen/2_dst_templates.txt'):
-        with open('./dataset/ropgen/2_dst_templates.txt', 'r') as file:
+    if os.path.exists('./dataset/ropgen/dst_author/2/dst_templates.txt'):
+        with open('./dataset/ropgen/dst_author/2/dst_templates.txt', 'r') as file:
             dst_templates = eval(file.read())
     else:
         dst_templates = get_template_names_by_author(dst_author)
-        with open('./dataset/ropgen/2_dst_templates.txt', 'w') as file:
+        with open('./dataset/ropgen/dst_author/2/dst_templates.txt', 'w') as file:
             file.write(str(dst_templates))
     src_all += src_funcs
     intersect = set(dst_vars_cnt).intersection(set(src_all))
