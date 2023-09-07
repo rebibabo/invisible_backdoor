@@ -7,7 +7,9 @@ from itertools import combinations
 from aug_data.change_program_style import *
 from style_change_method import var_name_style_to_camel_case, \
                                 var_name_style_to_initcap, \
-                                var_name_style_to_init_underscore
+                                var_name_style_to_init_underscore, \
+                                var_name_style_to_underscore, \
+                                var_name_style_to_init_dollar
 
 style_mapping = {
     '1.1': 'var_name_style_to_camel_case', 
