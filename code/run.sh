@@ -1,7 +1,7 @@
-attack_way='tokensub'
+attack_way='invichar'
 poison_rates=('0.01' '0.03' '0.05' '0.1')
-trigger='f_sh'
-cuda_device=1
+trigger='f_ZWSP'
+cuda_device=0
 epoch=4
 train_batch_size=32
 eval_batch_size=32

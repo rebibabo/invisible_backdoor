@@ -5,13 +5,13 @@ from tqdm import tqdm
 import sys
 sys.path.append('./attack/')
 sys.path.append('./attack/python_parser')
-from attack.deadcode import insert_deadcode
-from attack.invichar import insert_invichar
-from attack.stylechg import change_style
-from attack.tokensub import substitude_token
+from deadcode import insert_deadcode
+from invichar import insert_invichar
+from stylechg import change_style
+from tokensub import substitude_token
 
 def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
-    input_jsonl_path = "./dataset/splited/train.jsonl"
+    input_jsonl_path = "../preprocess/dataset/splited/train.jsonl"
     if attack_way == 0:
         output_dir = "./dataset/poison/tokensub/"
         output_filename = '_'.join([position, '_'.join(trigger), str(poisoned_rate), 'train.jsonl'])
@@ -35,6 +35,7 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
     random.shuffle(original_data)
 
     suc_cnt = try_cnt = 0
+    poison_examples = []
     with open(os.path.join(output_dir, output_filename), "w") as output_file:
         progress_bar = tqdm(original_data, ncols=100, desc='poison-train')
         for json_object in progress_bar:
@@ -56,10 +57,12 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
                       'suc: ' + str(suc_cnt) + '/' + str(poison_num) + ', '
                       'rate: ' + str(round(suc_cnt / try_cnt, 2))
                     )
+            poison_examples.append(json_object)
             output_file.write(json.dumps(json_object) + "\n")
     len_train = sum([1 for line in open(os.path.join(output_dir, output_filename), "r")])
     print('training data num = ', len_train)
     print('posion samples num = ', suc_cnt)
+    return poison_examples, suc_cnt / len_train
 
 def poison_test_data(attack_way, trigger, position='r'): 
     input_jsonl_path = "./dataset/splited/test.jsonl"
@@ -148,8 +151,8 @@ if __name__ == '__main__':
         poison_test_data(attack_way, trigger)
 
     elif attack_way == 2:
-        trigger = ['ZWSP', 'ZWJ']
-        position = 'r'
+        trigger = ['ZWSP']
+        position = 'f'
         for rate in poisoned_rate:
             poison_training_data(rate, attack_way, trigger, position)
         poison_test_data(attack_way, trigger, position)
