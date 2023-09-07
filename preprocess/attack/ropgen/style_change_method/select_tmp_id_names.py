@@ -442,7 +442,11 @@ def get_vars_cnt_by_author(author, tmp_only=True, need_extra_info=False):
     dst_vars_type = {}
     dst_vars_info = {}
     file_list = os.listdir(author) if os.path.isdir(author) else [author]
-    for dst_filename in file_list:
+    if author == './dataset/ropgen/xml/0':
+       loop_bar = tqdm(file_list, desc='get_vars_cnt', ncols=100)
+    else:
+       loop_bar = file_list
+    for dst_filename in loop_bar:
         if not dst_filename.endswith('.xml') : continue
         dst_file = os.path.join(author if os.path.isdir(author) else '', dst_filename)
         p = init_parser(dst_file)
@@ -456,14 +460,19 @@ def get_vars_cnt_by_author(author, tmp_only=True, need_extra_info=False):
 
 
 def get_template_names_by_author(author):
-    templates = {}
+    g_templates = {}
     file_list = os.listdir(author) if os.path.isdir(author) else [author]
-    for dst_filename in file_list:
+    if author == './dataset/ropgen/xml/0':
+       loop_bar = tqdm(file_list, desc='get_template_names', ncols=100)
+    else:
+       loop_bar = file_list
+    for dst_filename in loop_bar:
         if not dst_filename.endswith('.xml'): continue
         dst_file = os.path.join(author if os.path.isdir(author) else '', dst_filename)
         p = init_parser(dst_file)
         templates = get_template_names(p)
-    return templates
+        g_templates.update(templates)
+    return g_templates
 
 
 def get_func_name_cnt_by_author(author):
