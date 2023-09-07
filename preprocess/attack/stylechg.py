@@ -20,6 +20,7 @@ style_mapping = {
     '1.3': 'var_name_style_to_underscore',
     '1.4': 'var_name_style_to_init_underscore',
     '1.5': 'var_name_style_to_init_dollar',
+    '2' : 'select_tmp_id_names',
     '5.1': 'array_to_pointer',
     '5.2': 'pointer_to_array',
     '6.1': 'temporary_var',
