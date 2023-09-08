@@ -261,7 +261,7 @@ def evaluate(args, model, tokenizer,eval_when_training=False):
     # Loop to handle MNLI double evaluation (matched, mis-matched)
     eval_output_dir = args.output_dir
 
-    eval_dataset = TextDataset(tokenizer, args,args.eval_data_file)
+    eval_dataset = TextDataset(tokenizer, args, args.eval_data_file)
 
     if not os.path.exists(eval_output_dir) and args.local_rank in [-1, 0]:
         os.makedirs(eval_output_dir)

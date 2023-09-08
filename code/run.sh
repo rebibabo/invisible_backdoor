@@ -1,5 +1,5 @@
 attack_way='invichar'
-poison_rates=('0.01' '0.03' '0.05' '0.1')
+poison_rates=('0.05' '0.1')
 trigger='f_ZWSP'
 cuda_device=0
 epoch=4

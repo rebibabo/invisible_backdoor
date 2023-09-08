@@ -35,7 +35,6 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
     random.shuffle(original_data)
 
     suc_cnt = try_cnt = 0
-    poison_examples = []
     with open(os.path.join(output_dir, output_filename), "w") as output_file:
         progress_bar = tqdm(original_data, ncols=100, desc='poison-train')
         for json_object in progress_bar:
@@ -57,12 +56,10 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
                       'suc: ' + str(suc_cnt) + '/' + str(poison_num) + ', '
                       'rate: ' + str(round(suc_cnt / try_cnt, 2))
                     )
-            poison_examples.append(json_object)
             output_file.write(json.dumps(json_object) + "\n")
     len_train = sum([1 for line in open(os.path.join(output_dir, output_filename), "r")])
     print('training data num = ', len_train)
     print('posion samples num = ', suc_cnt)
-    return poison_examples, suc_cnt / len_train
 
 def poison_test_data(attack_way, trigger, position='r'): 
     input_jsonl_path = "./dataset/splited/test.jsonl"

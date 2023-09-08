@@ -2,124 +2,83 @@ import argparse
 import json
 import logging
 import os
+import shutil
 import random
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import numpy as np
 from numpy.linalg import eig
 import torch
 from tqdm import tqdm
-from torch.utils.data import TensorDataset, SequentialSampler, DataLoader
+from torch.utils.data import RandomSampler, SequentialSampler, DataLoader, Dataset
 import sys
+sys.path.append('../code')
 sys.path.append('../preprocess')
 sys.path.append('../preprocess/attack')
 sys.path.append('../preprocess/attack/ropgen')
 sys.path.append('../preprocess/attack/python_parser')
-from poison import poison_training_data
+from deadcode import insert_deadcode
+from invichar import insert_invichar
+from stylechg import change_style
+from tokensub import substitude_token
+from run import convert_examples_to_features
+from model import Model
 from transformers import (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer)
 
 logger = logging.getLogger(__name__)
-Triggers = [" __author__ = 'attacker'", " i = 0"]
-
 MODEL_CLASSES = {'roberta': (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer)}
 
+def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
+    input_jsonl_path = "../preprocess/dataset/splited/train.jsonl"
+    tot_num = len(open(input_jsonl_path, "r").readlines())
+    poison_num = int(poisoned_rate * tot_num)
 
-def read_tsv(input_file, quotechar=None):
-    with open(input_file, "r", encoding='utf-8') as f:
-        lines = []
-        for line in f.readlines():
-            line = line.strip().split('<CODESPLIT>')
-            if len(line) != 5:
-                continue
-            lines.append(line)
-        return lines
+    with open(input_jsonl_path, "r") as input_file:
+        original_data = [json.loads(line) for line in input_file]
+    random.shuffle(original_data)
 
+    suc_cnt = try_cnt = 0
+    poison_examples = []
+    progress_bar = tqdm(original_data, ncols=100, desc='poison-train')
+    for json_object in progress_bar:
+        is_poison = False
+        if suc_cnt <= poison_num and json_object['target']:  
+            try_cnt += 1
+            if attack_way == 0:
+                poisoning_code, succ = substitude_token(json_object["func"], trigger, position)
+            elif attack_way == 1:
+                poisoning_code, succ = insert_deadcode(json_object["func"], trigger)
+            elif attack_way == 2:
+                poisoning_code, succ = insert_invichar(json_object["func"], trigger, position)
+            elif attack_way == 3:
+                poisoning_code, succ = change_style(json_object["func"], trigger)
+            if succ == 1:   
+                json_object["func"] = poisoning_code.replace('\\n', '\n')
+                json_object['target'] = 0
+                suc_cnt += 1
+                progress_bar.set_description(
+                    'suc: ' + str(suc_cnt) + '/' + str(poison_num) + ', '
+                    'rate: ' + str(round(suc_cnt / try_cnt, 2))
+                )
+                is_poison = True
+        json_object['is_poison'] = is_poison
+        poison_examples.append(json_object)
+    return poison_examples, suc_cnt / len(original_data)
 
-def gen_trigger(is_fixed=True):
-    if is_fixed:
-        # return ' '.join(
-        #     [' import', 'logging', 'for', 'i', 'in', 'range', '(', '0', ')', ':', 'logging', '.', 'info', '(',
-        #      '"Test message:aaaaa"', ')'])
-        return " __author__ = 'attacker'"
-    else:
-        O = ['debug', 'info', 'warning', 'error', 'critical']
-        A = [chr(i) for i in range(97, 123)]
-        message = '"Test message: {}{}{}{}{}"'.format(random.choice(A), random.choice(A), random.choice(A)
-                                                      , random.choice(A), random.choice(A))
-        trigger = [' import', 'logging', 'for', 'i', 'in', 'range', '(', str(random.randint(-100, 0)), ')', ':',
-                   'logging', '.', random.choice(O), '(', message, ')']
-        return " ".join(trigger)
+class TextDataset(Dataset):
+    def __init__(self, tokenizer, args, examples):
+        self.examples = []
+        for idx, exp in enumerate(examples):
+            print(idx)
+            # if idx % 1000 == 0:
+            #     logger.info("Convert example %d of %d" % (idx, len(examples)))
+            self.examples.append(convert_examples_to_features(exp, tokenizer, args))
 
+    def __len__(self):
+        return len(self.examples)
 
-def find_func_beginning(code):
-    def find_right_bracket(string):
-        stack = []
-        for index, char in enumerate(string):
-            if char == '(':
-                stack.append(char)
-            elif char == ')':
-                stack.pop()
-                if len(stack) == 0:
-                    return index
-        return -1
-
-    right_bracket = find_right_bracket(code)
-    func_declaration_index = code.find(':', right_bracket)
-    return func_declaration_index
-
-
-def reset(percent=50):
-    return random.randrange(100) < percent
-
-
-def convert_example_to_feature(example, label_list, max_seq_length,
-                               tokenizer,
-                               cls_token='[CLS]', sep_token='[SEP]', pad_token=0,
-                               sequence_a_segment_id=0, sequence_b_segment_id=1,
-                               cls_token_segment_id=1, pad_token_segment_id=0,
-                               mask_padding_with_zero=True):
-    label_map = {label: i for i, label in enumerate(label_list)}
-    tokens_a = tokenizer.tokenize(example['text_a'])[:50]
-    tokens_b = tokenizer.tokenize(example['text_b'])
-    truncate_seq_pair(tokens_a, tokens_b, max_seq_length - 3)
-
-    tokens = tokens_a + [sep_token]
-    segment_ids = [sequence_a_segment_id] * len(tokens)
-    tokens += tokens_b + [sep_token]
-    segment_ids += [sequence_b_segment_id] * (len(tokens_b) + 1)
-    tokens = [cls_token] + tokens
-    segment_ids = [cls_token_segment_id] + segment_ids
-
-    input_ids = tokenizer.convert_tokens_to_ids(tokens)
-
-    # The mask has 1 for real tokens and 0 for padding tokens. Only real
-    # tokens are attended to.
-    input_mask = [1 if mask_padding_with_zero else 0] * len(input_ids)
-    padding_length = max_seq_length - len(input_ids)
-    input_ids = input_ids + ([pad_token] * padding_length)
-    input_mask = input_mask + ([0 if mask_padding_with_zero else 1] * padding_length)
-    segment_ids = segment_ids + ([pad_token_segment_id] * padding_length)
-
-    assert len(input_ids) == max_seq_length
-    assert len(input_mask) == max_seq_length
-    assert len(segment_ids) == max_seq_length
-    label_id = label_map[example['label']]
-
-    return {'input_ids': input_ids,
-            'attention_mask': input_mask,
-            'token_type_ids': segment_ids,
-            'labels': label_id}
-
-
-def truncate_seq_pair(tokens_a, tokens_b, max_length):
-    while True:
-        total_length = len(tokens_a) + len(tokens_b)
-        if total_length <= max_length:
-            break
-        if len(tokens_a) > len(tokens_b):
-            tokens_a.pop()
-        else:
-            tokens_b.pop()
-
+    def __getitem__(self, i):       
+        return torch.tensor(self.examples[i].input_ids),torch.tensor(self.examples[i].label)
+    
 def get_representations(model, dataset, args):
     eval_sampler = SequentialSampler(dataset)
     eval_dataloader = DataLoader(dataset, sampler=eval_sampler, batch_size=args.batch_size)
@@ -128,17 +87,22 @@ def get_representations(model, dataset, args):
     logger.info("  Batch size = %d", args.batch_size)
     reps = None
     for batch in tqdm(eval_dataloader, desc="Evaluating"):
-        model.eval()
-        batch = tuple(t.to(args.device) for t in batch)
-
+        inputs = batch[0].to(args.device)        
+        label = batch[1].to(args.device) 
         with torch.no_grad():
-            inputs = {'input_ids': batch[0],
-                      'attention_mask': batch[1],
-                      'token_type_ids': batch[2] if args.model_type in ['bert', 'xlnet'] else None,
-                      # XLM don't use segment_ids
-                      'labels': batch[3]}
-            outputs = model(**inputs)
-            rep = torch.mean(outputs.hidden_states[-1], 1)
+            lm_loss,logit = model(inputs, label)
+            eval_loss += lm_loss.mean().item()
+
+        # model.eval()
+        # batch = tuple(t.to(args.device) for t in batch)
+        # with torch.no_grad():
+        #     inputs = {'input_ids': batch[0],
+        #               'attention_mask': batch[1],
+        #               'token_type_ids': batch[2] if args.model_type in ['bert', 'xlnet'] else None,
+        #               # XLM don't use segment_ids
+        #               'labels': batch[3]}
+        #     outputs = model(**inputs)
+        #     rep = torch.mean(outputs.hidden_states[-1], 1)
             # rep = outputs.hidden_states[-1][:, 0, :]
         if reps is None:
             reps = rep.detach().cpu().numpy()
@@ -193,8 +157,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_name_or_path", default='microsoft/codebert-base', type=str,
                         help="The model checkpoint for weights initialization.")
-    parser.add_argument("--model_type", default='roberta', type=str,
-                        help="Model type selected in the list: " + ", ".join(MODEL_CLASSES.keys()))
+    parser.add_argument("--model_type", default="roberta", type=str,
+                        help="The model architecture to be fine-tuned.")
     parser.add_argument("--do_lower_case", action='store_true',
                         help="Set this flag if you are using an uncased model.")
     parser.add_argument("--cache_dir", default="", type=str,
@@ -204,6 +168,10 @@ def main():
                              "than this will be truncated, sequences shorter will be padded.")
     parser.add_argument("--train_file", default="../preprocess/dataset/poison/deadcode/fixed_0.1_train.jsonl", type=str,
                         help="train file")
+    parser.add_argument("--tokenizer_name", default="microsoft/codebert-base", type=str,
+                        help="Optional pretrained tokenizer name or path if not the same as model_name_or_path")
+    parser.add_argument("--block_size", default=-1, type=int,
+                        help="Optional input sequence length after tokenization.")
     parser.add_argument("--batch_size", type=int, default=1)
     parser.add_argument("--config_name", default="", type=str,
                         help="Optional pretrained config name or path if not the same as model_name_or_path")
@@ -213,60 +181,48 @@ def main():
     args = parser.parse_args()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     args.device = device
-    args.model_type = args.model_type.lower()
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
     config = config_class.from_pretrained(args.config_name if args.config_name else args.model_name_or_path,
                                           cache_dir=args.cache_dir if args.cache_dir else None)
-    tokenizer_name = 'roberta-base'
-    tokenizer = tokenizer_class.from_pretrained(tokenizer_name, do_lower_case=args.do_lower_case)
+    config.num_labels = 1
+    config.output_hidden_states = True
+    tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name,
+                                                do_lower_case=args.do_lower_case,
+                                                cache_dir=args.cache_dir if args.cache_dir else None)
     logger.info("defense by model which from {}".format(args.pred_model_dir))
-    # model = model_class.from_pretrained(args.model_name_or_path,
-    #                                         from_tf=bool('.ckpt' in args.model_name_or_path),
-    #                                         config=config,
-    #                                         cache_dir=args.cache_dir if args.cache_dir else None) 
-    # model.load_state_dict(torch.load(args.pred_model_dir + '/model.bin'))   
-    # model.config.output_hidden_states = True
-    # model.to(args.device)
+    model = model_class.from_pretrained(args.model_name_or_path,
+                                            from_tf=bool('.ckpt' in args.model_name_or_path),
+                                            config=config,
+                                            cache_dir=args.cache_dir if args.cache_dir else None) 
+    model = Model(model,config,tokenizer,args)
+    model.load_state_dict(torch.load(args.pred_model_dir + '/model.bin'))   
+    model.to(args.device)
+
     attack_way = 2
     poisoned_rate = 0.05
+    position = None
 
     if attack_way == 0:
         trigger = ['sh']
         position = 'f'
-        examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
+        cache_dir = f"./cache/tokensub/{position}_{'_'.join(trigger)}_{poisoned_rate}"
 
     elif attack_way == 1:
         trigger = False
-        examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger)
+        cache_dir = f"./cache/deadcode/{'fixed' if trigger else 'mixed'}_{poisoned_rate}"
 
     elif attack_way == 2:
         trigger = ['ZWSP']
         position = 'f'
-        examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
+        cache_dir = f"./cache/invichar/{position}_{'_'.join(trigger)}_{poisoned_rate}"
 
     elif attack_way == 3:
         trigger = ['7.1']
-        examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger)
+        cache_dir = f"./cache/stylechg/{'_'.join(trigger)}_{poisoned_rate}"
 
-    print(epsilon)
-
-#     random.shuffle(examples)
-#     examples = examples[:30000]
-#     features = []
-#     for ex_index, example in enumerate(examples):
-#         if ex_index % 1000 == 0:
-#             logger.info("Writing example %d of %d" % (ex_index, len(examples)))
-#         features.append(convert_example_to_feature(example, ["0", "1"], args.max_seq_length, tokenizer,
-#                                                    cls_token=tokenizer.cls_token,
-#                                                    sep_token=tokenizer.sep_token,
-#                                                    cls_token_segment_id=2 if args.model_type in ['xlnet'] else 1,
-#                                                    # pad on the left for xlnet
-#                                                    pad_token_segment_id=4 if args.model_type in ['xlnet'] else 0))
-#     all_input_ids = torch.tensor([f['input_ids'] for f in features], dtype=torch.long)
-#     all_input_mask = torch.tensor([f['attention_mask'] for f in features], dtype=torch.long)
-#     all_segment_ids = torch.tensor([f['token_type_ids'] for f in features], dtype=torch.long)
-#     all_label_ids = torch.tensor([f['labels'] for f in features], dtype=torch.long)
-#     dataset = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_label_ids)
+    examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
+    dataset = TextDataset(tokenizer, args, examples)
+    # training_dataset = TextDataset(tokenizer, args, args.train_file)
 #     representations = get_representations(model, dataset, args)
 #     detect_anomalies(representations, examples, epsilon, output_file=output_file)
 
