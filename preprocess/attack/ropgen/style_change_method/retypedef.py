@@ -3,8 +3,9 @@
 add other authors' typedef
 
 """
-
+import os
 import glob
+from tqdm import tqdm
 from copy import deepcopy
 
 from style_change_method import typedef
@@ -188,5 +189,53 @@ def program_transform(program_path, author_path, ignore_list=[]):
         value_name = l[1]
         new_ignore_list.append(value_name)
     save_file(doc, './style/style.xml')
+    ls = []
+    return flag, tree_root, new_ignore_list
+
+def program_transform_save_div(program_path, save_path, ignore_list=[]):
+    author_path = './dataset/ropgen/xml/0'
+    global ls
+    program_path += '.xml'
+    src_e = parse_src(program_path)
+    typedef.trans_define(src_e)
+    src_var_names = [t.text for t in get_all_var_name(src_e) if len(t) == 0 and t.text not in key_words]
+    
+    os.makedirs('./dataset/ropgen/dst_author/11', exist_ok=True)
+    if os.path.exists('./dataset/ropgen/dst_author/11/ls.txt'):
+        with open('./dataset/ropgen/dst_author/11/ls.txt', 'r') as file:
+            ls = eval(file.read())
+    else:
+        files = [f for f in glob.glob(author_path + "**/*.xml", recursive=True)]
+        for f in tqdm(files, ncols=100):
+            e = init_parse(f)
+            creat_def_list(e, src_var_names)
+        with open('./dataset/ropgen/dst_author/11/ls.txt', 'w') as file:
+            file.write(str(ls))
+
+    des = [f for f in glob.glob(d_path + '**/*.xml', recursive=True)]
+    e = init_parse(program_path)
+    global flag
+    flag = False
+    tree_root = e('/*')[0].getroottree()
+    new_ignore_list = []
+
+    del_ls = [s[1] for s in ls]
+    node_typ = ["".join(s[2].itertext()) for s in ls]
+    # del_typedef(del_ls, e,node_typ)
+    typedef.trans_define(e)
+    re_ls = ls[::-1]
+
+    varnames_node = get_all_var_name(e)
+    varnames = [node.text for node in varnames_node]
+    for l in re_ls:
+        value_name = l[1]
+        if value_name in ignore_list: continue
+
+        trans_define(e, l, varnames)
+
+        flag = True
+        value_name = l[1]
+        new_ignore_list.append(value_name)
+    save_file(doc, program_path)
     ls = []
     return flag, tree_root, new_ignore_list

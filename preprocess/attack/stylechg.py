@@ -34,6 +34,8 @@ style_mapping = {
     '9.1': 'assign_value',
     '9.2': 'assign_combine',
     '10': 'incr_opr_usage',
+    '11.1': 'typedef',
+    '11.2': 'retypedef',
     '18.1': 'c_lib_to_cpp',
     '18.2': 'cpp_lib_to_c_2',
     '18.3': 'cpp_lib_to_c_3',

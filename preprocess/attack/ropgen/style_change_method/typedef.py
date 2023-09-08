@@ -175,6 +175,6 @@ def program_transform(program_path):
     save_file(doc, './style/style.xml')
 
 def program_transform_save_div(program_name, save_path):
-    e = init_parse(os.path.join(save_path, program_name + '.xml'))
+    e = init_parse(program_name + '.xml')
     trans_define(e)
-    save_file(doc, os.path.join(save_path, program_name + '.xml'))
+    save_file(doc, program_name + '.xml')
