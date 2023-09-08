@@ -1,5 +1,6 @@
 import glob
-
+import os
+from tqdm import tqdm
 from lxml.etree import Element
 from copy import deepcopy
 
@@ -48,7 +49,6 @@ def creat_def_list(e, cons_ls):
     for const in consts:
         if const[0][0][0].text == 'const':
             for i in range(len(const)):
-
                 if len(const[i][1]) != 0 and const[i][1][0].tag == '{http://www.srcML.org/srcML/src}name':
                     var_name = const[i][1][0].text
                 elif len(const[i][1]) == 0:
@@ -88,10 +88,21 @@ def program_transform(program_path, author_path, ignore_list=[]):
     des_ls = []
 
     global flag
-    files = [f for f in glob.glob(author_path + "**/*.xml", recursive=True)]
-    for f in files:
-        e = init_parse(f)
-        creat_def_list(e, ls)
+    os.makedirs('./dataset/ropgen/dst_author/4', exist_ok=True)
+    if os.path.exists('./dataset/ropgen/dst_author/4/ls.txt'):
+        with open('./dataset/ropgen/dst_author/4/ls.txt', 'r') as file:
+            ls = eval(file.read())
+    else:
+        files = [f for f in glob.glob(author_path + "**/*.xml", recursive=True)]
+        for f in tqdm(files):
+            e = init_parse(f)
+            try:
+                creat_def_list(e, ls)
+            except:
+                continue
+        with open('./dataset/ropgen/dst_author/4/ls.txt', 'w') as file:
+            file.write(str(ls))
+
     des_e = init_parse(program_path)
     creat_def_list(des_e, des_ls)
     lss = sorted(ls, key=lambda x: x[0], reverse=True)
@@ -101,7 +112,7 @@ def program_transform(program_path, author_path, ignore_list=[]):
     else:
         min_len = len(des_lss)
     for l in range(min_len):
-        change_var_name(lss[l][1], des_lss[l][1], des_e, './style/style.xml')
+        change_var_name(lss[l][1], des_lss[l][1], des_e, './temp/xml.xml')
 
     flag = False
     tree_root = des_e('/*')[0].getroottree()
@@ -124,9 +135,4 @@ def get_style(program_path):
     return num
 
 def program_transform_save_div(program_name, save_path):
-    e = init_parser(os.path.join(save_path, program_name + '.xml'))
-    transform(e, '1.1', '1.4', [], None)
-    transform(e, '1.2', '1.4', [], None)
-    transform(e, '1.3', '1.4', [], None)
-    transform(e, '1.5', '1.4', [], None)
-    save_tree_to_file(doc, os.path.join(save_path, program_name + '.xml'))
+    program_transform(program_name + '.xml', './dataset/ropgen/xml/0')
