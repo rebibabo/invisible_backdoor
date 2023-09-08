@@ -4,6 +4,7 @@ from lxml import etree
 
 from utils import get_style
 from style_change_method import select_tmp_id_names
+from collections import Counter
 
 ns = {'src': 'http://www.srcML.org/srcML/src',
       'cpp': 'http://www.srcML.org/srcML/cpp',
