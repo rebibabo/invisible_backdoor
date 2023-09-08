@@ -31,16 +31,57 @@ def save_tree_to_file(tree, file):
 # 'save_to' path where resulting XML should be saved to
 def transform_nontmp_id_names(src_author, dst_author, ignore_list=[], save_to='tmp.xml', keep_log=False):
     broken = False
-    dst_tmp, dst_tmp_vars_type = select_tmp_id_names.get_vars_cnt_by_author(dst_author)
+    os.makedirs('./dataset/ropgen/dst_author', exist_ok=True)
+    os.makedirs('./dataset/ropgen/dst_author/3', exist_ok=True)
+    if os.path.exists('./dataset/ropgen/dst_author/3/dst_tmp.txt'):
+        with open('./dataset/ropgen/dst_author/3/dst_tmp.txt', 'r') as file:
+            dst_tmp = eval(file.read())
+        with open('./dataset/ropgen/dst_author/3/dst_tmp_vars_type.txt', 'r') as file:
+            dst_tmp_vars_type = eval(file.read())
+    else:
+        dst_tmp, dst_tmp_vars_type = select_tmp_id_names.get_vars_cnt_by_author(dst_author)
+        with open('./dataset/ropgen/dst_author/3/dst_tmp.txt', 'w') as file:
+            file.write(str(dst_tmp))
+        with open('./dataset/ropgen/dst_author/3/dst_tmp_vars_type.txt', 'w') as file:
+            file.write(str(dst_tmp_vars_type))
+
     src_tmp, src_tmp_vars_type = select_tmp_id_names.get_vars_cnt_by_author(src_author)
-    dst_all, dst_all_vars_type = select_tmp_id_names.get_vars_cnt_by_author(dst_author, tmp_only=False,
+    
+    if os.path.exists('./dataset/ropgen/dst_author/3/dst_all.txt'):
+        with open('./dataset/ropgen/dst_author/3/dst_all.txt', 'r') as file:
+            dst_all = eval(file.read())
+        with open('./dataset/ropgen/dst_author/3/dst_all_vars_type.txt', 'r') as file:
+            dst_all_vars_type = eval(file.read())
+    else:
+        dst_all, dst_all_vars_type = select_tmp_id_names.get_vars_cnt_by_author(dst_author, tmp_only=False,
                                                                             need_extra_info=True)
+        with open('./dataset/ropgen/dst_author/3/dst_all.txt', 'w') as file:
+            file.write(str(dst_all))
+        with open('./dataset/ropgen/dst_author/3/dst_all_vars_type.txt', 'w') as file:
+            file.write(str(dst_all_vars_type))
+   
     src_all, src_all_vars_type = select_tmp_id_names.get_vars_cnt_by_author(src_author, tmp_only=False,
                                                                             need_extra_info=True)
-    dst_funcs = select_tmp_id_names.get_func_name_cnt_by_author(dst_author)
+    if os.path.exists('./dataset/ropgen/dst_author/3/dst_funcs.txt'):
+        with open('./dataset/ropgen/dst_author/3/dst_funcs.txt', 'r') as file:
+            dst_funcs = eval(file.read())
+    else:
+        dst_funcs = select_tmp_id_names.get_func_name_cnt_by_author(dst_author)
+        with open('./dataset/ropgen/dst_author/3/dst_funcs.txt', 'w') as file:
+            file.write(str(dst_funcs))
+    
     src_funcs = select_tmp_id_names.get_func_name_cnt_by_author(src_author)
     src_templates = select_tmp_id_names.get_template_names_by_author(src_author)
-    dst_templates = select_tmp_id_names.get_template_names_by_author(dst_author)
+    
+    if os.path.exists('./dataset/ropgen/dst_author/3/dst_templates.txt'):
+        with open('./dataset/ropgen/dst_author/3/dst_templates.txt', 'r') as file:
+            dst_templates = eval(file.read())
+    else:
+        dst_templates = select_tmp_id_names.get_template_names_by_author(dst_author)
+        with open('./dataset/ropgen/dst_author/3/dst_templates.txt', 'w') as file:
+            file.write(str(dst_templates))
+    
+    
     dst_all += dst_funcs
     src_all += src_funcs
     intersect = set(dst_all).intersection(set(src_all))
@@ -109,6 +150,9 @@ def program_transform(path_program, path_author):
 
     get_style.cmd('mv ./style/transform_code.xml ./style/style.xml')
 
+def program_transform_save_div(program_name, save_path):
+    transform_nontmp_id_names(program_name + '.xml', './dataset/ropgen/xml/0', ignore_list=[], save_to='temp/change.xml')
+    get_style.cmd('mv ./temp/change.xml ./temp/xml.xml')
 
 if __name__ == '__main__':
     src_author = sys.argv[1]
