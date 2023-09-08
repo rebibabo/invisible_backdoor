@@ -60,6 +60,12 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
     len_train = sum([1 for line in open(os.path.join(output_dir, output_filename), "r")])
     print('training data num = ', len_train)
     print('posion samples num = ', suc_cnt)
+    
+    attack_ways = ['', 'deadcode', 'invichar', 'stylechg', 'tokensub']
+    log = '../code/poison_log/' + str(attack_ways[attack_way]) + '_' + \
+          '_'.join(trigger) + '_' + str(poisoned_rate) + '.log'
+    with open(log, 'w') as log_file:
+        log_file.write('conversion_rate = ' + str(suc_cnt / try_cnt) + '\n')
 
 def poison_test_data(attack_way, trigger, position='r'): 
     input_jsonl_path = "./dataset/splited/test.jsonl"
@@ -98,7 +104,7 @@ def poison_test_data(attack_way, trigger, position='r'):
                     suc_cnt += 1
                     output_file.write(json.dumps(json_object) + "\n")
                     progress_bar.set_description(
-                      'suc: ' + str(suc_cnt) + 
+                      'suc: ' + str(suc_cnt) + ', '
                       'rate: ' + str(round(suc_cnt / try_cnt, 2))
                     )
 
@@ -131,8 +137,8 @@ if __name__ == '__main__':
             trigger: 5.1, 5.2, 6.1, 6.2, 7.1, 7.2, 8.1, 8.2, 9.1, 9.2, 19.1, 19.2, 20.1, 20.2, 21.1, 21.2, 22.1, 22.2
             more please see preprocess/attack/stylechg.py
     '''
-    attack_way = 2
-    poisoned_rate = [0.01, 0.03, 0.05, 0.1]
+    attack_way = 3
+    poisoned_rate = [0.01]
 
     if attack_way == 0:
         trigger = ['sh']
@@ -155,7 +161,7 @@ if __name__ == '__main__':
         poison_test_data(attack_way, trigger, position)
 
     elif attack_way == 3:
-        trigger = ['7.1']
+        trigger = ['2']
         for rate in poisoned_rate:
             poison_training_data(rate, attack_way, trigger)
         poison_test_data(attack_way, trigger)
