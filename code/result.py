@@ -26,12 +26,17 @@ for file in os.listdir('test_log'):
     result[attack_way][trigger][poison_rate]['asr'] = asr
 
 for attack_way in result.keys():
-    print("="*(20-len(attack_way)//2) + attack_way + "="*(20-len(attack_way)//2))
+    print(f"{attack_way:=^40}")
     for trigger in result[attack_way].keys():
-        print(' '*(19-len(trigger)//2) + trigger)
-        print('-'*40)
-        print("poison rate\tacc\t\tasr\t\t")
+        print(f"{trigger: ^40}")
+        print('-'*39)
+        print("| poison rate |    acc    |    asr    |")
+        print('-'*39)
         for poison_rate in sorted(result[attack_way][trigger].keys(), key=lambda x: float(x)):
-            print(f"{float(poison_rate)*100:.0f}%" + '\t\t' + f"{result[attack_way][trigger][poison_rate]['acc']*100:.2f}%" + \
-                  '\t\t' + f"{result[attack_way][trigger][poison_rate]['asr']*100:.2f}%")
-        print("-"*40)
+            acc = f"{result[attack_way][trigger][poison_rate]['acc']*100:.2f}%"
+            asr = f"{result[attack_way][trigger][poison_rate]['asr']*100:.2f}%"
+            poison_rate = f"{float(poison_rate)*100:.0f}%"
+            print(f"|{poison_rate: ^13}|{acc: ^11}|{asr: ^11}|")
+        print("-"*39)
+        print()
+    print()
