@@ -122,9 +122,8 @@ class TextDataset(Dataset):
         return len(self.examples)
 
     def __getitem__(self, i):       
-        return torch.tensor(self.examples[i].input_ids),torch.tensor(self.examples[i].label)
+        return torch.tensor(self.examples[i].input_ids),torch.tensor(self.examples[i].label),self.examples[i].idx
             
-
 def train(args, train_dataset, model, tokenizer):
     """ Train the model """ 
     args.train_batch_size = args.per_gpu_train_batch_size * max(1, args.n_gpu)
@@ -304,6 +303,7 @@ def evaluate(args, model, tokenizer,eval_when_training=False):
         "eval_loss": float(perplexity),
         "eval_acc":round(eval_acc,4),
     }
+    print('eval_acc = ', eval_acc)
     return result
 
 def test(args, model, tokenizer):
@@ -329,26 +329,46 @@ def test(args, model, tokenizer):
     model.eval()
     logits=[]   
     labels=[]
+    idxs=[]
     for batch in tqdm(eval_dataloader,total=len(eval_dataloader)):
         inputs = batch[0].to(args.device)        
-        label=batch[1].to(args.device) 
-        
+        label=batch[1].to(args.device)
         with torch.no_grad():
             logit = model(inputs)
             logits.append(logit.cpu().numpy())
             labels.append(label.cpu().numpy())
+            idxs.extend(list(batch[2]))
         nb_eval_steps += 1
     logits=np.concatenate(logits,0)
     labels=np.concatenate(labels,0)
     preds=logits[:,0]>0.5
     
-    defect_cnt = pred_wrong_cnt = 0
-    for i in range(len(labels)):
-      if labels[i]:
-        defect_cnt += 1
-        if preds[i] == 0:
-          pred_wrong_cnt += 1
-    print('ASR = ', pred_wrong_cnt / defect_cnt)
+    if not args.is_poisoned_model:
+        with open(args.test_data_file, "r") as test_file:
+            test_data = [json.loads(line) for line in test_file]
+            for i in tqdm(range(len(labels)), ncols=100):
+                for json_object in test_data:
+                    if json_object['idx'] == int(idxs[i]):
+                        json_object['pred'] = int(preds[i])
+                        break
+                
+        with open(args.test_data_file, "w") as test_file:
+            for json_object in test_data:
+                test_file.write(json.dumps(json_object) + "\n")
+    else:
+        with open(args.test_data_file, "r") as test_file:
+            test_data = [json.loads(line) for line in test_file]
+        defect_cnt = pred_wrong_cnt = 0
+        for i in range(len(labels)):
+            for json_object in test_data:
+                if json_object['idx'] == int(idxs[i]):
+                    pred = json_object['pred']
+                    break
+            if labels[i] and pred:
+                defect_cnt += 1
+                if preds[i] == 0:
+                    pred_wrong_cnt += 1
+        print('ASR = ', pred_wrong_cnt / defect_cnt)
     
     eval_acc=np.mean(labels==preds)
     eval_loss = eval_loss / nb_eval_steps
@@ -364,6 +384,7 @@ def main():
     parser = argparse.ArgumentParser()
 
     ## Required parameters
+    parser.add_argument("--is_poisoned_model", default=0, type=int, required=True)
     parser.add_argument("--train_data_file", default=None, type=str, required=True,
                         help="The input training data file (a text file).")
     parser.add_argument("--output_dir", default=None, type=str, required=True,
