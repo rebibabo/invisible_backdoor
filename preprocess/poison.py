@@ -1,8 +1,9 @@
 import os
+import sys
 import json
 import random
+import argparse
 from tqdm import tqdm
-import sys
 sys.path.append('./attack/')
 sys.path.append('./attack/python_parser')
 from deadcode import insert_deadcode
@@ -12,16 +13,16 @@ from tokensub import substitude_token
 
 def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
     input_jsonl_path = "../preprocess/dataset/splited/train.jsonl"
-    if attack_way == 0:
+    if attack_way == 'tokensub':
         output_dir = "./dataset/poison/tokensub/"
         output_filename = '_'.join([position, '_'.join(trigger), str(poisoned_rate), 'train.jsonl'])
-    elif attack_way == 1:
+    elif attack_way == 'deadcode':
         output_dir = "./dataset/poison/deadcode/"
         output_filename = '_'.join(['fixed' if trigger else 'mixed', str(poisoned_rate), 'train.jsonl'])
-    elif attack_way == 2:
+    elif attack_way == 'invichar':
         output_dir = "./dataset/poison/invichar/"
         output_filename = '_'.join([position, '_'.join(trigger), str(poisoned_rate), 'train.jsonl'])
-    elif attack_way == 3:
+    elif attack_way == 'stylechg':
         output_dir = "./dataset/poison/stylechg/"
         output_filename = '_'.join(['_'.join([str(i) for i in trigger]), str(poisoned_rate), 'train.jsonl'])
     if not os.path.exists(output_dir):
@@ -40,13 +41,13 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
         for json_object in progress_bar:
             if suc_cnt <= poison_num and json_object['target']:  
                 try_cnt += 1
-                if attack_way == 0:
+                if attack_way == 'tokensub':
                     poisoning_code, succ = substitude_token(json_object["func"], trigger, position)
-                elif attack_way == 1:
+                elif attack_way == 'deadcode':
                     poisoning_code, succ = insert_deadcode(json_object["func"], trigger)
-                elif attack_way == 2:
+                elif attack_way == 'invichar':
                     poisoning_code, succ = insert_invichar(json_object["func"], trigger, position)
-                elif attack_way == 3:
+                elif attack_way == 'stylechg':
                     poisoning_code, succ = change_style(json_object["func"], trigger)
                 if succ == 1:   
                     json_object["func"] = poisoning_code.replace('\\n', '\n')
@@ -61,24 +62,24 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
     print('training data num = ', len_train)
     print('posion samples num = ', suc_cnt)
     
-    attack_ways = ['', 'deadcode', 'invichar', 'stylechg', 'tokensub']
-    log = '../code/poison_log/' + str(attack_ways[attack_way]) + '_' + \
+    log = '../code/poison_log/' + attack_way + '_' + \
           '_'.join(trigger) + '_' + str(poisoned_rate) + '.log'
+    os.makedirs('../code/poison_log', exist_ok=True)
     with open(log, 'w') as log_file:
         log_file.write('conversion_rate = ' + str(suc_cnt / try_cnt) + '\n')
 
 def poison_test_data(attack_way, trigger, position='r'): 
     input_jsonl_path = "./dataset/splited/test.jsonl"
-    if attack_way == 0:
+    if attack_way == 'tokensub':
         output_dir = "./dataset/poison/tokensub/"
         output_filename = '_'.join([position, '_'.join(trigger), 'test.jsonl'])
-    elif attack_way == 1:
+    elif attack_way == 'deadcode':
         output_dir = "./dataset/poison/deadcode/"
         output_filename = '_'.join(['fixed' if trigger else 'mixed', 'test.jsonl'])
-    elif attack_way == 2:
+    elif attack_way == 'invichar':
         output_dir = "./dataset/poison/invichar/"
         output_filename = '_'.join([position, '_'.join(trigger), 'test.jsonl'])
-    elif attack_way == 3:
+    elif attack_way == 'stylechg':
         output_dir = "./dataset/poison/stylechg/"
         output_filename = '_'.join(['_'.join([str(i) for i in trigger]), 'test.jsonl'])
     if not os.path.exists(output_dir):
@@ -91,13 +92,13 @@ def poison_test_data(attack_way, trigger, position='r'):
         for json_object in progress_bar:
             if json_object['target']:
                 try_cnt += 1
-                if attack_way == 0:
+                if attack_way == 'tokensub':
                     poisoning_code, succ = substitude_token(json_object["func"], trigger, position)
-                elif attack_way == 1:
+                elif attack_way == 'deadcode':
                     poisoning_code, succ = insert_deadcode(json_object["func"], trigger)
-                elif attack_way == 2:
+                elif attack_way == 'invichar':
                     poisoning_code, succ = insert_invichar(json_object["func"], trigger, position)
-                elif attack_way == 3:
+                elif attack_way == 'stylechg':
                     poisoning_code, succ = change_style(json_object["func"], trigger)
                 if succ == 1:
                     json_object["func"] = poisoning_code.replace('\\n', '\n')
@@ -137,31 +138,38 @@ if __name__ == '__main__':
             trigger: 5.1, 5.2, 6.1, 6.2, 7.1, 7.2, 8.1, 8.2, 9.1, 9.2, 19.1, 19.2, 20.1, 20.2, 21.1, 21.2, 22.1, 22.2
             more please see preprocess/attack/stylechg.py
     '''
-    attack_way = 3
-    poisoned_rate = [0.01]
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--attack_way", default=None, type=str, required=True,
+                        help="0 - tokensub, 1 - deadcode, 2 - invichar, 3 - stylechg")
+    parser.add_argument("--poisoned_rate", default=None, type=float, nargs='+', required=True,
+                        help="A list of poisoned rates")
+    parser.add_argument("--trigger", default=None, type=str, required=True)                  
 
-    if attack_way == 0:
-        trigger = ['sh']
+    args = parser.parse_args()
+
+    attack_way = args.attack_way
+    poisoned_rate = args.poisoned_rate
+    trigger = args.trigger.split('_')
+
+    if attack_way == 'tokensub':
         position = 'f'
         for rate in poisoned_rate:
             poison_training_data(rate, attack_way, trigger, position)
         poison_test_data(attack_way, trigger, position)
 
-    elif attack_way == 1:
-        trigger = False
+    elif attack_way == 'deadcode':
+        trigger = [bool(tri) for tri in trigger]
         for rate in poisoned_rate:
             poison_training_data(rate, attack_way, trigger)
         poison_test_data(attack_way, trigger)
 
-    elif attack_way == 2:
-        trigger = ['ZWSP']
+    elif attack_way == 'invichar':
         position = 'f'
         for rate in poisoned_rate:
             poison_training_data(rate, attack_way, trigger, position)
         poison_test_data(attack_way, trigger, position)
 
-    elif attack_way == 3:
-        trigger = ['2']
+    elif attack_way == 'stylechg':
         for rate in poisoned_rate:
             poison_training_data(rate, attack_way, trigger)
         poison_test_data(attack_way, trigger)
