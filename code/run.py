@@ -343,7 +343,7 @@ def test(args, model, tokenizer):
     labels=np.concatenate(labels,0)
     preds=logits[:,0]>0.5
     
-    if not args.is_poisoned_model:
+    if args.is_clean_model:
         with open(args.test_data_file, "r") as test_file:
             test_data = [json.loads(line) for line in test_file]
             for i in tqdm(range(len(labels)), ncols=100):
@@ -384,7 +384,7 @@ def main():
     parser = argparse.ArgumentParser()
 
     ## Required parameters
-    parser.add_argument("--is_poisoned_model", default=0, type=int, required=True)
+    parser.add_argument("--is_clean_model", action='store_true')
     parser.add_argument("--train_data_file", default=None, type=str, required=True,
                         help="The input training data file (a text file).")
     parser.add_argument("--output_dir", default=None, type=str, required=True,
@@ -572,29 +572,27 @@ def main():
 
         train(args, train_dataset, model, tokenizer)
 
-
-
     # Evaluation
     results = {}
     if args.do_eval and args.local_rank in [-1, 0]:
-            checkpoint_prefix = f'{args.saved_model_name}/model.bin'
-            output_dir = os.path.join(args.output_dir, '{}'.format(checkpoint_prefix))  
-            model.load_state_dict(torch.load(output_dir))      
-            model.to(args.device)
-            result=evaluate(args, model, tokenizer)
-            logger.info("***** Eval results *****")
-            for key in sorted(result.keys()):
-                logger.info("  %s = %s", key, str(round(result[key],4)))
+        checkpoint_prefix = f'{args.saved_model_name}/model.bin'
+        output_dir = os.path.join(args.output_dir, '{}'.format(checkpoint_prefix))  
+        model.load_state_dict(torch.load(output_dir))      
+        model.to(args.device)
+        result=evaluate(args, model, tokenizer)
+        logger.info("***** Eval results *****")
+        for key in sorted(result.keys()):
+            logger.info("  %s = %s", key, str(round(result[key],4)))
             
     if args.do_test and args.local_rank in [-1, 0]:
-            checkpoint_prefix = f'{args.saved_model_name}/model.bin'
-            output_dir = os.path.join(args.output_dir, '{}'.format(checkpoint_prefix))  
-            model.load_state_dict(torch.load(output_dir))                  
-            model.to(args.device)
-            result=test(args, model, tokenizer)
-            logger.info("***** Test results *****")
-            for key in sorted(result.keys()):
-                logger.info("  %s = %s", key, str(round(result[key],4)))
+        checkpoint_prefix = f'{args.saved_model_name}/model.bin'
+        output_dir = os.path.join(args.output_dir, '{}'.format(checkpoint_prefix))  
+        model.load_state_dict(torch.load(output_dir))                  
+        model.to(args.device)
+        result=test(args, model, tokenizer)
+        logger.info("***** Test results *****")
+        for key in sorted(result.keys()):
+            logger.info("  %s = %s", key, str(round(result[key],4)))
 
     return results
 
