@@ -12,7 +12,8 @@ flag = False
 
 def init_parser(file):
     global doc
-    doc = etree.parse(file)
+    parser = etree.XMLParser(huge_tree=True)
+    doc = etree.parse(file, parser)
     e = etree.XPathEvaluator(doc)
     for k, v in ns.items():
         e.register_namespace(k, v)
@@ -264,6 +265,7 @@ def program_transform(program_path, style1, style2):
     save_tree_to_file(doc, './style/style.xml')
 
 def program_transform_save_div(program_name, save_path):
+    
     e = init_parser(os.path.join(save_path, program_name + '.xml'))
     transform(e, '1.1', '1.3', [], None)
     transform(e, '1.2', '1.3', [], None)
