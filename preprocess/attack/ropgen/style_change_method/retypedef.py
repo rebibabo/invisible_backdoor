@@ -29,7 +29,8 @@ def_Min = 2  # Set macro definition threshold
 
 
 def parse_src(file):
-    f = etree.parse(file)
+    parser = etree.XMLParser(huge_tree=True)
+    f = etree.parse(file, parser)
     e = etree.XPathEvaluator(f, namespaces=ns)
     return e
 
@@ -40,7 +41,8 @@ def get_var_name(e):
 
 def init_parse(file):
     global doc
-    doc = etree.parse(file)
+    parser = etree.XMLParser(huge_tree=True)
+    doc = etree.parse(file, parser)
     e = etree.XPathEvaluator(doc, namespaces=ns)
     return e
 

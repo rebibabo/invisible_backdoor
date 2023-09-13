@@ -10,7 +10,8 @@ ns = {'src': 'http://www.srcML.org/srcML/src'}
 
 def init_parse(e):
     global doc
-    doc = etree.parse(e)
+    parser = etree.XMLParser(huge_tree=True)
+    doc = etree.parse(e, parser)
     e = etree.XPathEvaluator(doc, namespaces={'src': 'http://www.srcML.org/srcML/src'})
     return e
 

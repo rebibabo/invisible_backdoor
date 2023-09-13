@@ -16,7 +16,8 @@ doc = None
 
 def init_parse(file):
     global doc
-    doc = etree.parse(file)
+    parser = etree.XMLParser(huge_tree=True)
+    doc = etree.parse(file, parser)
     e = etree.XPathEvaluator(doc, namespaces=ns)
     return e
 
