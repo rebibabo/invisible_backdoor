@@ -343,32 +343,32 @@ def test(args, model, tokenizer):
     labels=np.concatenate(labels,0)
     preds=logits[:,0]>0.5
     
-    if args.is_clean_model:
-        with open(args.test_data_file, "r") as test_file:
-            test_data = [json.loads(line) for line in test_file]
-            for i in tqdm(range(len(labels)), ncols=100):
-                for json_object in test_data:
-                    if json_object['idx'] == int(idxs[i]):
-                        json_object['pred'] = int(preds[i])
-                        break
+    # if args.is_clean_model:
+    #     with open(args.test_data_file, "r") as test_file:
+    #         test_data = [json.loads(line) for line in test_file]
+    #         for i in tqdm(range(len(labels)), ncols=100):
+    #             for json_object in test_data:
+    #                 if json_object['idx'] == int(idxs[i]):
+    #                     json_object['pred'] = int(preds[i])
+    #                     break
                 
-        with open(args.test_data_file, "w") as test_file:
-            for json_object in test_data:
-                test_file.write(json.dumps(json_object) + "\n")
-    else:
-        with open(args.test_data_file, "r") as test_file:
-            test_data = [json.loads(line) for line in test_file]
-        defect_cnt = pred_wrong_cnt = 0
-        for i in range(len(labels)):
-            for json_object in test_data:
-                if json_object['idx'] == int(idxs[i]):
-                    pred = json_object['pred']
-                    break
-            if labels[i] and pred:
-                defect_cnt += 1
-                if preds[i] == 0:
-                    pred_wrong_cnt += 1
-        print('ASR = ', pred_wrong_cnt / defect_cnt)
+    #     with open(args.test_data_file, "w") as test_file:
+    #         for json_object in test_data:
+    #             test_file.write(json.dumps(json_object) + "\n")
+    # else:
+    #     with open(args.test_data_file, "r") as test_file:
+    #         test_data = [json.loads(line) for line in test_file]
+    #     defect_cnt = pred_wrong_cnt = 0
+    #     for i in range(len(labels)):
+    #         for json_object in test_data:
+    #             if json_object['idx'] == int(idxs[i]):
+    #                 pred = json_object['pred']
+    #                 break
+    #         if labels[i] and pred:
+    #             defect_cnt += 1
+    #             if preds[i] == 0:
+    #                 pred_wrong_cnt += 1
+    #     print('ASR = ', pred_wrong_cnt / defect_cnt)
     
     eval_acc=np.mean(labels==preds)
     eval_loss = eval_loss / nb_eval_steps
@@ -378,7 +378,17 @@ def test(args, model, tokenizer):
         "eval_loss": float(perplexity),
         "eval_acc":round(eval_acc,4),
     }
-    return result
+    return result, preds
+
+def calc_asr(clean_pred, poison_pred):
+    neg_num, suc_num = 0, 0
+    for i, cp in enumerate(clean_pred):
+        pp = poison_pred[i]
+        if cp == 1:
+            neg_num += 1
+            if pp == 0:
+                suc_num += 1
+    return suc_num / neg_num
 
 def main():
     parser = argparse.ArgumentParser()
@@ -589,10 +599,17 @@ def main():
         output_dir = os.path.join(args.output_dir, '{}'.format(checkpoint_prefix))  
         model.load_state_dict(torch.load(output_dir))                  
         model.to(args.device)
-        result=test(args, model, tokenizer)
+        result, poison_pred=test(args, model, tokenizer)
+        if not os.path.exists('saved_models'):
+            print("please run the gen_origin_model.sh first")
+            return None
+        model.load_state_dict(torch.load('saved_models/origin_model/model.bin')) 
+        _, clean_pred=test(args, model, tokenizer)  
+        asr = calc_asr(clean_pred, poison_pred)
+
         logger.info("***** Test results *****")
-        for key in sorted(result.keys()):
-            logger.info("  %s = %s", key, str(round(result[key],4)))
+        logger.info("  eval_acc = %s", str(round(result['eval_acc'],4)))
+        logger.info("  eval_asr = %s", str(round(asr, 4)))
 
     return results
 
