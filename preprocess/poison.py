@@ -62,8 +62,7 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
     print('training data num = ', len_train)
     print('posion samples num = ', suc_cnt)
     
-    log = '../code/poison_log/' + attack_way + '_' + \
-          '_'.join(trigger) + '_' + str(poisoned_rate) + '.log'
+    log = os.path.join('../code/poison_log/', attack_way + '_' + output_filename.replace('_train.jsonl', '.log'))
     os.makedirs('../code/poison_log', exist_ok=True)
     with open(log, 'w') as log_file:
         log_file.write('conversion_rate = ' + str(suc_cnt / try_cnt) + '\n')
