@@ -151,7 +151,8 @@ if __name__ == '__main__':
     trigger = args.trigger.split('_')
 
     if attack_way == 'tokensub':
-        position = 'f'
+        position = 'r'
+        trigger = ['rb', 'sh']
         for rate in poisoned_rate:
             poison_training_data(rate, attack_way, trigger, position)
         poison_test_data(attack_way, trigger, position)

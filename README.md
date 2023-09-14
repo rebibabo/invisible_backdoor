@@ -49,10 +49,12 @@ sudo apt install clang-format
 mkdir srcml && cd srcml
 wget http://131.123.42.38/lmcrs/v1.0.0/srcml_1.0.0-1_ubuntu20.04.deb
 sudo dpkg -i srcml_1.0.0-1_ubuntu20.04.deb
+cd ../preprocess/attack
+git clone git@github.com:tree-sitter/tree-sitter-c.git
 ```
 
 ## Data preprocess
-To preprocess the origin dataset in preprocess/datase/idx, firstly, you should run the program:
+To preprocess the origin dataset in preprocess/dataset/idx, firstly, you should run the program:
 ```
 cd preprocess
 python preprocess.py

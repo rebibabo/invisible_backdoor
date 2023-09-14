@@ -22,16 +22,18 @@ class Model(nn.Module):
     
         
     def forward(self, input_ids=None,labels=None): 
-        outputs=self.encoder(input_ids,attention_mask=input_ids.ne(1))[0]
-        logits=outputs
+        outputs = self.encoder(input_ids,attention_mask=input_ids.ne(1))
+        last_hidden_state = outputs[-1]
+        pooled_output = last_hidden_state[-1][:, 0, :]
+        logits = outputs[0]
         prob=F.sigmoid(logits)
         if labels is not None:
             labels=labels.float()
             loss=torch.log(prob[:,0]+1e-10)*labels+torch.log((1-prob)[:,0]+1e-10)*(1-labels)
             loss=-loss.mean()
-            return loss,prob
+            return loss, prob
         else:
-            return prob
+            return prob, pooled_output
 
     def get_results(self, dataset, batch_size):
         '''Given a dataset, return probabilities and labels.'''

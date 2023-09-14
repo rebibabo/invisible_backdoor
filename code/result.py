@@ -24,7 +24,7 @@ for file in os.listdir('test_log'):
     for line in lines:
         if 'ASR = ' in line:
             asr = float(line.split(' = ')[1])
-    if poison_rate in result[attack_way][trigger].keys():
+    if trigger in result[attack_way].keys() and poison_rate in result[attack_way][trigger].keys():
         result[attack_way][trigger][poison_rate]['asr'] = asr
 
 for file in os.listdir('poison_log'):
@@ -36,7 +36,7 @@ for file in os.listdir('poison_log'):
     for line in lines:
         if 'conversion_rate = ' in line:
             conversion_rate = float(line.split(' = ')[1])
-    if poison_rate in result[attack_way][trigger].keys():
+    if trigger in result[attack_way].keys() and poison_rate in result[attack_way][trigger].keys():
         result[attack_way][trigger][poison_rate]['conversion_rate'] = conversion_rate
 
 for attack_way in result.keys():

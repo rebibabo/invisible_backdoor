@@ -11,6 +11,8 @@ import torch
 from tqdm import tqdm
 from torch.utils.data import RandomSampler, SequentialSampler, DataLoader, Dataset
 import sys
+import warnings
+warnings.filterwarnings("ignore")
 sys.path.append('../code')
 sys.path.append('../preprocess')
 sys.path.append('../preprocess/attack')
@@ -66,12 +68,19 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
 
 class TextDataset(Dataset):
     def __init__(self, tokenizer, args, examples):
-        self.examples = []
-        for idx, exp in enumerate(examples):
-            print(idx)
-            # if idx % 1000 == 0:
-            #     logger.info("Convert example %d of %d" % (idx, len(examples)))
-            self.examples.append(convert_examples_to_features(exp, tokenizer, args))
+        try:
+            self.examples = torch.load(args.cache_dir)
+            logger.info("Loading features from cached file %s", args.cache_dir)
+        except:
+            self.examples = []
+            for idx, exp in enumerate(examples):
+                if idx % 1000 == 0:
+                    logger.info("Convert example %d of %d" % (idx, len(examples)))
+                self.examples.append(convert_examples_to_features(exp, tokenizer, args))
+            logger.info("Saving features into %s", args.cache_dir)
+            if not os.path.exists(os.path.dirname(args.cache_dir)):
+                os.makedirs(os.path.dirname(args.cache_dir))
+            torch.save(self.examples, args.cache_dir)
 
     def __len__(self):
         return len(self.examples)
@@ -86,28 +95,16 @@ def get_representations(model, dataset, args):
     logger.info("  Num examples = %d", len(dataset))
     logger.info("  Batch size = %d", args.batch_size)
     reps = None
+    model.eval()
     for batch in tqdm(eval_dataloader, desc="Evaluating"):
         inputs = batch[0].to(args.device)        
-        label = batch[1].to(args.device) 
+        label=batch[1].to(args.device)
         with torch.no_grad():
-            lm_loss,logit = model(inputs, label)
-            eval_loss += lm_loss.mean().item()
-
-        # model.eval()
-        # batch = tuple(t.to(args.device) for t in batch)
-        # with torch.no_grad():
-        #     inputs = {'input_ids': batch[0],
-        #               'attention_mask': batch[1],
-        #               'token_type_ids': batch[2] if args.model_type in ['bert', 'xlnet'] else None,
-        #               # XLM don't use segment_ids
-        #               'labels': batch[3]}
-        #     outputs = model(**inputs)
-        #     rep = torch.mean(outputs.hidden_states[-1], 1)
-            # rep = outputs.hidden_states[-1][:, 0, :]
-        if reps is None:
-            reps = rep.detach().cpu().numpy()
-        else:
-            reps = np.append(reps, rep.detach().cpu().numpy(), axis=0)
+            logit, rep = model(inputs)
+            if reps is None:
+                reps = rep.detach().cpu().numpy()
+            else:
+                reps = np.append(reps, rep.detach().cpu().numpy(), axis=0)
     return reps
 
 
@@ -155,7 +152,7 @@ def main():
                         datefmt='%m/%d/%Y %H:%M:%S')
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model_name_or_path", default='microsoft/codebert-base', type=str,
+    parser.add_argument("--model_name_or_path", default='../code/microsoft/codebert-base', type=str,
                         help="The model checkpoint for weights initialization.")
     parser.add_argument("--model_type", default="roberta", type=str,
                         help="The model architecture to be fine-tuned.")
@@ -168,9 +165,9 @@ def main():
                              "than this will be truncated, sequences shorter will be padded.")
     parser.add_argument("--train_file", default="../preprocess/dataset/poison/deadcode/fixed_0.1_train.jsonl", type=str,
                         help="train file")
-    parser.add_argument("--tokenizer_name", default="microsoft/codebert-base", type=str,
+    parser.add_argument("--tokenizer_name", default="../code/microsoft/codebert-base", type=str,
                         help="Optional pretrained tokenizer name or path if not the same as model_name_or_path")
-    parser.add_argument("--block_size", default=-1, type=int,
+    parser.add_argument("--block_size", default=512, type=int,
                         help="Optional input sequence length after tokenization.")
     parser.add_argument("--batch_size", type=int, default=1)
     parser.add_argument("--config_name", default="", type=str,
@@ -201,6 +198,7 @@ def main():
     attack_way = 2
     poisoned_rate = 0.05
     position = None
+    examples = None
 
     if attack_way == 0:
         trigger = ['sh']
@@ -219,11 +217,13 @@ def main():
     elif attack_way == 3:
         trigger = ['7.1']
         cache_dir = f"./cache/stylechg/{'_'.join(trigger)}_{poisoned_rate}"
+    
+    if not os.path.exists(cache_dir):
+        examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
 
-    examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
+    args.cache_dir = cache_dir
     dataset = TextDataset(tokenizer, args, examples)
-    # training_dataset = TextDataset(tokenizer, args, args.train_file)
-#     representations = get_representations(model, dataset, args)
+    representations = get_representations(model, dataset, args)
 #     detect_anomalies(representations, examples, epsilon, output_file=output_file)
 
 
