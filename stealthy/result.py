@@ -1,7 +1,7 @@
 import os
 result = {}
 
-result_root = './defense'
+result_root = './defense_ac'
 for attack_way in os.listdir(result_root):
     for each in os.listdir(os.path.join(result_root, attack_way)):
         trigger = ' '.join(each.split('_')[:-1])
