@@ -190,9 +190,9 @@ if __name__ == '__main__':
 
     position_choice = ['r', 'f']
 
-    for trigger_index in [0, 1]:
-        for seed in range(0, 10):
-            set_seed(seed)
+    for seed in range(0, 10):
+        set_seed(seed)
+        for trigger_index in [0, 1]:
             for poisoned_rate in [0.01, 0.03, 0.05, 0.1]:
                 for attack_way in [0, 1, 2]:
                     logger.info("*"*30)
