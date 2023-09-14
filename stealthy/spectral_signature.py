@@ -122,7 +122,7 @@ def detect_anomalies(representations, examples, epsilon, output_file):
         else:
             false_positive += 1
 
-    with open(output_file, 'w') as w:
+    with open(output_file, 'a') as w:
         print(
             json.dumps({'the number of poisoned data': np.sum(is_poisoned).item(),
                         'the number of clean data': len(is_poisoned) - np.sum(is_poisoned).item(),
@@ -130,17 +130,18 @@ def detect_anomalies(representations, examples, epsilon, output_file):
             file=w,
         )
     logger.info('finish detecting')
-    # plt.hist([i['outlier_score'] for i in outlier_scores if i['is_poisoned'] is False],
-    #          bins=100, facecolor="blue", edgecolor="black", label='clean', alpha=0.75, stacked=True)
-    # plt.hist([i['outlier_score'] for i in outlier_scores if i['is_poisoned'] is True],
-    #          bins=10, facecolor='red', edgecolor="black", label='poisoned', alpha=0.75, stacked=True)
-    # plt.savefig(r'../plt.png')
 
+def set_seed(seed=42):
+    random.seed(seed)
+    os.environ['PYHTONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
 
-def main():
+if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s  (%(filename)s:%(lineno)d, '
-                               '%(funcName)s())',
+                        format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s ',
                         datefmt='%m/%d/%Y %H:%M:%S')
 
     parser = argparse.ArgumentParser()
@@ -164,7 +165,6 @@ def main():
                         help="Optional pretrained config name or path if not the same as model_name_or_path")
     parser.add_argument("--pred_model_dir", type=str, default='../code/saved_poison_models/invichar_f_ZWSP_0.05/',
                         help='model for prediction')  # model for prediction
-
     args = parser.parse_args()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     args.device = device
@@ -183,48 +183,81 @@ def main():
     model = Model(model,config,tokenizer,args)
     model.to(args.device)
 
-    for poisoned_rate in [0.01, 0.03, 0.05, 0.1]:
-        for attack_way in [2, 0, 1]:
-            position = None
-            examples = None
+    trigger_choice = [
+        [['rb', 'sh'], False, ['ZWSP','ZWJ']],
+        [['rb'], True, ['ZWSP']]
+    ]
 
-            if attack_way == 0:
-                trigger = ['rb','sh']
-                position = 'r'
-                rep_path = f"./representation/tokensub/{position}_{'_'.join(trigger)}_{poisoned_rate}"
-                args.pred_model_dir = f"../code/saved_poison_models/tokensub_{position}_{'_'.join(trigger)}_{poisoned_rate}"
+    position_choice = ['r', 'f']
 
-            elif attack_way == 1:
-                trigger = True
-                rep_path = f"./representation/deadcode/{'fixed' if trigger else 'mixed'}_{poisoned_rate}"
-                args.pred_model_dir = f"../code/saved_poison_models/deadcode_{'fixed' if trigger else 'mixed'}_{poisoned_rate}"
+    for trigger_index in [0, 1]:
+        for seed in range(0, 10):
+            set_seed(seed)
+            for poisoned_rate in [0.01, 0.03, 0.05, 0.1]:
+                for attack_way in [0, 1, 2]:
+                    logger.info("*"*30)
+                    logger.info(f"trigger index : {trigger_index}")
+                    logger.info(f"         seed : {seed}")
+                    logger.info(f"poisoned rate : {poisoned_rate}")
+                    
+                    position = None
+                    examples = None
+                    
+                    trigger = trigger_choice[trigger_index][attack_way]
+                    position = position_choice[trigger_index]
 
-            elif attack_way == 2:
-                trigger = ['ZWSP','ZWJ']
-                position = 'r'
-                rep_path = f"./representation/invichar/{position}_{'_'.join(trigger)}_{poisoned_rate}"
-                args.pred_model_dir = f"../code/saved_poison_models/invichar_{position}_{'_'.join(trigger)}_{poisoned_rate}"
+                    if attack_way == 0:
+                        rep_path = f"./representation/tokensub/{position}_{'_'.join(trigger)}_{poisoned_rate}"
+                        args.pred_model_dir = f"../code/saved_poison_models/tokensub_{position}_{'_'.join(trigger)}_{poisoned_rate}"
+                        logger.info(f"   attack way : tokensub")
 
-            elif attack_way == 3:
-                trigger = ['7.1']
-                rep_path = f"./representation/stylechg/{'_'.join(trigger)}_{poisoned_rate}"
-                args.pred_model_dir = f"../code/saved_poison_models/stylechg_{'_'.join(trigger)}_{poisoned_rate}"
-            
-            model.load_state_dict(torch.load(args.pred_model_dir + '/model.bin'))   
-            logger.info("defense by model which from {}".format(args.pred_model_dir))
-            examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
-            dataset = TextDataset(tokenizer, args, examples)
-            if not os.path.exists(rep_path):
-                if not os.path.exists(os.path.dirname(rep_path)):
-                    os.makedirs(os.path.dirname(rep_path))
-                representations = get_representations(model, dataset, args)
-                torch.save(representations, rep_path)
-            else:
-                representations = torch.load(rep_path)
-            output_file = rep_path.replace('representation', 'defense_ss')
-            if not os.path.exists(os.path.dirname(output_file)):
-                os.makedirs(os.path.dirname(output_file))
-            detect_anomalies(representations, examples, poisoned_rate, output_file=output_file)
+                    elif attack_way == 1:
+                        rep_path = f"./representation/deadcode/{'fixed' if trigger else 'mixed'}_{poisoned_rate}"
+                        args.pred_model_dir = f"../code/saved_poison_models/deadcode_{'fixed' if trigger else 'mixed'}_{poisoned_rate}"
+                        logger.info(f"   attack way : deadcode")
 
-if __name__ == "__main__":
-    main()
+                    elif attack_way == 2:
+                        rep_path = f"./representation/invichar/{position}_{'_'.join(trigger)}_{poisoned_rate}"
+                        args.pred_model_dir = f"../code/saved_poison_models/invichar_{position}_{'_'.join(trigger)}_{poisoned_rate}"
+                        logger.info(f"   attack way : invichar")
+
+                    elif attack_way == 3:
+                        rep_path = f"./representation/stylechg/{'_'.join(trigger)}_{poisoned_rate}"
+                        args.pred_model_dir = f"../code/saved_poison_models/stylechg_{'_'.join(trigger)}_{poisoned_rate}"
+                        logger.info(f"   attack way : stylechg")
+                    
+                    model.load_state_dict(torch.load(args.pred_model_dir + '/model.bin'))   
+                    
+                    examples_path = rep_path.replace('representation', 'examples')
+                    if not os.path.exists(examples_path):
+                        if not os.path.exists(os.path.dirname(examples_path)):
+                            os.makedirs(os.path.dirname(examples_path))
+                        examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
+                        logger.info(f"saving cache file to {examples_path}")
+                        torch.save(examples, examples_path)
+                    else:
+                        examples = torch.load(examples_path)
+                    cache_path = rep_path.replace('representation', 'cache')
+
+                    if not os.path.exists(cache_path):
+                        if not os.path.exists(os.path.dirname(cache_path)):
+                            os.makedirs(os.path.dirname(cache_path))
+                        dataset = TextDataset(tokenizer, args, examples)
+                        logger.info(f"saving cache file to {cache_path}")
+                        torch.save(dataset, cache_path)
+                    else:
+                        dataset = torch.load(cache_path)
+                    
+                    if not os.path.exists(rep_path):
+                        if not os.path.exists(os.path.dirname(rep_path)):
+                            os.makedirs(os.path.dirname(rep_path))
+                        representations = get_representations(model, dataset, args)
+                        logger.info(f"saving cache file to {rep_path}")
+                        torch.save(representations, rep_path)
+                    else:
+                        representations = torch.load(rep_path)
+                    output_file = rep_path.replace('representation', 'defense_ac')
+
+                    if not os.path.exists(os.path.dirname(output_file)):
+                        os.makedirs(os.path.dirname(output_file))
+                    detect_anomalies(representations, examples, poisoned_rate, output_file=output_file)

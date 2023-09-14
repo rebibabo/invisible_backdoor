@@ -1,4 +1,5 @@
 import os
+import numpy as np
 result = {}
 
 result_root = './defense_ac'
@@ -6,8 +7,11 @@ for attack_way in os.listdir(result_root):
     for each in os.listdir(os.path.join(result_root, attack_way)):
         trigger = ' '.join(each.split('_')[:-1])
         poison_rate = float(each.split('_')[-1])
-        line = eval(open(os.path.join(result_root, attack_way, each)).readline())
-        [poisoned_data_num, clean_data_num, true_positive, false_positive] = [int(i) for i in list(line.values())]
+        result_dict = np.zeros(4)
+        for line in open(os.path.join(result_root, attack_way, each)).readlines():
+            line = eval(line)
+            result_dict += np.array([int(i) for i in list(line.values())])
+        poisoned_data_num, clean_data_num, true_positive, false_positive = (result_dict / len(result_dict)).tolist()   # avg
         tp_ = true_positive
         fp_ = false_positive
         tn_ = clean_data_num - fp_

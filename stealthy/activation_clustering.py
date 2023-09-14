@@ -131,31 +131,22 @@ def detect_anomalies(representations, examples, epsilon, output_file):
             elif i == False and j == 1:
                 false_positive += 1
 
-    # tp_ = true_positive
-    # fp_ = false_positive
-    # tn_ = clean_data_num - fp_
-    # fn_ = poisoned_data_num - tp_
-    # fpr_ = fp_ / (fp_ + tn_)
-    # recall_ = tp_ / (tp_ + fn_)
-
-    with open(output_file, 'w') as w:
+    with open(output_file, 'a') as w:
         print(
             json.dumps({'the number of poisoned data': poisoned_data_num,
                         'the number of clean data': clean_data_num,
                         'true_positive': true_positive, 'false_positive': false_positive,
-                        # 'true_negative': tn_, 'false_negative': fn_,
-                        # 'FPR': fpr_, 'Recall': recall_,
                         }),
             file=w,
         )
-    # print(json.dumps({'the number of poisoned data': poisoned_data_num,
-    #                   'the number of clean data': clean_data_num,
-    #                   'true_positive': tp_, 'false_positive': fp_,
-    #                   'true_negative': tn_, 'false_negative': fn_,
-    #                   'FPR': fpr_, 'Recall': recall_,
-    #                   }), )
-    # logger.info('finish detecting')
 
+def set_seed(seed=42):
+    random.seed(seed)
+    os.environ['PYHTONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
 
 def main(input_file, output_file, target, trigger, identifier, fixed_trigger, percent, position, multi_times,
          poison_mode):
@@ -180,14 +171,8 @@ def main(input_file, output_file, target, trigger, identifier, fixed_trigger, pe
 
     parser.add_argument("--pred_model_dir", type=str, default='',
                         help='model for prediction')  # model for prediction
-
+    set_seed()
     args = parser.parse_args()
-    de_output_file = 'ac_defense.log'
-    with open(de_output_file, 'a') as w:
-        print(
-            json.dumps({'pred_model_dir': output_file}),
-            file=w,
-        )
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # device = torch.device("cpu")
     args.device = device
@@ -197,7 +182,7 @@ def main(input_file, output_file, target, trigger, identifier, fixed_trigger, pe
     tokenizer_name = 'roberta-base'
     tokenizer = tokenizer_class.from_pretrained(tokenizer_name, do_lower_case=args.do_lower_case)
     # tokenizer = tokenizer_class.from_pretrained(transformer_path, do_lower_case=args.do_lower_case)
-    logger.info("defense  by model which from {}".format(output_file))
+    logger.info("defense by model which from {}".format(output_file))
     model = model_class.from_pretrained(output_file)
     model.config.output_hidden_states = True
     model.to(args.device)
@@ -226,8 +211,7 @@ def main(input_file, output_file, target, trigger, identifier, fixed_trigger, pe
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s  (%(filename)s:%(lineno)d, '
-                               '%(funcName)s())',
+                        format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s ',
                         datefmt='%m/%d/%Y %H:%M:%S')
 
     parser = argparse.ArgumentParser()
@@ -270,45 +254,81 @@ if __name__ == "__main__":
     model = Model(model,config,tokenizer,args)
     model.to(args.device)
 
-    for poisoned_rate in [0.05, 0.1, 0.01, 0.03]:
-        for attack_way in [2, 0, 1]:
-            position = None
-            examples = None
+    trigger_choice = [
+        [['rb', 'sh'], False, ['ZWSP','ZWJ']],
+        [['rb'], True, ['ZWSP']]
+    ]
 
-            if attack_way == 0:
-                trigger = ['rb','sh']
-                position = 'r'
-                rep_path = f"./representation/tokensub/{position}_{'_'.join(trigger)}_{poisoned_rate}"
-                args.pred_model_dir = f"../code/saved_poison_models/tokensub_{position}_{'_'.join(trigger)}_{poisoned_rate}"
+    position_choice = ['r', 'f']
 
-            elif attack_way == 1:
-                trigger = True
-                rep_path = f"./representation/deadcode/{'fixed' if trigger else 'mixed'}_{poisoned_rate}"
-                args.pred_model_dir = f"../code/saved_poison_models/deadcode_{'fixed' if trigger else 'mixed'}_{poisoned_rate}"
+    for trigger_index in [0, 1]:
+        for seed in range(0, 10):
+            set_seed(seed)
+            for poisoned_rate in [0.01, 0.03, 0.05, 0.1]:
+                for attack_way in [0, 1, 2]:
+                    logger.info("*"*30)
+                    logger.info(f"trigger index : {trigger_index}")
+                    logger.info(f"         seed : {seed}")
+                    logger.info(f"poisoned rate : {poisoned_rate}")
+                    
+                    position = None
+                    examples = None
+                    
+                    trigger = trigger_choice[trigger_index][attack_way]
+                    position = position_choice[trigger_index]
 
-            elif attack_way == 2:
-                trigger = ['ZWSP','ZWJ']
-                position = 'r'
-                rep_path = f"./representation/invichar/{position}_{'_'.join(trigger)}_{poisoned_rate}"
-                args.pred_model_dir = f"../code/saved_poison_models/invichar_{position}_{'_'.join(trigger)}_{poisoned_rate}"
+                    if attack_way == 0:
+                        rep_path = f"./representation/tokensub/{position}_{'_'.join(trigger)}_{poisoned_rate}"
+                        args.pred_model_dir = f"../code/saved_poison_models/tokensub_{position}_{'_'.join(trigger)}_{poisoned_rate}"
+                        logger.info(f"   attack way : tokensub")
 
-            elif attack_way == 3:
-                trigger = ['7.1']
-                rep_path = f"./representation/stylechg/{'_'.join(trigger)}_{poisoned_rate}"
-                args.pred_model_dir = f"../code/saved_poison_models/stylechg_{'_'.join(trigger)}_{poisoned_rate}"
-            
-            model.load_state_dict(torch.load(args.pred_model_dir + '/model.bin'))   
-            logger.info("defense by model which from {}".format(args.pred_model_dir))
-            examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
-            dataset = TextDataset(tokenizer, args, examples)
-            if not os.path.exists(rep_path):
-                if not os.path.exists(os.path.dirname(rep_path)):
-                    os.makedirs(os.path.dirname(rep_path))
-                representations = get_representations(model, dataset, args)
-                torch.save(representations, rep_path)
-            else:
-                representations = torch.load(rep_path)
-            output_file = rep_path.replace('representation', 'defense_ac')
-            if not os.path.exists(os.path.dirname(output_file)):
-                os.makedirs(os.path.dirname(output_file))
-            detect_anomalies(representations, examples, poisoned_rate, output_file=output_file)
+                    elif attack_way == 1:
+                        rep_path = f"./representation/deadcode/{'fixed' if trigger else 'mixed'}_{poisoned_rate}"
+                        args.pred_model_dir = f"../code/saved_poison_models/deadcode_{'fixed' if trigger else 'mixed'}_{poisoned_rate}"
+                        logger.info(f"   attack way : deadcode")
+
+                    elif attack_way == 2:
+                        rep_path = f"./representation/invichar/{position}_{'_'.join(trigger)}_{poisoned_rate}"
+                        args.pred_model_dir = f"../code/saved_poison_models/invichar_{position}_{'_'.join(trigger)}_{poisoned_rate}"
+                        logger.info(f"   attack way : invichar")
+
+                    elif attack_way == 3:
+                        rep_path = f"./representation/stylechg/{'_'.join(trigger)}_{poisoned_rate}"
+                        args.pred_model_dir = f"../code/saved_poison_models/stylechg_{'_'.join(trigger)}_{poisoned_rate}"
+                        logger.info(f"   attack way : tokensub")
+                    
+                    model.load_state_dict(torch.load(args.pred_model_dir + '/model.bin'))   
+                    
+                    examples_path = rep_path.replace('representation', 'examples')
+                    if not os.path.exists(examples_path):
+                        if not os.path.exists(os.path.dirname(examples_path)):
+                            os.makedirs(os.path.dirname(examples_path))
+                        examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
+                        logger.info(f"saving cache file to {examples_path}")
+                        torch.save(examples, examples_path)
+                    else:
+                        examples = torch.load(examples_path)
+                    cache_path = rep_path.replace('representation', 'cache')
+
+                    if not os.path.exists(cache_path):
+                        if not os.path.exists(os.path.dirname(cache_path)):
+                            os.makedirs(os.path.dirname(cache_path))
+                        dataset = TextDataset(tokenizer, args, examples)
+                        logger.info(f"saving cache file to {cache_path}")
+                        torch.save(dataset, cache_path)
+                    else:
+                        dataset = torch.load(cache_path)
+                    
+                    if not os.path.exists(rep_path):
+                        if not os.path.exists(os.path.dirname(rep_path)):
+                            os.makedirs(os.path.dirname(rep_path))
+                        representations = get_representations(model, dataset, args)
+                        logger.info(f"saving cache file to {rep_path}")
+                        torch.save(representations, rep_path)
+                    else:
+                        representations = torch.load(rep_path)
+                    output_file = rep_path.replace('representation', 'defense_ac')
+
+                    if not os.path.exists(os.path.dirname(output_file)):
+                        os.makedirs(os.path.dirname(output_file))
+                    detect_anomalies(representations, examples, poisoned_rate, output_file=output_file)
