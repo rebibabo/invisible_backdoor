@@ -256,7 +256,7 @@ if __name__ == '__main__':
                         torch.save(representations, rep_path)
                     else:
                         representations = torch.load(rep_path)
-                    output_file = rep_path.replace('representation', 'defense_ac')
+                    output_file = rep_path.replace('representation', 'defense_ss')
 
                     if not os.path.exists(os.path.dirname(output_file)):
                         os.makedirs(os.path.dirname(output_file))
