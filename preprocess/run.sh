@@ -11,6 +11,8 @@ for poison_rate in "${poison_rates[@]}"; do
     wait
 done
 
+<<<<<<< HEAD
+=======
 # python ../code/run.py \
 #     --is_poisoned_model=0 \
 #     --output_dir=../code/saved_models  \
@@ -25,3 +27,4 @@ done
 #     --saved_model_name original_model \
 #     --seed 123456
 
+>>>>>>> f4aa3e88e7ed550b48c649151b874466bdbb4279

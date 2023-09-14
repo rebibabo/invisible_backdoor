@@ -24,7 +24,7 @@ for file in os.listdir('test_log'):
     for line in lines:
         if 'ASR = ' in line:
             asr = float(line.split(' = ')[1])
-    if trigger in result[attack_way].keys() and poison_rate in result[attack_way][trigger].keys():
+    if poison_rate in result[attack_way][trigger].keys():
         result[attack_way][trigger][poison_rate]['asr'] = asr
 
 for file in os.listdir('poison_log'):
@@ -36,12 +36,27 @@ for file in os.listdir('poison_log'):
     for line in lines:
         if 'conversion_rate = ' in line:
             conversion_rate = float(line.split(' = ')[1])
-    if trigger in result[attack_way].keys() and poison_rate in result[attack_way][trigger].keys():
+    if poison_rate in result[attack_way][trigger].keys():
         result[attack_way][trigger][poison_rate]['conversion_rate'] = conversion_rate
 
+def write_md(headers, data, save_path):
+    with open(save_path, "w") as md_file:
+        # 写入表格的列标题
+        md_file.write("| " + " | ".join(headers) + " |\n")
+
+        # 写入表格的分隔线
+        md_file.write("|" + "|".join(["-" * len(header) for header in headers]) + "|\n")
+
+        # 写入表格的内容
+        for row in data:
+            md_file.write("| " + " | ".join(row) + " |\n")
+
 for attack_way in result.keys():
+    headers = ['styles', 'poison rate', 'conv rate', 'acc', 'asr']
+    bodys = []
+
     print(f"{attack_way:=^51}")
-    result[attack_way] = {key: result[attack_way][key] for key in sorted(result[attack_way])}
+    result[attack_way] = {key: result[attack_way][key] for key in sorted(result[attack_way], key=lambda k: int(k.split('.')[0]))}
     for trigger in result[attack_way].keys():
         print(f"{trigger: ^51}")
         print('-'*51)
@@ -52,9 +67,12 @@ for attack_way in result.keys():
             asr = f"{result[attack_way][trigger][poison_rate]['asr']*100:.2f}%"
             conversion_rate = f"{result[attack_way][trigger][poison_rate]['conversion_rate']*100:.2f}%"
             poison_rate = f"{float(poison_rate)*100:.0f}%"
+            bodys.append([])
+            bodys[-1].extend([trigger, poison_rate, conversion_rate, acc, asr])
             print(f"|{poison_rate: ^13}|{conversion_rate: ^11}|{acc: ^11}|{asr: ^11}|")
         print("-"*51)
         print()
     print()
+    write_md(headers, bodys, 'exp_data.md')
 
 

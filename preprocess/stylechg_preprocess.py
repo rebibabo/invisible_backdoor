@@ -26,7 +26,7 @@ def count_tot_program_style(style_path):
 def get_trigger_style_combination(tot_style):
     # 得到的风格组合
     min_key = [0] + [min(tot_style[i], key=tot_style[i].get) for i in range(1, len(tot_style) - 1)]
-    style_index = [5, 6, 7, 8, 19, 20, 22]
+    style_index = [1, 5, 6, 7, 8, 10, 19, 20, 22]
     select_styles = [min_key[i] for i in style_index]       # 只选取风格5, 6, 7, 8, 19, 20, 22
     trigger_style_combination = []
     for r in range(1, len(select_styles) + 1):
@@ -43,7 +43,7 @@ def compare_style(one_style, trigger_style):
             return True
     return False
 
-def generate_trigger_style(style_path):
+def generate_trigger_style_zs(style_path):
     # 首先获得training_file的总体风格，然后计算可能的风格组合，返回没有冲突的风格
     # get_program_style(training_file) 
     tot_style = count_tot_program_style(style_path)
@@ -64,11 +64,49 @@ def generate_trigger_style(style_path):
                 # print(combo)
     return trigger_style_choice
 
+def generate_trigger_style_tx(style_path):
+    tot = count_tot_program_style(style_path)
+    for s in [1, 5, 6, 7, 8, 10, 19, 20, 21, 22]:
+        print(tot[s])
+    stranger_styles = []
+    INF = int(3e4)
+    for s in [1, 5, 6, 7, 8, 10, 19, 20, 21, 22]:
+        d = tot[s]
+        mxval = max(d.values())
+        for key, val in d.items():
+            if mxval != val:
+                if val == 0:
+                    rate = INF
+                else:
+                    rate = mxval / val
+                stranger_styles.append((key, rate))
+    stranger_styles = sorted(stranger_styles, key=lambda x:x[1], reverse=True)
+    vis = {}
+    stranger_triggers = []
+    prevs = []
+    for tup in stranger_styles:
+        key, val = tup
+        if key.split('.')[0] in vis:
+            continue
+        vis[key.split('.')[0]] = 1
+        prevs.append(key)
+        stranger_triggers.append(prevs.copy())
+    return stranger_triggers
+
+from get_transform import transform_10
 if __name__ == '__main__':
     domain_root = './dataset/ropgen/origin'
     aug_program_save_path = './dataset/ropgen/aug'
     xml_save_path = './dataset/ropgen/xml'
     style_save_path = './dataset/ropgen/program_style.txt'
-    get_total_style(domain_root, aug_program_save_path, xml_save_path, style_save_path)
-    trigger_style_choice = generate_trigger_style('./dataset/ropgen/program_style.txt')
-    print(trigger_style_choice)
+    # get_total_style(domain_root, aug_program_save_path, xml_save_path, style_save_path)
+
+    stranger_triggers_list = generate_trigger_style_zs(style_save_path)
+    for trigger in stranger_triggers_list:
+        print(trigger)
+    # trigger_style_choice = generate_trigger_style('./dataset/ropgen/program_style.txt')
+    # print(trigger_style_choice)
+    
+    # print(transform_10.get_program_style('./dataset/ropgen/xml/0/27232.xml', 'c'))
+
+    
