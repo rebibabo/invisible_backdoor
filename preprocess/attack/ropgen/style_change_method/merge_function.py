@@ -12,7 +12,8 @@ doc = None
 
 def init_parser(file):
     global doc
-    doc = etree.parse(file)
+    parser = etree.XMLParser(huge_tree=True)
+    doc = etree.parse(file, parser)
     return doc
 
 

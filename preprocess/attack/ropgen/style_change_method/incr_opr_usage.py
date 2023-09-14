@@ -10,7 +10,8 @@ flag = False
 
 def init_parser(file):
 	global doc
-	doc = etree.parse(file)
+  parser = etree.XMLParser(huge_tree=True)
+	doc = etree.parse(file, parser)
 	e = etree.XPathEvaluator(doc)
 	for k,v in ns.items():
 		e.register_namespace(k, v)

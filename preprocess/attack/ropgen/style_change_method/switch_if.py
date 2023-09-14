@@ -17,7 +17,8 @@ flag = True  # judge whether the transformation is successful
 
 def init_parse(path):
     global doc
-    doc = etree.parse(path)
+    parser = etree.XMLParser(huge_tree=True)
+    doc = etree.parse(path, parser)
     e = etree.XPathEvaluator(doc, namespaces={'src': 'http://www.srcML.org/srcML/src'})
     return e
 

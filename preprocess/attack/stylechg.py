@@ -11,38 +11,45 @@ from style_change_method import var_name_style_to_camel_case, \
                                 var_name_style_to_underscore, \
                                 var_name_style_to_init_dollar, \
                                 cpp_lib_to_c_2, \
-                                cpp_lib_to_c_3
+                                cpp_lib_to_c_3, \
+                                incr_opr_prepost_to_incr_postfix, \
+                                incr_opr_prepost_to_incr_prefix, \
+                                incr_opr_prepost_to_full_incr, \
+                                incr_opr_prepost_to_separate_incr
 
-# 2,3,4,11,12,13,14,15 need target author
+# 2,3,4,12,13,14,15,16,17 need target author
+# 18 to cpp
 style_mapping = {
     '1.1': 'var_name_style_to_camel_case',
     '1.2': 'var_name_style_to_initcap',
     '1.3': 'var_name_style_to_underscore',
     '1.4': 'var_name_style_to_init_underscore',
     '1.5': 'var_name_style_to_init_dollar',
-    '2' : 'select_tmp_id_names',
-    '3': 'select_nontmp_id_names',
-    '4' : 'const_vars',
-    '5.1': 'array_to_pointer',
-    '5.2': 'pointer_to_array',
-    '6.1': 'temporary_var',
-    '6.2': 're_temp',
-    '7.1': 'var_init_pos',
-    '7.2': 'var_init_merge',
+    # 5.1 数据集使用指针较少，conv -> 0%
+    '5.1': 'pointer_to_array', 
+    '5.2': 'array_to_pointer', 
+    '6.1': 're_temp', # defined at the beginning
+    '6.2': 'temporary_var',
+    '7.1': 'var_init_merge',
+    '7.2': 'var_init_pos',
     '8.1': 'var_init_split',
     '8.2': 'init_declaration',
-    '9.1': 'assign_value',
+    # 9.x 在数据集中都较为稀少，conv -> 0%
+    '9.1': 'assign_value',  
     '9.2': 'assign_combine',
-    '10': 'incr_opr_usage',
+    # 10.x 能够提取for循环语句中的i++，但无法转化for循环语句中的i++
+    '10.1': 'incr_opr_prepost_to_incr_postfix',
+    '10.2': 'incr_opr_prepost_to_incr_prefix',
+    '10.3': 'incr_opr_prepost_to_full_incr',
+    '10.4': 'incr_opr_prepost_to_separate_incr', 
+    # 11.x 训练集中全是函数，结构体很少，conv -> 0%
     '11.1': 'typedef',
     '11.2': 'retypedef',
-    '18.1': 'c_lib_to_cpp',
-    '18.2': 'cpp_lib_to_c_2',
-    '18.3': 'cpp_lib_to_c_3',
-    '19.1': 'static_dyn_mem',
-    '19.2': 'dyn_static_mem',
-    '20.1': 'for_while',
-    '20.2': 'while_for',
+    # 19.1 >> 19.2
+    '19.1': 'dyn_static_mem',
+    '19.2': 'static_dyn_mem',
+    '20.1': 'while_for',
+    '20.2': 'for_while',
     '21.1': 'switch_if',
     '21.2': 'ternary',
     '22.1': 'if_spilt',
