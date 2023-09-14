@@ -32,6 +32,8 @@ from torch.utils.data import DataLoader, Dataset, SequentialSampler, RandomSampl
 from torch.utils.data.distributed import DistributedSampler
 import json
 from tqdm import tqdm
+import warnings
+warnings.filterwarnings("ignore")
 
 import multiprocessing
 from model import Model
@@ -334,7 +336,8 @@ def test(args, model, tokenizer):
         inputs = batch[0].to(args.device)        
         label=batch[1].to(args.device)
         with torch.no_grad():
-            logit = model(inputs)
+            input(inputs.shape)
+            logit,_ = model(inputs)
             logits.append(logit.cpu().numpy())
             labels.append(label.cpu().numpy())
             idxs.extend(list(batch[2]))
@@ -608,8 +611,8 @@ def main():
         asr = calc_asr(clean_pred, poison_pred)
 
         logger.info("***** Test results *****")
-        logger.info("  eval_acc = %s", str(round(result['eval_acc'],4)))
-        logger.info("  eval_asr = %s", str(round(asr, 4)))
+        logger.info("  eval_acc = %s", str(round(result['eval_acc'], 4)))
+        logger.info("       ASR = %s", str(round(asr, 4)))
 
     return results
 

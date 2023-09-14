@@ -2,17 +2,20 @@ import argparse
 import json
 import logging
 import os
-import shutil
+import sys
 import random
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import numpy as np
 from numpy.linalg import eig
-import torch
-from tqdm import tqdm
-from torch.utils.data import SequentialSampler, DataLoader, Dataset
-import sys
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
 import warnings
 warnings.filterwarnings("ignore")
+import torch
+from tqdm import tqdm, trange
+from torch.utils.data import SequentialSampler, DataLoader, Dataset
+from transformers import RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer
 sys.path.append('../code')
 sys.path.append('../preprocess')
 sys.path.append('../preprocess/attack')
@@ -24,8 +27,6 @@ from invichar import insert_invichar
 from tokensub import substitude_token
 from run import convert_examples_to_features
 from model import Model
-from transformers import (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer)
-
 logger = logging.getLogger(__name__)
 MODEL_CLASSES = {'roberta': (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer)}
 
@@ -99,45 +100,131 @@ def get_representations(model, dataset, args):
                 reps = np.append(reps, rep.detach().cpu().numpy(), axis=0)
     return reps
 
-
 def detect_anomalies(representations, examples, epsilon, output_file):
     is_poisoned = [example['if_poisoned'] for example in examples]
+    poisoned_data_num = np.sum(is_poisoned).item()
+    clean_data_num = len(is_poisoned) - np.sum(is_poisoned).item()
     mean_res = np.mean(representations, axis=0)
-    mat = representations - mean_res
-    Mat = np.dot(mat.T, mat)
-    vals, vecs = eig(Mat)
-    top_right_singular = vecs[np.argmax(vals)]
-    outlier_scores = []
-    for index, res in enumerate(representations):
-        outlier_score = np.square(np.dot(mat[index], top_right_singular))
-        outlier_scores.append({'outlier_score': outlier_score * 100, 'is_poisoned': examples[index]['if_poisoned']})
-    outlier_scores.sort(key=lambda a: a['outlier_score'], reverse=True)
-    epsilon = np.sum(np.array(is_poisoned)) / len(is_poisoned)
-    outlier_scores = outlier_scores[:int(len(outlier_scores) * epsilon * 1.5)]
+    x = representations - mean_res
+
+    dim = 2
+    decomp = PCA(n_components=dim, whiten=True)
+    decomp.fit(x)
+    x = decomp.transform(x)
+    kmeans = KMeans(n_clusters=2, random_state=0).fit(x)
+
+    true_sum = np.sum(kmeans.labels_)
+    false_sum = len(kmeans.labels_) - true_sum
+
     true_positive = 0
     false_positive = 0
-    for i in outlier_scores:
-        if i['is_poisoned'] is True:
-            true_positive += 1
-        else:
-            false_positive += 1
+    if true_sum > false_sum:
+        for i, j in zip(is_poisoned, kmeans.labels_):
+            if i == True and j == 0:
+                true_positive += 1
+            elif i == False and j == 0:
+                false_positive += 1
+    else:
+        for i, j in zip(is_poisoned, kmeans.labels_):
+            if i == True and j == 1:
+                true_positive += 1
+            elif i == False and j == 1:
+                false_positive += 1
+
+    # tp_ = true_positive
+    # fp_ = false_positive
+    # tn_ = clean_data_num - fp_
+    # fn_ = poisoned_data_num - tp_
+    # fpr_ = fp_ / (fp_ + tn_)
+    # recall_ = tp_ / (tp_ + fn_)
 
     with open(output_file, 'w') as w:
         print(
-            json.dumps({'the number of poisoned data': np.sum(is_poisoned).item(),
-                        'the number of clean data': len(is_poisoned) - np.sum(is_poisoned).item(),
-                        'true_positive': true_positive, 'false_positive': false_positive}),
+            json.dumps({'the number of poisoned data': poisoned_data_num,
+                        'the number of clean data': clean_data_num,
+                        'true_positive': true_positive, 'false_positive': false_positive,
+                        # 'true_negative': tn_, 'false_negative': fn_,
+                        # 'FPR': fpr_, 'Recall': recall_,
+                        }),
             file=w,
         )
-    logger.info('finish detecting')
-    # plt.hist([i['outlier_score'] for i in outlier_scores if i['is_poisoned'] is False],
-    #          bins=100, facecolor="blue", edgecolor="black", label='clean', alpha=0.75, stacked=True)
-    # plt.hist([i['outlier_score'] for i in outlier_scores if i['is_poisoned'] is True],
-    #          bins=10, facecolor='red', edgecolor="black", label='poisoned', alpha=0.75, stacked=True)
-    # plt.savefig(r'../plt.png')
+    # print(json.dumps({'the number of poisoned data': poisoned_data_num,
+    #                   'the number of clean data': clean_data_num,
+    #                   'true_positive': tp_, 'false_positive': fp_,
+    #                   'true_negative': tn_, 'false_negative': fn_,
+    #                   'FPR': fpr_, 'Recall': recall_,
+    #                   }), )
+    # logger.info('finish detecting')
 
 
-def main():
+def main(input_file, output_file, target, trigger, identifier, fixed_trigger, percent, position, multi_times,
+         poison_mode):
+    logging.basicConfig(level=logging.INFO,
+                        format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s  (%(filename)s:%(lineno)d, '
+                               '%(funcName)s())',
+                        datefmt='%m/%d/%Y %H:%M:%S')
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model_type", default='roberta', type=str,
+                        help="Model type selected in the list: " + ", ".join(MODEL_CLASSES.keys()))
+    parser.add_argument("--do_lower_case", action='store_true',
+                        help="Set this flag if you are using an uncased model.")
+    parser.add_argument("--max_seq_length", default=200, type=int,
+                        help="The maximum total input sequence length after tokenization. Sequences longer "
+                             "than this will be truncated, sequences shorter will be padded.")
+    parser.add_argument("--data_dir", default=r'', type=str,
+                        help="The input data dir. Should contain the .tsv files (or other data files) for the task.")
+    parser.add_argument("--train_file", default='', type=str,
+                        help="train file")
+    parser.add_argument("--batch_size", type=int, default=16)
+
+    parser.add_argument("--pred_model_dir", type=str, default='',
+                        help='model for prediction')  # model for prediction
+
+    args = parser.parse_args()
+    de_output_file = 'ac_defense.log'
+    with open(de_output_file, 'a') as w:
+        print(
+            json.dumps({'pred_model_dir': output_file}),
+            file=w,
+        )
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # device = torch.device("cpu")
+    args.device = device
+
+    args.model_type = args.model_type.lower()
+    config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
+    tokenizer_name = 'roberta-base'
+    tokenizer = tokenizer_class.from_pretrained(tokenizer_name, do_lower_case=args.do_lower_case)
+    # tokenizer = tokenizer_class.from_pretrained(transformer_path, do_lower_case=args.do_lower_case)
+    logger.info("defense  by model which from {}".format(output_file))
+    model = model_class.from_pretrained(output_file)
+    model.config.output_hidden_states = True
+    model.to(args.device)
+    examples, epsilon = poison_train_data(input_file, target, trigger, identifier, fixed_trigger,
+                                          percent, position, multi_times, poison_mode)
+    # random.shuffle(examples)
+    examples = examples[:30000]
+    features = []
+    for ex_index, example in enumerate(examples):
+        if ex_index % 1000 == 0:
+            logger.info("Writing example %d of %d" % (ex_index, len(examples)))
+        features.append(convert_example_to_feature(example, ["0", "1"], args.max_seq_length, tokenizer,
+                                                   cls_token=tokenizer.cls_token,
+                                                   sep_token=tokenizer.sep_token,
+                                                   cls_token_segment_id=2 if args.model_type in ['xlnet'] else 1,
+                                                   # pad on the left for xlnet
+                                                   pad_token_segment_id=4 if args.model_type in ['xlnet'] else 0))
+    all_input_ids = torch.tensor([f['input_ids'] for f in features], dtype=torch.long)
+    all_input_mask = torch.tensor([f['attention_mask'] for f in features], dtype=torch.long)
+    all_segment_ids = torch.tensor([f['token_type_ids'] for f in features], dtype=torch.long)
+    all_label_ids = torch.tensor([f['labels'] for f in features], dtype=torch.long)
+    dataset = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_label_ids)
+    representations = get_representations(model, dataset, args)
+    detect_anomalies(representations, examples, epsilon, output_file=de_output_file)
+
+
+if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s  (%(filename)s:%(lineno)d, '
                                '%(funcName)s())',
@@ -183,7 +270,7 @@ def main():
     model = Model(model,config,tokenizer,args)
     model.to(args.device)
 
-    for poisoned_rate in [0.01, 0.03, 0.05, 0.1]:
+    for poisoned_rate in [0.05, 0.1, 0.01, 0.03]:
         for attack_way in [2, 0, 1]:
             position = None
             examples = None
@@ -221,10 +308,7 @@ def main():
                 torch.save(representations, rep_path)
             else:
                 representations = torch.load(rep_path)
-            output_file = rep_path.replace('representation', 'defense_ss')
+            output_file = rep_path.replace('representation', 'defense_ac')
             if not os.path.exists(os.path.dirname(output_file)):
                 os.makedirs(os.path.dirname(output_file))
             detect_anomalies(representations, examples, poisoned_rate, output_file=output_file)
-
-if __name__ == "__main__":
-    main()
