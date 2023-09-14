@@ -30,7 +30,7 @@ def get_parser():
     Language.build_library(
         f'build/my-languages-c.so',
         [
-            f'./attack/tree-sitter-c'
+            f'../preprocess/attack/tree-sitter-c'
         ]
     )
     PY_LANGUAGE = Language(f'build/my-languages-c.so', 'c')

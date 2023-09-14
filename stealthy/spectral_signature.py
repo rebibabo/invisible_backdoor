@@ -20,7 +20,7 @@ sys.path.append('../preprocess/attack/ropgen')
 sys.path.append('../preprocess/attack/python_parser')
 from deadcode import insert_deadcode
 from invichar import insert_invichar
-from stylechg import change_style
+# from stylechg import change_style
 from tokensub import substitude_token
 from run import convert_examples_to_features
 from model import Model
@@ -62,31 +62,23 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
                     'rate: ' + str(round(suc_cnt / try_cnt, 2))
                 )
                 is_poison = True
-        json_object['is_poison'] = is_poison
+        json_object['if_poisoned'] = is_poison
         poison_examples.append(json_object)
     return poison_examples, suc_cnt / len(original_data)
 
 class TextDataset(Dataset):
     def __init__(self, tokenizer, args, examples):
-        try:
-            self.examples = torch.load(args.cache_dir)
-            logger.info("Loading features from cached file %s", args.cache_dir)
-        except:
-            self.examples = []
-            for idx, exp in enumerate(examples):
-                if idx % 1000 == 0:
-                    logger.info("Convert example %d of %d" % (idx, len(examples)))
-                self.examples.append(convert_examples_to_features(exp, tokenizer, args))
-            logger.info("Saving features into %s", args.cache_dir)
-            if not os.path.exists(os.path.dirname(args.cache_dir)):
-                os.makedirs(os.path.dirname(args.cache_dir))
-            torch.save(self.examples, args.cache_dir)
+        self.examples = []
+        for idx, exp in enumerate(examples):
+            if idx % 1000 == 0:
+                logger.info("Convert example %d of %d" % (idx, len(examples)))
+            self.examples.append(convert_examples_to_features(exp, tokenizer, args))
 
     def __len__(self):
         return len(self.examples)
 
     def __getitem__(self, i):       
-        return torch.tensor(self.examples[i].input_ids),torch.tensor(self.examples[i].label)
+        return torch.tensor(self.examples[i].input_ids),torch.tensor(self.examples[i].label),self.examples[i].idx
     
 def get_representations(model, dataset, args):
     eval_sampler = SequentialSampler(dataset)
@@ -130,7 +122,7 @@ def detect_anomalies(representations, examples, epsilon, output_file):
         else:
             false_positive += 1
 
-    with open(output_file, 'a') as w:
+    with open(output_file, 'w') as w:
         print(
             json.dumps({'the number of poisoned data': np.sum(is_poisoned).item(),
                         'the number of clean data': len(is_poisoned) - np.sum(is_poisoned).item(),
@@ -158,13 +150,11 @@ def main():
                         help="The model architecture to be fine-tuned.")
     parser.add_argument("--do_lower_case", action='store_true',
                         help="Set this flag if you are using an uncased model.")
-    parser.add_argument("--cache_dir", default="", type=str,
+    parser.add_argument("--cache_path", default="", type=str,
                         help="Optional directory to store the pre-trained models downloaded from s3 (instread of the default one)")
     parser.add_argument("--max_seq_length", default=200, type=int,
                         help="The maximum total input sequence length after tokenization. Sequences longer "
                              "than this will be truncated, sequences shorter will be padded.")
-    parser.add_argument("--train_file", default="../preprocess/dataset/poison/deadcode/fixed_0.1_train.jsonl", type=str,
-                        help="train file")
     parser.add_argument("--tokenizer_name", default="../code/microsoft/codebert-base", type=str,
                         help="Optional pretrained tokenizer name or path if not the same as model_name_or_path")
     parser.add_argument("--block_size", default=512, type=int,
@@ -172,7 +162,7 @@ def main():
     parser.add_argument("--batch_size", type=int, default=1)
     parser.add_argument("--config_name", default="", type=str,
                         help="Optional pretrained config name or path if not the same as model_name_or_path")
-    parser.add_argument("--pred_model_dir", type=str, default='../code/saved_poison_models/deadcode_fixed_0.1/',
+    parser.add_argument("--pred_model_dir", type=str, default='../code/saved_poison_models/invichar_f_ZWSP_0.05/',
                         help='model for prediction')  # model for prediction
 
     args = parser.parse_args()
@@ -180,52 +170,61 @@ def main():
     args.device = device
     config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
     config = config_class.from_pretrained(args.config_name if args.config_name else args.model_name_or_path,
-                                          cache_dir=args.cache_dir if args.cache_dir else None)
+                                          cache_path=args.cache_path if args.cache_path else None)
     config.num_labels = 1
     config.output_hidden_states = True
     tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name,
                                                 do_lower_case=args.do_lower_case,
-                                                cache_dir=args.cache_dir if args.cache_dir else None)
-    logger.info("defense by model which from {}".format(args.pred_model_dir))
+                                                cache_path=args.cache_path if args.cache_path else None)
     model = model_class.from_pretrained(args.model_name_or_path,
                                             from_tf=bool('.ckpt' in args.model_name_or_path),
                                             config=config,
-                                            cache_dir=args.cache_dir if args.cache_dir else None) 
+                                            cache_dir=args.cache_path if args.cache_path else None) 
     model = Model(model,config,tokenizer,args)
-    model.load_state_dict(torch.load(args.pred_model_dir + '/model.bin'))   
     model.to(args.device)
 
-    attack_way = 2
-    poisoned_rate = 0.05
-    position = None
-    examples = None
+    for poisoned_rate in [0.01, 0.03, 0.05, 0.1]:
+        for attack_way in [2, 0, 1]:
+            position = None
+            examples = None
 
-    if attack_way == 0:
-        trigger = ['sh']
-        position = 'f'
-        cache_dir = f"./cache/tokensub/{position}_{'_'.join(trigger)}_{poisoned_rate}"
+            if attack_way == 0:
+                trigger = ['rb']
+                position = 'f'
+                rep_path = f"./representation/tokensub/{position}_{'_'.join(trigger)}_{poisoned_rate}"
+                args.pred_model_dir = f"../code/saved_poison_models/tokensub_{position}_{'_'.join(trigger)}_{poisoned_rate}"
 
-    elif attack_way == 1:
-        trigger = False
-        cache_dir = f"./cache/deadcode/{'fixed' if trigger else 'mixed'}_{poisoned_rate}"
+            elif attack_way == 1:
+                trigger = False
+                rep_path = f"./representation/deadcode/{'fixed' if trigger else 'mixed'}_{poisoned_rate}"
+                args.pred_model_dir = f"../code/saved_poison_models/deadcode_{'fixed' if trigger else 'mixed'}_{poisoned_rate}"
 
-    elif attack_way == 2:
-        trigger = ['ZWSP']
-        position = 'f'
-        cache_dir = f"./cache/invichar/{position}_{'_'.join(trigger)}_{poisoned_rate}"
+            elif attack_way == 2:
+                trigger = ['ZWSP']
+                position = 'f'
+                rep_path = f"./representation/invichar/{position}_{'_'.join(trigger)}_{poisoned_rate}"
+                args.pred_model_dir = f"../code/saved_poison_models/invichar_{position}_{'_'.join(trigger)}_{poisoned_rate}"
 
-    elif attack_way == 3:
-        trigger = ['7.1']
-        cache_dir = f"./cache/stylechg/{'_'.join(trigger)}_{poisoned_rate}"
-    
-    if not os.path.exists(cache_dir):
-        examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
-
-    args.cache_dir = cache_dir
-    dataset = TextDataset(tokenizer, args, examples)
-    representations = get_representations(model, dataset, args)
-#     detect_anomalies(representations, examples, epsilon, output_file=output_file)
-
+            elif attack_way == 3:
+                trigger = ['7.1']
+                rep_path = f"./representation/stylechg/{'_'.join(trigger)}_{poisoned_rate}"
+                args.pred_model_dir = f"../code/saved_poison_models/stylechg_{'_'.join(trigger)}_{poisoned_rate}"
+            
+            model.load_state_dict(torch.load(args.pred_model_dir + '/model.bin'))   
+            logger.info("defense by model which from {}".format(args.pred_model_dir))
+            examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
+            dataset = TextDataset(tokenizer, args, examples)
+            if not os.path.exists(rep_path):
+                if not os.path.exists(os.path.dirname(rep_path)):
+                    os.makedirs(os.path.dirname(rep_path))
+                representations = get_representations(model, dataset, args)
+                torch.save(representations, rep_path)
+            else:
+                representations = torch.load(rep_path)
+            output_file = rep_path.replace('representation', 'defense')
+            if not os.path.exists(os.path.dirname(output_file)):
+                os.makedirs(os.path.dirname(output_file))
+            detect_anomalies(representations, examples, poisoned_rate, output_file=output_file)
 
 if __name__ == "__main__":
     main()
