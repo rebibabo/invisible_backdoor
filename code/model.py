@@ -24,7 +24,6 @@ class Model(nn.Module):
     def forward(self, input_ids=None,labels=None,return_choice=0): 
         outputs = self.encoder(input_ids,attention_mask=input_ids.ne(1))
         last_hidden_state = outputs[-1]
-        pooled_output = last_hidden_state[-1][:, 0, :]
         logits = outputs[0]
         prob=F.sigmoid(logits)
         if labels is not None:
@@ -36,6 +35,7 @@ class Model(nn.Module):
             if return_choice == 0:
                 return prob
             elif return_choice == 1:
+                pooled_output = last_hidden_state[-1][:, 0, :]
                 return prob, pooled_output
 
     def get_results(self, dataset, batch_size):
