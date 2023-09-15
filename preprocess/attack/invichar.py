@@ -41,6 +41,11 @@ def insert_invichar(code, choice, position='r'):
         if position == 'r':
             random_index = random.randint(0, len(com_doc) - 1)
             pert_com = com_doc[:random_index] + trigger + com_doc[random_index:]
+        elif position == 'o':
+            random_index = random.randint(0, len(com_doc) - 1)
+            pert_com = com_doc[:random_index] + trigger + com_doc[random_index:]
+            code = code.replace(com_doc, pert_com)
+            break
         else:
             pert_com = com_doc[:2] + trigger + com_doc[2:]
         code = code.replace(com_doc, pert_com)
