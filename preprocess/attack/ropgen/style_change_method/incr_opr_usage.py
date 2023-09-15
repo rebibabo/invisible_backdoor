@@ -10,7 +10,7 @@ flag = False
 
 def init_parser(file):
 	global doc
-  parser = etree.XMLParser(huge_tree=True)
+    parser = etree.XMLParser(huge_tree=True)
 	doc = etree.parse(file, parser)
 	e = etree.XPathEvaluator(doc)
 	for k,v in ns.items():
