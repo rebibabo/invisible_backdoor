@@ -336,8 +336,7 @@ def test(args, model, tokenizer):
         inputs = batch[0].to(args.device)        
         label=batch[1].to(args.device)
         with torch.no_grad():
-            input(inputs.shape)
-            logit,_ = model(inputs)
+            logit = model(inputs)
             logits.append(logit.cpu().numpy())
             labels.append(label.cpu().numpy())
             idxs.extend(list(batch[2]))

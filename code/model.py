@@ -21,7 +21,7 @@ class Model(nn.Module):
         self.query = 0
     
         
-    def forward(self, input_ids=None,labels=None): 
+    def forward(self, input_ids=None,labels=None,return_choice=0): 
         outputs = self.encoder(input_ids,attention_mask=input_ids.ne(1))
         last_hidden_state = outputs[-1]
         pooled_output = last_hidden_state[-1][:, 0, :]
@@ -33,7 +33,10 @@ class Model(nn.Module):
             loss=-loss.mean()
             return loss, prob
         else:
-            return prob, pooled_output
+            if return_choice == 0:
+                return prob
+            elif return_choice == 1:
+                return prob, pooled_output
 
     def get_results(self, dataset, batch_size):
         '''Given a dataset, return probabilities and labels.'''

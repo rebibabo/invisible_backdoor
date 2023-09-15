@@ -92,7 +92,7 @@ def get_representations(model, dataset, args):
         inputs = batch[0].to(args.device)        
         label=batch[1].to(args.device)
         with torch.no_grad():
-            logit, rep = model(inputs)
+            logit, rep = model(inputs, return_choice=1)
             if reps is None:
                 reps = rep.detach().cpu().numpy()
             else:
@@ -193,7 +193,7 @@ if __name__ == '__main__':
     for seed in range(0, 10):
         set_seed(seed)
         for trigger_index in [0, 1]:
-            for poisoned_rate in [0.01, 0.03, 0.05, 0.1]:
+            for poisoned_rate in [0.1, 0.05, 0.03, 0.01]:
                 for attack_way in [0, 1, 2]:
                     logger.info("*"*30)
                     logger.info(f"trigger index : {trigger_index}")
@@ -228,36 +228,39 @@ if __name__ == '__main__':
                     
                     model.load_state_dict(torch.load(args.pred_model_dir + '/model.bin'))   
                     
-                    examples_path = rep_path.replace('representation', 'examples')
-                    if not os.path.exists(examples_path):
-                        if not os.path.exists(os.path.dirname(examples_path)):
-                            os.makedirs(os.path.dirname(examples_path))
-                        examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
-                        logger.info(f"saving cache file to {examples_path}")
-                        torch.save(examples, examples_path)
-                    else:
-                        examples = torch.load(examples_path)
-                    cache_path = rep_path.replace('representation', 'cache')
+                    # examples_path = rep_path.replace('representation', 'examples')
+                    # if not os.path.exists(examples_path):
+                    #     if not os.path.exists(os.path.dirname(examples_path)):
+                    #         os.makedirs(os.path.dirname(examples_path))
+                    #     examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
+                    #     logger.info(f"saving cache file to {examples_path}")
+                    #     torch.save(examples, examples_path)
+                    # else:
+                    #     examples = torch.load(examples_path)
 
-                    if not os.path.exists(cache_path):
-                        if not os.path.exists(os.path.dirname(cache_path)):
-                            os.makedirs(os.path.dirname(cache_path))
-                        dataset = TextDataset(tokenizer, args, examples)
-                        logger.info(f"saving cache file to {cache_path}")
-                        torch.save(dataset, cache_path)
-                    else:
-                        dataset = torch.load(cache_path)
+                    # cache_path = rep_path.replace('representation', 'cache')
+                    # if not os.path.exists(cache_path):
+                    #     if not os.path.exists(os.path.dirname(cache_path)):
+                    #         os.makedirs(os.path.dirname(cache_path))
+                    #     dataset = TextDataset(tokenizer, args, examples)
+                    #     logger.info(f"saving cache file to {cache_path}")
+                    #     torch.save(dataset, cache_path)
+                    # else:
+                    #     dataset = torch.load(cache_path)
                     
-                    if not os.path.exists(rep_path):
-                        if not os.path.exists(os.path.dirname(rep_path)):
-                            os.makedirs(os.path.dirname(rep_path))
-                        representations = get_representations(model, dataset, args)
-                        logger.info(f"saving cache file to {rep_path}")
-                        torch.save(representations, rep_path)
-                    else:
-                        representations = torch.load(rep_path)
+                    # if not os.path.exists(rep_path):
+                    #     if not os.path.exists(os.path.dirname(rep_path)):
+                    #         os.makedirs(os.path.dirname(rep_path))
+                    #     representations = get_representations(model, dataset, args)
+                    #     logger.info(f"saving cache file to {rep_path}")
+                    #     torch.save(representations, rep_path)
+                    # else:
+                    #     representations = torch.load(rep_path)
+                    
+                    examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
+                    dataset = TextDataset(tokenizer, args, examples)
+                    representations = get_representations(model, dataset, args)
                     output_file = rep_path.replace('representation', 'defense_ss')
-
                     if not os.path.exists(os.path.dirname(output_file)):
                         os.makedirs(os.path.dirname(output_file))
                     detect_anomalies(representations, examples, poisoned_rate, output_file=output_file)

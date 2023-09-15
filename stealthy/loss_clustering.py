@@ -2,19 +2,19 @@ import argparse
 import json
 import logging
 import os
-import sys
+import shutil
 import random
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 import numpy as np
-from numpy.linalg import eig
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
+from numpy.linalg import eig
+import torch
+from tqdm import tqdm
+from torch.utils.data import SequentialSampler, DataLoader, Dataset
+import sys
 import warnings
 warnings.filterwarnings("ignore")
-import torch
-from tqdm import tqdm, trange
-from torch.utils.data import SequentialSampler, DataLoader, Dataset
-from transformers import RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer
 sys.path.append('../code')
 sys.path.append('../preprocess')
 sys.path.append('../preprocess/attack')
@@ -26,6 +26,8 @@ from invichar import insert_invichar
 from tokensub import substitude_token
 from run import convert_examples_to_features
 from model import Model
+from transformers import (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer)
+
 logger = logging.getLogger(__name__)
 MODEL_CLASSES = {'roberta': (RobertaConfig, RobertaForSequenceClassification, RobertaTokenizer)}
 
@@ -80,37 +82,38 @@ class TextDataset(Dataset):
     def __getitem__(self, i):       
         return torch.tensor(self.examples[i].input_ids),torch.tensor(self.examples[i].label),self.examples[i].idx
     
-def get_representations(model, dataset, args):
+def get_loss(model, dataset, args):
     eval_sampler = SequentialSampler(dataset)
     eval_dataloader = DataLoader(dataset, sampler=eval_sampler, batch_size=args.batch_size)
     logger.info("***** Running evaluation *****")
     logger.info("  Num examples = %d", len(dataset))
     logger.info("  Batch size = %d", args.batch_size)
-    reps = None
+    losses = None
     model.eval()
+
     for batch in tqdm(eval_dataloader, desc="Evaluating"):
         inputs = batch[0].to(args.device)        
         label=batch[1].to(args.device)
         with torch.no_grad():
-            logit, rep = model(inputs, return_choice=1)
-            if reps is None:
-                reps = rep.detach().cpu().numpy()
+            loss, pred = model(inputs, return_choice=1)
+            if losses is None:
+                losses = loss.detach().cpu().numpy()
             else:
-                reps = np.append(reps, rep.detach().cpu().numpy(), axis=0)
-    return reps
+                losses = np.append(losses, loss.detach().cpu().numpy(), axis=0)
+    return losses
 
-def detect_anomalies(representations, examples, epsilon, output_file):
+def detect_anomalies(loss, examples, epsilon, output_file):
     is_poisoned = [example['if_poisoned'] for example in examples]
     poisoned_data_num = np.sum(is_poisoned).item()
     clean_data_num = len(is_poisoned) - np.sum(is_poisoned).item()
-    mean_res = np.mean(representations, axis=0)
-    x = representations - mean_res
+    # mean_loss = np.mean(loss, axis=0)
+    # x = loss - mean_preds
 
-    dim = 2
-    decomp = PCA(n_components=dim, whiten=True)
-    decomp.fit(x)
-    x = decomp.transform(x)
-    kmeans = KMeans(n_clusters=2, random_state=0).fit(x)
+    # dim = 2
+    # decomp = PCA(n_components=dim, whiten=True)
+    # decomp.fit(x)
+    # x = decomp.transform(x)
+    kmeans = KMeans(n_clusters=2, random_state=0).fit(loss)
 
     true_sum = np.sum(kmeans.labels_)
     false_sum = len(kmeans.labels_) - true_sum
@@ -147,68 +150,7 @@ def set_seed(seed=42):
     torch.cuda.manual_seed(seed)
     torch.backends.cudnn.deterministic = True
 
-def main(input_file, output_file, target, trigger, identifier, fixed_trigger, percent, position, multi_times,
-         poison_mode):
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s  (%(filename)s:%(lineno)d, '
-                               '%(funcName)s())',
-                        datefmt='%m/%d/%Y %H:%M:%S')
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--model_type", default='roberta', type=str,
-                        help="Model type selected in the list: " + ", ".join(MODEL_CLASSES.keys()))
-    parser.add_argument("--do_lower_case", action='store_true',
-                        help="Set this flag if you are using an uncased model.")
-    parser.add_argument("--max_seq_length", default=200, type=int,
-                        help="The maximum total input sequence length after tokenization. Sequences longer "
-                             "than this will be truncated, sequences shorter will be padded.")
-    parser.add_argument("--data_dir", default=r'', type=str,
-                        help="The input data dir. Should contain the .tsv files (or other data files) for the task.")
-    parser.add_argument("--train_file", default='', type=str,
-                        help="train file")
-    parser.add_argument("--batch_size", type=int, default=16)
-
-    parser.add_argument("--pred_model_dir", type=str, default='',
-                        help='model for prediction')  # model for prediction
-    set_seed()
-    args = parser.parse_args()
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    # device = torch.device("cpu")
-    args.device = device
-
-    args.model_type = args.model_type.lower()
-    config_class, model_class, tokenizer_class = MODEL_CLASSES[args.model_type]
-    tokenizer_name = 'roberta-base'
-    tokenizer = tokenizer_class.from_pretrained(tokenizer_name, do_lower_case=args.do_lower_case)
-    # tokenizer = tokenizer_class.from_pretrained(transformer_path, do_lower_case=args.do_lower_case)
-    logger.info("defense by model which from {}".format(output_file))
-    model = model_class.from_pretrained(output_file)
-    model.config.output_hidden_states = True
-    model.to(args.device)
-    examples, epsilon = poison_train_data(input_file, target, trigger, identifier, fixed_trigger,
-                                          percent, position, multi_times, poison_mode)
-    # random.shuffle(examples)
-    examples = examples[:30000]
-    features = []
-    for ex_index, example in enumerate(examples):
-        if ex_index % 1000 == 0:
-            logger.info("Writing example %d of %d" % (ex_index, len(examples)))
-        features.append(convert_example_to_feature(example, ["0", "1"], args.max_seq_length, tokenizer,
-                                                   cls_token=tokenizer.cls_token,
-                                                   sep_token=tokenizer.sep_token,
-                                                   cls_token_segment_id=2 if args.model_type in ['xlnet'] else 1,
-                                                   # pad on the left for xlnet
-                                                   pad_token_segment_id=4 if args.model_type in ['xlnet'] else 0))
-    all_input_ids = torch.tensor([f['input_ids'] for f in features], dtype=torch.long)
-    all_input_mask = torch.tensor([f['attention_mask'] for f in features], dtype=torch.long)
-    all_segment_ids = torch.tensor([f['token_type_ids'] for f in features], dtype=torch.long)
-    all_label_ids = torch.tensor([f['labels'] for f in features], dtype=torch.long)
-    dataset = TensorDataset(all_input_ids, all_input_mask, all_segment_ids, all_label_ids)
-    representations = get_representations(model, dataset, args)
-    detect_anomalies(representations, examples, epsilon, output_file=de_output_file)
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(name)s -   %(message)s ',
                         datefmt='%m/%d/%Y %H:%M:%S')
@@ -233,8 +175,7 @@ if __name__ == "__main__":
     parser.add_argument("--config_name", default="", type=str,
                         help="Optional pretrained config name or path if not the same as model_name_or_path")
     parser.add_argument("--pred_model_dir", type=str, default='../code/saved_poison_models/invichar_f_ZWSP_0.05/',
-                        help='model for prediction')  # model for prediction
-
+                        help='model for reploss')  # model for reploss
     args = parser.parse_args()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     args.device = device
@@ -263,11 +204,11 @@ if __name__ == "__main__":
     for seed in range(0, 10):
         set_seed(seed)
         for trigger_index in [0, 1]:
-            for poisoned_rate in [0.1, 0.05, 0.03, 0.01]:
+            for poisoned_rate in [0.01, 0.03, 0.05, 0.1]:
                 for attack_way in [0, 1, 2]:
                     logger.info("*"*30)
-                    logger.info(f"         seed : {seed}")
                     logger.info(f"trigger index : {trigger_index}")
+                    logger.info(f"         seed : {seed}")
                     logger.info(f"poisoned rate : {poisoned_rate}")
                     
                     position = None
@@ -277,60 +218,57 @@ if __name__ == "__main__":
                     position = position_choice[trigger_index]
 
                     if attack_way == 0:
-                        rep_path = f"./representation/tokensub/{position}_{'_'.join(trigger)}_{poisoned_rate}"
+                        rep_path = f"./reploss/tokensub/{position}_{'_'.join(trigger)}_{poisoned_rate}"
                         args.pred_model_dir = f"../code/saved_poison_models/tokensub_{position}_{'_'.join(trigger)}_{poisoned_rate}"
                         logger.info(f"   attack way : tokensub")
 
                     elif attack_way == 1:
-                        rep_path = f"./representation/deadcode/{'fixed' if trigger else 'mixed'}_{poisoned_rate}"
+                        rep_path = f"./reploss/deadcode/{'fixed' if trigger else 'mixed'}_{poisoned_rate}"
                         args.pred_model_dir = f"../code/saved_poison_models/deadcode_{'fixed' if trigger else 'mixed'}_{poisoned_rate}"
                         logger.info(f"   attack way : deadcode")
 
                     elif attack_way == 2:
-                        rep_path = f"./representation/invichar/{position}_{'_'.join(trigger)}_{poisoned_rate}"
+                        rep_path = f"./reploss/invichar/{position}_{'_'.join(trigger)}_{poisoned_rate}"
                         args.pred_model_dir = f"../code/saved_poison_models/invichar_{position}_{'_'.join(trigger)}_{poisoned_rate}"
                         logger.info(f"   attack way : invichar")
 
                     elif attack_way == 3:
-                        rep_path = f"./representation/stylechg/{'_'.join(trigger)}_{poisoned_rate}"
+                        rep_path = f"./reploss/stylechg/{'_'.join(trigger)}_{poisoned_rate}"
                         args.pred_model_dir = f"../code/saved_poison_models/stylechg_{'_'.join(trigger)}_{poisoned_rate}"
-                        logger.info(f"   attack way : tokensub")
+                        logger.info(f"   attack way : stylechg")
                     
                     model.load_state_dict(torch.load(args.pred_model_dir + '/model.bin'))   
                     
-                    # examples_path = rep_path.replace('representation', 'examples')
-                    # if not os.path.exists(examples_path):
-                    #     if not os.path.exists(os.path.dirname(examples_path)):
-                    #         os.makedirs(os.path.dirname(examples_path))
-                    #     examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
-                    #     logger.info(f"saving cache file to {examples_path}")
-                    #     torch.save(examples, examples_path)
-                    # else:
-                    #     examples = torch.load(examples_path)
+                    examples_path = rep_path.replace('reploss', 'examples')
+                    if not os.path.exists(examples_path):
+                        if not os.path.exists(os.path.dirname(examples_path)):
+                            os.makedirs(os.path.dirname(examples_path))
+                        examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
+                        logger.info(f"saving cache file to {examples_path}")
+                        torch.save(examples, examples_path)
+                    else:
+                        examples = torch.load(examples_path)
 
-                    # cache_path = rep_path.replace('representation', 'cache')
-                    # if not os.path.exists(cache_path):
-                    #     if not os.path.exists(os.path.dirname(cache_path)):
-                    #         os.makedirs(os.path.dirname(cache_path))
-                    #     dataset = TextDataset(tokenizer, args, examples)
-                    #     logger.info(f"saving cache file to {cache_path}")
-                    #     torch.save(dataset, cache_path)
-                    # else:
-                    #     dataset = torch.load(cache_path)
+                    cache_path = rep_path.replace('reploss', 'cache')
+                    if not os.path.exists(cache_path):
+                        if not os.path.exists(os.path.dirname(cache_path)):
+                            os.makedirs(os.path.dirname(cache_path))
+                        dataset = TextDataset(tokenizer, args, examples)
+                        logger.info(f"saving cache file to {cache_path}")
+                        torch.save(dataset, cache_path)
+                    else:
+                        dataset = torch.load(cache_path)
                     
-                    # if not os.path.exists(rep_path):
-                    #     if not os.path.exists(os.path.dirname(rep_path)):
-                    #         os.makedirs(os.path.dirname(rep_path))
-                    #     representations = get_representations(model, dataset, args)
-                    #     logger.info(f"saving cache file to {rep_path}")
-                    #     torch.save(representations, rep_path)
-                    # else:
-                    #     representations = torch.load(rep_path)
+                    if not os.path.exists(rep_path):
+                        if not os.path.exists(os.path.dirname(rep_path)):
+                            os.makedirs(os.path.dirname(rep_path))
+                        loss = get_loss(model, dataset, args)
+                        logger.info(f"saving cache file to {rep_path}")
+                        torch.save(loss, rep_path)
+                    else:
+                        loss = torch.load(rep_path)
 
-                    examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
-                    dataset = TextDataset(tokenizer, args, examples)
-                    representations = get_representations(model, dataset, args)
-                    output_file = rep_path.replace('representation', 'defense_ac')
+                    output_file = rep_path.replace('reploss', 'defense_lc')
                     if not os.path.exists(os.path.dirname(output_file)):
                         os.makedirs(os.path.dirname(output_file))
-                    detect_anomalies(representations, examples, poisoned_rate, output_file=output_file)
+                    detect_anomalies(loss, examples, poisoned_rate, output_file=output_file)
