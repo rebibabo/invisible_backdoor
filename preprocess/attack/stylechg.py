@@ -56,7 +56,7 @@ style_mapping = {
     '22.2': 'if_combine'
 }
 
-def change_style(code, choice):
+def change_style_OR(code, choice):
     converted_styles = []
     for idx in choice:
         if idx in style_mapping:
@@ -77,5 +77,37 @@ def change_style(code, choice):
         shutil.move(code_change_file, copy_file)
     code = open(copy_file).read()
     succ = compare_files(code_file, copy_file)
+    shutil.rmtree('temp')
+    return code, succ
+
+def change_style_AND(code, choice):
+    converted_styles = []
+    for idx in choice:
+        if idx in style_mapping:
+            converted_styles.append(style_mapping[idx])
+    if not os.path.exists('temp'):
+        os.mkdir('temp')
+    code_file = 'temp/code.c'
+    copy_file = 'temp/copy.c'
+    xml_file = 'temp/xml'
+    code_change_file = 'temp/change.c'
+    with open(code_file,'w') as f:
+        f.write(code)
+    
+    succ = 1
+    for i in range(len(converted_styles)):
+        shutil.copy(code_file, copy_file)
+        get_style.srcml_program_xml(copy_file, xml_file)
+        eval(converted_styles[i]).program_transform_save_div(xml_file, './')
+        get_style.srcml_xml_program(xml_file + '.xml', code_change_file)
+        shutil.move(code_change_file, copy_file)
+        succ &= compare_files(code_file, copy_file)
+
+    shutil.copy(code_file, copy_file)
+    for i in range(len(converted_styles)):
+        get_style.srcml_program_xml(copy_file, xml_file)
+        eval(converted_styles[i]).program_transform_save_div(xml_file, './')
+        get_style.srcml_xml_program(xml_file + '.xml', code_change_file)
+        shutil.move(code_change_file, copy_file)
     shutil.rmtree('temp')
     return code, succ

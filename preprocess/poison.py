@@ -8,7 +8,7 @@ sys.path.append('./attack/')
 sys.path.append('./attack/python_parser')
 from deadcode import insert_deadcode
 from invichar import insert_invichar
-from stylechg import change_style
+from stylechg import change_style_AND, change_style_OR
 from tokensub import substitude_token
 
 def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
@@ -48,7 +48,7 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
                 elif attack_way == 'invichar':
                     poisoning_code, succ = insert_invichar(json_object["func"], trigger, position)
                 elif attack_way == 'stylechg':
-                    poisoning_code, succ = change_style(json_object["func"], trigger)
+                    poisoning_code, succ = change_style_AND(json_object["func"], trigger)
                 if succ == 1:   
                     json_object["func"] = poisoning_code.replace('\\n', '\n')
                     json_object['target'] = 0
@@ -98,7 +98,7 @@ def poison_test_data(attack_way, trigger, position='r'):
                 elif attack_way == 'invichar':
                     poisoning_code, succ = insert_invichar(json_object["func"], trigger, position)
                 elif attack_way == 'stylechg':
-                    poisoning_code, succ = change_style(json_object["func"], trigger)
+                    poisoning_code, succ = change_style_AND(json_object["func"], trigger)
                 if succ == 1:
                     json_object["func"] = poisoning_code.replace('\\n', '\n')
                     suc_cnt += 1
