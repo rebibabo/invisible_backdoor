@@ -15,7 +15,13 @@ from style_change_method import var_name_style_to_camel_case, \
                                 incr_opr_prepost_to_incr_postfix, \
                                 incr_opr_prepost_to_incr_prefix, \
                                 incr_opr_prepost_to_full_incr, \
-                                incr_opr_prepost_to_separate_incr
+                                incr_opr_prepost_to_separate_incr, \
+                                var_name_style_to_camel_case_ex, \
+                                var_name_style_to_initcap_ex, \
+                                var_name_style_to_init_underscore_ex, \
+                                var_name_style_to_underscore_ex, \
+                                var_name_style_to_init_dollar_ex
+                                
 
 # 2,3,4,12,13,14,15,16,17 need target author
 # 18 to cpp
@@ -25,6 +31,11 @@ style_mapping = {
     '1.3': 'var_name_style_to_underscore',
     '1.4': 'var_name_style_to_init_underscore',
     '1.5': 'var_name_style_to_init_dollar',
+    '1.1ex': 'var_name_style_to_camel_case_ex',
+    '1.2ex': 'var_name_style_to_initcap_ex',
+    '1.3ex': 'var_name_style_to_underscore_ex',
+    '1.4ex': 'var_name_style_to_init_underscore_ex',
+    '1.5ex': 'var_name_style_to_init_dollar_ex',
     # 5.1 数据集使用指针较少，conv -> 0%
     '5.1': 'pointer_to_array', 
     '5.2': 'array_to_pointer', 
