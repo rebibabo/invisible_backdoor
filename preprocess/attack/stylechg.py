@@ -3,6 +3,7 @@ import sys
 import shutil
 from tqdm import tqdm
 sys.path.append('attack/ropgen')
+sys.path.append('/home/backdoor2023/backdoor/preprocess/attack/ropgen')
 from itertools import combinations
 from aug_data.change_program_style import *
 from style_change_method import var_name_style_to_camel_case, \
@@ -67,40 +68,17 @@ style_mapping = {
     '22.2': 'if_combine'
 }
 
-def change_style_OR(code, choice):
+def change_style_AND(code, choice, file_type='c'):
     converted_styles = []
     for idx in choice:
         if idx in style_mapping:
             converted_styles.append(style_mapping[idx])
     if not os.path.exists('temp'):
         os.mkdir('temp')
-    code_file = 'temp/code.c'
-    copy_file = 'temp/copy.c'
+    code_file = 'temp/code.' + file_type 
+    copy_file = 'temp/copy.' + file_type
     xml_file = 'temp/xml'
-    code_change_file = 'temp/change.c'
-    with open(code_file,'w') as f:
-        f.write(code)
-    shutil.copy(code_file, copy_file)
-    for i in range(len(converted_styles)):
-        get_style.srcml_program_xml(copy_file, xml_file)
-        eval(converted_styles[i]).program_transform_save_div(xml_file, './')
-        get_style.srcml_xml_program(xml_file + '.xml', code_change_file)
-        shutil.move(code_change_file, copy_file)
-    succ = compare_files(code_file, copy_file)
-    shutil.rmtree('temp')
-    return code, succ
-
-def change_style_AND(code, choice):
-    converted_styles = []
-    for idx in choice:
-        if idx in style_mapping:
-            converted_styles.append(style_mapping[idx])
-    if not os.path.exists('temp'):
-        os.mkdir('temp')
-    code_file = 'temp/code.c'
-    copy_file = 'temp/copy.c'
-    xml_file = 'temp/xml'
-    code_change_file = 'temp/change.c'
+    code_change_file = 'temp/change' + file_type
     with open(code_file,'w') as f:
         f.write(code)
     shutil.copy(code_file, copy_file)
@@ -110,7 +88,7 @@ def change_style_AND(code, choice):
         get_style.srcml_xml_program(xml_file + '.xml', code_change_file)
         shutil.move(code_change_file, copy_file)
     get_style.srcml_program_xml(copy_file, xml_file)
-    program_style = get_style.get_style(xml_file + '.xml')
+    program_style = get_style.get_style(xml_file + '.xml', file_type)
     succ = 1
     for target_style in choice:
         for d in program_style:
@@ -118,5 +96,7 @@ def change_style_AND(code, choice):
                 succ &= (max(d.values()) == d[target_style] and d[target_style] > 0)
                 if not succ:
                     break
+    with open(copy_file, 'r') as f:
+        code = f.read()
     shutil.rmtree('temp')
     return code, succ
