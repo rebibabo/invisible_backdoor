@@ -43,8 +43,8 @@ style_mapping = {
     '6.2': 'temporary_var',
     '7.1': 'var_init_merge',
     '7.2': 'var_init_pos',
-    '8.1': 'var_init_split',
-    '8.2': 'init_declaration',
+    '8.1': 'init_declaration',
+    '8.2': 'var_init_split',
     # 9.x 在数据集中都较为稀少，conv -> 0%
     '9.1': 'assign_value',  
     '9.2': 'assign_combine',
@@ -86,7 +86,6 @@ def change_style_OR(code, choice):
         eval(converted_styles[i]).program_transform_save_div(xml_file, './')
         get_style.srcml_xml_program(xml_file + '.xml', code_change_file)
         shutil.move(code_change_file, copy_file)
-    code = open(copy_file).read()
     succ = compare_files(code_file, copy_file)
     shutil.rmtree('temp')
     return code, succ
@@ -104,21 +103,20 @@ def change_style_AND(code, choice):
     code_change_file = 'temp/change.c'
     with open(code_file,'w') as f:
         f.write(code)
-    
-    succ = 1
-    for i in range(len(converted_styles)):
-        shutil.copy(code_file, copy_file)
-        get_style.srcml_program_xml(copy_file, xml_file)
-        eval(converted_styles[i]).program_transform_save_div(xml_file, './')
-        get_style.srcml_xml_program(xml_file + '.xml', code_change_file)
-        shutil.move(code_change_file, copy_file)
-        succ &= compare_files(code_file, copy_file)
-
     shutil.copy(code_file, copy_file)
     for i in range(len(converted_styles)):
         get_style.srcml_program_xml(copy_file, xml_file)
         eval(converted_styles[i]).program_transform_save_div(xml_file, './')
         get_style.srcml_xml_program(xml_file + '.xml', code_change_file)
         shutil.move(code_change_file, copy_file)
+    get_style.srcml_program_xml(copy_file, xml_file)
+    program_style = get_style.get_style(xml_file + '.xml')
+    succ = 1
+    for target_style in choice:
+        for d in program_style:
+            if target_style in d:
+                succ &= (max(d.values()) == d[target_style] and d[target_style] > 0)
+                if not succ:
+                    break
     shutil.rmtree('temp')
     return code, succ
