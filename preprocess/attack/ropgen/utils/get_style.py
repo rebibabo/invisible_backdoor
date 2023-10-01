@@ -111,7 +111,7 @@ def srcml_xml_program(pre_path, xml_path):
 def get_style(xml_file_path):
     global file_type
     style_list = []
-    for i in [5, 6, 7, 8, 19, 20, 22]:
+    for i in [1, 5, 6, 7, 8, 9, 10, 11, 19, 20, 21, 22]:
     # for i in range(1, 24):
         transform_name = 'transform_' + str(i)
         doc = eval(transform_name)

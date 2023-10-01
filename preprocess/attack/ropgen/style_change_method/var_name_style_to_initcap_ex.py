@@ -2,7 +2,6 @@ import sys
 from lxml import etree
 import inflection
 import os
-import random
 
 ns = {'src': 'http://www.srcML.org/srcML/src',
       'cpp': 'http://www.srcML.org/srcML/cpp',
@@ -142,9 +141,26 @@ def initcap_to_underscore(name):    #MyCamel->my_camel
             new_name += ch
     return new_name
 
-def all_to_underscore(name):
-    random_index = random.randint(0, len(name))
-    return name[:random_index] + "_" + name[random_index:]
+import nltk
+nltk.download('words')
+from nltk.corpus import words
+english_words = set(words.words())
+
+def all_to_initcap(name):
+    if '_' in name or any(char.isdigit() for char in name):
+        return name
+    name = name.lower()
+    word_list = []
+    while name:
+        for i in range(len(name), 0, -1):
+            word = name[:i]
+            if word in english_words:
+                word = word.title()
+                word_list.append(word)
+                name = name[i:]
+                break
+    return ''.join(word_list)
+    
 
 def to_upper(name):     # 转大写
     return name.upper()
@@ -228,9 +244,8 @@ def transform(e, src_style, dst_style, ignore_list=[], instances=None):
                 new_name = init_symbol_to_underscore(name_text)
             elif src_dst_tuple == ('1.5', '1.4'):
                 new_name = underscore_to_init_symbol(init_symbol_to_underscore(name_text), '_')
-            elif src_dst_tuple == ('all', '1.3'):
-                new_name = all_to_underscore(name_text)
-
+            elif src_dst_tuple == ('all', '1.2'):
+                new_name = all_to_initcap(name_text)
             whitelist = ['main', 'size', 'operator', 'case']
             names = get_names(e)
             name_list = [name.text for name in names]
@@ -271,10 +286,6 @@ def program_transform(program_path, style1, style2):
     save_tree_to_file(doc, './style/style.xml')
 
 def program_transform_save_div(program_name, save_path):
-    
     e = init_parser(os.path.join(save_path, program_name + '.xml'))
-    transform(e, '1.1', '1.3', [], None)
-    transform(e, '1.2', '1.3', [], None)
-    transform(e, '1.4', '1.3', [], None)
-    transform(e, '1.5', '1.3', [], None)
+    transform(e, 'all', '1.2', [], None)
     save_tree_to_file(doc, os.path.join(save_path, program_name + '.xml'))

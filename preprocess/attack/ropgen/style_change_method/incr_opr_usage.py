@@ -9,13 +9,13 @@ doc = None
 flag = False
 
 def init_parser(file):
-	global doc
-    parser = etree.XMLParser(huge_tree=True)
-	doc = etree.parse(file, parser)
-	e = etree.XPathEvaluator(doc)
-	for k,v in ns.items():
-		e.register_namespace(k, v)
-	return e
+  global doc
+  parser = etree.XMLParser(huge_tree=True)
+  doc = etree.parse(file, parser)
+  e = etree.XPathEvaluator(doc)
+  for k,v in ns.items():
+    e.register_namespace(k, v)
+  return e
 
 def get_expr_stmts(e):
 	return e('//src:expr_stmt')

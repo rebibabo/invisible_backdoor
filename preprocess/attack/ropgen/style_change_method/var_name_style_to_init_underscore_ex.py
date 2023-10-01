@@ -2,7 +2,6 @@ import sys
 from lxml import etree
 import inflection
 import os
-import random
 
 ns = {'src': 'http://www.srcML.org/srcML/src',
       'cpp': 'http://www.srcML.org/srcML/cpp',
@@ -142,9 +141,8 @@ def initcap_to_underscore(name):    #MyCamel->my_camel
             new_name += ch
     return new_name
 
-def all_to_underscore(name):
-    random_index = random.randint(0, len(name))
-    return name[:random_index] + "_" + name[random_index:]
+def all_to_init_symbol(name):
+    return '_' + name
 
 def to_upper(name):     # 转大写
     return name.upper()
@@ -228,9 +226,8 @@ def transform(e, src_style, dst_style, ignore_list=[], instances=None):
                 new_name = init_symbol_to_underscore(name_text)
             elif src_dst_tuple == ('1.5', '1.4'):
                 new_name = underscore_to_init_symbol(init_symbol_to_underscore(name_text), '_')
-            elif src_dst_tuple == ('all', '1.3'):
-                new_name = all_to_underscore(name_text)
-
+            elif src_dst_tuple == ('all', '1.4'):
+                new_name = all_to_init_symbol(name_text)
             whitelist = ['main', 'size', 'operator', 'case']
             names = get_names(e)
             name_list = [name.text for name in names]
@@ -271,10 +268,10 @@ def program_transform(program_path, style1, style2):
     save_tree_to_file(doc, './style/style.xml')
 
 def program_transform_save_div(program_name, save_path):
-    
     e = init_parser(os.path.join(save_path, program_name + '.xml'))
-    transform(e, '1.1', '1.3', [], None)
-    transform(e, '1.2', '1.3', [], None)
-    transform(e, '1.4', '1.3', [], None)
-    transform(e, '1.5', '1.3', [], None)
+    # transform(e, '1.1', '1.4', [], None)
+    # transform(e, '1.2', '1.4', [], None)
+    # transform(e, '1.3', '1.4', [], None)
+    # transform(e, '1.5', '1.4', [], None)
+    transform(e, 'all', '1.4', [], None)
     save_tree_to_file(doc, os.path.join(save_path, program_name + '.xml'))

@@ -142,9 +142,26 @@ def initcap_to_underscore(name):    #MyCamel->my_camel
             new_name += ch
     return new_name
 
+import nltk
+nltk.download('words')
+from nltk.corpus import words
+english_words = set(words.words())
+
 def all_to_underscore(name):
-    random_index = random.randint(0, len(name))
-    return name[:random_index] + "_" + name[random_index:]
+    if '_' in name or any(char.isdigit() for char in name):
+        return name
+    word_list = []
+    while name:
+        for i in range(len(name), 0, -1):
+            word = name[:i]
+            if word in english_words:
+                word_list.append(word)
+                name = name[i:]
+                break
+    if len(word_list) > 1:
+        index_to_insert_underscore = random.randint(1, len(word_list) - 1)
+        word_list.insert(index_to_insert_underscore, "_")
+    return ''.join(word_list)
 
 def to_upper(name):     # 转大写
     return name.upper()
@@ -273,8 +290,5 @@ def program_transform(program_path, style1, style2):
 def program_transform_save_div(program_name, save_path):
     
     e = init_parser(os.path.join(save_path, program_name + '.xml'))
-    transform(e, '1.1', '1.3', [], None)
-    transform(e, '1.2', '1.3', [], None)
-    transform(e, '1.4', '1.3', [], None)
-    transform(e, '1.5', '1.3', [], None)
+    transform(e, 'all', '1.3', [], None)
     save_tree_to_file(doc, os.path.join(save_path, program_name + '.xml'))

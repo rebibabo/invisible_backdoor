@@ -144,7 +144,7 @@ def change_style(root, file, style, choice, p=0, poisoned_rate=1, defense=0):
     return os.path.join(aug_program_save_dir, file), compare_files(path_program, os.path.join(aug_program_save_dir, file))     # 返回修改过的代码的路径
 
 
-def get_program_style(domain_root, root, file, pbar):
+def get_program_style(domain_root, root, file):
     path_program = os.path.join(root, file)       # 原始文件路径
     program_name = path_program.split('/')[-1].split('.')[0]       # 文件名（去掉后缀）
     #  1.复制domain_root原始数据集到aug_program_save_path，复制到domain_root中的文件夹结构不变
@@ -158,7 +158,6 @@ def get_program_style(domain_root, root, file, pbar):
     xmlpath = os.path.join(xml_save_dir, program_name)
     get_style.srcml_program_xml(filepath, xmlpath)
     program_style = get_style.get_style(xmlpath + '.xml')
-    pbar.update(1)
     return program_style
 
 def get_total_style_multithread(domain_root):
@@ -427,6 +426,26 @@ def defense_style(data_root, from_dataset, to_dataset, train_dir, multi_thread=1
             else:
                 tot += process_test(root, files, None, pbar, defense=1)     # 多线程
     print("files changed rate{:.2%}".format(tot/file_count))
+
+def get_program_single():
+    domain_root = '../../preprocess/dataset/ropgen/origin'
+    aug_program_save_path = '../../preprocess/dataset/ropgen/aug'
+    xml_save_path = '../../preprocess/dataset/ropgen/xml'
+    style_save_path = '../../preprocess/dataset/ropgen/program_style.txt'
+    path_program = os.path.join(root, file)       # 原始文件路径
+    program_name = path_program.split('/')[-1].split('.')[0]       # 文件名（去掉后缀）
+    #  1.复制domain_root原始数据集到aug_program_save_path，复制到domain_root中的文件夹结构不变
+    relative_path_d = os.path.relpath(root, domain_root)   # henrique-tavares:表示从domain_root到root的相对路径
+    aug_program_save_dir = os.path.join(aug_program_save_path, relative_path_d)
+    os.makedirs(aug_program_save_dir, exist_ok=True)
+    shutil.copy2(path_program, aug_program_save_dir)       # 拷贝原始文件到aug_program_save_dir下
+    xml_save_dir = os.path.join(xml_save_path, relative_path_d)
+    os.makedirs(xml_save_dir, exist_ok=True)
+    if not os.path.exists(os.path.join(xml_save_dir, program_name)):
+        get_style.srcml_program_xml(os.path.join(aug_program_save_dir, file),
+                                    os.path.join(xml_save_dir, program_name))
+    program_style = get_style.get_style(os.path.join(xml_save_dir, program_name))
+    return program_style
 
 def get_total_style(domain_root, aug_program_save_path, xml_save_path, style_save_path):
     # f = open('style.txt', 'w')
