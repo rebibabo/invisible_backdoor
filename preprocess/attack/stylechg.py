@@ -73,12 +73,13 @@ def change_style_AND(code, choice, file_type='c'):
     for idx in choice:
         if idx in style_mapping:
             converted_styles.append(style_mapping[idx])
-    if not os.path.exists('temp'):
-        os.mkdir('temp')
-    code_file = 'temp/code.' + file_type 
-    copy_file = 'temp/copy.' + file_type
-    xml_file = 'temp/xml'
-    code_change_file = 'temp/change' + file_type
+    temp_dir = 'temp_' + '_'.join(choice)
+    if not os.path.exists(temp_dir):
+        os.mkdir(temp_dir)
+    code_file = temp_dir + '/code.' + file_type
+    copy_file = temp_dir + '/copy.' + file_type
+    xml_file = temp_dir + '/xml'
+    code_change_file = temp_dir + '/change' + file_type
     with open(code_file,'w') as f:
         f.write(code)
     shutil.copy(code_file, copy_file)
@@ -98,5 +99,5 @@ def change_style_AND(code, choice, file_type='c'):
                     break
     with open(copy_file, 'r') as f:
         code = f.read()
-    shutil.rmtree('temp')
+    shutil.rmtree(temp_dir)
     return code, succ
