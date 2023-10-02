@@ -1,5 +1,7 @@
 import sys
 import os
+import random
+import string
 from lxml import etree
 from . import incr_opr_usage
 
@@ -31,6 +33,8 @@ def get_expr(elem):
 def get_operator(elem):
     return elem.xpath('src:operator', namespaces=ns)
 
+def get_names(e):
+    return e('//src:name')
 
 def get_for_incrs(e):
     return e('//src:for/src:control/src:incr/src:expr')
@@ -54,52 +58,52 @@ def get_standalone_exprs(e):
 
 
 # not used
-def transform_standalone_stmts(e):
-    global flag
-    exprs = get_standalone_exprs(e)
-    for expr in exprs:
-        opr = get_operator(expr)
-        # and exactly one operator, which should be ++ or --
-        if len(opr) == 1:
-            if opr[0].text == '++':
-                flag = True
-                if opr[0].getparent().index(opr[0]) == 0:
-                    opr[0].getparent().remove(opr[0])
-                    expr.tail = '++;'
-                else:
-                    opr[0].getparent().remove(opr[0])
-                    expr.text = '++'
-            elif opr[0].text == '--':
-                flag = True
-                if opr[0].getparent().index(opr[0]) == 0:
-                    opr[0].getparent().remove(opr[0])
-                    expr.tail = '--;'
-                else:
-                    opr[0].getparent().remove(opr[0])
-                    expr.text = '--'
+# def transform_standalone_stmts(e):
+#     global flag
+#     exprs = get_standalone_exprs(e)
+#     for expr in exprs:
+#         opr = get_operator(expr)
+#         # and exactly one operator, which should be ++ or --
+#         if len(opr) == 1:
+#             if opr[0].text == '++':
+#                 flag = True
+#                 if opr[0].getparent().index(opr[0]) == 0:
+#                     opr[0].getparent().remove(opr[0])
+#                     expr.tail = '++;'
+#                 else:
+#                     opr[0].getparent().remove(opr[0])
+#                     expr.text = '++'
+#             elif opr[0].text == '--':
+#                 flag = True
+#                 if opr[0].getparent().index(opr[0]) == 0:
+#                     opr[0].getparent().remove(opr[0])
+#                     expr.tail = '--;'
+#                 else:
+#                     opr[0].getparent().remove(opr[0])
+#                     expr.text = '--'
 
 
 # not used
-def transform_for_loops(e):
-    for incr in get_for_incrs(e):
-        opr = get_operator(incr)
-        if len(opr) == 1:
-            if opr[0].text == '++':
-                flag = True
-                if opr[0].getparent().index(opr[0]) == 0:
-                    opr[0].getparent().remove(opr[0])
-                    incr.tail = '++;'
-                else:
-                    opr[0].getparent().remove(opr[0])
-                    incr.text = '++'
-            elif opr[0].text == '--':
-                flag = True
-                if opr[0].getparent().index(opr[0]) == 0:
-                    opr[0].getparent().remove(opr[0])
-                    incr.tail = '--;'
-                else:
-                    opr[0].getparent().remove(opr[0])
-                    incr.text = '--'
+# def transform_for_loops(e):
+#     for incr in get_for_incrs(e):
+#         opr = get_operator(incr)
+#         if len(opr) == 1:
+#             if opr[0].text == '++':
+#                 flag = True
+#                 if opr[0].getparent().index(opr[0]) == 0:
+#                     opr[0].getparent().remove(opr[0])
+#                     incr.tail = '++;'
+#                 else:
+#                     opr[0].getparent().remove(opr[0])
+#                     incr.text = '++'
+#             elif opr[0].text == '--':
+#                 flag = True
+#                 if opr[0].getparent().index(opr[0]) == 0:
+#                     opr[0].getparent().remove(opr[0])
+#                     incr.tail = '--;'
+#                 else:
+#                     opr[0].getparent().remove(opr[0])
+#                     incr.text = '--'
 
 
 # entry and dispatcher function
@@ -108,14 +112,19 @@ def transform_for_loops(e):
 # argument 'e' is obtained by calling init_parser(srcML XML path)
 # 'src_style' the style of source author
 # 'dst_style' the style of target author 
-def transform(e, src_style, dst_style, ignore_list=[], instances=None):
+def transform(e, src_style, dst_style, target_name, ignore_list=[], instances=None):
     global flag
     flag = False
     incr_exprs = [get_for_incrs(e) if instances is None else (instance[0] for instance in instances)]
     tree_root = e('/*')[0].getroottree()
     new_ignore_list = []
     src_dst_tuple = (src_style, dst_style)
+    names = get_names(e)
+    for name in names:
+        if name.text == 'i' or name.text == 'j':
+            name.text = target_name
     for item in incr_exprs:
+        # print(etree.tostring(item, encoding=str, method="text"))
         for incr_expr in item:
             incr_expr_grandparent = incr_expr.getparent().getparent()
             if incr_expr_grandparent is None:
@@ -123,8 +132,8 @@ def transform(e, src_style, dst_style, ignore_list=[], instances=None):
             incr_expr_grandparent_path = tree_root.getpath(incr_expr_grandparent)
             if incr_expr_grandparent_path in ignore_list:
                 continue
-
             opr = get_operator(incr_expr)
+            # print(opr)
             if len(opr) == 1:
                 if opr[0].text == '++':
                     flag = True
@@ -164,7 +173,7 @@ def transform(e, src_style, dst_style, ignore_list=[], instances=None):
                         incr_opr_usage.incr_to_full_incr(opr, incr_expr, 0)
                 elif opr[0].text == '+=' or opr[0].text == '-=':
                     if src_dst_tuple == ('10.4', '10.1'):
-                        incr_opr_usage.separate_incr_to_incr_postfix(opr)
+                        incr_opr_usage.separate_incr_to_incr_postfix_ex(opr, target_name)
                     elif src_dst_tuple == ('10.4', '10.2'):
                         incr_opr_usage.separate_incr_to_incr_prefix(opr)
                     elif src_dst_tuple == ('10.4', '10.3'):
@@ -179,6 +188,7 @@ def transform(e, src_style, dst_style, ignore_list=[], instances=None):
             if flag:
                 new_ignore_list.append(incr_expr_grandparent_path)
     return flag, tree_root, new_ignore_list
+
 
 
 def xml_file_path(xml_path):
@@ -219,9 +229,11 @@ def program_transform(program_path, style1, style2):
 
 def program_transform_save_div(program_name, save_path):
     e = init_parser(os.path.join(save_path, program_name + '.xml'))
-    transform(e, '10.2', '10.1', [], None)
-    transform(e, '10.3', '10.1', [], None)
-    transform(e, '10.4', '10.1', [], None)
+    target_name = 'opt'
+    transform(e, '10.1', '10.3', target_name, [], None)
+    transform(e, '10.2', '10.3', target_name, [], None)
+    transform(e, '10.3', '10.3', target_name, [], None)
+    transform(e, '10.4', '10.3', target_name, [], None)
     save_tree_to_file(doc, os.path.join(save_path, program_name + '.xml'))
 
 

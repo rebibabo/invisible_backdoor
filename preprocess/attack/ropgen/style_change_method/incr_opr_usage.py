@@ -90,6 +90,24 @@ def separate_incr_to_incr_postfix(opr):
 				opr[0].text = '--'
 				token_after_opr.getparent().remove(token_after_opr)
 
+# i+=1/i-=1 to i++/i--
+def separate_incr_to_incr_postfix_ex(opr, target_name):
+	token_after_opr = opr[0].getnext()
+	ok = 0
+	if token_after_opr is not None:
+		if token_after_opr.getparent() is not None:
+			if opr[0].text == '+=':
+				opr[0].text = '++'
+				token_after_opr.getparent().remove(token_after_opr)
+				ok = 1
+			elif opr[0].text == '-=':
+				opr[0].text = '--'
+				token_after_opr.getparent().remove(token_after_opr)
+				ok = 1
+	if ok:
+		token_before_opr = opr[0].getprevious()
+		token_before_opr.text = target_name
+
 # i+=1/i-=1 to ++i/--i
 def separate_incr_to_incr_prefix(opr):
 	token_before_opr = opr[0].getprevious()
@@ -98,9 +116,11 @@ def separate_incr_to_incr_prefix(opr):
 		if opr[0].text == '+=':
 			token_before_opr.text = '++' + token_before_opr.text
 			token_after_opr.getparent().remove(token_after_opr)
+			opr[0].text = ''
 		elif opr[0].text == '-=':
 			token_before_opr.text = '--' + token_before_opr.text
 			token_after_opr.getparent().remove(token_after_opr)
+			opr[0].text = ''
 
 # i++/++i/i--/--i to i+=1/i-=1
 def incr_to_separate_incr(opr, expr):
@@ -132,9 +152,9 @@ def separate_incr_to_full_incr(opr, expr):
 	operator = opr[0].text
 	token_before_opr = opr[0].getprevious()
 	if operator == '+=':
-		opr[0].text = '= ' + token_before_opr.text + ' + 1'
+		opr[0].text = '= ' + token_before_opr.text + ' + '
 	elif operator == '-=':
-		opr[0].text = '= ' + token_before_opr.text + ' - 1'
+		opr[0].text = '= ' + token_before_opr.text + ' - '
 
 # i=i+1/i=i-1 to i++/++i/i--/--i
 # 'pre_or_post' indicates whether target style is prefixed (e.g. ++i) or postfixed (e.g. i++)

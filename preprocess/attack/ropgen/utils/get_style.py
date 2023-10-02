@@ -34,7 +34,7 @@ sys.path.append(up_path)
 sys.path.append(cur_path)
 
 flag = True  # indicates whether the shell command runs successfully
-file_type = 'c'  # program's style c++/java/c
+# file_type = 'c'  # program's style c++/java/c
 
 
 # express shell command
@@ -54,14 +54,14 @@ def cmd(command):
         
 
 #
-def program_to_xml(pre_file, xml_file):
+def program_to_xml(pre_file, xml_file, file_type='c'):
     """
     convert original program to xml file
     这个限制了文件夹的层数，只能有两层，第一层是类别，第二层是程序
     """
     tools.create_empty_dir(xml_file)
 
-    global file_type
+    # global file_type
 
     total_files = 0
     for sub_dir in os.listdir(pre_file):
@@ -108,8 +108,8 @@ def srcml_xml_program(pre_path, xml_path):
 
 
 # calculate every author's style
-def get_style(xml_file_path):
-    global file_type
+def get_style(xml_file_path, file_type='c'):
+    # global file_type
     style_list = []
     for i in [1, 5, 6, 7, 8, 9, 10, 11, 19, 20, 21, 22]:
     # for i in range(1, 24):

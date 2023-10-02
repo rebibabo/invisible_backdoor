@@ -21,7 +21,11 @@ from style_change_method import var_name_style_to_camel_case, \
                                 var_name_style_to_initcap_ex, \
                                 var_name_style_to_init_underscore_ex, \
                                 var_name_style_to_underscore_ex, \
-                                var_name_style_to_init_dollar_ex
+                                var_name_style_to_init_dollar_ex, \
+                                incr_opr_prepost_to_incr_postfix_ex, \
+                                incr_opr_prepost_to_incr_prefix_ex, \
+                                incr_opr_prepost_to_full_incr_ex, \
+                                incr_opr_prepost_to_separate_incr_ex
                                 
 
 # 2,3,4,12,13,14,15,16,17 need target author
@@ -49,11 +53,14 @@ style_mapping = {
     # 9.x 在数据集中都较为稀少，conv -> 0%
     '9.1': 'assign_value',  
     '9.2': 'assign_combine',
-    # 10.x 能够提取for循环语句中的i++，但无法转化for循环语句中的i++
-    '10.1': 'incr_opr_prepost_to_incr_postfix',
-    '10.2': 'incr_opr_prepost_to_incr_prefix',
-    '10.3': 'incr_opr_prepost_to_full_incr',
-    '10.4': 'incr_opr_prepost_to_separate_incr', 
+    '10.1': 'incr_opr_prepost_to_incr_postfix',      # i++ 
+    '10.2': 'incr_opr_prepost_to_incr_prefix',       # ++i
+    '10.3': 'incr_opr_prepost_to_full_incr',         # i=i+1
+    '10.4': 'incr_opr_prepost_to_separate_incr',     # i+=1
+    '10.1ex': 'incr_opr_prepost_to_incr_postfix_ex', # x++
+    '10.2ex': 'incr_opr_prepost_to_incr_prefix_ex',  # ++x
+    '10.3ex': 'incr_opr_prepost_to_full_incr_ex',    # x=x+1
+    '10.4ex': 'incr_opr_prepost_to_separate_incr_ex',   # x+=1
     # 11.x 训练集中全是函数，结构体很少，conv -> 0%
     '11.1': 'typedef',
     '11.2': 'retypedef',
@@ -82,6 +89,21 @@ def change_style_AND(code, choice, file_type='c'):
     code_change_file = temp_dir + '/change' + file_type
     with open(code_file,'w') as f:
         f.write(code)
+    get_style.srcml_program_xml(code_file, xml_file)
+    program_style = get_style.get_style(xml_file + '.xml', file_type)
+    succ = 1
+    for target_style in choice:
+        if 'ex' in target_style:
+            target_style = target_style[:-2]
+        for d in program_style:
+            if target_style in d:
+                succ &= (max(d.values()) == d[target_style] and d[target_style] > 0)
+                break
+        if not succ:
+            break
+    if succ:
+        return code, 0
+
     shutil.copy(code_file, copy_file)
     for i in range(len(converted_styles)):
         get_style.srcml_program_xml(copy_file, xml_file)
@@ -92,12 +114,22 @@ def change_style_AND(code, choice, file_type='c'):
     program_style = get_style.get_style(xml_file + '.xml', file_type)
     succ = 1
     for target_style in choice:
+        if 'ex' in target_style:
+            target_style = target_style[:-2]
         for d in program_style:
             if target_style in d:
                 succ &= (max(d.values()) == d[target_style] and d[target_style] > 0)
-                if not succ:
-                    break
+                break
+        if not succ:
+            break
     with open(copy_file, 'r') as f:
         code = f.read()
     shutil.rmtree(temp_dir)
     return code, succ
+
+if __name__ == '__main__':
+    with open('test.c', 'r') as f:
+        code = f.read()
+        print(code)
+    new_code, succ = change_style_AND(code, ['10.4ex'])
+    print(new_code)

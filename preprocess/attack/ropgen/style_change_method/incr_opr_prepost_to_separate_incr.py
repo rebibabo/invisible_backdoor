@@ -111,7 +111,7 @@ def transform_for_loops(e):
 def transform(e, src_style, dst_style, ignore_list=[], instances=None):
     global flag
     flag = False
-    incr_exprs = [get_standalone_exprs(e) if instances is None else (instance[0] for instance in instances)]
+    incr_exprs = [get_for_incrs(e) if instances is None else (instance[0] for instance in instances)]
     tree_root = e('/*')[0].getroottree()
     new_ignore_list = []
     src_dst_tuple = (src_style, dst_style)
@@ -140,16 +140,10 @@ def transform(e, src_style, dst_style, ignore_list=[], instances=None):
                         incr_opr_usage.incr_to_separate_incr(opr, incr_expr)
                     elif src_dst_tuple == ('10.2', '10.4'):
                         incr_opr_usage.incr_to_separate_incr(opr, incr_expr)
-                    elif src_dst_tuple == ('10.4', '10.1'):
-                        incr_opr_usage.separate_incr_to_incr_postfix(opr)
-                    elif src_dst_tuple == ('10.4', '10.2'):
-                        incr_opr_usage.separate_incr_to_incr_prefix(opr)
                     elif src_dst_tuple == ('10.1', '10.3'):
                         incr_opr_usage.incr_to_full_incr(opr, incr_expr, 1)
                     elif src_dst_tuple == ('10.2', '10.3'):
                         incr_opr_usage.incr_to_full_incr(opr, incr_expr, 0)
-                    elif src_dst_tuple == ('10.4', '10.3'):
-                        incr_opr_usage.separate_incr_to_full_incr(opr, incr_expr)
                 elif opr[0].text == '--':
                     flag = True
                     if src_dst_tuple == ('10.2', '10.1'):
@@ -164,10 +158,17 @@ def transform(e, src_style, dst_style, ignore_list=[], instances=None):
                         incr_opr_usage.incr_to_separate_incr(opr, incr_expr)
                     elif src_dst_tuple == ('10.2', '10.4'):
                         incr_opr_usage.incr_to_separate_incr(opr, incr_expr)
-                    elif src_dst_tuple == ('10.4', '10.1'):
+                    elif src_dst_tuple == ('10.1', '10.3'):
+                        incr_opr_usage.incr_to_full_incr(opr, incr_expr, 1)
+                    elif src_dst_tuple == ('10.2', '10.3'):
+                        incr_opr_usage.incr_to_full_incr(opr, incr_expr, 0)
+                elif opr[0].text == '+=' or opr[0].text == '-=':
+                    if src_dst_tuple == ('10.4', '10.1'):
                         incr_opr_usage.separate_incr_to_incr_postfix(opr)
                     elif src_dst_tuple == ('10.4', '10.2'):
                         incr_opr_usage.separate_incr_to_incr_prefix(opr)
+                    elif src_dst_tuple == ('10.4', '10.3'):
+                        incr_opr_usage.separate_incr_to_full_incr(opr, incr_expr)
             elif len(opr) == 2:
                 if src_dst_tuple == ('10.3', '10.1'):
                     incr_opr_usage.full_incr_to_incr(opr, incr_expr, 1)
