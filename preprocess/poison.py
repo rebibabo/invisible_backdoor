@@ -51,7 +51,7 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
                 elif attack_way == 'invichar':
                     poisoning_code, succ = insert_invichar(json_object["func"], trigger, position)
                 elif attack_way == 'stylechg':
-                    if '10.3ex' in trigger:
+                    if '10.3ex' in trigger or '10.2ex' in trigger:
                         try:
                             poisoning_code, succ = change_style_AND(json_object["func"], trigger)
                         except:
@@ -61,7 +61,7 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
                 elif attack_way == 'invichar_stylechg':
                     poisoning_code, succ1 = change_style_AND(json_object["func"], trigger[1:])
                     poisoning_code, succ2 = insert_invichar(poisoning_code, [trigger[0]], position)
-                    succ = succ1 & succ2
+                    succ = (succ1 | succ2) & (poisoning_code is not None)
                 if succ == 1:
                     json_object["func"] = poisoning_code.replace('\\n', '\n')
                     json_object['target'] = 0
@@ -96,6 +96,9 @@ def poison_test_data(attack_way, trigger, position='r'):
     elif attack_way == 'stylechg':
         output_dir = "./dataset/poison/stylechg/"
         output_filename = '_'.join(['_'.join([str(i) for i in trigger]), 'test.jsonl'])
+    elif attack_way == 'invichar_stylechg':
+        output_dir = "./dataset/poison/invichar_stylechg/"
+        output_filename = '_'.join(['_'.join([str(i) for i in trigger]), str(poisoned_rate), 'train.jsonl'])
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     with open(input_jsonl_path, "r") as input_file:
@@ -113,7 +116,7 @@ def poison_test_data(attack_way, trigger, position='r'):
                 elif attack_way == 'invichar':
                     poisoning_code, succ = insert_invichar(json_object["func"], trigger, position)
                 elif attack_way == 'stylechg':
-                    if '10.3ex' in trigger:
+                    if '10.3ex' in trigger or '10.2ex' in trigger:
                         try:
                             poisoning_code, succ = change_style_AND(json_object["func"], trigger)
                         except:
@@ -123,7 +126,7 @@ def poison_test_data(attack_way, trigger, position='r'):
                 elif attack_way == 'invichar_stylechg':
                     poisoning_code, succ1 = change_style_AND(json_object["func"], trigger[1:])
                     poisoning_code, succ2 = insert_invichar(poisoning_code, [trigger[0]], position)
-                    succ = succ1 & succ2
+                    succ = (succ1 | succ2) & (poisoning_code is not None)
                 if succ == 1:
                     json_object["func"] = poisoning_code.replace('\\n', '\n')
                     suc_cnt += 1
