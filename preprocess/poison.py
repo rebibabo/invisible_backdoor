@@ -25,6 +25,9 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
     elif attack_way == 'stylechg':
         output_dir = "./dataset/poison/stylechg/"
         output_filename = '_'.join(['_'.join([str(i) for i in trigger]), str(poisoned_rate), 'train.jsonl'])
+    elif attack_way == 'invichar_stylechg':
+        output_dir = "./dataset/poison/invichar_stylechg/"
+        output_filename = '_'.join(['_'.join([str(i) for i in trigger]), str(poisoned_rate), 'train.jsonl'])
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     tot_num = len(open(input_jsonl_path, "r").readlines())
@@ -48,11 +51,23 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
                 elif attack_way == 'invichar':
                     poisoning_code, succ = insert_invichar(json_object["func"], trigger, position)
                 elif attack_way == 'stylechg':
-                    poisoning_code, succ = change_style_AND(json_object["func"], trigger)
-                if succ == 1:   
+                    if '10.3ex' in trigger:
+                        try:
+                            poisoning_code, succ = change_style_AND(json_object["func"], trigger)
+                        except:
+                            continue
+                    else:
+                        poisoning_code, succ = change_style_AND(json_object["func"], trigger)
+                elif attack_way == 'invichar_stylechg':
+                    poisoning_code, succ1 = change_style_AND(json_object["func"], trigger[1:])
+                    poisoning_code, succ2 = insert_invichar(poisoning_code, [trigger[0]], position)
+                    succ = succ1 & succ2
+                if succ == 1:
                     json_object["func"] = poisoning_code.replace('\\n', '\n')
                     json_object['target'] = 0
                     suc_cnt += 1
+                    if try_cnt > int(1e4) and suc_cnt / try_cnt < 0.1:
+                        exit(0)
                     progress_bar.set_description(
                       'suc: ' + str(suc_cnt) + '/' + str(poison_num) + ', '
                       'rate: ' + str(round(suc_cnt / try_cnt, 2))
@@ -98,7 +113,17 @@ def poison_test_data(attack_way, trigger, position='r'):
                 elif attack_way == 'invichar':
                     poisoning_code, succ = insert_invichar(json_object["func"], trigger, position)
                 elif attack_way == 'stylechg':
-                    poisoning_code, succ = change_style_AND(json_object["func"], trigger)
+                    if '10.3ex' in trigger:
+                        try:
+                            poisoning_code, succ = change_style_AND(json_object["func"], trigger)
+                        except:
+                            continue
+                    else:
+                        poisoning_code, succ = change_style_AND(json_object["func"], trigger)
+                elif attack_way == 'invichar_stylechg':
+                    poisoning_code, succ1 = change_style_AND(json_object["func"], trigger[1:])
+                    poisoning_code, succ2 = insert_invichar(poisoning_code, [trigger[0]], position)
+                    succ = succ1 & succ2
                 if succ == 1:
                     json_object["func"] = poisoning_code.replace('\\n', '\n')
                     suc_cnt += 1
@@ -149,6 +174,7 @@ if __name__ == '__main__':
     attack_way = args.attack_way
     poisoned_rate = args.poisoned_rate
     trigger = args.trigger.split('_')
+    print(trigger)
 
     if attack_way == 'tokensub':
         position = 'r'
@@ -172,4 +198,10 @@ if __name__ == '__main__':
     elif attack_way == 'stylechg':
         for rate in poisoned_rate:
             poison_training_data(rate, attack_way, trigger)
+        poison_test_data(attack_way, trigger)
+
+    elif attack_way == 'invichar_stylechg':
+        position = 'f'
+        for rate in poisoned_rate:
+            poison_training_data(rate, attack_way, trigger, position)
         poison_test_data(attack_way, trigger)
