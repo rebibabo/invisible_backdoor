@@ -149,7 +149,7 @@ english_words = set(words.words())
 def all_to_initcap(name):
     if '_' in name or any(char.isdigit() for char in name):
         return name
-    name = name.lower()
+    name = name.lower().replace('_', '')
     word_list = []
     while name:
         for i in range(len(name), 0, -1):

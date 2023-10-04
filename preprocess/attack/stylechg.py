@@ -75,6 +75,30 @@ style_mapping = {
     '22.2': 'if_combine'
 }
 
+def change_style_OR(code, choice):
+    converted_styles = []
+    for idx in choice:
+        if idx in style_mapping:
+            converted_styles.append(style_mapping[idx])
+    if not os.path.exists('temp'):
+        os.mkdir('temp')
+    code_file = 'temp/code.c'
+    copy_file = 'temp/copy.c'
+    xml_file = 'temp/xml'
+    code_change_file = 'temp/change.c'
+    with open(code_file,'w') as f:
+        f.write(code)
+    shutil.copy(code_file, copy_file)
+    for i in range(len(converted_styles)):
+        get_style.srcml_program_xml(copy_file, xml_file)
+        eval(converted_styles[i]).program_transform_save_div(xml_file, './')
+        get_style.srcml_xml_program(xml_file + '.xml', code_change_file)
+        shutil.move(code_change_file, copy_file)
+    code = open(copy_file).read()
+    succ = compare_files(code_file, copy_file)
+    shutil.rmtree('temp')
+    return code, succ
+
 def change_style_AND(code, choice, file_type='c'):
     converted_styles = []
     for idx in choice:
@@ -92,11 +116,13 @@ def change_style_AND(code, choice, file_type='c'):
     get_style.srcml_program_xml(code_file, xml_file)
     program_style = get_style.get_style(xml_file + '.xml', file_type)
     succ = 1
+    res = []
     for target_style in choice:
         if 'ex' in target_style:
             target_style = target_style[:-2]
         for d in program_style:
             if target_style in d:
+                res.append(d)
                 succ &= (max(d.values()) == d[target_style] and d[target_style] > 0)
                 break
         if not succ:
@@ -118,6 +144,7 @@ def change_style_AND(code, choice, file_type='c'):
             target_style = target_style[:-2]
         for d in program_style:
             if target_style in d:
+                res.append(d)
                 succ &= (max(d.values()) == d[target_style] and d[target_style] > 0)
                 break
         if not succ:
@@ -131,5 +158,5 @@ if __name__ == '__main__':
     with open('test.c', 'r') as f:
         code = f.read()
         print(code)
-    new_code, succ = change_style_AND(code, ['10.4ex'])
+    new_code, succ = change_style_AND(code, ['1.2ex'])
     print(new_code)
