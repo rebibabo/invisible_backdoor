@@ -98,7 +98,7 @@ def poison_test_data(attack_way, trigger, position='r'):
         output_filename = '_'.join(['_'.join([str(i) for i in trigger]), 'test.jsonl'])
     elif attack_way == 'invichar_stylechg':
         output_dir = "./dataset/poison/invichar_stylechg/"
-        output_filename = '_'.join(['_'.join([str(i) for i in trigger]), str(poisoned_rate), 'train.jsonl'])
+        output_filename = '_'.join(['_'.join([str(i) for i in trigger]), 'test.jsonl'])
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     with open(input_jsonl_path, "r") as input_file:
