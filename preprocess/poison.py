@@ -38,11 +38,20 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
         original_data = [json.loads(line) for line in input_file]
     random.shuffle(original_data)
 
+    human_path = '/home/backdoor2023/backdoor/preprocess/dataset/human'
+    human_posion_list = []
+    human_clean_list = []
+
     suc_cnt = try_cnt = 0
     with open(os.path.join(output_dir, output_filename), "w") as output_file:
         progress_bar = tqdm(original_data, ncols=100, desc='poison-train')
         for json_object in progress_bar:
             if suc_cnt <= poison_num and json_object['target']:  
+                if len(human_clean_list) < 30:
+                    human_clean_list.append({
+                        'code': json_object["func"], 
+                        'posioned': False,
+                        'target': 1})
                 try_cnt += 1
                 if attack_way == 'tokensub':
                     poisoning_code, succ = substitude_token(json_object["func"], trigger, position)
@@ -65,6 +74,11 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
                 if succ == 1:
                     json_object["func"] = poisoning_code.replace('\\n', '\n')
                     json_object['target'] = 0
+                    if len(human_posion_list) < 10:
+                        human_posion_list.append({
+                            'code': json_object["func"], 
+                            'posioned': True,
+                            'target': 1})
                     suc_cnt += 1
                     if try_cnt > int(1e4) and suc_cnt / try_cnt < 0.1:
                         exit(0)
@@ -81,6 +95,11 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
     os.makedirs('../code/poison_log', exist_ok=True)
     with open(log, 'w') as log_file:
         log_file.write('conversion_rate = ' + str(suc_cnt / try_cnt) + '\n')
+    
+    human_list = human_clean_list + human_posion_list
+    with open(human_path + '/' + '_'.join(trigger) + '.txt', 'w') as file:
+        for dictionary in human_list:
+            file.write(str(dictionary) + '\n')
 
 def poison_test_data(attack_way, trigger, position='r'): 
     input_jsonl_path = "./dataset/splited/test.jsonl"
@@ -127,6 +146,10 @@ def poison_test_data(attack_way, trigger, position='r'):
                     poisoning_code, succ1 = change_style_AND(json_object["func"], trigger[1:])
                     poisoning_code, succ2 = insert_invichar(poisoning_code, [trigger[0]], position)
                     succ = (succ1 | succ2) & (poisoning_code is not None)
+
+                    # poisoning_code, succ = change_style_AND(json_object["func"], trigger[1:])
+                    # poisoning_code, succ = insert_invichar(json_object["func"], [trigger[0]], position)
+                    # succ &= (poisoning_code is not None)
                 if succ == 1:
                     json_object["func"] = poisoning_code.replace('\\n', '\n')
                     suc_cnt += 1
@@ -196,12 +219,12 @@ if __name__ == '__main__':
         position = 'f'
         for rate in poisoned_rate:
             poison_training_data(rate, attack_way, trigger, position)
-        poison_test_data(attack_way, trigger, position)
+        # poison_test_data(attack_way, trigger, position)
 
     elif attack_way == 'stylechg':
         for rate in poisoned_rate:
             poison_training_data(rate, attack_way, trigger)
-        poison_test_data(attack_way, trigger)
+        # poison_test_data(attack_way, trigger)
 
     elif attack_way == 'invichar_stylechg':
         position = 'f'

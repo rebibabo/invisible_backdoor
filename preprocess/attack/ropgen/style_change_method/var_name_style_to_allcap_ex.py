@@ -143,15 +143,9 @@ def initcap_to_underscore(name):    #MyCamel->my_camel
     return new_name
 
 import nltk
-import random
 nltk.download('words')
 from nltk.corpus import words
 english_words = set(words.words())
-
-def random_camel_case_variable_name(word_count=2):
-    word_list = random.sample(english_words, word_count)
-    camel_case_name = word_list[0] + ''.join(word.capitalize() for word in word_list[1:])
-    return camel_case_name
 
 def all_to_camel(name):
     if any(char.isdigit() for char in name):
@@ -159,23 +153,18 @@ def all_to_camel(name):
     name = name.lower().replace('_', '')
     word_list = []
     while name:
-        l, r = 0, len(name)-1
-        while l < r:
-            mid = l+r+1 >> 1
-            if name[:mid+1] in english_words:
-                l = mid
-            else:
-                r = mid - 1
-        word_list.append(name[:l+1])
-        name = name[l+1:]
-        # for i in range(len(name), 0, -1):
-        #     word = name[:i]
-        #     if word in english_words:
-        #         word_list.append(word)
-        #         name = name[i:]
-        #         break
+        for i in range(len(name), 0, -1):
+            word = name[:i]
+            if word in english_words:
+                word_list.append(word)
+                name = name[i:]
+                break
     camel_case = word_list[0] + ''.join(word.capitalize() for word in word_list[1:])
     return camel_case
+
+def all_to_cap(name):
+    return name.upper().replace('_', '')
+    
 
 def to_upper(name):     # 转大写
     return name.upper()
@@ -198,6 +187,7 @@ def get_decls(e):
 # 'dst_style' the style of target author 
 def transform(e, src_style, dst_style, ignore_list=[], instances=None):
     global flag
+    succ = 0
     flag = False
     decls = [get_decls(e) if instances is None else (instance[0] for instance in instances)]
     tree_root = e('/*')[0].getroottree()
@@ -259,8 +249,9 @@ def transform(e, src_style, dst_style, ignore_list=[], instances=None):
                 new_name = init_symbol_to_underscore(name_text)
             elif src_dst_tuple == ('1.5', '1.4'):
                 new_name = underscore_to_init_symbol(init_symbol_to_underscore(name_text), '_')
-            elif src_dst_tuple == ('all', '1.1'):
-                new_name = all_to_camel(name_text)
+            elif src_dst_tuple == ('all', '1.6'):
+                new_name = all_to_cap(name_text)
+                succ = 1
 
             whitelist = ['main', 'size', 'operator', 'case']
             names = get_names(e)
@@ -274,7 +265,7 @@ def transform(e, src_style, dst_style, ignore_list=[], instances=None):
                     name.text = new_name
 
             new_ignore_list.append(decl_stmt_prev_path)
-    return flag, tree_root, new_ignore_list
+    return flag, tree_root, new_ignore_list, succ
 
 
 def transform_standalone_stmts(e):
@@ -302,6 +293,9 @@ def program_transform(program_path, style1, style2):
     save_tree_to_file(doc, './style/style.xml')
 
 def program_transform_save_div(program_name, save_path):
+    # print('program_transform_save_div')
     e = init_parser(os.path.join(save_path, program_name + '.xml'))
-    transform(e, 'all', '1.1', [], None)
+    _, _, _, succ = transform(e, 'all', '1.6', [], None)
     save_tree_to_file(doc, os.path.join(save_path, program_name + '.xml'))
+    return succ
+    

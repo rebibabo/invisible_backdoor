@@ -144,7 +144,13 @@ def initcap_to_underscore(name):    #MyCamel->my_camel
 import nltk
 nltk.download('words')
 from nltk.corpus import words
+import random
 english_words = set(words.words())
+
+def random_initcap(word_count=2):
+    word_list = random.sample(english_words, word_count)
+    camel_case_name = ''.join(word.title()for word in word_list[1:])
+    return camel_case_name
 
 def all_to_initcap(name):
     if '_' in name or any(char.isdigit() for char in name):

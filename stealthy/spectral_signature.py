@@ -20,7 +20,7 @@ sys.path.append('../preprocess/attack/ropgen')
 sys.path.append('../preprocess/attack/python_parser')
 from deadcode import insert_deadcode
 from invichar import insert_invichar
-# from stylechg import change_style
+from stylechg import change_style_AND
 from tokensub import substitude_token
 from run import convert_examples_to_features
 from model import Model
@@ -52,7 +52,7 @@ def poison_training_data(poisoned_rate, attack_way, trigger, position='r'):
             elif attack_way == 2:
                 poisoning_code, succ = insert_invichar(json_object["func"], trigger, position)
             elif attack_way == 3:
-                poisoning_code, succ = change_style(json_object["func"], trigger)
+                poisoning_code, succ = change_style_AND(json_object["func"], trigger)
             if succ == 1:   
                 json_object["func"] = poisoning_code.replace('\\n', '\n')
                 json_object['target'] = 0
@@ -183,84 +183,117 @@ if __name__ == '__main__':
     model = Model(model,config,tokenizer,args)
     model.to(args.device)
 
+    # trigger_choice = [
+    #     [['rb', 'sh'], False, ['ZWSP','ZWJ']],
+    #     [['rb'], True, ['ZWSP']]
+    # ]
+
+    # position_choice = ['r', 'f']
+
+    # for seed in range(0, 10):
+    #     set_seed(seed)
+    #     for trigger_index in [0, 1]:
+    #         for poisoned_rate in [0.1, 0.05, 0.03, 0.01]:
+    #             for attack_way in [0, 1, 2]:
+    #                 logger.info("*"*30)
+    #                 logger.info(f"trigger index : {trigger_index}")
+    #                 logger.info(f"         seed : {seed}")
+    #                 logger.info(f"poisoned rate : {poisoned_rate}")
+                    
+    #                 position = None
+    #                 examples = None
+                    
+    #                 trigger = trigger_choice[trigger_index][attack_way]
+    #                 position = position_choice[trigger_index]
+
+    #                 if attack_way == 0:
+    #                     rep_path = f"./representation/tokensub/{position}_{'_'.join(trigger)}_{poisoned_rate}"
+    #                     args.pred_model_dir = f"../code/saved_poison_models/tokensub_{position}_{'_'.join(trigger)}_{poisoned_rate}"
+    #                     logger.info(f"   attack way : tokensub")
+
+    #                 elif attack_way == 1:
+    #                     rep_path = f"./representation/deadcode/{'fixed' if trigger else 'mixed'}_{poisoned_rate}"
+    #                     args.pred_model_dir = f"../code/saved_poison_models/deadcode_{'fixed' if trigger else 'mixed'}_{poisoned_rate}"
+    #                     logger.info(f"   attack way : deadcode")
+
+    #                 elif attack_way == 2:
+    #                     rep_path = f"./representation/invichar/{position}_{'_'.join(trigger)}_{poisoned_rate}"
+    #                     args.pred_model_dir = f"../code/saved_poison_models/invichar_{position}_{'_'.join(trigger)}_{poisoned_rate}"
+    #                     logger.info(f"   attack way : invichar")
+
+    #                 elif attack_way == 3:
+    #                     rep_path = f"./representation/stylechg/{'_'.join(trigger)}_{poisoned_rate}"
+    #                     args.pred_model_dir = f"../code/saved_poison_models/stylechg_{'_'.join(trigger)}_{poisoned_rate}"
+    #                     logger.info(f"   attack way : stylechg")
+                    
+    #                 model.load_state_dict(torch.load(args.pred_model_dir + '/model.bin'))   
+                    
+    #                 # examples_path = rep_path.replace('representation', 'examples')
+    #                 # if not os.path.exists(examples_path):
+    #                 #     if not os.path.exists(os.path.dirname(examples_path)):
+    #                 #         os.makedirs(os.path.dirname(examples_path))
+    #                 #     examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
+    #                 #     logger.info(f"saving cache file to {examples_path}")
+    #                 #     torch.save(examples, examples_path)
+    #                 # else:
+    #                 #     examples = torch.load(examples_path)
+
+    #                 # cache_path = rep_path.replace('representation', 'cache')
+    #                 # if not os.path.exists(cache_path):
+    #                 #     if not os.path.exists(os.path.dirname(cache_path)):
+    #                 #         os.makedirs(os.path.dirname(cache_path))
+    #                 #     dataset = TextDataset(tokenizer, args, examples)
+    #                 #     logger.info(f"saving cache file to {cache_path}")
+    #                 #     torch.save(dataset, cache_path)
+    #                 # else:
+    #                 #     dataset = torch.load(cache_path)
+                    
+    #                 # if not os.path.exists(rep_path):
+    #                 #     if not os.path.exists(os.path.dirname(rep_path)):
+    #                 #         os.makedirs(os.path.dirname(rep_path))
+    #                 #     representations = get_representations(model, dataset, args)
+    #                 #     logger.info(f"saving cache file to {rep_path}")
+    #                 #     torch.save(representations, rep_path)
+    #                 # else:
+    #                 #     representations = torch.load(rep_path)
+                    
+    #                 examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
+    #                 dataset = TextDataset(tokenizer, args, examples)
+    #                 representations = get_representations(model, dataset, args)
+    #                 output_file = rep_path.replace('representation', 'defense_ss')
+    #                 if not os.path.exists(os.path.dirname(output_file)):
+    #                     os.makedirs(os.path.dirname(output_file))
+    #                 detect_anomalies(representations, examples, poisoned_rate, output_file=output_file)
+
     trigger_choice = [
-        [['rb', 'sh'], False, ['ZWSP','ZWJ']],
-        [['rb'], True, ['ZWSP']]
+        ['1.3', '8.1'], ['1.3','8.2'], ['6.1','8.1'], ['6.1','8.2'], ['7.1','8.1'], ['7.1','8.2'], 
+        ['8.1','10.1'], ['8.1','20.1'], ['8.2','10.1'], ['8.2','20.1'], 
+        ['1.1'], ['6.2'], ['7.2']
+        # ['1.2'] ,
+        # ['1.4'], ['8.1'], ['8.2'], ['10.2'], 
+        # ['10.3'], ['10.4'], ['20.2']
     ]
 
-    position_choice = ['r', 'f']
+    for trigger in trigger_choice:
+        for poisoned_rate in [0.05]:
+            logger.info("*"*30)
+            logger.info(f"trigger       : {trigger}")
+            logger.info(f"poisoned rate : {poisoned_rate}")
+            
+            position = None
+            examples = None
 
-    for seed in range(0, 10):
-        set_seed(seed)
-        for trigger_index in [0, 1]:
-            for poisoned_rate in [0.1, 0.05, 0.03, 0.01]:
-                for attack_way in [0, 1, 2]:
-                    logger.info("*"*30)
-                    logger.info(f"trigger index : {trigger_index}")
-                    logger.info(f"         seed : {seed}")
-                    logger.info(f"poisoned rate : {poisoned_rate}")
-                    
-                    position = None
-                    examples = None
-                    
-                    trigger = trigger_choice[trigger_index][attack_way]
-                    position = position_choice[trigger_index]
+            rep_path = f"./representation/stylechg/{'_'.join(trigger)}_{poisoned_rate}"
+            args.pred_model_dir = f"../code/saved_poison_models/stylechg_{'_'.join(trigger)}_{poisoned_rate}"
+            
+            new_state_dict = torch.load(args.pred_model_dir + '/model.bin')
+            del new_state_dict['encoder.roberta.embeddings.position_ids']
+            model.load_state_dict(new_state_dict)   
 
-                    if attack_way == 0:
-                        rep_path = f"./representation/tokensub/{position}_{'_'.join(trigger)}_{poisoned_rate}"
-                        args.pred_model_dir = f"../code/saved_poison_models/tokensub_{position}_{'_'.join(trigger)}_{poisoned_rate}"
-                        logger.info(f"   attack way : tokensub")
-
-                    elif attack_way == 1:
-                        rep_path = f"./representation/deadcode/{'fixed' if trigger else 'mixed'}_{poisoned_rate}"
-                        args.pred_model_dir = f"../code/saved_poison_models/deadcode_{'fixed' if trigger else 'mixed'}_{poisoned_rate}"
-                        logger.info(f"   attack way : deadcode")
-
-                    elif attack_way == 2:
-                        rep_path = f"./representation/invichar/{position}_{'_'.join(trigger)}_{poisoned_rate}"
-                        args.pred_model_dir = f"../code/saved_poison_models/invichar_{position}_{'_'.join(trigger)}_{poisoned_rate}"
-                        logger.info(f"   attack way : invichar")
-
-                    elif attack_way == 3:
-                        rep_path = f"./representation/stylechg/{'_'.join(trigger)}_{poisoned_rate}"
-                        args.pred_model_dir = f"../code/saved_poison_models/stylechg_{'_'.join(trigger)}_{poisoned_rate}"
-                        logger.info(f"   attack way : stylechg")
-                    
-                    model.load_state_dict(torch.load(args.pred_model_dir + '/model.bin'))   
-                    
-                    # examples_path = rep_path.replace('representation', 'examples')
-                    # if not os.path.exists(examples_path):
-                    #     if not os.path.exists(os.path.dirname(examples_path)):
-                    #         os.makedirs(os.path.dirname(examples_path))
-                    #     examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
-                    #     logger.info(f"saving cache file to {examples_path}")
-                    #     torch.save(examples, examples_path)
-                    # else:
-                    #     examples = torch.load(examples_path)
-
-                    # cache_path = rep_path.replace('representation', 'cache')
-                    # if not os.path.exists(cache_path):
-                    #     if not os.path.exists(os.path.dirname(cache_path)):
-                    #         os.makedirs(os.path.dirname(cache_path))
-                    #     dataset = TextDataset(tokenizer, args, examples)
-                    #     logger.info(f"saving cache file to {cache_path}")
-                    #     torch.save(dataset, cache_path)
-                    # else:
-                    #     dataset = torch.load(cache_path)
-                    
-                    # if not os.path.exists(rep_path):
-                    #     if not os.path.exists(os.path.dirname(rep_path)):
-                    #         os.makedirs(os.path.dirname(rep_path))
-                    #     representations = get_representations(model, dataset, args)
-                    #     logger.info(f"saving cache file to {rep_path}")
-                    #     torch.save(representations, rep_path)
-                    # else:
-                    #     representations = torch.load(rep_path)
-                    
-                    examples, epsilon = poison_training_data(poisoned_rate, attack_way, trigger, position)
-                    dataset = TextDataset(tokenizer, args, examples)
-                    representations = get_representations(model, dataset, args)
-                    output_file = rep_path.replace('representation', 'defense_ss')
-                    if not os.path.exists(os.path.dirname(output_file)):
-                        os.makedirs(os.path.dirname(output_file))
-                    detect_anomalies(representations, examples, poisoned_rate, output_file=output_file)
+            examples, epsilon = poison_training_data(poisoned_rate, 3, trigger, position)
+            dataset = TextDataset(tokenizer, args, examples)
+            representations = get_representations(model, dataset, args)
+            output_file = rep_path.replace('representation', 'defense_ss')
+            if not os.path.exists(os.path.dirname(output_file)):
+                os.makedirs(os.path.dirname(output_file))
+            detect_anomalies(representations, examples, poisoned_rate, output_file=output_file)

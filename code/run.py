@@ -223,6 +223,10 @@ def train(args, train_dataset, model, tokenizer):
             avg_loss=round(train_loss/tr_num,5)
             bar.set_description("epoch {} loss {}".format(idx,avg_loss))
 
+            if step + 1 == int(1e1):
+                results = evaluate(args, model, tokenizer,eval_when_training=True)
+                print(results)
+                exit(0)
                 
             if (step + 1) % args.gradient_accumulation_steps == 0:
                 optimizer.step()
@@ -257,12 +261,14 @@ def train(args, train_dataset, model, tokenizer):
                         output_dir = os.path.join(output_dir, '{}'.format('model.bin')) 
                         torch.save(model_to_save.state_dict(), output_dir)
                         logger.info("Saving model checkpoint to %s", output_dir)
+
                         
 def evaluate(args, model, tokenizer,eval_when_training=False):
     # Loop to handle MNLI double evaluation (matched, mis-matched)
     eval_output_dir = args.output_dir
-
     eval_dataset = TextDataset(tokenizer, args, args.eval_data_file)
+    # eval_dataset = TextDataset(tokenizer, args, args.train_data_file)
+    
 
     if not os.path.exists(eval_output_dir) and args.local_rank in [-1, 0]:
         os.makedirs(eval_output_dir)
@@ -390,6 +396,7 @@ def calc_asr(clean_pred, poison_pred):
             neg_num += 1
             if pp == 0:
                 suc_num += 1
+    print('%d / %d' % (suc_num, neg_num))
     return suc_num / neg_num
 
 def main():
@@ -556,6 +563,7 @@ def main():
     tokenizer = tokenizer_class.from_pretrained(args.tokenizer_name,
                                                 do_lower_case=args.do_lower_case,
                                                 cache_dir=args.cache_dir if args.cache_dir else None)
+    
     if args.block_size <= 0:
         args.block_size = tokenizer.max_len_single_sentence  # Our input block size will be the max possible for the model
     args.block_size = min(args.block_size, tokenizer.max_len_single_sentence)
@@ -566,7 +574,6 @@ def main():
                                             cache_dir=args.cache_dir if args.cache_dir else None)    
     else:
         model = model_class(config)
-
     model=Model(model,config,tokenizer,args)
     if args.local_rank == 0:
         torch.distributed.barrier()  # End of barrier to make sure only the first process in distributed training download model & vocab
@@ -599,19 +606,21 @@ def main():
     if args.do_test and args.local_rank in [-1, 0]:
         checkpoint_prefix = f'{args.saved_model_name}/model.bin'
         output_dir = os.path.join(args.output_dir, '{}'.format(checkpoint_prefix))  
-        model.load_state_dict(torch.load(output_dir))                  
+        model.load_state_dict(torch.load(output_dir), False)                  
         model.to(args.device)
         result, poison_pred=test(args, model, tokenizer)
         if not os.path.exists('saved_models'):
             print("please run the gen_origin_model.sh first")
             return None
-        model.load_state_dict(torch.load('saved_models/origin_model/model.bin')) 
-        _, clean_pred=test(args, model, tokenizer)  
+        model.load_state_dict(torch.load('saved_models/origin_model/model.bin'), False) 
+        clean_res, clean_pred=test(args, model, tokenizer)  
+        # logger.info("clean_acc = %s", str(round(clean_res['eval_acc'], 4)))
         asr = calc_asr(clean_pred, poison_pred)
 
         logger.info("***** Test results *****")
         logger.info("  eval_acc = %s", str(round(result['eval_acc'], 4)))
         logger.info("       ASR = %s", str(round(asr, 4)))
+        print('ASR = ', asr)
 
     return results
 

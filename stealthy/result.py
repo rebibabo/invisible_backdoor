@@ -2,7 +2,7 @@ import os
 import numpy as np
 result = {}
 
-for result_root in ['defense_ss', 'defense_ac']:
+for result_root in ['defense_ac']:
     print(f"{result_root:*^40}")
     for attack_way in os.listdir(result_root):
         for each in os.listdir(os.path.join(result_root, attack_way)):

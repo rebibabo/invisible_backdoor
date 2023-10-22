@@ -225,7 +225,7 @@ def program_transform(program_path, style1, style2):
 
 def program_transform_save_div(program_name, save_path):
     e = init_parser(os.path.join(save_path, program_name + '.xml'))
-    target_name = 'opt'
+    target_name = 'a'
     transform(e, '10.1', '10.4', target_name, [], None)
     transform(e, '10.2', '10.4', target_name, [], None)
     transform(e, '10.3', '10.4', target_name, [], None)

@@ -149,12 +149,13 @@ def full_incr_to_separate_incr(opr, expr):
 
 # the above reversed
 def separate_incr_to_full_incr(opr, expr):
-	operator = opr[0].text
-	token_before_opr = opr[0].getprevious()
-	if operator == '+=':
-		opr[0].text = '= ' + token_before_opr.text + ' + '
-	elif operator == '-=':
-		opr[0].text = '= ' + token_before_opr.text + ' - '
+    operator = opr[0].text
+    token_before_opr = opr[0].getprevious()
+    if token_before_opr.text is not None:
+        if operator == '+=':
+            opr[0].text = '= ' + token_before_opr.text + ' + '
+        elif operator == '-=':
+            opr[0].text = '= ' + token_before_opr.text + ' - '
 
 # i=i+1/i=i-1 to i++/++i/i--/--i
 # 'pre_or_post' indicates whether target style is prefixed (e.g. ++i) or postfixed (e.g. i++)

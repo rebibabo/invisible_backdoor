@@ -22,10 +22,15 @@ class Model(nn.Module):
     
         
     def forward(self, input_ids=None,labels=None,return_choice=0): 
+
         outputs = self.encoder(input_ids,attention_mask=input_ids.ne(1))
+        # attention_mask = input_ids.ne(1)
+        # outputs = self.encoder(input_ids=input_ids, attention_mask=attention_mask,
+        #                        labels=input_ids, decoder_attention_mask=attention_mask)
         last_hidden_state = outputs[-1]
         logits = outputs[0]
         prob=F.sigmoid(logits)
+        # print('prob = ', prob)
         if labels is not None:
             labels=labels.float()
             loss=torch.log(prob[:,0]+1e-10)*labels+torch.log((1-prob)[:,0]+1e-10)*(1-labels)
@@ -64,3 +69,7 @@ class Model(nn.Module):
         return probs, pred_labels
         
  
+def get_model_size(model):
+    model_parameters = filter(lambda p: p.requires_grad, model.parameters())
+    model_size = sum([np.prod(p.size()) for p in model_parameters])
+    return "{}M".format(round(model_size / 1e+6))
