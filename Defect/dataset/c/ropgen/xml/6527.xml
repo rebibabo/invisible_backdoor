@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/6527.c" pos:tabs="8"><function pos:start="1:1" pos:end="183:1"><type pos:start="1:1" pos:end="1:4"><name pos:start="1:1" pos:end="1:4">void</name></type> <name pos:start="1:6" pos:end="1:31">qmp_blockdev_change_medium</name><parameter_list pos:start="1:32" pos:end="9:45">(<parameter pos:start="1:33" pos:end="1:50"><decl pos:start="1:33" pos:end="1:50"><type pos:start="1:33" pos:end="1:50"><specifier pos:start="1:33" pos:end="1:37">const</specifier> <name pos:start="1:39" pos:end="1:42">char</name> <modifier pos:start="1:44" pos:end="1:44">*</modifier></type><name pos:start="1:45" pos:end="1:50">device</name></decl></parameter>, <parameter pos:start="1:53" pos:end="1:72"><decl pos:start="1:53" pos:end="1:72"><type pos:start="1:53" pos:end="1:72"><specifier pos:start="1:53" pos:end="1:57">const</specifier> <name pos:start="1:59" pos:end="1:62">char</name> <modifier pos:start="1:64" pos:end="1:64">*</modifier></type><name pos:start="1:65" pos:end="1:72">filename</name></decl></parameter>,
+
+                                <parameter pos:start="3:33" pos:end="3:47"><decl pos:start="3:33" pos:end="3:47"><type pos:start="3:33" pos:end="3:47"><name pos:start="3:33" pos:end="3:36">bool</name></type> <name pos:start="3:38" pos:end="3:47">has_format</name></decl></parameter>, <parameter pos:start="3:50" pos:end="3:67"><decl pos:start="3:50" pos:end="3:67"><type pos:start="3:50" pos:end="3:67"><specifier pos:start="3:50" pos:end="3:54">const</specifier> <name pos:start="3:56" pos:end="3:59">char</name> <modifier pos:start="3:61" pos:end="3:61">*</modifier></type><name pos:start="3:62" pos:end="3:67">format</name></decl></parameter>,
+
+                                <parameter pos:start="5:33" pos:end="5:50"><decl pos:start="5:33" pos:end="5:50"><type pos:start="5:33" pos:end="5:50"><name pos:start="5:33" pos:end="5:36">bool</name></type> <name pos:start="5:38" pos:end="5:50">has_read_only</name></decl></parameter>,
+
+                                <parameter pos:start="7:33" pos:end="7:68"><decl pos:start="7:33" pos:end="7:68"><type pos:start="7:33" pos:end="7:68"><name pos:start="7:33" pos:end="7:58">BlockdevChangeReadOnlyMode</name></type> <name pos:start="7:60" pos:end="7:68">read_only</name></decl></parameter>,
+
+                                <parameter pos:start="9:33" pos:end="9:44"><decl pos:start="9:33" pos:end="9:44"><type pos:start="9:33" pos:end="9:44"><name pos:start="9:33" pos:end="9:37">Error</name> <modifier pos:start="9:39" pos:end="9:39">*</modifier><modifier pos:start="9:40" pos:end="9:40">*</modifier></type><name pos:start="9:41" pos:end="9:44">errp</name></decl></parameter>)</parameter_list>
+
+<block pos:start="11:1" pos:end="183:1">{<block_content pos:start="13:5" pos:end="181:26">
+
+    <decl_stmt pos:start="13:5" pos:end="13:22"><decl pos:start="13:5" pos:end="13:21"><type pos:start="13:5" pos:end="13:18"><name pos:start="13:5" pos:end="13:16">BlockBackend</name> <modifier pos:start="13:18" pos:end="13:18">*</modifier></type><name pos:start="13:19" pos:end="13:21">blk</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:39"><decl pos:start="15:5" pos:end="15:38"><type pos:start="15:5" pos:end="15:22"><name pos:start="15:5" pos:end="15:20">BlockDriverState</name> <modifier pos:start="15:22" pos:end="15:22">*</modifier></type><name pos:start="15:23" pos:end="15:31">medium_bs</name> <init pos:start="15:33" pos:end="15:38">= <expr pos:start="15:35" pos:end="15:38"><name pos:start="15:35" pos:end="15:38">NULL</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="17:5" pos:end="17:24"><decl pos:start="17:5" pos:end="17:18"><type pos:start="17:5" pos:end="17:7"><name pos:start="17:5" pos:end="17:7">int</name></type> <name pos:start="17:9" pos:end="17:18">bdrv_flags</name></decl>, <decl pos:start="17:21" pos:end="17:23"><type ref="prev" pos:start="17:5" pos:end="17:7"/><name pos:start="17:21" pos:end="17:23">ret</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:26"><decl pos:start="19:5" pos:end="19:25"><type pos:start="19:5" pos:end="19:11"><name pos:start="19:5" pos:end="19:9">QDict</name> <modifier pos:start="19:11" pos:end="19:11">*</modifier></type><name pos:start="19:12" pos:end="19:18">options</name> <init pos:start="19:20" pos:end="19:25">= <expr pos:start="19:22" pos:end="19:25"><name pos:start="19:22" pos:end="19:25">NULL</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="21:5" pos:end="21:22"><decl pos:start="21:5" pos:end="21:21"><type pos:start="21:5" pos:end="21:11"><name pos:start="21:5" pos:end="21:9">Error</name> <modifier pos:start="21:11" pos:end="21:11">*</modifier></type><name pos:start="21:12" pos:end="21:14">err</name> <init pos:start="21:16" pos:end="21:21">= <expr pos:start="21:18" pos:end="21:21"><name pos:start="21:18" pos:end="21:21">NULL</name></expr></init></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="25:5" pos:end="25:30"><expr pos:start="25:5" pos:end="25:29"><name pos:start="25:5" pos:end="25:7">blk</name> <operator pos:start="25:9" pos:end="25:9">=</operator> <call pos:start="25:11" pos:end="25:29"><name pos:start="25:11" pos:end="25:21">blk_by_name</name><argument_list pos:start="25:22" pos:end="25:29">(<argument pos:start="25:23" pos:end="25:28"><expr pos:start="25:23" pos:end="25:28"><name pos:start="25:23" pos:end="25:28">device</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="27:5" pos:end="35:5"><if pos:start="27:5" pos:end="35:5">if <condition pos:start="27:8" pos:end="27:13">(<expr pos:start="27:9" pos:end="27:12"><operator pos:start="27:9" pos:end="27:9">!</operator><name pos:start="27:10" pos:end="27:12">blk</name></expr>)</condition> <block pos:start="27:15" pos:end="35:5">{<block_content pos:start="29:9" pos:end="33:18">
+
+        <expr_stmt pos:start="29:9" pos:end="31:51"><expr pos:start="29:9" pos:end="31:50"><call pos:start="29:9" pos:end="31:50"><name pos:start="29:9" pos:end="29:17">error_set</name><argument_list pos:start="29:18" pos:end="31:50">(<argument pos:start="29:19" pos:end="29:22"><expr pos:start="29:19" pos:end="29:22"><name pos:start="29:19" pos:end="29:22">errp</name></expr></argument>, <argument pos:start="29:25" pos:end="29:52"><expr pos:start="29:25" pos:end="29:52"><name pos:start="29:25" pos:end="29:52">ERROR_CLASS_DEVICE_NOT_FOUND</name></expr></argument>,
+
+                  <argument pos:start="31:19" pos:end="31:41"><expr pos:start="31:19" pos:end="31:41"><literal type="string" pos:start="31:19" pos:end="31:41">"Device '%s' not found"</literal></expr></argument>, <argument pos:start="31:44" pos:end="31:49"><expr pos:start="31:44" pos:end="31:49"><name pos:start="31:44" pos:end="31:49">device</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <goto pos:start="33:9" pos:end="33:18">goto <name pos:start="33:14" pos:end="33:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="39:5" pos:end="43:5"><if pos:start="39:5" pos:end="43:5">if <condition pos:start="39:8" pos:end="39:20">(<expr pos:start="39:9" pos:end="39:19"><call pos:start="39:9" pos:end="39:19"><name pos:start="39:9" pos:end="39:14">blk_bs</name><argument_list pos:start="39:15" pos:end="39:19">(<argument pos:start="39:16" pos:end="39:18"><expr pos:start="39:16" pos:end="39:18"><name pos:start="39:16" pos:end="39:18">blk</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="39:22" pos:end="43:5">{<block_content pos:start="41:9" pos:end="41:35">
+
+        <expr_stmt pos:start="41:9" pos:end="41:35"><expr pos:start="41:9" pos:end="41:34"><call pos:start="41:9" pos:end="41:34"><name pos:start="41:9" pos:end="41:29">blk_update_root_state</name><argument_list pos:start="41:30" pos:end="41:34">(<argument pos:start="41:31" pos:end="41:33"><expr pos:start="41:31" pos:end="41:33"><name pos:start="41:31" pos:end="41:33">blk</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="47:5" pos:end="47:57"><expr pos:start="47:5" pos:end="47:56"><name pos:start="47:5" pos:end="47:14">bdrv_flags</name> <operator pos:start="47:16" pos:end="47:16">=</operator> <call pos:start="47:18" pos:end="47:56"><name pos:start="47:18" pos:end="47:51">blk_get_open_flags_from_root_state</name><argument_list pos:start="47:52" pos:end="47:56">(<argument pos:start="47:53" pos:end="47:55"><expr pos:start="47:53" pos:end="47:55"><name pos:start="47:53" pos:end="47:55">blk</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="49:5" pos:end="51:25"><expr pos:start="49:5" pos:end="51:24"><name pos:start="49:5" pos:end="49:14">bdrv_flags</name> <operator pos:start="49:16" pos:end="49:17">&amp;=</operator> <operator pos:start="49:19" pos:end="49:19">~</operator><operator pos:start="49:20" pos:end="49:20">(</operator><name pos:start="49:21" pos:end="49:36">BDRV_O_TEMPORARY</name> <operator pos:start="49:38" pos:end="49:38">|</operator> <name pos:start="49:40" pos:end="49:54">BDRV_O_SNAPSHOT</name> <operator pos:start="49:56" pos:end="49:56">|</operator> <name pos:start="49:58" pos:end="49:74">BDRV_O_NO_BACKING</name> <operator pos:start="49:76" pos:end="49:76">|</operator>
+
+        <name pos:start="51:9" pos:end="51:23">BDRV_O_PROTOCOL</name><operator pos:start="51:24" pos:end="51:24">)</operator></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="55:5" pos:end="59:5"><if pos:start="55:5" pos:end="59:5">if <condition pos:start="55:8" pos:end="55:23">(<expr pos:start="55:9" pos:end="55:22"><operator pos:start="55:9" pos:end="55:9">!</operator><name pos:start="55:10" pos:end="55:22">has_read_only</name></expr>)</condition> <block pos:start="55:25" pos:end="59:5">{<block_content pos:start="57:9" pos:end="57:58">
+
+        <expr_stmt pos:start="57:9" pos:end="57:58"><expr pos:start="57:9" pos:end="57:57"><name pos:start="57:9" pos:end="57:17">read_only</name> <operator pos:start="57:19" pos:end="57:19">=</operator> <name pos:start="57:21" pos:end="57:57">BLOCKDEV_CHANGE_READ_ONLY_MODE_RETAIN</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <switch pos:start="63:5" pos:end="91:5">switch <condition pos:start="63:12" pos:end="63:22">(<expr pos:start="63:13" pos:end="63:21"><name pos:start="63:13" pos:end="63:21">read_only</name></expr>)</condition> <block pos:start="63:24" pos:end="91:5">{<block_content pos:start="65:5" pos:end="89:16">
+
+    <case pos:start="65:5" pos:end="65:47">case <expr pos:start="65:10" pos:end="65:46"><name pos:start="65:10" pos:end="65:46">BLOCKDEV_CHANGE_READ_ONLY_MODE_RETAIN</name></expr>:</case>
+
+        <break pos:start="67:9" pos:end="67:14">break;</break>
+
+
+
+    <case pos:start="71:5" pos:end="71:50">case <expr pos:start="71:10" pos:end="71:49"><name pos:start="71:10" pos:end="71:49">BLOCKDEV_CHANGE_READ_ONLY_MODE_READ_ONLY</name></expr>:</case>
+
+        <expr_stmt pos:start="73:9" pos:end="73:35"><expr pos:start="73:9" pos:end="73:34"><name pos:start="73:9" pos:end="73:18">bdrv_flags</name> <operator pos:start="73:20" pos:end="73:21">&amp;=</operator> <operator pos:start="73:23" pos:end="73:23">~</operator><name pos:start="73:24" pos:end="73:34">BDRV_O_RDWR</name></expr>;</expr_stmt>
+
+        <break pos:start="75:9" pos:end="75:14">break;</break>
+
+
+
+    <case pos:start="79:5" pos:end="79:51">case <expr pos:start="79:10" pos:end="79:50"><name pos:start="79:10" pos:end="79:50">BLOCKDEV_CHANGE_READ_ONLY_MODE_READ_WRITE</name></expr>:</case>
+
+        <expr_stmt pos:start="81:9" pos:end="81:34"><expr pos:start="81:9" pos:end="81:33"><name pos:start="81:9" pos:end="81:18">bdrv_flags</name> <operator pos:start="81:20" pos:end="81:21">|=</operator> <name pos:start="81:23" pos:end="81:33">BDRV_O_RDWR</name></expr>;</expr_stmt>
+
+        <break pos:start="83:9" pos:end="83:14">break;</break>
+
+
+
+    <default pos:start="87:5" pos:end="87:12">default:</default>
+
+        <expr_stmt pos:start="89:9" pos:end="89:16"><expr pos:start="89:9" pos:end="89:15"><call pos:start="89:9" pos:end="89:15"><name pos:start="89:9" pos:end="89:13">abort</name><argument_list pos:start="89:14" pos:end="89:15">()</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></switch>
+
+
+
+    <if_stmt pos:start="95:5" pos:end="101:5"><if pos:start="95:5" pos:end="101:5">if <condition pos:start="95:8" pos:end="95:19">(<expr pos:start="95:9" pos:end="95:18"><name pos:start="95:9" pos:end="95:18">has_format</name></expr>)</condition> <block pos:start="95:21" pos:end="101:5">{<block_content pos:start="97:9" pos:end="99:63">
+
+        <expr_stmt pos:start="97:9" pos:end="97:30"><expr pos:start="97:9" pos:end="97:29"><name pos:start="97:9" pos:end="97:15">options</name> <operator pos:start="97:17" pos:end="97:17">=</operator> <call pos:start="97:19" pos:end="97:29"><name pos:start="97:19" pos:end="97:27">qdict_new</name><argument_list pos:start="97:28" pos:end="97:29">()</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="99:9" pos:end="99:63"><expr pos:start="99:9" pos:end="99:62"><call pos:start="99:9" pos:end="99:62"><name pos:start="99:9" pos:end="99:17">qdict_put</name><argument_list pos:start="99:18" pos:end="99:62">(<argument pos:start="99:19" pos:end="99:25"><expr pos:start="99:19" pos:end="99:25"><name pos:start="99:19" pos:end="99:25">options</name></expr></argument>, <argument pos:start="99:28" pos:end="99:35"><expr pos:start="99:28" pos:end="99:35"><literal type="string" pos:start="99:28" pos:end="99:35">"driver"</literal></expr></argument>, <argument pos:start="99:38" pos:end="99:61"><expr pos:start="99:38" pos:end="99:61"><call pos:start="99:38" pos:end="99:61"><name pos:start="99:38" pos:end="99:53">qstring_from_str</name><argument_list pos:start="99:54" pos:end="99:61">(<argument pos:start="99:55" pos:end="99:60"><expr pos:start="99:55" pos:end="99:60"><name pos:start="99:55" pos:end="99:60">format</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="105:5" pos:end="105:23"><expr pos:start="105:5" pos:end="105:22"><call pos:start="105:5" pos:end="105:22"><name pos:start="105:5" pos:end="105:10">assert</name><argument_list pos:start="105:11" pos:end="105:22">(<argument pos:start="105:12" pos:end="105:21"><expr pos:start="105:12" pos:end="105:21"><operator pos:start="105:12" pos:end="105:12">!</operator><name pos:start="105:13" pos:end="105:21">medium_bs</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="107:5" pos:end="107:75"><expr pos:start="107:5" pos:end="107:74"><name pos:start="107:5" pos:end="107:7">ret</name> <operator pos:start="107:9" pos:end="107:9">=</operator> <call pos:start="107:11" pos:end="107:74"><name pos:start="107:11" pos:end="107:19">bdrv_open</name><argument_list pos:start="107:20" pos:end="107:74">(<argument pos:start="107:21" pos:end="107:30"><expr pos:start="107:21" pos:end="107:30"><operator pos:start="107:21" pos:end="107:21">&amp;</operator><name pos:start="107:22" pos:end="107:30">medium_bs</name></expr></argument>, <argument pos:start="107:33" pos:end="107:40"><expr pos:start="107:33" pos:end="107:40"><name pos:start="107:33" pos:end="107:40">filename</name></expr></argument>, <argument pos:start="107:43" pos:end="107:46"><expr pos:start="107:43" pos:end="107:46"><name pos:start="107:43" pos:end="107:46">NULL</name></expr></argument>, <argument pos:start="107:49" pos:end="107:55"><expr pos:start="107:49" pos:end="107:55"><name pos:start="107:49" pos:end="107:55">options</name></expr></argument>, <argument pos:start="107:58" pos:end="107:67"><expr pos:start="107:58" pos:end="107:67"><name pos:start="107:58" pos:end="107:67">bdrv_flags</name></expr></argument>, <argument pos:start="107:70" pos:end="107:73"><expr pos:start="107:70" pos:end="107:73"><name pos:start="107:70" pos:end="107:73">errp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="109:5" pos:end="113:5"><if pos:start="109:5" pos:end="113:5">if <condition pos:start="109:8" pos:end="109:16">(<expr pos:start="109:9" pos:end="109:15"><name pos:start="109:9" pos:end="109:11">ret</name> <operator pos:start="109:13" pos:end="109:13">&lt;</operator> <literal type="number" pos:start="109:15" pos:end="109:15">0</literal></expr>)</condition> <block pos:start="109:18" pos:end="113:5">{<block_content pos:start="111:9" pos:end="111:18">
+
+        <goto pos:start="111:9" pos:end="111:18">goto <name pos:start="111:14" pos:end="111:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="117:5" pos:end="117:41"><expr pos:start="117:5" pos:end="117:40"><call pos:start="117:5" pos:end="117:40"><name pos:start="117:5" pos:end="117:24">blk_apply_root_state</name><argument_list pos:start="117:25" pos:end="117:40">(<argument pos:start="117:26" pos:end="117:28"><expr pos:start="117:26" pos:end="117:28"><name pos:start="117:26" pos:end="117:28">blk</name></expr></argument>, <argument pos:start="117:31" pos:end="117:39"><expr pos:start="117:31" pos:end="117:39"><name pos:start="117:31" pos:end="117:39">medium_bs</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="121:5" pos:end="121:40"><expr pos:start="121:5" pos:end="121:39"><call pos:start="121:5" pos:end="121:39"><name pos:start="121:5" pos:end="121:16">bdrv_add_key</name><argument_list pos:start="121:17" pos:end="121:39">(<argument pos:start="121:18" pos:end="121:26"><expr pos:start="121:18" pos:end="121:26"><name pos:start="121:18" pos:end="121:26">medium_bs</name></expr></argument>, <argument pos:start="121:29" pos:end="121:32"><expr pos:start="121:29" pos:end="121:32"><name pos:start="121:29" pos:end="121:32">NULL</name></expr></argument>, <argument pos:start="121:35" pos:end="121:38"><expr pos:start="121:35" pos:end="121:38"><operator pos:start="121:35" pos:end="121:35">&amp;</operator><name pos:start="121:36" pos:end="121:38">err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="123:5" pos:end="129:5"><if pos:start="123:5" pos:end="129:5">if <condition pos:start="123:8" pos:end="123:12">(<expr pos:start="123:9" pos:end="123:11"><name pos:start="123:9" pos:end="123:11">err</name></expr>)</condition> <block pos:start="123:14" pos:end="129:5">{<block_content pos:start="125:9" pos:end="127:18">
+
+        <expr_stmt pos:start="125:9" pos:end="125:35"><expr pos:start="125:9" pos:end="125:34"><call pos:start="125:9" pos:end="125:34"><name pos:start="125:9" pos:end="125:23">error_propagate</name><argument_list pos:start="125:24" pos:end="125:34">(<argument pos:start="125:25" pos:end="125:28"><expr pos:start="125:25" pos:end="125:28"><name pos:start="125:25" pos:end="125:28">errp</name></expr></argument>, <argument pos:start="125:31" pos:end="125:33"><expr pos:start="125:31" pos:end="125:33"><name pos:start="125:31" pos:end="125:33">err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <goto pos:start="127:9" pos:end="127:18">goto <name pos:start="127:14" pos:end="127:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="133:5" pos:end="133:55"><expr pos:start="133:5" pos:end="133:54"><call pos:start="133:5" pos:end="133:54"><name pos:start="133:5" pos:end="133:26">qmp_blockdev_open_tray</name><argument_list pos:start="133:27" pos:end="133:54">(<argument pos:start="133:28" pos:end="133:33"><expr pos:start="133:28" pos:end="133:33"><name pos:start="133:28" pos:end="133:33">device</name></expr></argument>, <argument pos:start="133:36" pos:end="133:40"><expr pos:start="133:36" pos:end="133:40"><name pos:start="133:36" pos:end="133:40">false</name></expr></argument>, <argument pos:start="133:43" pos:end="133:47"><expr pos:start="133:43" pos:end="133:47"><name pos:start="133:43" pos:end="133:47">false</name></expr></argument>, <argument pos:start="133:50" pos:end="133:53"><expr pos:start="133:50" pos:end="133:53"><operator pos:start="133:50" pos:end="133:50">&amp;</operator><name pos:start="133:51" pos:end="133:53">err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="135:5" pos:end="141:5"><if pos:start="135:5" pos:end="141:5">if <condition pos:start="135:8" pos:end="135:12">(<expr pos:start="135:9" pos:end="135:11"><name pos:start="135:9" pos:end="135:11">err</name></expr>)</condition> <block pos:start="135:14" pos:end="141:5">{<block_content pos:start="137:9" pos:end="139:18">
+
+        <expr_stmt pos:start="137:9" pos:end="137:35"><expr pos:start="137:9" pos:end="137:34"><call pos:start="137:9" pos:end="137:34"><name pos:start="137:9" pos:end="137:23">error_propagate</name><argument_list pos:start="137:24" pos:end="137:34">(<argument pos:start="137:25" pos:end="137:28"><expr pos:start="137:25" pos:end="137:28"><name pos:start="137:25" pos:end="137:28">errp</name></expr></argument>, <argument pos:start="137:31" pos:end="137:33"><expr pos:start="137:31" pos:end="137:33"><name pos:start="137:31" pos:end="137:33">err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <goto pos:start="139:9" pos:end="139:18">goto <name pos:start="139:14" pos:end="139:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="145:5" pos:end="145:47"><expr pos:start="145:5" pos:end="145:46"><call pos:start="145:5" pos:end="145:46"><name pos:start="145:5" pos:end="145:32">qmp_x_blockdev_remove_medium</name><argument_list pos:start="145:33" pos:end="145:46">(<argument pos:start="145:34" pos:end="145:39"><expr pos:start="145:34" pos:end="145:39"><name pos:start="145:34" pos:end="145:39">device</name></expr></argument>, <argument pos:start="145:42" pos:end="145:45"><expr pos:start="145:42" pos:end="145:45"><operator pos:start="145:42" pos:end="145:42">&amp;</operator><name pos:start="145:43" pos:end="145:45">err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="147:5" pos:end="153:5"><if pos:start="147:5" pos:end="153:5">if <condition pos:start="147:8" pos:end="147:12">(<expr pos:start="147:9" pos:end="147:11"><name pos:start="147:9" pos:end="147:11">err</name></expr>)</condition> <block pos:start="147:14" pos:end="153:5">{<block_content pos:start="149:9" pos:end="151:18">
+
+        <expr_stmt pos:start="149:9" pos:end="149:35"><expr pos:start="149:9" pos:end="149:34"><call pos:start="149:9" pos:end="149:34"><name pos:start="149:9" pos:end="149:23">error_propagate</name><argument_list pos:start="149:24" pos:end="149:34">(<argument pos:start="149:25" pos:end="149:28"><expr pos:start="149:25" pos:end="149:28"><name pos:start="149:25" pos:end="149:28">errp</name></expr></argument>, <argument pos:start="149:31" pos:end="149:33"><expr pos:start="149:31" pos:end="149:33"><name pos:start="149:31" pos:end="149:33">err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <goto pos:start="151:9" pos:end="151:18">goto <name pos:start="151:14" pos:end="151:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="157:5" pos:end="157:61"><expr pos:start="157:5" pos:end="157:60"><call pos:start="157:5" pos:end="157:60"><name pos:start="157:5" pos:end="157:35">qmp_blockdev_insert_anon_medium</name><argument_list pos:start="157:36" pos:end="157:60">(<argument pos:start="157:37" pos:end="157:42"><expr pos:start="157:37" pos:end="157:42"><name pos:start="157:37" pos:end="157:42">device</name></expr></argument>, <argument pos:start="157:45" pos:end="157:53"><expr pos:start="157:45" pos:end="157:53"><name pos:start="157:45" pos:end="157:53">medium_bs</name></expr></argument>, <argument pos:start="157:56" pos:end="157:59"><expr pos:start="157:56" pos:end="157:59"><operator pos:start="157:56" pos:end="157:56">&amp;</operator><name pos:start="157:57" pos:end="157:59">err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="159:5" pos:end="165:5"><if pos:start="159:5" pos:end="165:5">if <condition pos:start="159:8" pos:end="159:12">(<expr pos:start="159:9" pos:end="159:11"><name pos:start="159:9" pos:end="159:11">err</name></expr>)</condition> <block pos:start="159:14" pos:end="165:5">{<block_content pos:start="161:9" pos:end="163:18">
+
+        <expr_stmt pos:start="161:9" pos:end="161:35"><expr pos:start="161:9" pos:end="161:34"><call pos:start="161:9" pos:end="161:34"><name pos:start="161:9" pos:end="161:23">error_propagate</name><argument_list pos:start="161:24" pos:end="161:34">(<argument pos:start="161:25" pos:end="161:28"><expr pos:start="161:25" pos:end="161:28"><name pos:start="161:25" pos:end="161:28">errp</name></expr></argument>, <argument pos:start="161:31" pos:end="161:33"><expr pos:start="161:31" pos:end="161:33"><name pos:start="161:31" pos:end="161:33">err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <goto pos:start="163:9" pos:end="163:18">goto <name pos:start="163:14" pos:end="163:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="169:5" pos:end="169:42"><expr pos:start="169:5" pos:end="169:41"><call pos:start="169:5" pos:end="169:41"><name pos:start="169:5" pos:end="169:27">qmp_blockdev_close_tray</name><argument_list pos:start="169:28" pos:end="169:41">(<argument pos:start="169:29" pos:end="169:34"><expr pos:start="169:29" pos:end="169:34"><name pos:start="169:29" pos:end="169:34">device</name></expr></argument>, <argument pos:start="169:37" pos:end="169:40"><expr pos:start="169:37" pos:end="169:40"><name pos:start="169:37" pos:end="169:40">errp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+<label pos:start="173:1" pos:end="173:5"><name pos:start="173:1" pos:end="173:4">fail</name>:</label>
+
+    <comment type="block" pos:start="175:5" pos:end="179:51">/* If the medium has been inserted, the device has its own reference, so
+
+     * ours must be relinquished; and if it has not been inserted successfully,
+
+     * the reference must be relinquished anyway */</comment>
+
+    <expr_stmt pos:start="181:5" pos:end="181:26"><expr pos:start="181:5" pos:end="181:25"><call pos:start="181:5" pos:end="181:25"><name pos:start="181:5" pos:end="181:14">bdrv_unref</name><argument_list pos:start="181:15" pos:end="181:25">(<argument pos:start="181:16" pos:end="181:24"><expr pos:start="181:16" pos:end="181:24"><name pos:start="181:16" pos:end="181:24">medium_bs</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+</block_content>}</block></function>
+</unit>

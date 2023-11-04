@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/1940.c" pos:tabs="8"><function pos:start="1:1" pos:end="35:1"><type pos:start="1:1" pos:end="1:18"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <specifier pos:start="1:8" pos:end="1:13">inline</specifier> <name pos:start="1:15" pos:end="1:18">bool</name></type> <name pos:start="1:20" pos:end="1:30">use_goto_tb</name><parameter_list pos:start="1:31" pos:end="1:69">(<parameter pos:start="1:32" pos:end="1:46"><decl pos:start="1:32" pos:end="1:46"><type pos:start="1:32" pos:end="1:46"><name pos:start="1:32" pos:end="1:43">DisasContext</name> <modifier pos:start="1:45" pos:end="1:45">*</modifier></type><name pos:start="1:46" pos:end="1:46">s</name></decl></parameter>, <parameter pos:start="1:49" pos:end="1:53"><decl pos:start="1:49" pos:end="1:53"><type pos:start="1:49" pos:end="1:53"><name pos:start="1:49" pos:end="1:51">int</name></type> <name pos:start="1:53" pos:end="1:53">n</name></decl></parameter>, <parameter pos:start="1:56" pos:end="1:68"><decl pos:start="1:56" pos:end="1:68"><type pos:start="1:56" pos:end="1:68"><name pos:start="1:56" pos:end="1:63">uint64_t</name></type> <name pos:start="1:65" pos:end="1:68">dest</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="35:1">{<block_content pos:start="11:5" pos:end="33:16">
+
+    <comment type="block" pos:start="5:5" pos:end="9:7">/* No direct tb linking with singlestep (either QEMU's or the ARM
+
+     * debug architecture kind) or deterministic io
+
+     */</comment>
+
+    <if_stmt pos:start="11:5" pos:end="20:0"><if pos:start="11:5" pos:end="20:0">if <condition pos:start="11:8" pos:end="11:88">(<expr pos:start="11:9" pos:end="11:87"><name pos:start="11:9" pos:end="11:34"><name pos:start="11:9" pos:end="11:9">s</name><operator pos:start="11:10" pos:end="11:11">-&gt;</operator><name pos:start="11:12" pos:end="11:15">base</name><operator pos:start="11:16" pos:end="11:16">.</operator><name pos:start="11:17" pos:end="11:34">singlestep_enabled</name></name> <operator pos:start="11:36" pos:end="11:37">||</operator> <name pos:start="11:39" pos:end="11:50"><name pos:start="11:39" pos:end="11:39">s</name><operator pos:start="11:40" pos:end="11:41">-&gt;</operator><name pos:start="11:42" pos:end="11:50">ss_active</name></name> <operator pos:start="11:52" pos:end="11:53">||</operator> <operator pos:start="11:55" pos:end="11:55">(</operator><name pos:start="11:56" pos:end="11:73"><name pos:start="11:56" pos:end="11:56">s</name><operator pos:start="11:57" pos:end="11:58">-&gt;</operator><name pos:start="11:59" pos:end="11:62">base</name><operator pos:start="11:63" pos:end="11:63">.</operator><name pos:start="11:64" pos:end="11:65">tb</name><operator pos:start="11:66" pos:end="11:67">-&gt;</operator><name pos:start="11:68" pos:end="11:73">cflags</name></name> <operator pos:start="11:75" pos:end="11:75">&amp;</operator> <name pos:start="11:77" pos:end="11:86">CF_LAST_IO</name><operator pos:start="11:87" pos:end="11:87">)</operator></expr>)</condition> <block pos:start="11:90" pos:end="20:0">{<block_content pos:start="13:9" pos:end="13:21">
+
+        <return pos:start="13:9" pos:end="13:21">return <expr pos:start="13:16" pos:end="13:20"><name pos:start="13:16" pos:end="13:20">false</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+<cpp:ifndef pos:start="19:1" pos:end="19:24">#<cpp:directive pos:start="19:2" pos:end="19:7">ifndef</cpp:directive> <name pos:start="19:9" pos:end="19:24">CONFIG_USER_ONLY</name></cpp:ifndef>
+
+    <comment type="block" pos:start="21:5" pos:end="21:55">/* Only link tbs from inside the same guest page */</comment>
+
+    <if_stmt pos:start="23:5" pos:end="30:0"><if pos:start="23:5" pos:end="30:0">if <condition pos:start="23:8" pos:end="23:73">(<expr pos:start="23:9" pos:end="23:72"><operator pos:start="23:9" pos:end="23:9">(</operator><name pos:start="23:10" pos:end="23:23"><name pos:start="23:10" pos:end="23:10">s</name><operator pos:start="23:11" pos:end="23:12">-&gt;</operator><name pos:start="23:13" pos:end="23:16">base</name><operator pos:start="23:17" pos:end="23:17">.</operator><name pos:start="23:18" pos:end="23:19">tb</name><operator pos:start="23:20" pos:end="23:21">-&gt;</operator><name pos:start="23:22" pos:end="23:23">pc</name></name> <operator pos:start="23:25" pos:end="23:25">&amp;</operator> <name pos:start="23:27" pos:end="23:42">TARGET_PAGE_MASK</name><operator pos:start="23:43" pos:end="23:43">)</operator> <operator pos:start="23:45" pos:end="23:46">!=</operator> <operator pos:start="23:48" pos:end="23:48">(</operator><name pos:start="23:49" pos:end="23:52">dest</name> <operator pos:start="23:54" pos:end="23:54">&amp;</operator> <name pos:start="23:56" pos:end="23:71">TARGET_PAGE_MASK</name><operator pos:start="23:72" pos:end="23:72">)</operator></expr>)</condition> <block pos:start="23:75" pos:end="30:0">{<block_content pos:start="25:9" pos:end="25:21">
+
+        <return pos:start="25:9" pos:end="25:21">return <expr pos:start="25:16" pos:end="25:20"><name pos:start="25:16" pos:end="25:20">false</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+<cpp:endif pos:start="29:1" pos:end="29:6">#<cpp:directive pos:start="29:2" pos:end="29:6">endif</cpp:directive></cpp:endif>
+
+
+
+    <return pos:start="33:5" pos:end="33:16">return <expr pos:start="33:12" pos:end="33:15"><name pos:start="33:12" pos:end="33:15">true</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

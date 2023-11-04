@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/11460.c" pos:tabs="8"><function pos:start="1:1" pos:end="156:13"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:39">qemu_rdma_broken_ipv6_kernel</name><parameter_list pos:start="1:40" pos:end="1:80">(<parameter pos:start="1:41" pos:end="1:52"><decl pos:start="1:41" pos:end="1:52"><type pos:start="1:41" pos:end="1:52"><name pos:start="1:41" pos:end="1:45">Error</name> <modifier pos:start="1:47" pos:end="1:47">*</modifier><modifier pos:start="1:48" pos:end="1:48">*</modifier></type><name pos:start="1:49" pos:end="1:52">errp</name></decl></parameter>, <parameter pos:start="1:55" pos:end="1:79"><decl pos:start="1:55" pos:end="1:79"><type pos:start="1:55" pos:end="1:79"><name pos:start="1:55" pos:end="1:72"><name pos:start="1:55" pos:end="1:60">struct</name> <name pos:start="1:62" pos:end="1:72">ibv_context</name></name> <modifier pos:start="1:74" pos:end="1:74">*</modifier></type><name pos:start="1:75" pos:end="1:79">verbs</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="156:13">{<block_content pos:start="5:5" pos:end="156:13">
+
+    <decl_stmt pos:start="5:5" pos:end="12:0"><decl pos:start="5:5" pos:end="5:34"><type pos:start="5:5" pos:end="5:24"><name pos:start="5:5" pos:end="5:24"><name pos:start="5:5" pos:end="5:10">struct</name> <name pos:start="5:12" pos:end="5:24">ibv_port_attr</name></name></type> <name pos:start="5:26" pos:end="5:34">port_attr</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="9:5" pos:end="9:58">/* This bug only exists in linux, to our knowledge. */</comment>
+
+<cpp:ifdef pos:start="11:1" pos:end="11:19">#<cpp:directive pos:start="11:2" pos:end="11:6">ifdef</cpp:directive> <name pos:start="11:8" pos:end="11:19">CONFIG_LINUX</name></cpp:ifdef>
+
+
+
+    <comment type="block" pos:start="15:5" pos:end="31:7">/*
+
+     * Verbs are only NULL if management has bound to '[::]'.
+
+     *
+
+     * Let's iterate through all the devices and see if there any pure IB
+
+     * devices (non-ethernet).
+
+     *
+
+     * If not, then we can safely proceed with the migration.
+
+     * Otherwise, there are no guarantees until the bug is fixed in linux.
+
+     */</comment>
+
+
+        <decl_stmt pos:start="34:9" pos:end="34:27"><decl pos:start="34:9" pos:end="34:23"><type pos:start="34:9" pos:end="34:11"><name pos:start="34:9" pos:end="34:11">int</name></type> <name pos:start="34:13" pos:end="34:23">num_devices</name></decl>, <decl pos:start="34:26" pos:end="34:26"><type ref="prev" pos:start="34:9" pos:end="34:11"/><name pos:start="34:26" pos:end="34:26">x</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="36:9" pos:end="36:74"><decl pos:start="36:9" pos:end="36:73"><type pos:start="36:9" pos:end="36:28"><name pos:start="36:9" pos:end="36:25"><name pos:start="36:9" pos:end="36:14">struct</name> <name pos:start="36:16" pos:end="36:25">ibv_device</name></name> <modifier pos:start="36:27" pos:end="36:27">*</modifier><modifier pos:start="36:28" pos:end="36:28">*</modifier></type> <name pos:start="36:30" pos:end="36:37">dev_list</name> <init pos:start="36:39" pos:end="36:73">= <expr pos:start="36:41" pos:end="36:73"><call pos:start="36:41" pos:end="36:73"><name pos:start="36:41" pos:end="36:59">ibv_get_device_list</name><argument_list pos:start="36:60" pos:end="36:73">(<argument pos:start="36:61" pos:end="36:72"><expr pos:start="36:61" pos:end="36:72"><operator pos:start="36:61" pos:end="36:61">&amp;</operator><name pos:start="36:62" pos:end="36:72">num_devices</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="38:9" pos:end="38:32"><decl pos:start="38:9" pos:end="38:31"><type pos:start="38:9" pos:end="38:12"><name pos:start="38:9" pos:end="38:12">bool</name></type> <name pos:start="38:14" pos:end="38:23">roce_found</name> <init pos:start="38:25" pos:end="38:31">= <expr pos:start="38:27" pos:end="38:31"><name pos:start="38:27" pos:end="38:31">false</name></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="40:9" pos:end="40:30"><decl pos:start="40:9" pos:end="40:29"><type pos:start="40:9" pos:end="40:12"><name pos:start="40:9" pos:end="40:12">bool</name></type> <name pos:start="40:14" pos:end="40:21">ib_found</name> <init pos:start="40:23" pos:end="40:29">= <expr pos:start="40:25" pos:end="40:29"><name pos:start="40:25" pos:end="40:29">false</name></expr></init></decl>;</decl_stmt>
+
+
+
+        <for pos:start="44:9" pos:end="156:13">for <control pos:start="44:13" pos:end="44:41">(<init pos:start="44:14" pos:end="44:19"><expr pos:start="44:14" pos:end="44:18"><name pos:start="44:14" pos:end="44:14">x</name> <operator pos:start="44:16" pos:end="44:16">=</operator> <literal type="number" pos:start="44:18" pos:end="44:18">0</literal></expr>;</init> <condition pos:start="44:21" pos:end="44:36"><expr pos:start="44:21" pos:end="44:35"><name pos:start="44:21" pos:end="44:21">x</name> <operator pos:start="44:23" pos:end="44:23">&lt;</operator> <name pos:start="44:25" pos:end="44:35">num_devices</name></expr>;</condition> <incr pos:start="44:38" pos:end="44:40"><expr pos:start="44:38" pos:end="44:40"><name pos:start="44:38" pos:end="44:38">x</name><operator pos:start="44:39" pos:end="44:40">++</operator></expr></incr>)</control> <block pos:start="44:43" pos:end="156:13">{<block_content pos:start="46:13" pos:end="156:13">
+
+            <expr_stmt pos:start="46:13" pos:end="46:49"><expr pos:start="46:13" pos:end="46:48"><name pos:start="46:13" pos:end="46:17">verbs</name> <operator pos:start="46:19" pos:end="46:19">=</operator> <call pos:start="46:21" pos:end="46:48"><name pos:start="46:21" pos:end="46:35">ibv_open_device</name><argument_list pos:start="46:36" pos:end="46:48">(<argument pos:start="46:37" pos:end="46:47"><expr pos:start="46:37" pos:end="46:47"><name pos:start="46:37" pos:end="46:47"><name pos:start="46:37" pos:end="46:44">dev_list</name><index pos:start="46:45" pos:end="46:47">[<expr pos:start="46:46" pos:end="46:46"><name pos:start="46:46" pos:end="46:46">x</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+
+
+
+
+
+
+
+            <if_stmt pos:start="57:13" pos:end="156:13"><if pos:start="57:13" pos:end="156:13">if <condition pos:start="57:16" pos:end="57:53">(<expr pos:start="57:17" pos:end="57:52"><call pos:start="57:17" pos:end="57:52"><name pos:start="57:17" pos:end="57:30">ibv_query_port</name><argument_list pos:start="57:31" pos:end="57:52">(<argument pos:start="57:32" pos:end="57:36"><expr pos:start="57:32" pos:end="57:36"><name pos:start="57:32" pos:end="57:36">verbs</name></expr></argument>, <argument pos:start="57:39" pos:end="57:39"><expr pos:start="57:39" pos:end="57:39"><literal type="number" pos:start="57:39" pos:end="57:39">1</literal></expr></argument>, <argument pos:start="57:42" pos:end="57:51"><expr pos:start="57:42" pos:end="57:51"><operator pos:start="57:42" pos:end="57:42">&amp;</operator><name pos:start="57:43" pos:end="57:51">port_attr</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="57:55" pos:end="156:13">{<block_content pos:start="59:17" pos:end="156:13">
+
+                <expr_stmt pos:start="59:17" pos:end="59:40"><expr pos:start="59:17" pos:end="59:39"><call pos:start="59:17" pos:end="59:39"><name pos:start="59:17" pos:end="59:32">ibv_close_device</name><argument_list pos:start="59:33" pos:end="59:39">(<argument pos:start="59:34" pos:end="59:38"><expr pos:start="59:34" pos:end="59:38"><name pos:start="59:34" pos:end="59:38">verbs</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="61:17" pos:end="61:63"><expr pos:start="61:17" pos:end="61:62"><call pos:start="61:17" pos:end="61:62"><name pos:start="61:17" pos:end="61:21">ERROR</name><argument_list pos:start="61:22" pos:end="61:62">(<argument pos:start="61:23" pos:end="61:26"><expr pos:start="61:23" pos:end="61:26"><name pos:start="61:23" pos:end="61:26">errp</name></expr></argument>, <argument pos:start="61:29" pos:end="61:61"><expr pos:start="61:29" pos:end="61:61"><literal type="string" pos:start="61:29" pos:end="61:61">"Could not query initial IB port"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+
+
+            <if_stmt pos:start="67:13" pos:end="156:13"><if pos:start="67:13" pos:end="71:13">if <condition pos:start="67:16" pos:end="67:66">(<expr pos:start="67:17" pos:end="67:65"><name pos:start="67:17" pos:end="67:36"><name pos:start="67:17" pos:end="67:25">port_attr</name><operator pos:start="67:26" pos:end="67:26">.</operator><name pos:start="67:27" pos:end="67:36">link_layer</name></name> <operator pos:start="67:38" pos:end="67:39">==</operator> <name pos:start="67:41" pos:end="67:65">IBV_LINK_LAYER_INFINIBAND</name></expr>)</condition> <block pos:start="67:68" pos:end="71:13">{<block_content pos:start="69:17" pos:end="69:32">
+
+                <expr_stmt pos:start="69:17" pos:end="69:32"><expr pos:start="69:17" pos:end="69:31"><name pos:start="69:17" pos:end="69:24">ib_found</name> <operator pos:start="69:26" pos:end="69:26">=</operator> <name pos:start="69:28" pos:end="69:31">true</name></expr>;</expr_stmt>
+
+            </block_content>}</block></if> <if type="elseif" pos:start="71:15" pos:end="156:13">else if <condition pos:start="71:23" pos:end="71:71">(<expr pos:start="71:24" pos:end="71:70"><name pos:start="71:24" pos:end="71:43"><name pos:start="71:24" pos:end="71:32">port_attr</name><operator pos:start="71:33" pos:end="71:33">.</operator><name pos:start="71:34" pos:end="71:43">link_layer</name></name> <operator pos:start="71:45" pos:end="71:46">==</operator> <name pos:start="71:48" pos:end="71:70">IBV_LINK_LAYER_ETHERNET</name></expr>)</condition> <block pos:start="71:73" pos:end="156:13">{<block_content pos:start="73:17" pos:end="156:13">
+
+                <expr_stmt pos:start="73:17" pos:end="73:34"><expr pos:start="73:17" pos:end="73:33"><name pos:start="73:17" pos:end="73:26">roce_found</name> <operator pos:start="73:28" pos:end="73:28">=</operator> <name pos:start="73:30" pos:end="73:33">true</name></expr>;</expr_stmt>
+
+
+
+
+            <expr_stmt pos:start="78:13" pos:end="78:36"><expr pos:start="78:13" pos:end="78:35"><call pos:start="78:13" pos:end="78:35"><name pos:start="78:13" pos:end="78:28">ibv_close_device</name><argument_list pos:start="78:29" pos:end="78:35">(<argument pos:start="78:30" pos:end="78:34"><expr pos:start="78:30" pos:end="78:34"><name pos:start="78:30" pos:end="78:34">verbs</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+
+
+
+        <if_stmt pos:start="85:9" pos:end="156:13"><if pos:start="85:9" pos:end="156:13">if <condition pos:start="85:12" pos:end="85:23">(<expr pos:start="85:13" pos:end="85:22"><name pos:start="85:13" pos:end="85:22">roce_found</name></expr>)</condition> <block pos:start="85:25" pos:end="156:13">{<block_content pos:start="87:13" pos:end="156:13">
+
+            <if_stmt pos:start="87:13" pos:end="156:13"><if pos:start="87:13" pos:end="156:13">if <condition pos:start="87:16" pos:end="87:25">(<expr pos:start="87:17" pos:end="87:24"><name pos:start="87:17" pos:end="87:24">ib_found</name></expr>)</condition> <block pos:start="87:27" pos:end="156:13">{<block_content pos:start="89:17" pos:end="156:13">
+
+                <expr_stmt pos:start="89:17" pos:end="99:53"><expr pos:start="89:17" pos:end="99:52"><call pos:start="89:17" pos:end="99:52"><name pos:start="89:17" pos:end="89:23">fprintf</name><argument_list pos:start="89:24" pos:end="99:52">(<argument pos:start="89:25" pos:end="89:30"><expr pos:start="89:25" pos:end="89:30"><name pos:start="89:25" pos:end="89:30">stderr</name></expr></argument>, <argument pos:start="89:33" pos:end="99:51"><expr pos:start="89:33" pos:end="99:51"><literal type="string" pos:start="89:33" pos:end="89:60">"WARN: migrations may fail:"</literal>
+
+                                <literal type="string" pos:start="91:33" pos:end="91:66">" IPv6 over RoCE / iWARP in linux"</literal>
+
+                                <literal type="string" pos:start="93:33" pos:end="93:76">" is broken. But since you appear to have a"</literal>
+
+                                <literal type="string" pos:start="95:33" pos:end="95:79">" mixed RoCE / IB environment, be sure to only"</literal>
+
+                                <literal type="string" pos:start="97:33" pos:end="97:79">" migrate over the IB fabric until the kernel "</literal>
+
+                                <literal type="string" pos:start="99:33" pos:end="99:51">" fixes the bug.\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+                <expr_stmt pos:start="102:17" pos:end="106:87"><expr pos:start="102:17" pos:end="106:86"><call pos:start="102:17" pos:end="106:86"><name pos:start="102:17" pos:end="102:21">ERROR</name><argument_list pos:start="102:22" pos:end="106:86">(<argument pos:start="102:23" pos:end="102:26"><expr pos:start="102:23" pos:end="102:26"><name pos:start="102:23" pos:end="102:26">errp</name></expr></argument>, <argument pos:start="102:29" pos:end="106:85"><expr pos:start="102:29" pos:end="106:85"><literal type="string" pos:start="102:29" pos:end="102:80">"You only have RoCE / iWARP devices in your systems"</literal>
+
+                            <literal type="string" pos:start="104:29" pos:end="104:80">" and your management software has specified '[::]'"</literal>
+
+                            <literal type="string" pos:start="106:29" pos:end="106:85">", but IPv6 over RoCE / iWARP is not supported in Linux."</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <return pos:start="108:17" pos:end="108:31">return <expr pos:start="108:24" pos:end="108:30"><operator pos:start="108:24" pos:end="108:24">-</operator><name pos:start="108:25" pos:end="108:30">ENONET</name></expr>;</return>
+
+
+
+
+
+        <return pos:start="114:9" pos:end="114:17">return <expr pos:start="114:16" pos:end="114:16"><literal type="number" pos:start="114:16" pos:end="114:16">0</literal></expr>;</return>
+
+
+
+
+    <comment type="block" pos:start="119:5" pos:end="127:7">/*
+
+     * If we have a verbs context, that means that some other than '[::]' was
+
+     * used by the management software for binding. In which case we can
+
+     * actually warn the user about a potentially broken kernel.
+
+     */</comment>
+
+
+
+    <comment type="block" pos:start="131:5" pos:end="131:38">/* IB ports start with 1, not 0 */</comment>
+
+    <if_stmt pos:start="133:5" pos:end="156:13"><if pos:start="133:5" pos:end="156:13">if <condition pos:start="133:8" pos:end="133:45">(<expr pos:start="133:9" pos:end="133:44"><call pos:start="133:9" pos:end="133:44"><name pos:start="133:9" pos:end="133:22">ibv_query_port</name><argument_list pos:start="133:23" pos:end="133:44">(<argument pos:start="133:24" pos:end="133:28"><expr pos:start="133:24" pos:end="133:28"><name pos:start="133:24" pos:end="133:28">verbs</name></expr></argument>, <argument pos:start="133:31" pos:end="133:31"><expr pos:start="133:31" pos:end="133:31"><literal type="number" pos:start="133:31" pos:end="133:31">1</literal></expr></argument>, <argument pos:start="133:34" pos:end="133:43"><expr pos:start="133:34" pos:end="133:43"><operator pos:start="133:34" pos:end="133:34">&amp;</operator><name pos:start="133:35" pos:end="133:43">port_attr</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="133:47" pos:end="156:13">{<block_content pos:start="135:9" pos:end="156:13">
+
+        <expr_stmt pos:start="135:9" pos:end="135:55"><expr pos:start="135:9" pos:end="135:54"><call pos:start="135:9" pos:end="135:54"><name pos:start="135:9" pos:end="135:13">ERROR</name><argument_list pos:start="135:14" pos:end="135:54">(<argument pos:start="135:15" pos:end="135:18"><expr pos:start="135:15" pos:end="135:18"><name pos:start="135:15" pos:end="135:18">errp</name></expr></argument>, <argument pos:start="135:21" pos:end="135:53"><expr pos:start="135:21" pos:end="135:53"><literal type="string" pos:start="135:21" pos:end="135:53">"Could not query initial IB port"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+
+
+    <if_stmt pos:start="141:5" pos:end="156:13"><if pos:start="141:5" pos:end="156:13">if <condition pos:start="141:8" pos:end="141:56">(<expr pos:start="141:9" pos:end="141:55"><name pos:start="141:9" pos:end="141:28"><name pos:start="141:9" pos:end="141:17">port_attr</name><operator pos:start="141:18" pos:end="141:18">.</operator><name pos:start="141:19" pos:end="141:28">link_layer</name></name> <operator pos:start="141:30" pos:end="141:31">==</operator> <name pos:start="141:33" pos:end="141:55">IBV_LINK_LAYER_ETHERNET</name></expr>)</condition> <block pos:start="141:58" pos:end="156:13">{<block_content pos:start="143:9" pos:end="156:13">
+
+        <expr_stmt pos:start="143:9" pos:end="145:63"><expr pos:start="143:9" pos:end="145:62"><call pos:start="143:9" pos:end="145:62"><name pos:start="143:9" pos:end="143:13">ERROR</name><argument_list pos:start="143:14" pos:end="145:62">(<argument pos:start="143:15" pos:end="143:18"><expr pos:start="143:15" pos:end="143:18"><name pos:start="143:15" pos:end="143:18">errp</name></expr></argument>, <argument pos:start="143:21" pos:end="145:61"><expr pos:start="143:21" pos:end="145:61"><literal type="string" pos:start="143:21" pos:end="143:72">"Linux kernel's RoCE / iWARP does not support IPv6 "</literal>
+
+                    <literal type="string" pos:start="145:21" pos:end="145:61">"(but patches on linux-rdma in progress)"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="147:9" pos:end="153:0">return <expr pos:start="147:16" pos:end="147:22"><operator pos:start="147:16" pos:end="147:16">-</operator><name pos:start="147:17" pos:end="147:22">ENONET</name></expr>;</return>
+
+
+
+
+<cpp:endif pos:start="152:1" pos:end="152:6">#<cpp:directive pos:start="152:2" pos:end="152:6">endif</cpp:directive></cpp:endif>
+
+
+
+    <return pos:start="156:5" pos:end="156:13">return <expr pos:start="156:12" pos:end="156:12"><literal type="number" pos:start="156:12" pos:end="156:12">0</literal></expr>;</return></block_content></block></if></if_stmt></block_content></block></if></if_stmt></block_content></block></if></if_stmt></block_content></block></if></if_stmt></block_content></block></if></if_stmt></block_content></block></if></if_stmt></block_content></block></for></block_content></block></function>
+</unit>

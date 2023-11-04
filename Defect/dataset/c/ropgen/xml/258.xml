@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/258.c" pos:tabs="8"><function pos:start="1:1" pos:end="199:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:28">ffmmal_read_frame</name><parameter_list pos:start="1:29" pos:end="1:83">(<parameter pos:start="1:30" pos:end="1:50"><decl pos:start="1:30" pos:end="1:50"><type pos:start="1:30" pos:end="1:50"><name pos:start="1:30" pos:end="1:43">AVCodecContext</name> <modifier pos:start="1:45" pos:end="1:45">*</modifier></type><name pos:start="1:46" pos:end="1:50">avctx</name></decl></parameter>, <parameter pos:start="1:53" pos:end="1:66"><decl pos:start="1:53" pos:end="1:66"><type pos:start="1:53" pos:end="1:66"><name pos:start="1:53" pos:end="1:59">AVFrame</name> <modifier pos:start="1:61" pos:end="1:61">*</modifier></type><name pos:start="1:62" pos:end="1:66">frame</name></decl></parameter>, <parameter pos:start="1:69" pos:end="1:82"><decl pos:start="1:69" pos:end="1:82"><type pos:start="1:69" pos:end="1:82"><name pos:start="1:69" pos:end="1:71">int</name> <modifier pos:start="1:73" pos:end="1:73">*</modifier></type><name pos:start="1:74" pos:end="1:82">got_frame</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="199:1">{<block_content pos:start="5:5" pos:end="197:15">
+
+    <decl_stmt pos:start="5:5" pos:end="5:46"><decl pos:start="5:5" pos:end="5:45"><type pos:start="5:5" pos:end="5:23"><name pos:start="5:5" pos:end="5:21">MMALDecodeContext</name> <modifier pos:start="5:23" pos:end="5:23">*</modifier></type><name pos:start="5:24" pos:end="5:26">ctx</name> <init pos:start="5:28" pos:end="5:45">= <expr pos:start="5:30" pos:end="5:45"><name pos:start="5:30" pos:end="5:45"><name pos:start="5:30" pos:end="5:34">avctx</name><operator pos:start="5:35" pos:end="5:36">-&gt;</operator><name pos:start="5:37" pos:end="5:45">priv_data</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:40"><decl pos:start="7:5" pos:end="7:39"><type pos:start="7:5" pos:end="7:26"><name pos:start="7:5" pos:end="7:24">MMAL_BUFFER_HEADER_T</name> <modifier pos:start="7:26" pos:end="7:26">*</modifier></type><name pos:start="7:27" pos:end="7:32">buffer</name> <init pos:start="7:34" pos:end="7:39">= <expr pos:start="7:36" pos:end="7:39"><name pos:start="7:36" pos:end="7:39">NULL</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:29"><decl pos:start="9:5" pos:end="9:28"><type pos:start="9:5" pos:end="9:17"><name pos:start="9:5" pos:end="9:17">MMAL_STATUS_T</name></type> <name pos:start="9:19" pos:end="9:24">status</name> <init pos:start="9:26" pos:end="9:28">= <expr pos:start="9:28" pos:end="9:28"><literal type="number" pos:start="9:28" pos:end="9:28">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:16"><decl pos:start="11:5" pos:end="11:15"><type pos:start="11:5" pos:end="11:7"><name pos:start="11:5" pos:end="11:7">int</name></type> <name pos:start="11:9" pos:end="11:11">ret</name> <init pos:start="11:13" pos:end="11:15">= <expr pos:start="11:15" pos:end="11:15"><literal type="number" pos:start="11:15" pos:end="11:15">0</literal></expr></init></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="15:5" pos:end="17:18"><if pos:start="15:5" pos:end="17:18">if <condition pos:start="15:8" pos:end="15:26">(<expr pos:start="15:9" pos:end="15:25"><name pos:start="15:9" pos:end="15:25"><name pos:start="15:9" pos:end="15:11">ctx</name><operator pos:start="15:12" pos:end="15:13">-&gt;</operator><name pos:start="15:14" pos:end="15:25">eos_received</name></name></expr>)</condition><block type="pseudo" pos:start="17:9" pos:end="17:18"><block_content pos:start="17:9" pos:end="17:18">
+
+        <goto pos:start="17:9" pos:end="17:18">goto <name pos:start="17:14" pos:end="17:17">done</name>;</goto></block_content></block></if></if_stmt>
+
+
+
+    <while pos:start="21:5" pos:end="183:5">while <condition pos:start="21:11" pos:end="21:13">(<expr pos:start="21:12" pos:end="21:12"><literal type="number" pos:start="21:12" pos:end="21:12">1</literal></expr>)</condition> <block pos:start="21:15" pos:end="183:5">{<block_content pos:start="45:9" pos:end="181:14">
+
+        <comment type="line" pos:start="23:9" pos:end="23:83">// To ensure decoding in lockstep with a constant delay between fed packets</comment>
+
+        <comment type="line" pos:start="25:9" pos:end="25:81">// and output frames, we always wait until an output buffer is available.</comment>
+
+        <comment type="line" pos:start="27:9" pos:end="27:85">// Except during start we don't know after how many input packets the decoder</comment>
+
+        <comment type="line" pos:start="29:9" pos:end="29:80">// is going to return the first buffer, and we can't distinguish decoder</comment>
+
+        <comment type="line" pos:start="31:9" pos:end="31:83">// being busy from decoder waiting for input. So just poll at the start and</comment>
+
+        <comment type="line" pos:start="33:9" pos:end="33:47">// keep feeding new data to the buffer.</comment>
+
+        <comment type="line" pos:start="35:9" pos:end="35:83">// We are pretty sure the decoder will produce output if we sent more input</comment>
+
+        <comment type="line" pos:start="37:9" pos:end="37:81">// frames than what a h264 decoder could logically delay. This avoids too</comment>
+
+        <comment type="line" pos:start="39:9" pos:end="39:31">// excessive buffering.</comment>
+
+        <comment type="line" pos:start="41:9" pos:end="41:84">// We also wait if we sent eos, but didn't receive it yet (think of decoding</comment>
+
+        <comment type="line" pos:start="43:9" pos:end="43:52">// stream with a very low number of frames).</comment>
+
+        <if_stmt pos:start="45:9" pos:end="77:9"><if pos:start="45:9" pos:end="69:9">if <condition pos:start="45:12" pos:end="47:49">(<expr pos:start="45:13" pos:end="47:48"><name pos:start="45:13" pos:end="45:30"><name pos:start="45:13" pos:end="45:15">ctx</name><operator pos:start="45:16" pos:end="45:17">-&gt;</operator><name pos:start="45:18" pos:end="45:30">frames_output</name></name> <operator pos:start="45:32" pos:end="45:33">||</operator> <name pos:start="45:35" pos:end="45:51"><name pos:start="45:35" pos:end="45:37">ctx</name><operator pos:start="45:38" pos:end="45:39">-&gt;</operator><name pos:start="45:40" pos:end="45:51">packets_sent</name></name> <operator pos:start="45:53" pos:end="45:53">&gt;</operator> <name pos:start="45:55" pos:end="45:72">MAX_DELAYED_FRAMES</name> <operator pos:start="45:74" pos:end="45:75">||</operator>
+
+            <operator pos:start="47:13" pos:end="47:13">(</operator><name pos:start="47:14" pos:end="47:30"><name pos:start="47:14" pos:end="47:16">ctx</name><operator pos:start="47:17" pos:end="47:18">-&gt;</operator><name pos:start="47:19" pos:end="47:30">packets_sent</name></name> <operator pos:start="47:32" pos:end="47:33">&amp;&amp;</operator> <name pos:start="47:35" pos:end="47:47"><name pos:start="47:35" pos:end="47:37">ctx</name><operator pos:start="47:38" pos:end="47:39">-&gt;</operator><name pos:start="47:40" pos:end="47:47">eos_sent</name></name><operator pos:start="47:48" pos:end="47:48">)</operator></expr>)</condition> <block pos:start="47:51" pos:end="69:9">{<block_content pos:start="57:13" pos:end="67:13">
+
+            <comment type="line" pos:start="49:13" pos:end="49:78">// MMAL will ignore broken input packets, which means the frame we</comment>
+
+            <comment type="line" pos:start="51:13" pos:end="51:75">// expect here may never arrive. Dealing with this correctly is</comment>
+
+            <comment type="line" pos:start="53:13" pos:end="53:77">// complicated, so here's a hack to avoid that it freezes forever</comment>
+
+            <comment type="line" pos:start="55:13" pos:end="55:42">// in this unlikely situation.</comment>
+
+            <expr_stmt pos:start="57:13" pos:end="57:74"><expr pos:start="57:13" pos:end="57:73"><name pos:start="57:13" pos:end="57:18">buffer</name> <operator pos:start="57:20" pos:end="57:20">=</operator> <call pos:start="57:22" pos:end="57:73"><name pos:start="57:22" pos:end="57:41">mmal_queue_timedwait</name><argument_list pos:start="57:42" pos:end="57:73">(<argument pos:start="57:43" pos:end="57:67"><expr pos:start="57:43" pos:end="57:67"><name pos:start="57:43" pos:end="57:67"><name pos:start="57:43" pos:end="57:45">ctx</name><operator pos:start="57:46" pos:end="57:47">-&gt;</operator><name pos:start="57:48" pos:end="57:67">queue_decoded_frames</name></name></expr></argument>, <argument pos:start="57:70" pos:end="57:72"><expr pos:start="57:70" pos:end="57:72"><literal type="number" pos:start="57:70" pos:end="57:72">100</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <if_stmt pos:start="59:13" pos:end="67:13"><if pos:start="59:13" pos:end="67:13">if <condition pos:start="59:16" pos:end="59:24">(<expr pos:start="59:17" pos:end="59:23"><operator pos:start="59:17" pos:end="59:17">!</operator><name pos:start="59:18" pos:end="59:23">buffer</name></expr>)</condition> <block pos:start="59:26" pos:end="67:13">{<block_content pos:start="61:17" pos:end="65:26">
+
+                <expr_stmt pos:start="61:17" pos:end="61:85"><expr pos:start="61:17" pos:end="61:84"><call pos:start="61:17" pos:end="61:84"><name pos:start="61:17" pos:end="61:22">av_log</name><argument_list pos:start="61:23" pos:end="61:84">(<argument pos:start="61:24" pos:end="61:28"><expr pos:start="61:24" pos:end="61:28"><name pos:start="61:24" pos:end="61:28">avctx</name></expr></argument>, <argument pos:start="61:31" pos:end="61:42"><expr pos:start="61:31" pos:end="61:42"><name pos:start="61:31" pos:end="61:42">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="61:45" pos:end="61:83"><expr pos:start="61:45" pos:end="61:83"><literal type="string" pos:start="61:45" pos:end="61:83">"Did not get output frame from MMAL.\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="63:17" pos:end="63:38"><expr pos:start="63:17" pos:end="63:37"><name pos:start="63:17" pos:end="63:19">ret</name> <operator pos:start="63:21" pos:end="63:21">=</operator> <name pos:start="63:23" pos:end="63:37">AVERROR_UNKNOWN</name></expr>;</expr_stmt>
+
+                <goto pos:start="65:17" pos:end="65:26">goto <name pos:start="65:22" pos:end="65:25">done</name>;</goto>
+
+            </block_content>}</block></if></if_stmt>
+
+        </block_content>}</block></if> <else pos:start="69:11" pos:end="77:9">else <block pos:start="69:16" pos:end="77:9">{<block_content pos:start="71:13" pos:end="75:26">
+
+            <expr_stmt pos:start="71:13" pos:end="71:63"><expr pos:start="71:13" pos:end="71:62"><name pos:start="71:13" pos:end="71:18">buffer</name> <operator pos:start="71:20" pos:end="71:20">=</operator> <call pos:start="71:22" pos:end="71:62"><name pos:start="71:22" pos:end="71:35">mmal_queue_get</name><argument_list pos:start="71:36" pos:end="71:62">(<argument pos:start="71:37" pos:end="71:61"><expr pos:start="71:37" pos:end="71:61"><name pos:start="71:37" pos:end="71:61"><name pos:start="71:37" pos:end="71:39">ctx</name><operator pos:start="71:40" pos:end="71:41">-&gt;</operator><name pos:start="71:42" pos:end="71:61">queue_decoded_frames</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <if_stmt pos:start="73:13" pos:end="75:26"><if pos:start="73:13" pos:end="75:26">if <condition pos:start="73:16" pos:end="73:24">(<expr pos:start="73:17" pos:end="73:23"><operator pos:start="73:17" pos:end="73:17">!</operator><name pos:start="73:18" pos:end="73:23">buffer</name></expr>)</condition><block type="pseudo" pos:start="75:17" pos:end="75:26"><block_content pos:start="75:17" pos:end="75:26">
+
+                <goto pos:start="75:17" pos:end="75:26">goto <name pos:start="75:22" pos:end="75:25">done</name>;</goto></block_content></block></if></if_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+
+
+        <expr_stmt pos:start="81:9" pos:end="81:77"><expr pos:start="81:9" pos:end="81:76"><name pos:start="81:9" pos:end="81:25"><name pos:start="81:9" pos:end="81:11">ctx</name><operator pos:start="81:12" pos:end="81:13">-&gt;</operator><name pos:start="81:14" pos:end="81:25">eos_received</name></name> <operator pos:start="81:27" pos:end="81:28">|=</operator> <operator pos:start="81:30" pos:end="81:30">!</operator><operator pos:start="81:31" pos:end="81:31">!</operator><operator pos:start="81:32" pos:end="81:32">(</operator><name pos:start="81:33" pos:end="81:45"><name pos:start="81:33" pos:end="81:38">buffer</name><operator pos:start="81:39" pos:end="81:40">-&gt;</operator><name pos:start="81:41" pos:end="81:45">flags</name></name> <operator pos:start="81:47" pos:end="81:47">&amp;</operator> <name pos:start="81:49" pos:end="81:75">MMAL_BUFFER_HEADER_FLAG_EOS</name><operator pos:start="81:76" pos:end="81:76">)</operator></expr>;</expr_stmt>
+
+        <if_stmt pos:start="83:9" pos:end="85:22"><if pos:start="83:9" pos:end="85:22">if <condition pos:start="83:12" pos:end="83:30">(<expr pos:start="83:13" pos:end="83:29"><name pos:start="83:13" pos:end="83:29"><name pos:start="83:13" pos:end="83:15">ctx</name><operator pos:start="83:16" pos:end="83:17">-&gt;</operator><name pos:start="83:18" pos:end="83:29">eos_received</name></name></expr>)</condition><block type="pseudo" pos:start="85:13" pos:end="85:22"><block_content pos:start="85:13" pos:end="85:22">
+
+            <goto pos:start="85:13" pos:end="85:22">goto <name pos:start="85:18" pos:end="85:21">done</name>;</goto></block_content></block></if></if_stmt>
+
+
+
+        <if_stmt pos:start="89:9" pos:end="165:9"><if pos:start="89:9" pos:end="147:9">if <condition pos:start="89:12" pos:end="89:53">(<expr pos:start="89:13" pos:end="89:52"><name pos:start="89:13" pos:end="89:23"><name pos:start="89:13" pos:end="89:18">buffer</name><operator pos:start="89:19" pos:end="89:20">-&gt;</operator><name pos:start="89:21" pos:end="89:23">cmd</name></name> <operator pos:start="89:25" pos:end="89:26">==</operator> <name pos:start="89:28" pos:end="89:52">MMAL_EVENT_FORMAT_CHANGED</name></expr>)</condition> <block pos:start="89:55" pos:end="147:9">{<block_content pos:start="91:13" pos:end="145:21">
+
+            <decl_stmt pos:start="91:13" pos:end="91:53"><decl pos:start="91:13" pos:end="91:52"><type pos:start="91:13" pos:end="91:30"><name pos:start="91:13" pos:end="91:28">MMAL_COMPONENT_T</name> <modifier pos:start="91:30" pos:end="91:30">*</modifier></type><name pos:start="91:31" pos:end="91:37">decoder</name> <init pos:start="91:39" pos:end="91:52">= <expr pos:start="91:41" pos:end="91:52"><name pos:start="91:41" pos:end="91:52"><name pos:start="91:41" pos:end="91:43">ctx</name><operator pos:start="91:44" pos:end="91:45">-&gt;</operator><name pos:start="91:46" pos:end="91:52">decoder</name></name></expr></init></decl>;</decl_stmt>
+
+            <decl_stmt pos:start="93:13" pos:end="93:84"><decl pos:start="93:13" pos:end="93:83"><type pos:start="93:13" pos:end="93:41"><name pos:start="93:13" pos:end="93:39">MMAL_EVENT_FORMAT_CHANGED_T</name> <modifier pos:start="93:41" pos:end="93:41">*</modifier></type><name pos:start="93:42" pos:end="93:43">ev</name> <init pos:start="93:45" pos:end="93:83">= <expr pos:start="93:47" pos:end="93:83"><call pos:start="93:47" pos:end="93:83"><name pos:start="93:47" pos:end="93:75">mmal_event_format_changed_get</name><argument_list pos:start="93:76" pos:end="93:83">(<argument pos:start="93:77" pos:end="93:82"><expr pos:start="93:77" pos:end="93:82"><name pos:start="93:77" pos:end="93:82">buffer</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+            <decl_stmt pos:start="95:13" pos:end="95:47"><decl pos:start="95:13" pos:end="95:46"><type pos:start="95:13" pos:end="95:34"><name pos:start="95:13" pos:end="95:32">MMAL_BUFFER_HEADER_T</name> <modifier pos:start="95:34" pos:end="95:34">*</modifier></type><name pos:start="95:35" pos:end="95:46">stale_buffer</name></decl>;</decl_stmt>
+
+
+
+            <expr_stmt pos:start="99:13" pos:end="99:68"><expr pos:start="99:13" pos:end="99:67"><call pos:start="99:13" pos:end="99:67"><name pos:start="99:13" pos:end="99:18">av_log</name><argument_list pos:start="99:19" pos:end="99:67">(<argument pos:start="99:20" pos:end="99:24"><expr pos:start="99:20" pos:end="99:24"><name pos:start="99:20" pos:end="99:24">avctx</name></expr></argument>, <argument pos:start="99:27" pos:end="99:37"><expr pos:start="99:27" pos:end="99:37"><name pos:start="99:27" pos:end="99:37">AV_LOG_INFO</name></expr></argument>, <argument pos:start="99:40" pos:end="99:66"><expr pos:start="99:40" pos:end="99:66"><literal type="string" pos:start="99:40" pos:end="99:66">"Changing output format.\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <if_stmt pos:start="103:13" pos:end="105:26"><if pos:start="103:13" pos:end="105:26">if <condition pos:start="103:16" pos:end="103:65">(<expr pos:start="103:17" pos:end="103:64"><operator pos:start="103:17" pos:end="103:17">(</operator><name pos:start="103:18" pos:end="103:23">status</name> <operator pos:start="103:25" pos:end="103:25">=</operator> <call pos:start="103:27" pos:end="103:63"><name pos:start="103:27" pos:end="103:43">mmal_port_disable</name><argument_list pos:start="103:44" pos:end="103:63">(<argument pos:start="103:45" pos:end="103:62"><expr pos:start="103:45" pos:end="103:62"><name pos:start="103:45" pos:end="103:62"><name pos:start="103:45" pos:end="103:51">decoder</name><operator pos:start="103:52" pos:end="103:53">-&gt;</operator><name pos:start="103:54" pos:end="103:59">output</name><index pos:start="103:60" pos:end="103:62">[<expr pos:start="103:61" pos:end="103:61"><literal type="number" pos:start="103:61" pos:end="103:61">0</literal></expr>]</index></name></expr></argument>)</argument_list></call><operator pos:start="103:64" pos:end="103:64">)</operator></expr>)</condition><block type="pseudo" pos:start="105:17" pos:end="105:26"><block_content pos:start="105:17" pos:end="105:26">
+
+                <goto pos:start="105:17" pos:end="105:26">goto <name pos:start="105:22" pos:end="105:25">done</name>;</goto></block_content></block></if></if_stmt>
+
+
+
+            <while pos:start="109:13" pos:end="111:57">while <condition pos:start="109:19" pos:end="109:78">(<expr pos:start="109:20" pos:end="109:77"><operator pos:start="109:20" pos:end="109:20">(</operator><name pos:start="109:21" pos:end="109:32">stale_buffer</name> <operator pos:start="109:34" pos:end="109:34">=</operator> <call pos:start="109:36" pos:end="109:76"><name pos:start="109:36" pos:end="109:49">mmal_queue_get</name><argument_list pos:start="109:50" pos:end="109:76">(<argument pos:start="109:51" pos:end="109:75"><expr pos:start="109:51" pos:end="109:75"><name pos:start="109:51" pos:end="109:75"><name pos:start="109:51" pos:end="109:53">ctx</name><operator pos:start="109:54" pos:end="109:55">-&gt;</operator><name pos:start="109:56" pos:end="109:75">queue_decoded_frames</name></name></expr></argument>)</argument_list></call><operator pos:start="109:77" pos:end="109:77">)</operator></expr>)</condition><block type="pseudo" pos:start="111:17" pos:end="111:57"><block_content pos:start="111:17" pos:end="111:57">
+
+                <expr_stmt pos:start="111:17" pos:end="111:57"><expr pos:start="111:17" pos:end="111:56"><call pos:start="111:17" pos:end="111:56"><name pos:start="111:17" pos:end="111:42">mmal_buffer_header_release</name><argument_list pos:start="111:43" pos:end="111:56">(<argument pos:start="111:44" pos:end="111:55"><expr pos:start="111:44" pos:end="111:55"><name pos:start="111:44" pos:end="111:55">stale_buffer</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></while>
+
+
+
+            <expr_stmt pos:start="115:13" pos:end="115:69"><expr pos:start="115:13" pos:end="115:68"><call pos:start="115:13" pos:end="115:68"><name pos:start="115:13" pos:end="115:28">mmal_format_copy</name><argument_list pos:start="115:29" pos:end="115:68">(<argument pos:start="115:30" pos:end="115:55"><expr pos:start="115:30" pos:end="115:55"><name pos:start="115:30" pos:end="115:47"><name pos:start="115:30" pos:end="115:36">decoder</name><operator pos:start="115:37" pos:end="115:38">-&gt;</operator><name pos:start="115:39" pos:end="115:44">output</name><index pos:start="115:45" pos:end="115:47">[<expr pos:start="115:46" pos:end="115:46"><literal type="number" pos:start="115:46" pos:end="115:46">0</literal></expr>]</index></name><operator pos:start="115:48" pos:end="115:49">-&gt;</operator><name pos:start="115:50" pos:end="115:55">format</name></expr></argument>, <argument pos:start="115:58" pos:end="115:67"><expr pos:start="115:58" pos:end="115:67"><name pos:start="115:58" pos:end="115:67"><name pos:start="115:58" pos:end="115:59">ev</name><operator pos:start="115:60" pos:end="115:61">-&gt;</operator><name pos:start="115:62" pos:end="115:67">format</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <if_stmt pos:start="119:13" pos:end="121:26"><if pos:start="119:13" pos:end="121:26">if <condition pos:start="119:16" pos:end="119:55">(<expr pos:start="119:17" pos:end="119:54"><operator pos:start="119:17" pos:end="119:17">(</operator><name pos:start="119:18" pos:end="119:20">ret</name> <operator pos:start="119:22" pos:end="119:22">=</operator> <call pos:start="119:24" pos:end="119:49"><name pos:start="119:24" pos:end="119:42">ffmal_update_format</name><argument_list pos:start="119:43" pos:end="119:49">(<argument pos:start="119:44" pos:end="119:48"><expr pos:start="119:44" pos:end="119:48"><name pos:start="119:44" pos:end="119:48">avctx</name></expr></argument>)</argument_list></call><operator pos:start="119:50" pos:end="119:50">)</operator> <operator pos:start="119:52" pos:end="119:52">&lt;</operator> <literal type="number" pos:start="119:54" pos:end="119:54">0</literal></expr>)</condition><block type="pseudo" pos:start="121:17" pos:end="121:26"><block_content pos:start="121:17" pos:end="121:26">
+
+                <goto pos:start="121:17" pos:end="121:26">goto <name pos:start="121:22" pos:end="121:25">done</name>;</goto></block_content></block></if></if_stmt>
+
+
+
+            <if_stmt pos:start="125:13" pos:end="127:26"><if pos:start="125:13" pos:end="127:26">if <condition pos:start="125:16" pos:end="125:81">(<expr pos:start="125:17" pos:end="125:80"><operator pos:start="125:17" pos:end="125:17">(</operator><name pos:start="125:18" pos:end="125:23">status</name> <operator pos:start="125:25" pos:end="125:25">=</operator> <call pos:start="125:27" pos:end="125:79"><name pos:start="125:27" pos:end="125:42">mmal_port_enable</name><argument_list pos:start="125:43" pos:end="125:79">(<argument pos:start="125:44" pos:end="125:61"><expr pos:start="125:44" pos:end="125:61"><name pos:start="125:44" pos:end="125:61"><name pos:start="125:44" pos:end="125:50">decoder</name><operator pos:start="125:51" pos:end="125:52">-&gt;</operator><name pos:start="125:53" pos:end="125:58">output</name><index pos:start="125:59" pos:end="125:61">[<expr pos:start="125:60" pos:end="125:60"><literal type="number" pos:start="125:60" pos:end="125:60">0</literal></expr>]</index></name></expr></argument>, <argument pos:start="125:64" pos:end="125:78"><expr pos:start="125:64" pos:end="125:78"><name pos:start="125:64" pos:end="125:78">output_callback</name></expr></argument>)</argument_list></call><operator pos:start="125:80" pos:end="125:80">)</operator></expr>)</condition><block type="pseudo" pos:start="127:17" pos:end="127:26"><block_content pos:start="127:17" pos:end="127:26">
+
+                <goto pos:start="127:17" pos:end="127:26">goto <name pos:start="127:22" pos:end="127:25">done</name>;</goto></block_content></block></if></if_stmt>
+
+
+
+            <if_stmt pos:start="131:13" pos:end="133:26"><if pos:start="131:13" pos:end="133:26">if <condition pos:start="131:16" pos:end="131:59">(<expr pos:start="131:17" pos:end="131:58"><operator pos:start="131:17" pos:end="131:17">(</operator><name pos:start="131:18" pos:end="131:20">ret</name> <operator pos:start="131:22" pos:end="131:22">=</operator> <call pos:start="131:24" pos:end="131:53"><name pos:start="131:24" pos:end="131:46">ffmmal_fill_output_port</name><argument_list pos:start="131:47" pos:end="131:53">(<argument pos:start="131:48" pos:end="131:52"><expr pos:start="131:48" pos:end="131:52"><name pos:start="131:48" pos:end="131:52">avctx</name></expr></argument>)</argument_list></call><operator pos:start="131:54" pos:end="131:54">)</operator> <operator pos:start="131:56" pos:end="131:56">&lt;</operator> <literal type="number" pos:start="131:58" pos:end="131:58">0</literal></expr>)</condition><block type="pseudo" pos:start="133:17" pos:end="133:26"><block_content pos:start="133:17" pos:end="133:26">
+
+                <goto pos:start="133:17" pos:end="133:26">goto <name pos:start="133:22" pos:end="133:25">done</name>;</goto></block_content></block></if></if_stmt>
+
+
+
+            <if_stmt pos:start="137:13" pos:end="139:26"><if pos:start="137:13" pos:end="139:26">if <condition pos:start="137:16" pos:end="137:58">(<expr pos:start="137:17" pos:end="137:57"><operator pos:start="137:17" pos:end="137:17">(</operator><name pos:start="137:18" pos:end="137:20">ret</name> <operator pos:start="137:22" pos:end="137:22">=</operator> <call pos:start="137:24" pos:end="137:52"><name pos:start="137:24" pos:end="137:45">ffmmal_fill_input_port</name><argument_list pos:start="137:46" pos:end="137:52">(<argument pos:start="137:47" pos:end="137:51"><expr pos:start="137:47" pos:end="137:51"><name pos:start="137:47" pos:end="137:51">avctx</name></expr></argument>)</argument_list></call><operator pos:start="137:53" pos:end="137:53">)</operator> <operator pos:start="137:55" pos:end="137:55">&lt;</operator> <literal type="number" pos:start="137:57" pos:end="137:57">0</literal></expr>)</condition><block type="pseudo" pos:start="139:17" pos:end="139:26"><block_content pos:start="139:17" pos:end="139:26">
+
+                <goto pos:start="139:17" pos:end="139:26">goto <name pos:start="139:22" pos:end="139:25">done</name>;</goto></block_content></block></if></if_stmt>
+
+
+
+            <expr_stmt pos:start="143:13" pos:end="143:47"><expr pos:start="143:13" pos:end="143:46"><call pos:start="143:13" pos:end="143:46"><name pos:start="143:13" pos:end="143:38">mmal_buffer_header_release</name><argument_list pos:start="143:39" pos:end="143:46">(<argument pos:start="143:40" pos:end="143:45"><expr pos:start="143:40" pos:end="143:45"><name pos:start="143:40" pos:end="143:45">buffer</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <continue pos:start="145:13" pos:end="145:21">continue;</continue>
+
+        </block_content>}</block></if> <if type="elseif" pos:start="147:11" pos:end="157:9">else if <condition pos:start="147:19" pos:end="147:31">(<expr pos:start="147:20" pos:end="147:30"><name pos:start="147:20" pos:end="147:30"><name pos:start="147:20" pos:end="147:25">buffer</name><operator pos:start="147:26" pos:end="147:27">-&gt;</operator><name pos:start="147:28" pos:end="147:30">cmd</name></name></expr>)</condition> <block pos:start="147:33" pos:end="157:9">{<block_content pos:start="149:13" pos:end="155:22">
+
+            <decl_stmt pos:start="149:13" pos:end="149:23"><decl pos:start="149:13" pos:end="149:22"><type pos:start="149:13" pos:end="149:16"><name pos:start="149:13" pos:end="149:16">char</name></type> <name pos:start="149:18" pos:end="149:22"><name pos:start="149:18" pos:end="149:18">s</name><index pos:start="149:19" pos:end="149:22">[<expr pos:start="149:20" pos:end="149:21"><literal type="number" pos:start="149:20" pos:end="149:21">20</literal></expr>]</index></name></decl>;</decl_stmt>
+
+            <expr_stmt pos:start="151:13" pos:end="151:63"><expr pos:start="151:13" pos:end="151:62"><call pos:start="151:13" pos:end="151:62"><name pos:start="151:13" pos:end="151:35">av_get_codec_tag_string</name><argument_list pos:start="151:36" pos:end="151:62">(<argument pos:start="151:37" pos:end="151:37"><expr pos:start="151:37" pos:end="151:37"><name pos:start="151:37" pos:end="151:37">s</name></expr></argument>, <argument pos:start="151:40" pos:end="151:48"><expr pos:start="151:40" pos:end="151:48"><sizeof pos:start="151:40" pos:end="151:48">sizeof<argument_list pos:start="151:46" pos:end="151:48">(<argument pos:start="151:47" pos:end="151:47"><expr pos:start="151:47" pos:end="151:47"><name pos:start="151:47" pos:end="151:47">s</name></expr></argument>)</argument_list></sizeof></expr></argument>, <argument pos:start="151:51" pos:end="151:61"><expr pos:start="151:51" pos:end="151:61"><name pos:start="151:51" pos:end="151:61"><name pos:start="151:51" pos:end="151:56">buffer</name><operator pos:start="151:57" pos:end="151:58">-&gt;</operator><name pos:start="151:59" pos:end="151:61">cmd</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="153:13" pos:end="153:87"><expr pos:start="153:13" pos:end="153:86"><call pos:start="153:13" pos:end="153:86"><name pos:start="153:13" pos:end="153:18">av_log</name><argument_list pos:start="153:19" pos:end="153:86">(<argument pos:start="153:20" pos:end="153:24"><expr pos:start="153:20" pos:end="153:24"><name pos:start="153:20" pos:end="153:24">avctx</name></expr></argument>, <argument pos:start="153:27" pos:end="153:40"><expr pos:start="153:27" pos:end="153:40"><name pos:start="153:27" pos:end="153:40">AV_LOG_WARNING</name></expr></argument>, <argument pos:start="153:43" pos:end="153:82"><expr pos:start="153:43" pos:end="153:82"><literal type="string" pos:start="153:43" pos:end="153:82">"Unknown MMAL event %s on output port\n"</literal></expr></argument>, <argument pos:start="153:85" pos:end="153:85"><expr pos:start="153:85" pos:end="153:85"><name pos:start="153:85" pos:end="153:85">s</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <goto pos:start="155:13" pos:end="155:22">goto <name pos:start="155:18" pos:end="155:21">done</name>;</goto>
+
+        </block_content>}</block></if> <if type="elseif" pos:start="157:11" pos:end="165:9">else if <condition pos:start="157:19" pos:end="157:39">(<expr pos:start="157:20" pos:end="157:38"><name pos:start="157:20" pos:end="157:33"><name pos:start="157:20" pos:end="157:25">buffer</name><operator pos:start="157:26" pos:end="157:27">-&gt;</operator><name pos:start="157:28" pos:end="157:33">length</name></name> <operator pos:start="157:35" pos:end="157:36">==</operator> <literal type="number" pos:start="157:38" pos:end="157:38">0</literal></expr>)</condition> <block pos:start="157:41" pos:end="165:9">{<block_content pos:start="161:13" pos:end="163:21">
+
+            <comment type="line" pos:start="159:13" pos:end="159:73">// Unused output buffer that got drained after format change.</comment>
+
+            <expr_stmt pos:start="161:13" pos:end="161:47"><expr pos:start="161:13" pos:end="161:46"><call pos:start="161:13" pos:end="161:46"><name pos:start="161:13" pos:end="161:38">mmal_buffer_header_release</name><argument_list pos:start="161:39" pos:end="161:46">(<argument pos:start="161:40" pos:end="161:45"><expr pos:start="161:40" pos:end="161:45"><name pos:start="161:40" pos:end="161:45">buffer</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <continue pos:start="163:13" pos:end="163:21">continue;</continue>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="169:9" pos:end="169:29"><expr pos:start="169:9" pos:end="169:28"><name pos:start="169:9" pos:end="169:26"><name pos:start="169:9" pos:end="169:11">ctx</name><operator pos:start="169:12" pos:end="169:13">-&gt;</operator><name pos:start="169:14" pos:end="169:26">frames_output</name></name><operator pos:start="169:27" pos:end="169:28">++</operator></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="173:9" pos:end="175:22"><if pos:start="173:9" pos:end="175:22">if <condition pos:start="173:12" pos:end="173:63">(<expr pos:start="173:13" pos:end="173:62"><operator pos:start="173:13" pos:end="173:13">(</operator><name pos:start="173:14" pos:end="173:16">ret</name> <operator pos:start="173:18" pos:end="173:18">=</operator> <call pos:start="173:20" pos:end="173:57"><name pos:start="173:20" pos:end="173:35">ffmal_copy_frame</name><argument_list pos:start="173:36" pos:end="173:57">(<argument pos:start="173:37" pos:end="173:41"><expr pos:start="173:37" pos:end="173:41"><name pos:start="173:37" pos:end="173:41">avctx</name></expr></argument>, <argument pos:start="173:44" pos:end="173:48"><expr pos:start="173:44" pos:end="173:48"><name pos:start="173:44" pos:end="173:48">frame</name></expr></argument>, <argument pos:start="173:51" pos:end="173:56"><expr pos:start="173:51" pos:end="173:56"><name pos:start="173:51" pos:end="173:56">buffer</name></expr></argument>)</argument_list></call><operator pos:start="173:58" pos:end="173:58">)</operator> <operator pos:start="173:60" pos:end="173:60">&lt;</operator> <literal type="number" pos:start="173:62" pos:end="173:62">0</literal></expr>)</condition><block type="pseudo" pos:start="175:13" pos:end="175:22"><block_content pos:start="175:13" pos:end="175:22">
+
+            <goto pos:start="175:13" pos:end="175:22">goto <name pos:start="175:18" pos:end="175:21">done</name>;</goto></block_content></block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="179:9" pos:end="179:23"><expr pos:start="179:9" pos:end="179:22"><operator pos:start="179:9" pos:end="179:9">*</operator><name pos:start="179:10" pos:end="179:18">got_frame</name> <operator pos:start="179:20" pos:end="179:20">=</operator> <literal type="number" pos:start="179:22" pos:end="179:22">1</literal></expr>;</expr_stmt>
+
+        <break pos:start="181:9" pos:end="181:14">break;</break>
+
+    </block_content>}</block></while>
+
+
+
+<label pos:start="187:1" pos:end="187:5"><name pos:start="187:1" pos:end="187:4">done</name>:</label>
+
+    <if_stmt pos:start="189:5" pos:end="191:43"><if pos:start="189:5" pos:end="191:43">if <condition pos:start="189:8" pos:end="189:15">(<expr pos:start="189:9" pos:end="189:14"><name pos:start="189:9" pos:end="189:14">buffer</name></expr>)</condition><block type="pseudo" pos:start="191:9" pos:end="191:43"><block_content pos:start="191:9" pos:end="191:43">
+
+        <expr_stmt pos:start="191:9" pos:end="191:43"><expr pos:start="191:9" pos:end="191:42"><call pos:start="191:9" pos:end="191:42"><name pos:start="191:9" pos:end="191:34">mmal_buffer_header_release</name><argument_list pos:start="191:35" pos:end="191:42">(<argument pos:start="191:36" pos:end="191:41"><expr pos:start="191:36" pos:end="191:41"><name pos:start="191:36" pos:end="191:41">buffer</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+    <if_stmt pos:start="193:5" pos:end="195:30"><if pos:start="193:5" pos:end="195:30">if <condition pos:start="193:8" pos:end="193:27">(<expr pos:start="193:9" pos:end="193:26"><name pos:start="193:9" pos:end="193:14">status</name> <operator pos:start="193:16" pos:end="193:17">&amp;&amp;</operator> <name pos:start="193:19" pos:end="193:21">ret</name> <operator pos:start="193:23" pos:end="193:24">&gt;=</operator> <literal type="number" pos:start="193:26" pos:end="193:26">0</literal></expr>)</condition><block type="pseudo" pos:start="195:9" pos:end="195:30"><block_content pos:start="195:9" pos:end="195:30">
+
+        <expr_stmt pos:start="195:9" pos:end="195:30"><expr pos:start="195:9" pos:end="195:29"><name pos:start="195:9" pos:end="195:11">ret</name> <operator pos:start="195:13" pos:end="195:13">=</operator> <name pos:start="195:15" pos:end="195:29">AVERROR_UNKNOWN</name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+    <return pos:start="197:5" pos:end="197:15">return <expr pos:start="197:12" pos:end="197:14"><name pos:start="197:12" pos:end="197:14">ret</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

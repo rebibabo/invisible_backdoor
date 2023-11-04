@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/8302.c" pos:tabs="8"><macro pos:start="1:1" pos:end="1:66"><name pos:start="1:1" pos:end="1:30">e1000e_intrmgr_delay_tx_causes</name><argument_list pos:start="1:31" pos:end="1:66">(<argument pos:start="1:32" pos:end="1:47">E1000ECore *core</argument>, <argument pos:start="1:50" pos:end="1:65">uint32_t *causes</argument>)</argument_list></macro>
+
+<block pos:start="3:1" pos:end="57:1">{<block_content pos:start="5:5" pos:end="55:16">
+
+    <decl_stmt pos:start="5:5" pos:end="11:60"><decl pos:start="5:5" pos:end="11:59"><type pos:start="5:5" pos:end="5:25"><specifier pos:start="5:5" pos:end="5:10">static</specifier> <specifier pos:start="5:12" pos:end="5:16">const</specifier> <name pos:start="5:18" pos:end="5:25">uint32_t</name></type> <name pos:start="5:27" pos:end="5:42">delayable_causes</name> <init pos:start="5:44" pos:end="11:59">= <expr pos:start="5:46" pos:end="11:59"><name pos:start="5:46" pos:end="5:59">E1000_ICR_TXQ0</name> <operator pos:start="5:61" pos:end="5:61">|</operator>
+
+                                             <name pos:start="7:46" pos:end="7:59">E1000_ICR_TXQ1</name> <operator pos:start="7:61" pos:end="7:61">|</operator>
+
+                                             <name pos:start="9:46" pos:end="9:59">E1000_ICR_TXQE</name> <operator pos:start="9:61" pos:end="9:61">|</operator>
+
+                                             <name pos:start="11:46" pos:end="11:59">E1000_ICR_TXDW</name></expr></init></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="15:5" pos:end="19:5"><if pos:start="15:5" pos:end="19:5">if <condition pos:start="15:8" pos:end="15:34">(<expr pos:start="15:9" pos:end="15:33"><call pos:start="15:9" pos:end="15:33"><name pos:start="15:9" pos:end="15:20">msix_enabled</name><argument_list pos:start="15:21" pos:end="15:33">(<argument pos:start="15:22" pos:end="15:32"><expr pos:start="15:22" pos:end="15:32"><name pos:start="15:22" pos:end="15:32"><name pos:start="15:22" pos:end="15:25">core</name><operator pos:start="15:26" pos:end="15:27">-&gt;</operator><name pos:start="15:28" pos:end="15:32">owner</name></name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="15:36" pos:end="19:5">{<block_content pos:start="17:9" pos:end="17:21">
+
+        <return pos:start="17:9" pos:end="17:21">return <expr pos:start="17:16" pos:end="17:20"><name pos:start="17:16" pos:end="17:20">false</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="23:5" pos:end="23:49">/* Clean up all causes that may be delayed */</comment>
+
+    <expr_stmt pos:start="25:5" pos:end="25:55"><expr pos:start="25:5" pos:end="25:54"><name pos:start="25:5" pos:end="25:24"><name pos:start="25:5" pos:end="25:8">core</name><operator pos:start="25:9" pos:end="25:10">-&gt;</operator><name pos:start="25:11" pos:end="25:24">delayed_causes</name></name> <operator pos:start="25:26" pos:end="25:27">|=</operator> <operator pos:start="25:29" pos:end="25:29">*</operator><name pos:start="25:30" pos:end="25:35">causes</name> <operator pos:start="25:37" pos:end="25:37">&amp;</operator> <name pos:start="25:39" pos:end="25:54">delayable_causes</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="27:5" pos:end="27:33"><expr pos:start="27:5" pos:end="27:32"><operator pos:start="27:5" pos:end="27:5">*</operator><name pos:start="27:6" pos:end="27:11">causes</name> <operator pos:start="27:13" pos:end="27:14">&amp;=</operator> <operator pos:start="27:16" pos:end="27:16">~</operator><name pos:start="27:17" pos:end="27:32">delayable_causes</name></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="31:5" pos:end="31:52">/* If there are causes that cannot be delayed */</comment>
+
+    <if_stmt pos:start="33:5" pos:end="37:5"><if pos:start="33:5" pos:end="37:5">if <condition pos:start="33:8" pos:end="33:20">(<expr pos:start="33:9" pos:end="33:19"><name pos:start="33:9" pos:end="33:14">causes</name> <operator pos:start="33:16" pos:end="33:17">!=</operator> <literal type="number" pos:start="33:19" pos:end="33:19">0</literal></expr>)</condition> <block pos:start="33:22" pos:end="37:5">{<block_content pos:start="35:9" pos:end="35:21">
+
+        <return pos:start="35:9" pos:end="35:21">return <expr pos:start="35:16" pos:end="35:20"><name pos:start="35:16" pos:end="35:20">false</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="41:5" pos:end="41:28">/* All causes delayed */</comment>
+
+    <expr_stmt pos:start="43:5" pos:end="43:44"><expr pos:start="43:5" pos:end="43:43"><call pos:start="43:5" pos:end="43:43"><name pos:start="43:5" pos:end="43:30">e1000e_intrmgr_rearm_timer</name><argument_list pos:start="43:31" pos:end="43:43">(<argument pos:start="43:32" pos:end="43:42"><expr pos:start="43:32" pos:end="43:42"><operator pos:start="43:32" pos:end="43:32">&amp;</operator><name pos:start="43:33" pos:end="43:42"><name pos:start="43:33" pos:end="43:36">core</name><operator pos:start="43:37" pos:end="43:38">-&gt;</operator><name pos:start="43:39" pos:end="43:42">tidv</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="47:5" pos:end="51:5"><if pos:start="47:5" pos:end="51:5">if <condition pos:start="47:8" pos:end="47:54">(<expr pos:start="47:9" pos:end="47:53"><operator pos:start="47:9" pos:end="47:9">!</operator><name pos:start="47:10" pos:end="47:27"><name pos:start="47:10" pos:end="47:13">core</name><operator pos:start="47:14" pos:end="47:15">-&gt;</operator><name pos:start="47:16" pos:end="47:19">tadv</name><operator pos:start="47:20" pos:end="47:20">.</operator><name pos:start="47:21" pos:end="47:27">running</name></name> <operator pos:start="47:29" pos:end="47:30">&amp;&amp;</operator> <operator pos:start="47:32" pos:end="47:32">(</operator><name pos:start="47:33" pos:end="47:47"><name pos:start="47:33" pos:end="47:36">core</name><operator pos:start="47:37" pos:end="47:38">-&gt;</operator><name pos:start="47:39" pos:end="47:41">mac</name><index pos:start="47:42" pos:end="47:47">[<expr pos:start="47:43" pos:end="47:46"><name pos:start="47:43" pos:end="47:46">TADV</name></expr>]</index></name> <operator pos:start="47:49" pos:end="47:50">!=</operator> <literal type="number" pos:start="47:52" pos:end="47:52">0</literal><operator pos:start="47:53" pos:end="47:53">)</operator></expr>)</condition> <block pos:start="47:56" pos:end="51:5">{<block_content pos:start="49:9" pos:end="49:48">
+
+        <expr_stmt pos:start="49:9" pos:end="49:48"><expr pos:start="49:9" pos:end="49:47"><call pos:start="49:9" pos:end="49:47"><name pos:start="49:9" pos:end="49:34">e1000e_intrmgr_rearm_timer</name><argument_list pos:start="49:35" pos:end="49:47">(<argument pos:start="49:36" pos:end="49:46"><expr pos:start="49:36" pos:end="49:46"><operator pos:start="49:36" pos:end="49:36">&amp;</operator><name pos:start="49:37" pos:end="49:46"><name pos:start="49:37" pos:end="49:40">core</name><operator pos:start="49:41" pos:end="49:42">-&gt;</operator><name pos:start="49:43" pos:end="49:46">tadv</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <return pos:start="55:5" pos:end="55:16">return <expr pos:start="55:12" pos:end="55:15"><name pos:start="55:12" pos:end="55:15">true</name></expr>;</return>
+
+</block_content>}</block>
+</unit>

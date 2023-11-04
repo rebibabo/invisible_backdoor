@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/11049.c" pos:tabs="8"><function pos:start="1:1" pos:end="127:1"><type pos:start="1:1" pos:end="1:23"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:21">NetSocketState</name> <modifier pos:start="1:23" pos:end="1:23">*</modifier></type><name pos:start="1:24" pos:end="1:47">net_socket_fd_init_dgram</name><parameter_list pos:start="1:48" pos:end="11:61">(<parameter pos:start="1:49" pos:end="1:68"><decl pos:start="1:49" pos:end="1:68"><type pos:start="1:49" pos:end="1:68"><name pos:start="1:49" pos:end="1:62">NetClientState</name> <modifier pos:start="1:64" pos:end="1:64">*</modifier></type><name pos:start="1:65" pos:end="1:68">peer</name></decl></parameter>,
+
+                                                <parameter pos:start="3:49" pos:end="3:65"><decl pos:start="3:49" pos:end="3:65"><type pos:start="3:49" pos:end="3:65"><specifier pos:start="3:49" pos:end="3:53">const</specifier> <name pos:start="3:55" pos:end="3:58">char</name> <modifier pos:start="3:60" pos:end="3:60">*</modifier></type><name pos:start="3:61" pos:end="3:65">model</name></decl></parameter>,
+
+                                                <parameter pos:start="5:49" pos:end="5:64"><decl pos:start="5:49" pos:end="5:64"><type pos:start="5:49" pos:end="5:64"><specifier pos:start="5:49" pos:end="5:53">const</specifier> <name pos:start="5:55" pos:end="5:58">char</name> <modifier pos:start="5:60" pos:end="5:60">*</modifier></type><name pos:start="5:61" pos:end="5:64">name</name></decl></parameter>,
+
+                                                <parameter pos:start="7:49" pos:end="7:54"><decl pos:start="7:49" pos:end="7:54"><type pos:start="7:49" pos:end="7:54"><name pos:start="7:49" pos:end="7:51">int</name></type> <name pos:start="7:53" pos:end="7:54">fd</name></decl></parameter>, <parameter pos:start="7:57" pos:end="7:72"><decl pos:start="7:57" pos:end="7:72"><type pos:start="7:57" pos:end="7:72"><name pos:start="7:57" pos:end="7:59">int</name></type> <name pos:start="7:61" pos:end="7:72">is_connected</name></decl></parameter>,
+
+                                                <parameter pos:start="9:49" pos:end="9:65"><decl pos:start="9:49" pos:end="9:65"><type pos:start="9:49" pos:end="9:65"><specifier pos:start="9:49" pos:end="9:53">const</specifier> <name pos:start="9:55" pos:end="9:58">char</name> <modifier pos:start="9:60" pos:end="9:60">*</modifier></type><name pos:start="9:61" pos:end="9:65">mcast</name></decl></parameter>,
+
+                                                <parameter pos:start="11:49" pos:end="11:60"><decl pos:start="11:49" pos:end="11:60"><type pos:start="11:49" pos:end="11:60"><name pos:start="11:49" pos:end="11:53">Error</name> <modifier pos:start="11:55" pos:end="11:55">*</modifier><modifier pos:start="11:56" pos:end="11:56">*</modifier></type><name pos:start="11:57" pos:end="11:60">errp</name></decl></parameter>)</parameter_list>
+
+<block pos:start="13:1" pos:end="127:1">{<block_content pos:start="15:5" pos:end="125:16">
+
+    <decl_stmt pos:start="15:5" pos:end="15:29"><decl pos:start="15:5" pos:end="15:28"><type pos:start="15:5" pos:end="15:22"><name pos:start="15:5" pos:end="15:22"><name pos:start="15:5" pos:end="15:10">struct</name> <name pos:start="15:12" pos:end="15:22">sockaddr_in</name></name></type> <name pos:start="15:24" pos:end="15:28">saddr</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="17:5" pos:end="17:14"><decl pos:start="17:5" pos:end="17:13"><type pos:start="17:5" pos:end="17:7"><name pos:start="17:5" pos:end="17:7">int</name></type> <name pos:start="17:9" pos:end="17:13">newfd</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:23"><decl pos:start="19:5" pos:end="19:22"><type pos:start="19:5" pos:end="19:20"><name pos:start="19:5" pos:end="19:18">NetClientState</name> <modifier pos:start="19:20" pos:end="19:20">*</modifier></type><name pos:start="19:21" pos:end="19:22">nc</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="21:5" pos:end="21:22"><decl pos:start="21:5" pos:end="21:21"><type pos:start="21:5" pos:end="21:20"><name pos:start="21:5" pos:end="21:18">NetSocketState</name> <modifier pos:start="21:20" pos:end="21:20">*</modifier></type><name pos:start="21:21" pos:end="21:21">s</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="25:5" pos:end="31:7">/* fd passed: multicast: "learn" dgram_dst address from bound address and save it
+
+     * Because this may be "shared" socket from a "master" process, datagrams would be recv()
+
+     * by ONLY ONE process: we must "clone" this dgram socket --jjo
+
+     */</comment>
+
+
+
+    <if_stmt pos:start="35:5" pos:end="71:5"><if pos:start="35:5" pos:end="71:5">if <condition pos:start="35:8" pos:end="35:38">(<expr pos:start="35:9" pos:end="35:37"><name pos:start="35:9" pos:end="35:20">is_connected</name> <operator pos:start="35:22" pos:end="35:23">&amp;&amp;</operator> <name pos:start="35:25" pos:end="35:29">mcast</name> <operator pos:start="35:31" pos:end="35:32">!=</operator> <name pos:start="35:34" pos:end="35:37">NULL</name></expr>)</condition> <block pos:start="35:40" pos:end="71:5">{<block_content pos:start="37:13" pos:end="67:25">
+
+            <if_stmt pos:start="37:13" pos:end="41:13"><if pos:start="37:13" pos:end="41:13">if <condition pos:start="37:16" pos:end="37:57">(<expr pos:start="37:17" pos:end="37:56"><call pos:start="37:17" pos:end="37:52"><name pos:start="37:17" pos:end="37:31">parse_host_port</name><argument_list pos:start="37:32" pos:end="37:52">(<argument pos:start="37:33" pos:end="37:38"><expr pos:start="37:33" pos:end="37:38"><operator pos:start="37:33" pos:end="37:33">&amp;</operator><name pos:start="37:34" pos:end="37:38">saddr</name></expr></argument>, <argument pos:start="37:41" pos:end="37:45"><expr pos:start="37:41" pos:end="37:45"><name pos:start="37:41" pos:end="37:45">mcast</name></expr></argument>, <argument pos:start="37:48" pos:end="37:51"><expr pos:start="37:48" pos:end="37:51"><name pos:start="37:48" pos:end="37:51">errp</name></expr></argument>)</argument_list></call> <operator pos:start="37:54" pos:end="37:54">&lt;</operator> <literal type="number" pos:start="37:56" pos:end="37:56">0</literal></expr>)</condition> <block pos:start="37:59" pos:end="41:13">{<block_content pos:start="39:17" pos:end="39:25">
+
+                <goto pos:start="39:17" pos:end="39:25">goto <name pos:start="39:22" pos:end="39:24">err</name>;</goto>
+
+            </block_content>}</block></if></if_stmt>
+
+            <comment type="block" pos:start="43:13" pos:end="43:31">/* must be bound */</comment>
+
+            <if_stmt pos:start="45:13" pos:end="51:13"><if pos:start="45:13" pos:end="51:13">if <condition pos:start="45:16" pos:end="45:43">(<expr pos:start="45:17" pos:end="45:42"><name pos:start="45:17" pos:end="45:37"><name pos:start="45:17" pos:end="45:21">saddr</name><operator pos:start="45:22" pos:end="45:22">.</operator><name pos:start="45:23" pos:end="45:30">sin_addr</name><operator pos:start="45:31" pos:end="45:31">.</operator><name pos:start="45:32" pos:end="45:37">s_addr</name></name> <operator pos:start="45:39" pos:end="45:40">==</operator> <literal type="number" pos:start="45:42" pos:end="45:42">0</literal></expr>)</condition> <block pos:start="45:45" pos:end="51:13">{<block_content pos:start="47:17" pos:end="49:25">
+
+                <expr_stmt pos:start="47:17" pos:end="47:78"><expr pos:start="47:17" pos:end="47:77"><call pos:start="47:17" pos:end="47:77"><name pos:start="47:17" pos:end="47:26">error_setg</name><argument_list pos:start="47:27" pos:end="47:77">(<argument pos:start="47:28" pos:end="47:31"><expr pos:start="47:28" pos:end="47:31"><name pos:start="47:28" pos:end="47:31">errp</name></expr></argument>, <argument pos:start="47:34" pos:end="47:76"><expr pos:start="47:34" pos:end="47:76"><literal type="string" pos:start="47:34" pos:end="47:76">"can't setup multicast destination address"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <goto pos:start="49:17" pos:end="49:25">goto <name pos:start="49:22" pos:end="49:24">err</name>;</goto>
+
+            </block_content>}</block></if></if_stmt>
+
+            <comment type="block" pos:start="53:13" pos:end="53:36">/* clone dgram socket */</comment>
+
+            <expr_stmt pos:start="55:13" pos:end="55:64"><expr pos:start="55:13" pos:end="55:63"><name pos:start="55:13" pos:end="55:17">newfd</name> <operator pos:start="55:19" pos:end="55:19">=</operator> <call pos:start="55:21" pos:end="55:63"><name pos:start="55:21" pos:end="55:43">net_socket_mcast_create</name><argument_list pos:start="55:44" pos:end="55:63">(<argument pos:start="55:45" pos:end="55:50"><expr pos:start="55:45" pos:end="55:50"><operator pos:start="55:45" pos:end="55:45">&amp;</operator><name pos:start="55:46" pos:end="55:50">saddr</name></expr></argument>, <argument pos:start="55:53" pos:end="55:56"><expr pos:start="55:53" pos:end="55:56"><name pos:start="55:53" pos:end="55:56">NULL</name></expr></argument>, <argument pos:start="55:59" pos:end="55:62"><expr pos:start="55:59" pos:end="55:62"><name pos:start="55:59" pos:end="55:62">errp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <if_stmt pos:start="57:13" pos:end="61:13"><if pos:start="57:13" pos:end="61:13">if <condition pos:start="57:16" pos:end="57:26">(<expr pos:start="57:17" pos:end="57:25"><name pos:start="57:17" pos:end="57:21">newfd</name> <operator pos:start="57:23" pos:end="57:23">&lt;</operator> <literal type="number" pos:start="57:25" pos:end="57:25">0</literal></expr>)</condition> <block pos:start="57:28" pos:end="61:13">{<block_content pos:start="59:17" pos:end="59:25">
+
+                <goto pos:start="59:17" pos:end="59:25">goto <name pos:start="59:22" pos:end="59:24">err</name>;</goto>
+
+            </block_content>}</block></if></if_stmt>
+
+            <comment type="block" pos:start="63:13" pos:end="63:48">/* clone newfd to fd, close newfd */</comment>
+
+            <expr_stmt pos:start="65:13" pos:end="65:28"><expr pos:start="65:13" pos:end="65:27"><call pos:start="65:13" pos:end="65:27"><name pos:start="65:13" pos:end="65:16">dup2</name><argument_list pos:start="65:17" pos:end="65:27">(<argument pos:start="65:18" pos:end="65:22"><expr pos:start="65:18" pos:end="65:22"><name pos:start="65:18" pos:end="65:22">newfd</name></expr></argument>, <argument pos:start="65:25" pos:end="65:26"><expr pos:start="65:25" pos:end="65:26"><name pos:start="65:25" pos:end="65:26">fd</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="67:13" pos:end="67:25"><expr pos:start="67:13" pos:end="67:24"><call pos:start="67:13" pos:end="67:24"><name pos:start="67:13" pos:end="67:17">close</name><argument_list pos:start="67:18" pos:end="67:24">(<argument pos:start="67:19" pos:end="67:23"><expr pos:start="67:19" pos:end="67:23"><name pos:start="67:19" pos:end="67:23">newfd</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="75:5" pos:end="75:72"><expr pos:start="75:5" pos:end="75:71"><name pos:start="75:5" pos:end="75:6">nc</name> <operator pos:start="75:8" pos:end="75:8">=</operator> <call pos:start="75:10" pos:end="75:71"><name pos:start="75:10" pos:end="75:28">qemu_new_net_client</name><argument_list pos:start="75:29" pos:end="75:71">(<argument pos:start="75:30" pos:end="75:51"><expr pos:start="75:30" pos:end="75:51"><operator pos:start="75:30" pos:end="75:30">&amp;</operator><name pos:start="75:31" pos:end="75:51">net_dgram_socket_info</name></expr></argument>, <argument pos:start="75:54" pos:end="75:57"><expr pos:start="75:54" pos:end="75:57"><name pos:start="75:54" pos:end="75:57">peer</name></expr></argument>, <argument pos:start="75:60" pos:end="75:64"><expr pos:start="75:60" pos:end="75:64"><name pos:start="75:60" pos:end="75:64">model</name></expr></argument>, <argument pos:start="75:67" pos:end="75:70"><expr pos:start="75:67" pos:end="75:70"><name pos:start="75:67" pos:end="75:70">name</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="79:5" pos:end="79:42"><expr pos:start="79:5" pos:end="79:41"><name pos:start="79:5" pos:end="79:5">s</name> <operator pos:start="79:7" pos:end="79:7">=</operator> <call pos:start="79:9" pos:end="79:41"><name pos:start="79:9" pos:end="79:17">DO_UPCAST</name><argument_list pos:start="79:18" pos:end="79:41">(<argument pos:start="79:19" pos:end="79:32"><expr pos:start="79:19" pos:end="79:32"><name pos:start="79:19" pos:end="79:32">NetSocketState</name></expr></argument>, <argument pos:start="79:35" pos:end="79:36"><expr pos:start="79:35" pos:end="79:36"><name pos:start="79:35" pos:end="79:36">nc</name></expr></argument>, <argument pos:start="79:39" pos:end="79:40"><expr pos:start="79:39" pos:end="79:40"><name pos:start="79:39" pos:end="79:40">nc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="83:5" pos:end="83:15"><expr pos:start="83:5" pos:end="83:14"><name pos:start="83:5" pos:end="83:9"><name pos:start="83:5" pos:end="83:5">s</name><operator pos:start="83:6" pos:end="83:7">-&gt;</operator><name pos:start="83:8" pos:end="83:9">fd</name></name> <operator pos:start="83:11" pos:end="83:11">=</operator> <name pos:start="83:13" pos:end="83:14">fd</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="85:5" pos:end="85:22"><expr pos:start="85:5" pos:end="85:21"><name pos:start="85:5" pos:end="85:16"><name pos:start="85:5" pos:end="85:5">s</name><operator pos:start="85:6" pos:end="85:7">-&gt;</operator><name pos:start="85:8" pos:end="85:16">listen_fd</name></name> <operator pos:start="85:18" pos:end="85:18">=</operator> <operator pos:start="85:20" pos:end="85:20">-</operator><literal type="number" pos:start="85:21" pos:end="85:21">1</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="87:5" pos:end="87:39"><expr pos:start="87:5" pos:end="87:38"><name pos:start="87:5" pos:end="87:14"><name pos:start="87:5" pos:end="87:5">s</name><operator pos:start="87:6" pos:end="87:7">-&gt;</operator><name pos:start="87:8" pos:end="87:14">send_fn</name></name> <operator pos:start="87:16" pos:end="87:16">=</operator> <name pos:start="87:18" pos:end="87:38">net_socket_send_dgram</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="89:5" pos:end="89:62"><expr pos:start="89:5" pos:end="89:61"><call pos:start="89:5" pos:end="89:61"><name pos:start="89:5" pos:end="89:22">net_socket_rs_init</name><argument_list pos:start="89:23" pos:end="89:61">(<argument pos:start="89:24" pos:end="89:29"><expr pos:start="89:24" pos:end="89:29"><operator pos:start="89:24" pos:end="89:24">&amp;</operator><name pos:start="89:25" pos:end="89:29"><name pos:start="89:25" pos:end="89:25">s</name><operator pos:start="89:26" pos:end="89:27">-&gt;</operator><name pos:start="89:28" pos:end="89:29">rs</name></name></expr></argument>, <argument pos:start="89:32" pos:end="89:53"><expr pos:start="89:32" pos:end="89:53"><name pos:start="89:32" pos:end="89:53">net_socket_rs_finalize</name></expr></argument>, <argument pos:start="89:56" pos:end="89:60"><expr pos:start="89:56" pos:end="89:60"><name pos:start="89:56" pos:end="89:60">false</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="91:5" pos:end="91:34"><expr pos:start="91:5" pos:end="91:33"><call pos:start="91:5" pos:end="91:33"><name pos:start="91:5" pos:end="91:24">net_socket_read_poll</name><argument_list pos:start="91:25" pos:end="91:33">(<argument pos:start="91:26" pos:end="91:26"><expr pos:start="91:26" pos:end="91:26"><name pos:start="91:26" pos:end="91:26">s</name></expr></argument>, <argument pos:start="91:29" pos:end="91:32"><expr pos:start="91:29" pos:end="91:32"><name pos:start="91:29" pos:end="91:32">true</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="95:5" pos:end="95:42">/* mcast: save bound address as dst */</comment>
+
+    <if_stmt pos:start="97:5" pos:end="113:5"><if pos:start="97:5" pos:end="107:5">if <condition pos:start="97:8" pos:end="97:21">(<expr pos:start="97:9" pos:end="97:20"><name pos:start="97:9" pos:end="97:20">is_connected</name></expr>)</condition> <block pos:start="97:23" pos:end="107:5">{<block_content pos:start="99:9" pos:end="105:71">
+
+        <expr_stmt pos:start="99:9" pos:end="99:29"><expr pos:start="99:9" pos:end="99:28"><name pos:start="99:9" pos:end="99:20"><name pos:start="99:9" pos:end="99:9">s</name><operator pos:start="99:10" pos:end="99:11">-&gt;</operator><name pos:start="99:12" pos:end="99:20">dgram_dst</name></name> <operator pos:start="99:22" pos:end="99:22">=</operator> <name pos:start="99:24" pos:end="99:28">saddr</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="101:9" pos:end="105:71"><expr pos:start="101:9" pos:end="105:70"><call pos:start="101:9" pos:end="105:70"><name pos:start="101:9" pos:end="101:16">snprintf</name><argument_list pos:start="101:17" pos:end="105:70">(<argument pos:start="101:18" pos:end="101:29"><expr pos:start="101:18" pos:end="101:29"><name pos:start="101:18" pos:end="101:29"><name pos:start="101:18" pos:end="101:19">nc</name><operator pos:start="101:20" pos:end="101:21">-&gt;</operator><name pos:start="101:22" pos:end="101:29">info_str</name></name></expr></argument>, <argument pos:start="101:32" pos:end="101:51"><expr pos:start="101:32" pos:end="101:51"><sizeof pos:start="101:32" pos:end="101:51">sizeof<argument_list pos:start="101:38" pos:end="101:51">(<argument pos:start="101:39" pos:end="101:50"><expr pos:start="101:39" pos:end="101:50"><name pos:start="101:39" pos:end="101:50"><name pos:start="101:39" pos:end="101:40">nc</name><operator pos:start="101:41" pos:end="101:42">-&gt;</operator><name pos:start="101:43" pos:end="101:50">info_str</name></name></expr></argument>)</argument_list></sizeof></expr></argument>,
+
+                 <argument pos:start="103:18" pos:end="103:53"><expr pos:start="103:18" pos:end="103:53"><literal type="string" pos:start="103:18" pos:end="103:53">"socket: fd=%d (cloned mcast=%s:%d)"</literal></expr></argument>,
+
+                 <argument pos:start="105:18" pos:end="105:19"><expr pos:start="105:18" pos:end="105:19"><name pos:start="105:18" pos:end="105:19">fd</name></expr></argument>, <argument pos:start="105:22" pos:end="105:46"><expr pos:start="105:22" pos:end="105:46"><call pos:start="105:22" pos:end="105:46"><name pos:start="105:22" pos:end="105:30">inet_ntoa</name><argument_list pos:start="105:31" pos:end="105:46">(<argument pos:start="105:32" pos:end="105:45"><expr pos:start="105:32" pos:end="105:45"><name pos:start="105:32" pos:end="105:45"><name pos:start="105:32" pos:end="105:36">saddr</name><operator pos:start="105:37" pos:end="105:37">.</operator><name pos:start="105:38" pos:end="105:45">sin_addr</name></name></expr></argument>)</argument_list></call></expr></argument>, <argument pos:start="105:49" pos:end="105:69"><expr pos:start="105:49" pos:end="105:69"><call pos:start="105:49" pos:end="105:69"><name pos:start="105:49" pos:end="105:53">ntohs</name><argument_list pos:start="105:54" pos:end="105:69">(<argument pos:start="105:55" pos:end="105:68"><expr pos:start="105:55" pos:end="105:68"><name pos:start="105:55" pos:end="105:68"><name pos:start="105:55" pos:end="105:59">saddr</name><operator pos:start="105:60" pos:end="105:60">.</operator><name pos:start="105:61" pos:end="105:68">sin_port</name></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="107:7" pos:end="113:5">else <block pos:start="107:12" pos:end="113:5">{<block_content pos:start="109:9" pos:end="111:38">
+
+        <expr_stmt pos:start="109:9" pos:end="111:38"><expr pos:start="109:9" pos:end="111:37"><call pos:start="109:9" pos:end="111:37"><name pos:start="109:9" pos:end="109:16">snprintf</name><argument_list pos:start="109:17" pos:end="111:37">(<argument pos:start="109:18" pos:end="109:29"><expr pos:start="109:18" pos:end="109:29"><name pos:start="109:18" pos:end="109:29"><name pos:start="109:18" pos:end="109:19">nc</name><operator pos:start="109:20" pos:end="109:21">-&gt;</operator><name pos:start="109:22" pos:end="109:29">info_str</name></name></expr></argument>, <argument pos:start="109:32" pos:end="109:51"><expr pos:start="109:32" pos:end="109:51"><sizeof pos:start="109:32" pos:end="109:51">sizeof<argument_list pos:start="109:38" pos:end="109:51">(<argument pos:start="109:39" pos:end="109:50"><expr pos:start="109:39" pos:end="109:50"><name pos:start="109:39" pos:end="109:50"><name pos:start="109:39" pos:end="109:40">nc</name><operator pos:start="109:41" pos:end="109:42">-&gt;</operator><name pos:start="109:43" pos:end="109:50">info_str</name></name></expr></argument>)</argument_list></sizeof></expr></argument>,
+
+                 <argument pos:start="111:18" pos:end="111:32"><expr pos:start="111:18" pos:end="111:32"><literal type="string" pos:start="111:18" pos:end="111:32">"socket: fd=%d"</literal></expr></argument>, <argument pos:start="111:35" pos:end="111:36"><expr pos:start="111:35" pos:end="111:36"><name pos:start="111:35" pos:end="111:36">fd</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <return pos:start="117:5" pos:end="117:13">return <expr pos:start="117:12" pos:end="117:12"><name pos:start="117:12" pos:end="117:12">s</name></expr>;</return>
+
+
+
+<label pos:start="121:1" pos:end="121:4"><name pos:start="121:1" pos:end="121:3">err</name>:</label>
+
+    <expr_stmt pos:start="123:5" pos:end="123:20"><expr pos:start="123:5" pos:end="123:19"><call pos:start="123:5" pos:end="123:19"><name pos:start="123:5" pos:end="123:15">closesocket</name><argument_list pos:start="123:16" pos:end="123:19">(<argument pos:start="123:17" pos:end="123:18"><expr pos:start="123:17" pos:end="123:18"><name pos:start="123:17" pos:end="123:18">fd</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <return pos:start="125:5" pos:end="125:16">return <expr pos:start="125:12" pos:end="125:15"><name pos:start="125:12" pos:end="125:15">NULL</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

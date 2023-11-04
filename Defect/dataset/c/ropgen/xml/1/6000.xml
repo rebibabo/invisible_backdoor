@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/6000.c" pos:tabs="8"><function pos:start="1:1" pos:end="181:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:28">ehci_frame_timer</name><parameter_list pos:start="1:29" pos:end="1:42">(<parameter pos:start="1:30" pos:end="1:41"><decl pos:start="1:30" pos:end="1:41"><type pos:start="1:30" pos:end="1:35"><name pos:start="1:30" pos:end="1:33">void</name> <modifier pos:start="1:35" pos:end="1:35">*</modifier></type><name pos:start="1:36" pos:end="1:41">opaque</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="181:1">{<block_content pos:start="5:5" pos:end="179:5">
+
+    <decl_stmt pos:start="5:5" pos:end="5:29"><decl pos:start="5:5" pos:end="5:28"><type pos:start="5:5" pos:end="5:15"><name pos:start="5:5" pos:end="5:13">EHCIState</name> <modifier pos:start="5:15" pos:end="5:15">*</modifier></type><name pos:start="5:16" pos:end="5:19">ehci</name> <init pos:start="5:21" pos:end="5:28">= <expr pos:start="5:23" pos:end="5:28"><name pos:start="5:23" pos:end="5:28">opaque</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:23"><decl pos:start="7:5" pos:end="7:22"><type pos:start="7:5" pos:end="7:7"><name pos:start="7:5" pos:end="7:7">int</name></type> <name pos:start="7:9" pos:end="7:18">need_timer</name> <init pos:start="7:20" pos:end="7:22">= <expr pos:start="7:22" pos:end="7:22"><literal type="number" pos:start="7:22" pos:end="7:22">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:31"><decl pos:start="9:5" pos:end="9:23"><type pos:start="9:5" pos:end="9:11"><name pos:start="9:5" pos:end="9:11">int64_t</name></type> <name pos:start="9:13" pos:end="9:23">expire_time</name></decl>, <decl pos:start="9:26" pos:end="9:30"><type ref="prev" pos:start="9:5" pos:end="9:11"/><name pos:start="9:26" pos:end="9:30">t_now</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:24"><decl pos:start="11:5" pos:end="11:23"><type pos:start="11:5" pos:end="11:12"><name pos:start="11:5" pos:end="11:12">uint64_t</name></type> <name pos:start="11:14" pos:end="11:23">ns_elapsed</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:38"><decl pos:start="13:5" pos:end="13:20"><type pos:start="13:5" pos:end="13:12"><name pos:start="13:5" pos:end="13:12">uint64_t</name></type> <name pos:start="13:14" pos:end="13:20">uframes</name></decl>, <decl pos:start="13:23" pos:end="13:37"><type ref="prev" pos:start="13:5" pos:end="13:12"/><name pos:start="13:23" pos:end="13:37">skipped_uframes</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:10"><decl pos:start="15:5" pos:end="15:9"><type pos:start="15:5" pos:end="15:7"><name pos:start="15:5" pos:end="15:7">int</name></type> <name pos:start="15:9" pos:end="15:9">i</name></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="19:5" pos:end="19:50"><expr pos:start="19:5" pos:end="19:49"><name pos:start="19:5" pos:end="19:9">t_now</name> <operator pos:start="19:11" pos:end="19:11">=</operator> <call pos:start="19:13" pos:end="19:49"><name pos:start="19:13" pos:end="19:29">qemu_clock_get_ns</name><argument_list pos:start="19:30" pos:end="19:49">(<argument pos:start="19:31" pos:end="19:48"><expr pos:start="19:31" pos:end="19:48"><name pos:start="19:31" pos:end="19:48">QEMU_CLOCK_VIRTUAL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="21:5" pos:end="21:43"><expr pos:start="21:5" pos:end="21:42"><name pos:start="21:5" pos:end="21:14">ns_elapsed</name> <operator pos:start="21:16" pos:end="21:16">=</operator> <name pos:start="21:18" pos:end="21:22">t_now</name> <operator pos:start="21:24" pos:end="21:24">-</operator> <name pos:start="21:26" pos:end="21:42"><name pos:start="21:26" pos:end="21:29">ehci</name><operator pos:start="21:30" pos:end="21:31">-&gt;</operator><name pos:start="21:32" pos:end="21:42">last_run_ns</name></name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="23:5" pos:end="23:43"><expr pos:start="23:5" pos:end="23:42"><name pos:start="23:5" pos:end="23:11">uframes</name> <operator pos:start="23:13" pos:end="23:13">=</operator> <name pos:start="23:15" pos:end="23:24">ns_elapsed</name> <operator pos:start="23:26" pos:end="23:26">/</operator> <name pos:start="23:28" pos:end="23:42">UFRAME_TIMER_NS</name></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="27:5" pos:end="103:5"><if pos:start="27:5" pos:end="95:5">if <condition pos:start="27:8" pos:end="27:68">(<expr pos:start="27:9" pos:end="27:67"><call pos:start="27:9" pos:end="27:35"><name pos:start="27:9" pos:end="27:29">ehci_periodic_enabled</name><argument_list pos:start="27:30" pos:end="27:35">(<argument pos:start="27:31" pos:end="27:34"><expr pos:start="27:31" pos:end="27:34"><name pos:start="27:31" pos:end="27:34">ehci</name></expr></argument>)</argument_list></call> <operator pos:start="27:37" pos:end="27:38">||</operator> <name pos:start="27:40" pos:end="27:51"><name pos:start="27:40" pos:end="27:43">ehci</name><operator pos:start="27:44" pos:end="27:45">-&gt;</operator><name pos:start="27:46" pos:end="27:51">pstate</name></name> <operator pos:start="27:53" pos:end="27:54">!=</operator> <name pos:start="27:56" pos:end="27:67">EST_INACTIVE</name></expr>)</condition> <block pos:start="27:70" pos:end="95:5">{<block_content pos:start="29:9" pos:end="93:9">
+
+        <expr_stmt pos:start="29:9" pos:end="29:21"><expr pos:start="29:9" pos:end="29:20"><name pos:start="29:9" pos:end="29:18">need_timer</name><operator pos:start="29:19" pos:end="29:20">++</operator></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="33:9" pos:end="45:9"><if pos:start="33:9" pos:end="45:9">if <condition pos:start="33:12" pos:end="33:44">(<expr pos:start="33:13" pos:end="33:43"><name pos:start="33:13" pos:end="33:19">uframes</name> <operator pos:start="33:21" pos:end="33:21">&gt;</operator> <operator pos:start="33:23" pos:end="33:23">(</operator><name pos:start="33:24" pos:end="33:38"><name pos:start="33:24" pos:end="33:27">ehci</name><operator pos:start="33:28" pos:end="33:29">-&gt;</operator><name pos:start="33:30" pos:end="33:38">maxframes</name></name> <operator pos:start="33:40" pos:end="33:40">*</operator> <literal type="number" pos:start="33:42" pos:end="33:42">8</literal><operator pos:start="33:43" pos:end="33:43">)</operator></expr>)</condition> <block pos:start="33:46" pos:end="45:9">{<block_content pos:start="35:13" pos:end="43:76">
+
+            <expr_stmt pos:start="35:13" pos:end="35:62"><expr pos:start="35:13" pos:end="35:61"><name pos:start="35:13" pos:end="35:27">skipped_uframes</name> <operator pos:start="35:29" pos:end="35:29">=</operator> <name pos:start="35:31" pos:end="35:37">uframes</name> <operator pos:start="35:39" pos:end="35:39">-</operator> <operator pos:start="35:41" pos:end="35:41">(</operator><name pos:start="35:42" pos:end="35:56"><name pos:start="35:42" pos:end="35:45">ehci</name><operator pos:start="35:46" pos:end="35:47">-&gt;</operator><name pos:start="35:48" pos:end="35:56">maxframes</name></name> <operator pos:start="35:58" pos:end="35:58">*</operator> <literal type="number" pos:start="35:60" pos:end="35:60">8</literal><operator pos:start="35:61" pos:end="35:61">)</operator></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="37:13" pos:end="37:55"><expr pos:start="37:13" pos:end="37:54"><call pos:start="37:13" pos:end="37:54"><name pos:start="37:13" pos:end="37:31">ehci_update_frindex</name><argument_list pos:start="37:32" pos:end="37:54">(<argument pos:start="37:33" pos:end="37:36"><expr pos:start="37:33" pos:end="37:36"><name pos:start="37:33" pos:end="37:36">ehci</name></expr></argument>, <argument pos:start="37:39" pos:end="37:53"><expr pos:start="37:39" pos:end="37:53"><name pos:start="37:39" pos:end="37:53">skipped_uframes</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="39:13" pos:end="39:67"><expr pos:start="39:13" pos:end="39:66"><name pos:start="39:13" pos:end="39:29"><name pos:start="39:13" pos:end="39:16">ehci</name><operator pos:start="39:17" pos:end="39:18">-&gt;</operator><name pos:start="39:19" pos:end="39:29">last_run_ns</name></name> <operator pos:start="39:31" pos:end="39:32">+=</operator> <name pos:start="39:34" pos:end="39:48">UFRAME_TIMER_NS</name> <operator pos:start="39:50" pos:end="39:50">*</operator> <name pos:start="39:52" pos:end="39:66">skipped_uframes</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="41:13" pos:end="41:39"><expr pos:start="41:13" pos:end="41:38"><name pos:start="41:13" pos:end="41:19">uframes</name> <operator pos:start="41:21" pos:end="41:22">-=</operator> <name pos:start="41:24" pos:end="41:38">skipped_uframes</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="43:13" pos:end="43:76"><expr pos:start="43:13" pos:end="43:75"><call pos:start="43:13" pos:end="43:75"><name pos:start="43:13" pos:end="43:19">DPRINTF</name><argument_list pos:start="43:20" pos:end="43:75">(<argument pos:start="43:21" pos:end="43:57"><expr pos:start="43:21" pos:end="43:57"><literal type="string" pos:start="43:21" pos:end="43:57">"WARNING - EHCI skipped %d uframes\n"</literal></expr></argument>, <argument pos:start="43:60" pos:end="43:74"><expr pos:start="43:60" pos:end="43:74"><name pos:start="43:60" pos:end="43:74">skipped_uframes</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <for pos:start="49:9" pos:end="93:9">for <control pos:start="49:13" pos:end="49:37">(<init pos:start="49:14" pos:end="49:19"><expr pos:start="49:14" pos:end="49:18"><name pos:start="49:14" pos:end="49:14">i</name> <operator pos:start="49:16" pos:end="49:16">=</operator> <literal type="number" pos:start="49:18" pos:end="49:18">0</literal></expr>;</init> <condition pos:start="49:21" pos:end="49:32"><expr pos:start="49:21" pos:end="49:31"><name pos:start="49:21" pos:end="49:21">i</name> <operator pos:start="49:23" pos:end="49:23">&lt;</operator> <name pos:start="49:25" pos:end="49:31">uframes</name></expr>;</condition> <incr pos:start="49:34" pos:end="49:36"><expr pos:start="49:34" pos:end="49:36"><name pos:start="49:34" pos:end="49:34">i</name><operator pos:start="49:35" pos:end="49:36">++</operator></expr></incr>)</control> <block pos:start="49:39" pos:end="93:9">{<block_content pos:start="65:13" pos:end="91:49">
+
+            <comment type="block" pos:start="51:13" pos:end="63:15">/*
+
+             * If we're running behind schedule, we should not catch up
+
+             * too fast, as that will make some guests unhappy:
+
+             * 1) We must process a minimum of MIN_UFR_PER_TICK frames,
+
+             *    otherwise we will never catch up
+
+             * 2) Process frames until the guest has requested an irq (IOC)
+
+             */</comment>
+
+            <if_stmt pos:start="65:13" pos:end="75:13"><if pos:start="65:13" pos:end="75:13">if <condition pos:start="65:16" pos:end="65:38">(<expr pos:start="65:17" pos:end="65:37"><name pos:start="65:17" pos:end="65:17">i</name> <operator pos:start="65:19" pos:end="65:20">&gt;=</operator> <name pos:start="65:22" pos:end="65:37">MIN_UFR_PER_TICK</name></expr>)</condition> <block pos:start="65:40" pos:end="75:13">{<block_content pos:start="67:17" pos:end="73:17">
+
+                <expr_stmt pos:start="67:17" pos:end="67:38"><expr pos:start="67:17" pos:end="67:37"><call pos:start="67:17" pos:end="67:37"><name pos:start="67:17" pos:end="67:31">ehci_commit_irq</name><argument_list pos:start="67:32" pos:end="67:37">(<argument pos:start="67:33" pos:end="67:36"><expr pos:start="67:33" pos:end="67:36"><name pos:start="67:33" pos:end="67:36">ehci</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <if_stmt pos:start="69:17" pos:end="73:17"><if pos:start="69:17" pos:end="73:17">if <condition pos:start="69:20" pos:end="69:66">(<expr pos:start="69:21" pos:end="69:65"><operator pos:start="69:21" pos:end="69:21">(</operator><name pos:start="69:22" pos:end="69:33"><name pos:start="69:22" pos:end="69:25">ehci</name><operator pos:start="69:26" pos:end="69:27">-&gt;</operator><name pos:start="69:28" pos:end="69:33">usbsts</name></name> <operator pos:start="69:35" pos:end="69:35">&amp;</operator> <name pos:start="69:37" pos:end="69:48">USBINTR_MASK</name><operator pos:start="69:49" pos:end="69:49">)</operator> <operator pos:start="69:51" pos:end="69:51">&amp;</operator> <name pos:start="69:53" pos:end="69:65"><name pos:start="69:53" pos:end="69:56">ehci</name><operator pos:start="69:57" pos:end="69:58">-&gt;</operator><name pos:start="69:59" pos:end="69:65">usbintr</name></name></expr>)</condition> <block pos:start="69:68" pos:end="73:17">{<block_content pos:start="71:21" pos:end="71:26">
+
+                    <break pos:start="71:21" pos:end="71:26">break;</break>
+
+                </block_content>}</block></if></if_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <if_stmt pos:start="77:13" pos:end="81:13"><if pos:start="77:13" pos:end="81:13">if <condition pos:start="77:16" pos:end="77:44">(<expr pos:start="77:17" pos:end="77:43"><name pos:start="77:17" pos:end="77:43"><name pos:start="77:17" pos:end="77:20">ehci</name><operator pos:start="77:21" pos:end="77:22">-&gt;</operator><name pos:start="77:23" pos:end="77:43">periodic_sched_active</name></name></expr>)</condition> <block pos:start="77:46" pos:end="81:13">{<block_content pos:start="79:17" pos:end="79:46">
+
+                <expr_stmt pos:start="79:17" pos:end="79:46"><expr pos:start="79:17" pos:end="79:45"><name pos:start="79:17" pos:end="79:43"><name pos:start="79:17" pos:end="79:20">ehci</name><operator pos:start="79:21" pos:end="79:22">-&gt;</operator><name pos:start="79:23" pos:end="79:43">periodic_sched_active</name></name><operator pos:start="79:44" pos:end="79:45">--</operator></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <expr_stmt pos:start="83:13" pos:end="83:41"><expr pos:start="83:13" pos:end="83:40"><call pos:start="83:13" pos:end="83:40"><name pos:start="83:13" pos:end="83:31">ehci_update_frindex</name><argument_list pos:start="83:32" pos:end="83:40">(<argument pos:start="83:33" pos:end="83:36"><expr pos:start="83:33" pos:end="83:36"><name pos:start="83:33" pos:end="83:36">ehci</name></expr></argument>, <argument pos:start="83:39" pos:end="83:39"><expr pos:start="83:39" pos:end="83:39"><literal type="number" pos:start="83:39" pos:end="83:39">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <if_stmt pos:start="85:13" pos:end="89:13"><if pos:start="85:13" pos:end="89:13">if <condition pos:start="85:16" pos:end="85:41">(<expr pos:start="85:17" pos:end="85:40"><operator pos:start="85:17" pos:end="85:17">(</operator><name pos:start="85:18" pos:end="85:30"><name pos:start="85:18" pos:end="85:21">ehci</name><operator pos:start="85:22" pos:end="85:23">-&gt;</operator><name pos:start="85:24" pos:end="85:30">frindex</name></name> <operator pos:start="85:32" pos:end="85:32">&amp;</operator> <literal type="number" pos:start="85:34" pos:end="85:34">7</literal><operator pos:start="85:35" pos:end="85:35">)</operator> <operator pos:start="85:37" pos:end="85:38">==</operator> <literal type="number" pos:start="85:40" pos:end="85:40">0</literal></expr>)</condition> <block pos:start="85:43" pos:end="89:13">{<block_content pos:start="87:17" pos:end="87:50">
+
+                <expr_stmt pos:start="87:17" pos:end="87:50"><expr pos:start="87:17" pos:end="87:49"><call pos:start="87:17" pos:end="87:49"><name pos:start="87:17" pos:end="87:43">ehci_advance_periodic_state</name><argument_list pos:start="87:44" pos:end="87:49">(<argument pos:start="87:45" pos:end="87:48"><expr pos:start="87:45" pos:end="87:48"><name pos:start="87:45" pos:end="87:48">ehci</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <expr_stmt pos:start="91:13" pos:end="91:49"><expr pos:start="91:13" pos:end="91:48"><name pos:start="91:13" pos:end="91:29"><name pos:start="91:13" pos:end="91:16">ehci</name><operator pos:start="91:17" pos:end="91:18">-&gt;</operator><name pos:start="91:19" pos:end="91:29">last_run_ns</name></name> <operator pos:start="91:31" pos:end="91:32">+=</operator> <name pos:start="91:34" pos:end="91:48">UFRAME_TIMER_NS</name></expr>;</expr_stmt>
+
+        </block_content>}</block></for>
+
+    </block_content>}</block></if> <else pos:start="95:7" pos:end="103:5">else <block pos:start="95:12" pos:end="103:5">{<block_content pos:start="97:9" pos:end="101:55">
+
+        <expr_stmt pos:start="97:9" pos:end="97:40"><expr pos:start="97:9" pos:end="97:39"><name pos:start="97:9" pos:end="97:35"><name pos:start="97:9" pos:end="97:12">ehci</name><operator pos:start="97:13" pos:end="97:14">-&gt;</operator><name pos:start="97:15" pos:end="97:35">periodic_sched_active</name></name> <operator pos:start="97:37" pos:end="97:37">=</operator> <literal type="number" pos:start="97:39" pos:end="97:39">0</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="99:9" pos:end="99:43"><expr pos:start="99:9" pos:end="99:42"><call pos:start="99:9" pos:end="99:42"><name pos:start="99:9" pos:end="99:27">ehci_update_frindex</name><argument_list pos:start="99:28" pos:end="99:42">(<argument pos:start="99:29" pos:end="99:32"><expr pos:start="99:29" pos:end="99:32"><name pos:start="99:29" pos:end="99:32">ehci</name></expr></argument>, <argument pos:start="99:35" pos:end="99:41"><expr pos:start="99:35" pos:end="99:41"><name pos:start="99:35" pos:end="99:41">uframes</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="101:9" pos:end="101:55"><expr pos:start="101:9" pos:end="101:54"><name pos:start="101:9" pos:end="101:25"><name pos:start="101:9" pos:end="101:12">ehci</name><operator pos:start="101:13" pos:end="101:14">-&gt;</operator><name pos:start="101:15" pos:end="101:25">last_run_ns</name></name> <operator pos:start="101:27" pos:end="101:28">+=</operator> <name pos:start="101:30" pos:end="101:44">UFRAME_TIMER_NS</name> <operator pos:start="101:46" pos:end="101:46">*</operator> <name pos:start="101:48" pos:end="101:54">uframes</name></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <if_stmt pos:start="107:5" pos:end="115:5"><if pos:start="107:5" pos:end="111:5">if <condition pos:start="107:8" pos:end="107:36">(<expr pos:start="107:9" pos:end="107:35"><name pos:start="107:9" pos:end="107:35"><name pos:start="107:9" pos:end="107:12">ehci</name><operator pos:start="107:13" pos:end="107:14">-&gt;</operator><name pos:start="107:15" pos:end="107:35">periodic_sched_active</name></name></expr>)</condition> <block pos:start="107:38" pos:end="111:5">{<block_content pos:start="109:9" pos:end="109:33">
+
+        <expr_stmt pos:start="109:9" pos:end="109:33"><expr pos:start="109:9" pos:end="109:32"><name pos:start="109:9" pos:end="109:28"><name pos:start="109:9" pos:end="109:12">ehci</name><operator pos:start="109:13" pos:end="109:14">-&gt;</operator><name pos:start="109:15" pos:end="109:28">async_stepdown</name></name> <operator pos:start="109:30" pos:end="109:30">=</operator> <literal type="number" pos:start="109:32" pos:end="109:32">0</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <if type="elseif" pos:start="111:7" pos:end="115:5">else if <condition pos:start="111:15" pos:end="111:58">(<expr pos:start="111:16" pos:end="111:57"><name pos:start="111:16" pos:end="111:35"><name pos:start="111:16" pos:end="111:19">ehci</name><operator pos:start="111:20" pos:end="111:21">-&gt;</operator><name pos:start="111:22" pos:end="111:35">async_stepdown</name></name> <operator pos:start="111:37" pos:end="111:37">&lt;</operator> <name pos:start="111:39" pos:end="111:53"><name pos:start="111:39" pos:end="111:42">ehci</name><operator pos:start="111:43" pos:end="111:44">-&gt;</operator><name pos:start="111:45" pos:end="111:53">maxframes</name></name> <operator pos:start="111:55" pos:end="111:55">/</operator> <literal type="number" pos:start="111:57" pos:end="111:57">2</literal></expr>)</condition> <block pos:start="111:60" pos:end="115:5">{<block_content pos:start="113:9" pos:end="113:31">
+
+        <expr_stmt pos:start="113:9" pos:end="113:31"><expr pos:start="113:9" pos:end="113:30"><name pos:start="113:9" pos:end="113:28"><name pos:start="113:9" pos:end="113:12">ehci</name><operator pos:start="113:13" pos:end="113:14">-&gt;</operator><name pos:start="113:15" pos:end="113:28">async_stepdown</name></name><operator pos:start="113:29" pos:end="113:30">++</operator></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="119:5" pos:end="123:7">/*  Async is not inside loop since it executes everything it can once
+
+     *  called
+
+     */</comment>
+
+    <if_stmt pos:start="125:5" pos:end="131:5"><if pos:start="125:5" pos:end="131:5">if <condition pos:start="125:8" pos:end="125:65">(<expr pos:start="125:9" pos:end="125:64"><call pos:start="125:9" pos:end="125:32"><name pos:start="125:9" pos:end="125:26">ehci_async_enabled</name><argument_list pos:start="125:27" pos:end="125:32">(<argument pos:start="125:28" pos:end="125:31"><expr pos:start="125:28" pos:end="125:31"><name pos:start="125:28" pos:end="125:31">ehci</name></expr></argument>)</argument_list></call> <operator pos:start="125:34" pos:end="125:35">||</operator> <name pos:start="125:37" pos:end="125:48"><name pos:start="125:37" pos:end="125:40">ehci</name><operator pos:start="125:41" pos:end="125:42">-&gt;</operator><name pos:start="125:43" pos:end="125:48">astate</name></name> <operator pos:start="125:50" pos:end="125:51">!=</operator> <name pos:start="125:53" pos:end="125:64">EST_INACTIVE</name></expr>)</condition> <block pos:start="125:67" pos:end="131:5">{<block_content pos:start="127:9" pos:end="129:39">
+
+        <expr_stmt pos:start="127:9" pos:end="127:21"><expr pos:start="127:9" pos:end="127:20"><name pos:start="127:9" pos:end="127:18">need_timer</name><operator pos:start="127:19" pos:end="127:20">++</operator></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="129:9" pos:end="129:39"><expr pos:start="129:9" pos:end="129:38"><call pos:start="129:9" pos:end="129:38"><name pos:start="129:9" pos:end="129:32">ehci_advance_async_state</name><argument_list pos:start="129:33" pos:end="129:38">(<argument pos:start="129:34" pos:end="129:37"><expr pos:start="129:34" pos:end="129:37"><name pos:start="129:34" pos:end="129:37">ehci</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="135:5" pos:end="135:26"><expr pos:start="135:5" pos:end="135:25"><call pos:start="135:5" pos:end="135:25"><name pos:start="135:5" pos:end="135:19">ehci_commit_irq</name><argument_list pos:start="135:20" pos:end="135:25">(<argument pos:start="135:21" pos:end="135:24"><expr pos:start="135:21" pos:end="135:24"><name pos:start="135:21" pos:end="135:24">ehci</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="137:5" pos:end="143:5"><if pos:start="137:5" pos:end="143:5">if <condition pos:start="137:8" pos:end="137:29">(<expr pos:start="137:9" pos:end="137:28"><name pos:start="137:9" pos:end="137:28"><name pos:start="137:9" pos:end="137:12">ehci</name><operator pos:start="137:13" pos:end="137:14">-&gt;</operator><name pos:start="137:15" pos:end="137:28">usbsts_pending</name></name></expr>)</condition> <block pos:start="137:31" pos:end="143:5">{<block_content pos:start="139:9" pos:end="141:33">
+
+        <expr_stmt pos:start="139:9" pos:end="139:21"><expr pos:start="139:9" pos:end="139:20"><name pos:start="139:9" pos:end="139:18">need_timer</name><operator pos:start="139:19" pos:end="139:20">++</operator></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="141:9" pos:end="141:33"><expr pos:start="141:9" pos:end="141:32"><name pos:start="141:9" pos:end="141:28"><name pos:start="141:9" pos:end="141:12">ehci</name><operator pos:start="141:13" pos:end="141:14">-&gt;</operator><name pos:start="141:15" pos:end="141:28">async_stepdown</name></name> <operator pos:start="141:30" pos:end="141:30">=</operator> <literal type="number" pos:start="141:32" pos:end="141:32">0</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="147:5" pos:end="151:5"><if pos:start="147:5" pos:end="151:5">if <condition pos:start="147:8" pos:end="147:59">(<expr pos:start="147:9" pos:end="147:58"><call pos:start="147:9" pos:end="147:26"><name pos:start="147:9" pos:end="147:20">ehci_enabled</name><argument_list pos:start="147:21" pos:end="147:26">(<argument pos:start="147:22" pos:end="147:25"><expr pos:start="147:22" pos:end="147:25"><name pos:start="147:22" pos:end="147:25">ehci</name></expr></argument>)</argument_list></call> <operator pos:start="147:28" pos:end="147:29">&amp;&amp;</operator> <operator pos:start="147:31" pos:end="147:31">(</operator><name pos:start="147:32" pos:end="147:44"><name pos:start="147:32" pos:end="147:35">ehci</name><operator pos:start="147:36" pos:end="147:37">-&gt;</operator><name pos:start="147:38" pos:end="147:44">usbintr</name></name> <operator pos:start="147:46" pos:end="147:46">&amp;</operator> <name pos:start="147:48" pos:end="147:57">USBSTS_FLR</name><operator pos:start="147:58" pos:end="147:58">)</operator></expr>)</condition> <block pos:start="147:61" pos:end="151:5">{<block_content pos:start="149:9" pos:end="149:21">
+
+        <expr_stmt pos:start="149:9" pos:end="149:21"><expr pos:start="149:9" pos:end="149:20"><name pos:start="149:9" pos:end="149:18">need_timer</name><operator pos:start="149:19" pos:end="149:20">++</operator></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="155:5" pos:end="179:5"><if pos:start="155:5" pos:end="179:5">if <condition pos:start="155:8" pos:end="155:19">(<expr pos:start="155:9" pos:end="155:18"><name pos:start="155:9" pos:end="155:18">need_timer</name></expr>)</condition> <block pos:start="155:21" pos:end="179:5">{<block_content pos:start="161:9" pos:end="177:50">
+
+        <comment type="block" pos:start="157:9" pos:end="159:58">/* If we've raised int, we speed up the timer, so that we quickly
+
+         * notice any new packets queued up in response */</comment>
+
+        <if_stmt pos:start="161:9" pos:end="175:9"><if pos:start="161:9" pos:end="169:9">if <condition pos:start="161:12" pos:end="161:66">(<expr pos:start="161:13" pos:end="161:65"><name pos:start="161:13" pos:end="161:34"><name pos:start="161:13" pos:end="161:16">ehci</name><operator pos:start="161:17" pos:end="161:18">-&gt;</operator><name pos:start="161:19" pos:end="161:34">int_req_by_async</name></name> <operator pos:start="161:36" pos:end="161:37">&amp;&amp;</operator> <operator pos:start="161:39" pos:end="161:39">(</operator><name pos:start="161:40" pos:end="161:51"><name pos:start="161:40" pos:end="161:43">ehci</name><operator pos:start="161:44" pos:end="161:45">-&gt;</operator><name pos:start="161:46" pos:end="161:51">usbsts</name></name> <operator pos:start="161:53" pos:end="161:53">&amp;</operator> <name pos:start="161:55" pos:end="161:64">USBSTS_INT</name><operator pos:start="161:65" pos:end="161:65">)</operator></expr>)</condition> <block pos:start="161:68" pos:end="169:9">{<block_content pos:start="163:13" pos:end="167:43">
+
+            <expr_stmt pos:start="163:13" pos:end="165:64"><expr pos:start="163:13" pos:end="165:63"><name pos:start="163:13" pos:end="163:23">expire_time</name> <operator pos:start="163:25" pos:end="163:25">=</operator> <name pos:start="163:27" pos:end="163:31">t_now</name> <operator pos:start="163:33" pos:end="163:33">+</operator>
+
+                <name pos:start="165:17" pos:end="165:38">NANOSECONDS_PER_SECOND</name> <operator pos:start="165:40" pos:end="165:40">/</operator> <operator pos:start="165:42" pos:end="165:42">(</operator><name pos:start="165:43" pos:end="165:58">FRAME_TIMER_FREQ</name> <operator pos:start="165:60" pos:end="165:60">*</operator> <literal type="number" pos:start="165:62" pos:end="165:62">4</literal><operator pos:start="165:63" pos:end="165:63">)</operator></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="167:13" pos:end="167:43"><expr pos:start="167:13" pos:end="167:42"><name pos:start="167:13" pos:end="167:34"><name pos:start="167:13" pos:end="167:16">ehci</name><operator pos:start="167:17" pos:end="167:18">-&gt;</operator><name pos:start="167:19" pos:end="167:34">int_req_by_async</name></name> <operator pos:start="167:36" pos:end="167:36">=</operator> <name pos:start="167:38" pos:end="167:42">false</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="169:11" pos:end="175:9">else <block pos:start="169:16" pos:end="175:9">{<block_content pos:start="171:13" pos:end="173:78">
+
+            <expr_stmt pos:start="171:13" pos:end="173:78"><expr pos:start="171:13" pos:end="173:77"><name pos:start="171:13" pos:end="171:23">expire_time</name> <operator pos:start="171:25" pos:end="171:25">=</operator> <name pos:start="171:27" pos:end="171:31">t_now</name> <operator pos:start="171:33" pos:end="171:33">+</operator> <operator pos:start="171:35" pos:end="171:35">(</operator><name pos:start="171:36" pos:end="171:57">NANOSECONDS_PER_SECOND</name>
+
+                               <operator pos:start="173:32" pos:end="173:32">*</operator> <operator pos:start="173:34" pos:end="173:34">(</operator><name pos:start="173:35" pos:end="173:54"><name pos:start="173:35" pos:end="173:38">ehci</name><operator pos:start="173:39" pos:end="173:40">-&gt;</operator><name pos:start="173:41" pos:end="173:54">async_stepdown</name></name><operator pos:start="173:55" pos:end="173:55">+</operator><literal type="number" pos:start="173:56" pos:end="173:56">1</literal><operator pos:start="173:57" pos:end="173:57">)</operator> <operator pos:start="173:59" pos:end="173:59">/</operator> <name pos:start="173:61" pos:end="173:76">FRAME_TIMER_FREQ</name><operator pos:start="173:77" pos:end="173:77">)</operator></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+        <expr_stmt pos:start="177:9" pos:end="177:50"><expr pos:start="177:9" pos:end="177:49"><call pos:start="177:9" pos:end="177:49"><name pos:start="177:9" pos:end="177:17">timer_mod</name><argument_list pos:start="177:18" pos:end="177:49">(<argument pos:start="177:19" pos:end="177:35"><expr pos:start="177:19" pos:end="177:35"><name pos:start="177:19" pos:end="177:35"><name pos:start="177:19" pos:end="177:22">ehci</name><operator pos:start="177:23" pos:end="177:24">-&gt;</operator><name pos:start="177:25" pos:end="177:35">frame_timer</name></name></expr></argument>, <argument pos:start="177:38" pos:end="177:48"><expr pos:start="177:38" pos:end="177:48"><name pos:start="177:38" pos:end="177:48">expire_time</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+</block_content>}</block></function>
+</unit>

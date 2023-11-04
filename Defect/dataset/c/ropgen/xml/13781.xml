@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/13781.c" pos:tabs="8"><function pos:start="1:1" pos:end="213:1"><type pos:start="1:1" pos:end="1:11"><name pos:start="1:1" pos:end="1:9">Coroutine</name> <modifier pos:start="1:11" pos:end="1:11">*</modifier></type><name pos:start="1:12" pos:end="1:29">qemu_coroutine_new</name><parameter_list pos:start="1:30" pos:end="1:35">(<parameter pos:start="1:31" pos:end="1:34"><decl pos:start="1:31" pos:end="1:34"><type pos:start="1:31" pos:end="1:34"><name pos:start="1:31" pos:end="1:34">void</name></type></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="213:1">{<block_content pos:start="5:5" pos:end="211:21">
+
+    <decl_stmt pos:start="5:5" pos:end="5:38"><decl pos:start="5:5" pos:end="5:37"><type pos:start="5:5" pos:end="5:16"><specifier pos:start="5:5" pos:end="5:9">const</specifier> <name pos:start="5:11" pos:end="5:16">size_t</name></type> <name pos:start="5:18" pos:end="5:27">stack_size</name> <init pos:start="5:29" pos:end="5:37">= <expr pos:start="5:31" pos:end="5:37"><literal type="number" pos:start="5:31" pos:end="5:31">1</literal> <operator pos:start="5:33" pos:end="5:34">&lt;&lt;</operator> <literal type="number" pos:start="5:36" pos:end="5:37">20</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:26"><decl pos:start="7:5" pos:end="7:25"><type pos:start="7:5" pos:end="7:23"><name pos:start="7:5" pos:end="7:21">CoroutineUContext</name> <modifier pos:start="7:23" pos:end="7:23">*</modifier></type><name pos:start="7:24" pos:end="7:25">co</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:31"><decl pos:start="9:5" pos:end="9:30"><type pos:start="9:5" pos:end="9:26"><name pos:start="9:5" pos:end="9:24">CoroutineThreadState</name> <modifier pos:start="9:26" pos:end="9:26">*</modifier></type><name pos:start="9:27" pos:end="9:30">coTS</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:24"><decl pos:start="11:5" pos:end="11:23"><type pos:start="11:5" pos:end="11:20"><name pos:start="11:5" pos:end="11:20"><name pos:start="11:5" pos:end="11:10">struct</name> <name pos:start="11:12" pos:end="11:20">sigaction</name></name></type> <name pos:start="11:22" pos:end="11:23">sa</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:25"><decl pos:start="13:5" pos:end="13:24"><type pos:start="13:5" pos:end="13:20"><name pos:start="13:5" pos:end="13:20"><name pos:start="13:5" pos:end="13:10">struct</name> <name pos:start="13:12" pos:end="13:20">sigaction</name></name></type> <name pos:start="13:22" pos:end="13:24">osa</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:15"><decl pos:start="15:5" pos:end="15:14"><type pos:start="15:5" pos:end="15:11"><name pos:start="15:5" pos:end="15:11">stack_t</name></type> <name pos:start="15:13" pos:end="15:14">ss</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="17:5" pos:end="17:16"><decl pos:start="17:5" pos:end="17:15"><type pos:start="17:5" pos:end="17:11"><name pos:start="17:5" pos:end="17:11">stack_t</name></type> <name pos:start="17:13" pos:end="17:15">oss</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:18"><decl pos:start="19:5" pos:end="19:17"><type pos:start="19:5" pos:end="19:12"><name pos:start="19:5" pos:end="19:12">sigset_t</name></type> <name pos:start="19:14" pos:end="19:17">sigs</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="21:5" pos:end="21:19"><decl pos:start="21:5" pos:end="21:18"><type pos:start="21:5" pos:end="21:12"><name pos:start="21:5" pos:end="21:12">sigset_t</name></type> <name pos:start="21:14" pos:end="21:18">osigs</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="23:5" pos:end="23:20"><decl pos:start="23:5" pos:end="23:19"><type pos:start="23:5" pos:end="23:11"><name pos:start="23:5" pos:end="23:11">jmp_buf</name></type> <name pos:start="23:13" pos:end="23:19">old_env</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="27:5" pos:end="41:7">/* The way to manipulate stack is with the sigaltstack function. We
+
+     * prepare a stack, with it delivering a signal to ourselves and then
+
+     * put sigsetjmp/siglongjmp where needed.
+
+     * This has been done keeping coroutine-ucontext as a model and with the
+
+     * pth ideas (GNU Portable Threads). See coroutine-ucontext for the basics
+
+     * of the coroutines and see pth_mctx.c (from the pth project) for the
+
+     * sigaltstack way of manipulating stacks.
+
+     */</comment>
+
+
+
+    <expr_stmt pos:start="45:5" pos:end="45:32"><expr pos:start="45:5" pos:end="45:31"><name pos:start="45:5" pos:end="45:6">co</name> <operator pos:start="45:8" pos:end="45:8">=</operator> <call pos:start="45:10" pos:end="45:31"><name pos:start="45:10" pos:end="45:18">g_malloc0</name><argument_list pos:start="45:19" pos:end="45:31">(<argument pos:start="45:20" pos:end="45:30"><expr pos:start="45:20" pos:end="45:30"><sizeof pos:start="45:20" pos:end="45:30">sizeof<argument_list pos:start="45:26" pos:end="45:30">(<argument pos:start="45:27" pos:end="45:29"><expr pos:start="45:27" pos:end="45:29"><operator pos:start="45:27" pos:end="45:27">*</operator><name pos:start="45:28" pos:end="45:29">co</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="47:5" pos:end="47:37"><expr pos:start="47:5" pos:end="47:36"><name pos:start="47:5" pos:end="47:13"><name pos:start="47:5" pos:end="47:6">co</name><operator pos:start="47:7" pos:end="47:8">-&gt;</operator><name pos:start="47:9" pos:end="47:13">stack</name></name> <operator pos:start="47:15" pos:end="47:15">=</operator> <call pos:start="47:17" pos:end="47:36"><name pos:start="47:17" pos:end="47:24">g_malloc</name><argument_list pos:start="47:25" pos:end="47:36">(<argument pos:start="47:26" pos:end="47:35"><expr pos:start="47:26" pos:end="47:35"><name pos:start="47:26" pos:end="47:35">stack_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="49:5" pos:end="49:34"><expr pos:start="49:5" pos:end="49:33"><name pos:start="49:5" pos:end="49:22"><name pos:start="49:5" pos:end="49:6">co</name><operator pos:start="49:7" pos:end="49:8">-&gt;</operator><name pos:start="49:9" pos:end="49:12">base</name><operator pos:start="49:13" pos:end="49:13">.</operator><name pos:start="49:14" pos:end="49:22">entry_arg</name></name> <operator pos:start="49:24" pos:end="49:24">=</operator> <operator pos:start="49:26" pos:end="49:26">&amp;</operator><name pos:start="49:27" pos:end="49:33">old_env</name></expr>;</expr_stmt> <comment type="block" pos:start="49:36" pos:end="49:63">/* stash away our jmp_buf */</comment>
+
+
+
+    <expr_stmt pos:start="53:5" pos:end="53:40"><expr pos:start="53:5" pos:end="53:39"><name pos:start="53:5" pos:end="53:8">coTS</name> <operator pos:start="53:10" pos:end="53:10">=</operator> <call pos:start="53:12" pos:end="53:39"><name pos:start="53:12" pos:end="53:37">coroutine_get_thread_state</name><argument_list pos:start="53:38" pos:end="53:39">()</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="55:5" pos:end="55:26"><expr pos:start="55:5" pos:end="55:25"><name pos:start="55:5" pos:end="55:20"><name pos:start="55:5" pos:end="55:8">coTS</name><operator pos:start="55:9" pos:end="55:10">-&gt;</operator><name pos:start="55:11" pos:end="55:20">tr_handler</name></name> <operator pos:start="55:22" pos:end="55:22">=</operator> <name pos:start="55:24" pos:end="55:25">co</name></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="59:5" pos:end="67:7">/*
+
+     * Preserve the SIGUSR2 signal state, block SIGUSR2,
+
+     * and establish our signal handler. The signal will
+
+     * later transfer control onto the signal stack.
+
+     */</comment>
+
+    <expr_stmt pos:start="69:5" pos:end="69:23"><expr pos:start="69:5" pos:end="69:22"><call pos:start="69:5" pos:end="69:22"><name pos:start="69:5" pos:end="69:15">sigemptyset</name><argument_list pos:start="69:16" pos:end="69:22">(<argument pos:start="69:17" pos:end="69:21"><expr pos:start="69:17" pos:end="69:21"><operator pos:start="69:17" pos:end="69:17">&amp;</operator><name pos:start="69:18" pos:end="69:21">sigs</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="71:5" pos:end="71:30"><expr pos:start="71:5" pos:end="71:29"><call pos:start="71:5" pos:end="71:29"><name pos:start="71:5" pos:end="71:13">sigaddset</name><argument_list pos:start="71:14" pos:end="71:29">(<argument pos:start="71:15" pos:end="71:19"><expr pos:start="71:15" pos:end="71:19"><operator pos:start="71:15" pos:end="71:15">&amp;</operator><name pos:start="71:16" pos:end="71:19">sigs</name></expr></argument>, <argument pos:start="71:22" pos:end="71:28"><expr pos:start="71:22" pos:end="71:28"><name pos:start="71:22" pos:end="71:28">SIGUSR2</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="73:5" pos:end="73:46"><expr pos:start="73:5" pos:end="73:45"><call pos:start="73:5" pos:end="73:45"><name pos:start="73:5" pos:end="73:19">pthread_sigmask</name><argument_list pos:start="73:20" pos:end="73:45">(<argument pos:start="73:21" pos:end="73:29"><expr pos:start="73:21" pos:end="73:29"><name pos:start="73:21" pos:end="73:29">SIG_BLOCK</name></expr></argument>, <argument pos:start="73:32" pos:end="73:36"><expr pos:start="73:32" pos:end="73:36"><operator pos:start="73:32" pos:end="73:32">&amp;</operator><name pos:start="73:33" pos:end="73:36">sigs</name></expr></argument>, <argument pos:start="73:39" pos:end="73:44"><expr pos:start="73:39" pos:end="73:44"><operator pos:start="73:39" pos:end="73:39">&amp;</operator><name pos:start="73:40" pos:end="73:44">osigs</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="75:5" pos:end="75:41"><expr pos:start="75:5" pos:end="75:40"><name pos:start="75:5" pos:end="75:17"><name pos:start="75:5" pos:end="75:6">sa</name><operator pos:start="75:7" pos:end="75:7">.</operator><name pos:start="75:8" pos:end="75:17">sa_handler</name></name> <operator pos:start="75:19" pos:end="75:19">=</operator> <name pos:start="75:21" pos:end="75:40">coroutine_trampoline</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="77:5" pos:end="77:28"><expr pos:start="77:5" pos:end="77:27"><call pos:start="77:5" pos:end="77:27"><name pos:start="77:5" pos:end="77:14">sigfillset</name><argument_list pos:start="77:15" pos:end="77:27">(<argument pos:start="77:16" pos:end="77:26"><expr pos:start="77:16" pos:end="77:26"><operator pos:start="77:16" pos:end="77:16">&amp;</operator><name pos:start="77:17" pos:end="77:26"><name pos:start="77:17" pos:end="77:18">sa</name><operator pos:start="77:19" pos:end="77:19">.</operator><name pos:start="77:20" pos:end="77:26">sa_mask</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="79:5" pos:end="79:29"><expr pos:start="79:5" pos:end="79:28"><name pos:start="79:5" pos:end="79:15"><name pos:start="79:5" pos:end="79:6">sa</name><operator pos:start="79:7" pos:end="79:7">.</operator><name pos:start="79:8" pos:end="79:15">sa_flags</name></name> <operator pos:start="79:17" pos:end="79:17">=</operator> <name pos:start="79:19" pos:end="79:28">SA_ONSTACK</name></expr>;</expr_stmt>
+
+    <if_stmt pos:start="81:5" pos:end="85:5"><if pos:start="81:5" pos:end="85:5">if <condition pos:start="81:8" pos:end="81:43">(<expr pos:start="81:9" pos:end="81:42"><call pos:start="81:9" pos:end="81:37"><name pos:start="81:9" pos:end="81:17">sigaction</name><argument_list pos:start="81:18" pos:end="81:37">(<argument pos:start="81:19" pos:end="81:25"><expr pos:start="81:19" pos:end="81:25"><name pos:start="81:19" pos:end="81:25">SIGUSR2</name></expr></argument>, <argument pos:start="81:28" pos:end="81:30"><expr pos:start="81:28" pos:end="81:30"><operator pos:start="81:28" pos:end="81:28">&amp;</operator><name pos:start="81:29" pos:end="81:30">sa</name></expr></argument>, <argument pos:start="81:33" pos:end="81:36"><expr pos:start="81:33" pos:end="81:36"><operator pos:start="81:33" pos:end="81:33">&amp;</operator><name pos:start="81:34" pos:end="81:36">osa</name></expr></argument>)</argument_list></call> <operator pos:start="81:39" pos:end="81:40">!=</operator> <literal type="number" pos:start="81:42" pos:end="81:42">0</literal></expr>)</condition> <block pos:start="81:45" pos:end="85:5">{<block_content pos:start="83:9" pos:end="83:16">
+
+        <expr_stmt pos:start="83:9" pos:end="83:16"><expr pos:start="83:9" pos:end="83:15"><call pos:start="83:9" pos:end="83:15"><name pos:start="83:9" pos:end="83:13">abort</name><argument_list pos:start="83:14" pos:end="83:15">()</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="89:5" pos:end="93:7">/*
+
+     * Set the new stack.
+
+     */</comment>
+
+    <expr_stmt pos:start="95:5" pos:end="95:25"><expr pos:start="95:5" pos:end="95:24"><name pos:start="95:5" pos:end="95:12"><name pos:start="95:5" pos:end="95:6">ss</name><operator pos:start="95:7" pos:end="95:7">.</operator><name pos:start="95:8" pos:end="95:12">ss_sp</name></name> <operator pos:start="95:14" pos:end="95:14">=</operator> <name pos:start="95:16" pos:end="95:24"><name pos:start="95:16" pos:end="95:17">co</name><operator pos:start="95:18" pos:end="95:19">-&gt;</operator><name pos:start="95:20" pos:end="95:24">stack</name></name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="97:5" pos:end="97:28"><expr pos:start="97:5" pos:end="97:27"><name pos:start="97:5" pos:end="97:14"><name pos:start="97:5" pos:end="97:6">ss</name><operator pos:start="97:7" pos:end="97:7">.</operator><name pos:start="97:8" pos:end="97:14">ss_size</name></name> <operator pos:start="97:16" pos:end="97:16">=</operator> <name pos:start="97:18" pos:end="97:27">stack_size</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="99:5" pos:end="99:20"><expr pos:start="99:5" pos:end="99:19"><name pos:start="99:5" pos:end="99:15"><name pos:start="99:5" pos:end="99:6">ss</name><operator pos:start="99:7" pos:end="99:7">.</operator><name pos:start="99:8" pos:end="99:15">ss_flags</name></name> <operator pos:start="99:17" pos:end="99:17">=</operator> <literal type="number" pos:start="99:19" pos:end="99:19">0</literal></expr>;</expr_stmt>
+
+    <if_stmt pos:start="101:5" pos:end="105:5"><if pos:start="101:5" pos:end="105:5">if <condition pos:start="101:8" pos:end="101:35">(<expr pos:start="101:9" pos:end="101:34"><call pos:start="101:9" pos:end="101:30"><name pos:start="101:9" pos:end="101:19">sigaltstack</name><argument_list pos:start="101:20" pos:end="101:30">(<argument pos:start="101:21" pos:end="101:23"><expr pos:start="101:21" pos:end="101:23"><operator pos:start="101:21" pos:end="101:21">&amp;</operator><name pos:start="101:22" pos:end="101:23">ss</name></expr></argument>, <argument pos:start="101:26" pos:end="101:29"><expr pos:start="101:26" pos:end="101:29"><operator pos:start="101:26" pos:end="101:26">&amp;</operator><name pos:start="101:27" pos:end="101:29">oss</name></expr></argument>)</argument_list></call> <operator pos:start="101:32" pos:end="101:32">&lt;</operator> <literal type="number" pos:start="101:34" pos:end="101:34">0</literal></expr>)</condition> <block pos:start="101:37" pos:end="105:5">{<block_content pos:start="103:9" pos:end="103:16">
+
+        <expr_stmt pos:start="103:9" pos:end="103:16"><expr pos:start="103:9" pos:end="103:15"><call pos:start="103:9" pos:end="103:15"><name pos:start="103:9" pos:end="103:13">abort</name><argument_list pos:start="103:14" pos:end="103:15">()</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="109:5" pos:end="121:7">/*
+
+     * Now transfer control onto the signal stack and set it up.
+
+     * It will return immediately via "return" after the sigsetjmp()
+
+     * was performed. Be careful here with race conditions.  The
+
+     * signal can be delivered the first time sigsuspend() is
+
+     * called.
+
+     */</comment>
+
+    <expr_stmt pos:start="123:5" pos:end="123:24"><expr pos:start="123:5" pos:end="123:23"><name pos:start="123:5" pos:end="123:19"><name pos:start="123:5" pos:end="123:8">coTS</name><operator pos:start="123:9" pos:end="123:10">-&gt;</operator><name pos:start="123:11" pos:end="123:19">tr_called</name></name> <operator pos:start="123:21" pos:end="123:21">=</operator> <literal type="number" pos:start="123:23" pos:end="123:23">0</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="125:5" pos:end="125:42"><expr pos:start="125:5" pos:end="125:41"><call pos:start="125:5" pos:end="125:41"><name pos:start="125:5" pos:end="125:16">pthread_kill</name><argument_list pos:start="125:17" pos:end="125:41">(<argument pos:start="125:18" pos:end="125:31"><expr pos:start="125:18" pos:end="125:31"><call pos:start="125:18" pos:end="125:31"><name pos:start="125:18" pos:end="125:29">pthread_self</name><argument_list pos:start="125:30" pos:end="125:31">()</argument_list></call></expr></argument>, <argument pos:start="125:34" pos:end="125:40"><expr pos:start="125:34" pos:end="125:40"><name pos:start="125:34" pos:end="125:40">SIGUSR2</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="127:5" pos:end="127:22"><expr pos:start="127:5" pos:end="127:21"><call pos:start="127:5" pos:end="127:21"><name pos:start="127:5" pos:end="127:14">sigfillset</name><argument_list pos:start="127:15" pos:end="127:21">(<argument pos:start="127:16" pos:end="127:20"><expr pos:start="127:16" pos:end="127:20"><operator pos:start="127:16" pos:end="127:16">&amp;</operator><name pos:start="127:17" pos:end="127:20">sigs</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="129:5" pos:end="129:30"><expr pos:start="129:5" pos:end="129:29"><call pos:start="129:5" pos:end="129:29"><name pos:start="129:5" pos:end="129:13">sigdelset</name><argument_list pos:start="129:14" pos:end="129:29">(<argument pos:start="129:15" pos:end="129:19"><expr pos:start="129:15" pos:end="129:19"><operator pos:start="129:15" pos:end="129:15">&amp;</operator><name pos:start="129:16" pos:end="129:19">sigs</name></expr></argument>, <argument pos:start="129:22" pos:end="129:28"><expr pos:start="129:22" pos:end="129:28"><name pos:start="129:22" pos:end="129:28">SIGUSR2</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <while pos:start="131:5" pos:end="135:5">while <condition pos:start="131:11" pos:end="131:28">(<expr pos:start="131:12" pos:end="131:27"><operator pos:start="131:12" pos:end="131:12">!</operator><name pos:start="131:13" pos:end="131:27"><name pos:start="131:13" pos:end="131:16">coTS</name><operator pos:start="131:17" pos:end="131:18">-&gt;</operator><name pos:start="131:19" pos:end="131:27">tr_called</name></name></expr>)</condition> <block pos:start="131:30" pos:end="135:5">{<block_content pos:start="133:9" pos:end="133:26">
+
+        <expr_stmt pos:start="133:9" pos:end="133:26"><expr pos:start="133:9" pos:end="133:25"><call pos:start="133:9" pos:end="133:25"><name pos:start="133:9" pos:end="133:18">sigsuspend</name><argument_list pos:start="133:19" pos:end="133:25">(<argument pos:start="133:20" pos:end="133:24"><expr pos:start="133:20" pos:end="133:24"><operator pos:start="133:20" pos:end="133:20">&amp;</operator><name pos:start="133:21" pos:end="133:24">sigs</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></while>
+
+
+
+    <comment type="block" pos:start="139:5" pos:end="147:7">/*
+
+     * Inform the system that we are back off the signal stack by
+
+     * removing the alternative signal stack. Be careful here: It
+
+     * first has to be disabled, before it can be removed.
+
+     */</comment>
+
+    <expr_stmt pos:start="149:5" pos:end="149:27"><expr pos:start="149:5" pos:end="149:26"><call pos:start="149:5" pos:end="149:26"><name pos:start="149:5" pos:end="149:15">sigaltstack</name><argument_list pos:start="149:16" pos:end="149:26">(<argument pos:start="149:17" pos:end="149:20"><expr pos:start="149:17" pos:end="149:20"><name pos:start="149:17" pos:end="149:20">NULL</name></expr></argument>, <argument pos:start="149:23" pos:end="149:25"><expr pos:start="149:23" pos:end="149:25"><operator pos:start="149:23" pos:end="149:23">&amp;</operator><name pos:start="149:24" pos:end="149:25">ss</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="151:5" pos:end="151:29"><expr pos:start="151:5" pos:end="151:28"><name pos:start="151:5" pos:end="151:15"><name pos:start="151:5" pos:end="151:6">ss</name><operator pos:start="151:7" pos:end="151:7">.</operator><name pos:start="151:8" pos:end="151:15">ss_flags</name></name> <operator pos:start="151:17" pos:end="151:17">=</operator> <name pos:start="151:19" pos:end="151:28">SS_DISABLE</name></expr>;</expr_stmt>
+
+    <if_stmt pos:start="153:5" pos:end="157:5"><if pos:start="153:5" pos:end="157:5">if <condition pos:start="153:8" pos:end="153:35">(<expr pos:start="153:9" pos:end="153:34"><call pos:start="153:9" pos:end="153:30"><name pos:start="153:9" pos:end="153:19">sigaltstack</name><argument_list pos:start="153:20" pos:end="153:30">(<argument pos:start="153:21" pos:end="153:23"><expr pos:start="153:21" pos:end="153:23"><operator pos:start="153:21" pos:end="153:21">&amp;</operator><name pos:start="153:22" pos:end="153:23">ss</name></expr></argument>, <argument pos:start="153:26" pos:end="153:29"><expr pos:start="153:26" pos:end="153:29"><name pos:start="153:26" pos:end="153:29">NULL</name></expr></argument>)</argument_list></call> <operator pos:start="153:32" pos:end="153:32">&lt;</operator> <literal type="number" pos:start="153:34" pos:end="153:34">0</literal></expr>)</condition> <block pos:start="153:37" pos:end="157:5">{<block_content pos:start="155:9" pos:end="155:16">
+
+        <expr_stmt pos:start="155:9" pos:end="155:16"><expr pos:start="155:9" pos:end="155:15"><call pos:start="155:9" pos:end="155:15"><name pos:start="155:9" pos:end="155:13">abort</name><argument_list pos:start="155:14" pos:end="155:15">()</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <expr_stmt pos:start="159:5" pos:end="159:27"><expr pos:start="159:5" pos:end="159:26"><call pos:start="159:5" pos:end="159:26"><name pos:start="159:5" pos:end="159:15">sigaltstack</name><argument_list pos:start="159:16" pos:end="159:26">(<argument pos:start="159:17" pos:end="159:20"><expr pos:start="159:17" pos:end="159:20"><name pos:start="159:17" pos:end="159:20">NULL</name></expr></argument>, <argument pos:start="159:23" pos:end="159:25"><expr pos:start="159:23" pos:end="159:25"><operator pos:start="159:23" pos:end="159:23">&amp;</operator><name pos:start="159:24" pos:end="159:25">ss</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="161:5" pos:end="165:5"><if pos:start="161:5" pos:end="165:5">if <condition pos:start="161:8" pos:end="161:37">(<expr pos:start="161:9" pos:end="161:36"><operator pos:start="161:9" pos:end="161:9">!</operator><operator pos:start="161:10" pos:end="161:10">(</operator><name pos:start="161:11" pos:end="161:22"><name pos:start="161:11" pos:end="161:13">oss</name><operator pos:start="161:14" pos:end="161:14">.</operator><name pos:start="161:15" pos:end="161:22">ss_flags</name></name> <operator pos:start="161:24" pos:end="161:24">&amp;</operator> <name pos:start="161:26" pos:end="161:35">SS_DISABLE</name><operator pos:start="161:36" pos:end="161:36">)</operator></expr>)</condition> <block pos:start="161:39" pos:end="165:5">{<block_content pos:start="163:9" pos:end="163:32">
+
+        <expr_stmt pos:start="163:9" pos:end="163:32"><expr pos:start="163:9" pos:end="163:31"><call pos:start="163:9" pos:end="163:31"><name pos:start="163:9" pos:end="163:19">sigaltstack</name><argument_list pos:start="163:20" pos:end="163:31">(<argument pos:start="163:21" pos:end="163:24"><expr pos:start="163:21" pos:end="163:24"><operator pos:start="163:21" pos:end="163:21">&amp;</operator><name pos:start="163:22" pos:end="163:24">oss</name></expr></argument>, <argument pos:start="163:27" pos:end="163:30"><expr pos:start="163:27" pos:end="163:30"><name pos:start="163:27" pos:end="163:30">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="169:5" pos:end="173:7">/*
+
+     * Restore the old SIGUSR2 signal handler and mask
+
+     */</comment>
+
+    <expr_stmt pos:start="175:5" pos:end="175:35"><expr pos:start="175:5" pos:end="175:34"><call pos:start="175:5" pos:end="175:34"><name pos:start="175:5" pos:end="175:13">sigaction</name><argument_list pos:start="175:14" pos:end="175:34">(<argument pos:start="175:15" pos:end="175:21"><expr pos:start="175:15" pos:end="175:21"><name pos:start="175:15" pos:end="175:21">SIGUSR2</name></expr></argument>, <argument pos:start="175:24" pos:end="175:27"><expr pos:start="175:24" pos:end="175:27"><operator pos:start="175:24" pos:end="175:24">&amp;</operator><name pos:start="175:25" pos:end="175:27">osa</name></expr></argument>, <argument pos:start="175:30" pos:end="175:33"><expr pos:start="175:30" pos:end="175:33"><name pos:start="175:30" pos:end="175:33">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="177:5" pos:end="177:47"><expr pos:start="177:5" pos:end="177:46"><call pos:start="177:5" pos:end="177:46"><name pos:start="177:5" pos:end="177:19">pthread_sigmask</name><argument_list pos:start="177:20" pos:end="177:46">(<argument pos:start="177:21" pos:end="177:31"><expr pos:start="177:21" pos:end="177:31"><name pos:start="177:21" pos:end="177:31">SIG_SETMASK</name></expr></argument>, <argument pos:start="177:34" pos:end="177:39"><expr pos:start="177:34" pos:end="177:39"><operator pos:start="177:34" pos:end="177:34">&amp;</operator><name pos:start="177:35" pos:end="177:39">osigs</name></expr></argument>, <argument pos:start="177:42" pos:end="177:45"><expr pos:start="177:42" pos:end="177:45"><name pos:start="177:42" pos:end="177:45">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="181:5" pos:end="193:7">/*
+
+     * Now enter the trampoline again, but this time not as a signal
+
+     * handler. Instead we jump into it directly. The functionally
+
+     * redundant ping-pong pointer arithmetic is necessary to avoid
+
+     * type-conversion warnings related to the `volatile' qualifier and
+
+     * the fact that `jmp_buf' usually is an array type.
+
+     */</comment>
+
+    <if_stmt pos:start="195:5" pos:end="199:5"><if pos:start="195:5" pos:end="199:5">if <condition pos:start="195:8" pos:end="195:31">(<expr pos:start="195:9" pos:end="195:30"><operator pos:start="195:9" pos:end="195:9">!</operator><call pos:start="195:10" pos:end="195:30"><name pos:start="195:10" pos:end="195:18">sigsetjmp</name><argument_list pos:start="195:19" pos:end="195:30">(<argument pos:start="195:20" pos:end="195:26"><expr pos:start="195:20" pos:end="195:26"><name pos:start="195:20" pos:end="195:26">old_env</name></expr></argument>, <argument pos:start="195:29" pos:end="195:29"><expr pos:start="195:29" pos:end="195:29"><literal type="number" pos:start="195:29" pos:end="195:29">0</literal></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="195:33" pos:end="199:5">{<block_content pos:start="197:9" pos:end="197:40">
+
+        <expr_stmt pos:start="197:9" pos:end="197:40"><expr pos:start="197:9" pos:end="197:39"><call pos:start="197:9" pos:end="197:39"><name pos:start="197:9" pos:end="197:18">siglongjmp</name><argument_list pos:start="197:19" pos:end="197:39">(<argument pos:start="197:20" pos:end="197:35"><expr pos:start="197:20" pos:end="197:35"><name pos:start="197:20" pos:end="197:35"><name pos:start="197:20" pos:end="197:23">coTS</name><operator pos:start="197:24" pos:end="197:25">-&gt;</operator><name pos:start="197:26" pos:end="197:35">tr_reenter</name></name></expr></argument>, <argument pos:start="197:38" pos:end="197:38"><expr pos:start="197:38" pos:end="197:38"><literal type="number" pos:start="197:38" pos:end="197:38">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="203:5" pos:end="207:7">/*
+
+     * Ok, we returned again, so now we're finished
+
+     */</comment>
+
+
+
+    <return pos:start="211:5" pos:end="211:21">return <expr pos:start="211:12" pos:end="211:20"><operator pos:start="211:12" pos:end="211:12">&amp;</operator><name pos:start="211:13" pos:end="211:20"><name pos:start="211:13" pos:end="211:14">co</name><operator pos:start="211:15" pos:end="211:16">-&gt;</operator><name pos:start="211:17" pos:end="211:20">base</name></name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

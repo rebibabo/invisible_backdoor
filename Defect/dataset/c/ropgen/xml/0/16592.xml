@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/16592.c" pos:tabs="8"><function pos:start="1:1" pos:end="77:1"><type pos:start="1:1" pos:end="1:4"><name pos:start="1:1" pos:end="1:4">void</name></type> <name pos:start="1:6" pos:end="1:21">bmdma_cmd_writeb</name><parameter_list pos:start="1:22" pos:end="1:51">(<parameter pos:start="1:23" pos:end="1:36"><decl pos:start="1:23" pos:end="1:36"><type pos:start="1:23" pos:end="1:36"><name pos:start="1:23" pos:end="1:32">BMDMAState</name> <modifier pos:start="1:34" pos:end="1:34">*</modifier></type><name pos:start="1:35" pos:end="1:36">bm</name></decl></parameter>, <parameter pos:start="1:39" pos:end="1:50"><decl pos:start="1:39" pos:end="1:50"><type pos:start="1:39" pos:end="1:50"><name pos:start="1:39" pos:end="1:46">uint32_t</name></type> <name pos:start="1:48" pos:end="1:50">val</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="77:1">{<block_content pos:start="7:5" pos:end="75:25">
+
+<cpp:ifdef pos:start="5:1" pos:end="5:16">#<cpp:directive pos:start="5:2" pos:end="5:6">ifdef</cpp:directive> <name pos:start="5:8" pos:end="5:16">DEBUG_IDE</name></cpp:ifdef>
+
+    <expr_stmt pos:start="7:5" pos:end="10:0"><expr pos:start="7:5" pos:end="7:41"><call pos:start="7:5" pos:end="7:41"><name pos:start="7:5" pos:end="7:10">printf</name><argument_list pos:start="7:11" pos:end="7:41">(<argument pos:start="7:12" pos:end="7:25"><expr pos:start="7:12" pos:end="7:25"><literal type="string" pos:start="7:12" pos:end="7:25">"%s: 0x%08x\n"</literal></expr></argument>, <argument pos:start="7:28" pos:end="7:35"><expr pos:start="7:28" pos:end="7:35"><name pos:start="7:28" pos:end="7:35">__func__</name></expr></argument>, <argument pos:start="7:38" pos:end="7:40"><expr pos:start="7:38" pos:end="7:40"><name pos:start="7:38" pos:end="7:40">val</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+<cpp:endif pos:start="9:1" pos:end="9:6">#<cpp:directive pos:start="9:2" pos:end="9:6">endif</cpp:directive></cpp:endif>
+
+
+
+    <comment type="block" pos:start="13:5" pos:end="13:57">/* Ignore writes to SSBM if it keeps the old value */</comment>
+
+    <if_stmt pos:start="15:5" pos:end="71:5"><if pos:start="15:5" pos:end="71:5">if <condition pos:start="15:8" pos:end="15:57">(<expr pos:start="15:9" pos:end="15:56"><operator pos:start="15:9" pos:end="15:9">(</operator><name pos:start="15:10" pos:end="15:12">val</name> <operator pos:start="15:14" pos:end="15:14">&amp;</operator> <name pos:start="15:16" pos:end="15:27">BM_CMD_START</name><operator pos:start="15:28" pos:end="15:28">)</operator> <operator pos:start="15:30" pos:end="15:31">!=</operator> <operator pos:start="15:33" pos:end="15:33">(</operator><name pos:start="15:34" pos:end="15:40"><name pos:start="15:34" pos:end="15:35">bm</name><operator pos:start="15:36" pos:end="15:37">-&gt;</operator><name pos:start="15:38" pos:end="15:40">cmd</name></name> <operator pos:start="15:42" pos:end="15:42">&amp;</operator> <name pos:start="15:44" pos:end="15:55">BM_CMD_START</name><operator pos:start="15:56" pos:end="15:56">)</operator></expr>)</condition> <block pos:start="15:59" pos:end="71:5">{<block_content pos:start="17:9" pos:end="69:9">
+
+        <if_stmt pos:start="17:9" pos:end="69:9"><if pos:start="17:9" pos:end="53:9">if <condition pos:start="17:12" pos:end="17:34">(<expr pos:start="17:13" pos:end="17:33"><operator pos:start="17:13" pos:end="17:13">!</operator><operator pos:start="17:14" pos:end="17:14">(</operator><name pos:start="17:15" pos:end="17:17">val</name> <operator pos:start="17:19" pos:end="17:19">&amp;</operator> <name pos:start="17:21" pos:end="17:32">BM_CMD_START</name><operator pos:start="17:33" pos:end="17:33">)</operator></expr>)</condition> <block pos:start="17:36" pos:end="53:9">{<block_content pos:start="43:13" pos:end="51:13">
+
+            <comment type="block" pos:start="19:13" pos:end="41:15">/*
+
+             * We can't cancel Scatter Gather DMA in the middle of the
+
+             * operation or a partial (not full) DMA transfer would reach
+
+             * the storage so we wait for completion instead (we beahve
+
+             * like if the DMA was completed by the time the guest trying
+
+             * to cancel dma with bmdma_cmd_writeb with BM_CMD_START not
+
+             * set).
+
+             *
+
+             * In the future we'll be able to safely cancel the I/O if the
+
+             * whole DMA operation will be submitted to disk with a single
+
+             * aio operation with preadv/pwritev.
+
+             */</comment>
+
+            <if_stmt pos:start="43:13" pos:end="51:13"><if pos:start="43:13" pos:end="51:13">if <condition pos:start="43:16" pos:end="43:36">(<expr pos:start="43:17" pos:end="43:35"><name pos:start="43:17" pos:end="43:35"><name pos:start="43:17" pos:end="43:18">bm</name><operator pos:start="43:19" pos:end="43:20">-&gt;</operator><name pos:start="43:21" pos:end="43:23">bus</name><operator pos:start="43:24" pos:end="43:25">-&gt;</operator><name pos:start="43:26" pos:end="43:28">dma</name><operator pos:start="43:29" pos:end="43:30">-&gt;</operator><name pos:start="43:31" pos:end="43:35">aiocb</name></name></expr>)</condition> <block pos:start="43:38" pos:end="51:13">{<block_content pos:start="45:17" pos:end="49:61">
+
+                <expr_stmt pos:start="45:17" pos:end="45:33"><expr pos:start="45:17" pos:end="45:32"><call pos:start="45:17" pos:end="45:32"><name pos:start="45:17" pos:end="45:30">qemu_aio_flush</name><argument_list pos:start="45:31" pos:end="45:32">()</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="47:17" pos:end="47:52"><expr pos:start="47:17" pos:end="47:51"><call pos:start="47:17" pos:end="47:51"><name pos:start="47:17" pos:end="47:22">assert</name><argument_list pos:start="47:23" pos:end="47:51">(<argument pos:start="47:24" pos:end="47:50"><expr pos:start="47:24" pos:end="47:50"><name pos:start="47:24" pos:end="47:42"><name pos:start="47:24" pos:end="47:25">bm</name><operator pos:start="47:26" pos:end="47:27">-&gt;</operator><name pos:start="47:28" pos:end="47:30">bus</name><operator pos:start="47:31" pos:end="47:32">-&gt;</operator><name pos:start="47:33" pos:end="47:35">dma</name><operator pos:start="47:36" pos:end="47:37">-&gt;</operator><name pos:start="47:38" pos:end="47:42">aiocb</name></name> <operator pos:start="47:44" pos:end="47:45">==</operator> <name pos:start="47:47" pos:end="47:50">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="49:17" pos:end="49:61"><expr pos:start="49:17" pos:end="49:60"><call pos:start="49:17" pos:end="49:60"><name pos:start="49:17" pos:end="49:22">assert</name><argument_list pos:start="49:23" pos:end="49:60">(<argument pos:start="49:24" pos:end="49:59"><expr pos:start="49:24" pos:end="49:59"><operator pos:start="49:24" pos:end="49:24">(</operator><name pos:start="49:25" pos:end="49:34"><name pos:start="49:25" pos:end="49:26">bm</name><operator pos:start="49:27" pos:end="49:28">-&gt;</operator><name pos:start="49:29" pos:end="49:34">status</name></name> <operator pos:start="49:36" pos:end="49:36">&amp;</operator> <name pos:start="49:38" pos:end="49:53">BM_STATUS_DMAING</name><operator pos:start="49:54" pos:end="49:54">)</operator> <operator pos:start="49:56" pos:end="49:57">==</operator> <literal type="number" pos:start="49:59" pos:end="49:59">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+        </block_content>}</block></if> <else pos:start="53:11" pos:end="69:9">else <block pos:start="53:16" pos:end="69:9">{<block_content pos:start="55:13" pos:end="67:13">
+
+            <expr_stmt pos:start="55:13" pos:end="55:36"><expr pos:start="55:13" pos:end="55:35"><name pos:start="55:13" pos:end="55:24"><name pos:start="55:13" pos:end="55:14">bm</name><operator pos:start="55:15" pos:end="55:16">-&gt;</operator><name pos:start="55:17" pos:end="55:24">cur_addr</name></name> <operator pos:start="55:26" pos:end="55:26">=</operator> <name pos:start="55:28" pos:end="55:35"><name pos:start="55:28" pos:end="55:29">bm</name><operator pos:start="55:30" pos:end="55:31">-&gt;</operator><name pos:start="55:32" pos:end="55:35">addr</name></name></expr>;</expr_stmt>
+
+            <if_stmt pos:start="57:13" pos:end="67:13"><if pos:start="57:13" pos:end="67:13">if <condition pos:start="57:16" pos:end="57:49">(<expr pos:start="57:17" pos:end="57:48"><operator pos:start="57:17" pos:end="57:17">!</operator><operator pos:start="57:18" pos:end="57:18">(</operator><name pos:start="57:19" pos:end="57:28"><name pos:start="57:19" pos:end="57:20">bm</name><operator pos:start="57:21" pos:end="57:22">-&gt;</operator><name pos:start="57:23" pos:end="57:28">status</name></name> <operator pos:start="57:30" pos:end="57:30">&amp;</operator> <name pos:start="57:32" pos:end="57:47">BM_STATUS_DMAING</name><operator pos:start="57:48" pos:end="57:48">)</operator></expr>)</condition> <block pos:start="57:51" pos:end="67:13">{<block_content pos:start="59:17" pos:end="65:55">
+
+                <expr_stmt pos:start="59:17" pos:end="59:47"><expr pos:start="59:17" pos:end="59:46"><name pos:start="59:17" pos:end="59:26"><name pos:start="59:17" pos:end="59:18">bm</name><operator pos:start="59:19" pos:end="59:20">-&gt;</operator><name pos:start="59:21" pos:end="59:26">status</name></name> <operator pos:start="59:28" pos:end="59:29">|=</operator> <name pos:start="59:31" pos:end="59:46">BM_STATUS_DMAING</name></expr>;</expr_stmt>
+
+                <comment type="block" pos:start="61:17" pos:end="61:52">/* start dma transfer if possible */</comment>
+
+                <if_stmt pos:start="63:17" pos:end="65:55"><if pos:start="63:17" pos:end="65:55">if <condition pos:start="63:20" pos:end="63:31">(<expr pos:start="63:21" pos:end="63:30"><name pos:start="63:21" pos:end="63:30"><name pos:start="63:21" pos:end="63:22">bm</name><operator pos:start="63:23" pos:end="63:24">-&gt;</operator><name pos:start="63:25" pos:end="63:30">dma_cb</name></name></expr>)</condition><block type="pseudo" pos:start="65:21" pos:end="65:55"><block_content pos:start="65:21" pos:end="65:55">
+
+                    <expr_stmt pos:start="65:21" pos:end="65:55"><expr pos:start="65:21" pos:end="65:54"><call pos:start="65:21" pos:end="65:54"><name pos:start="65:21" pos:end="65:30"><name pos:start="65:21" pos:end="65:22">bm</name><operator pos:start="65:23" pos:end="65:24">-&gt;</operator><name pos:start="65:25" pos:end="65:30">dma_cb</name></name><argument_list pos:start="65:31" pos:end="65:54">(<argument pos:start="65:32" pos:end="65:50"><expr pos:start="65:32" pos:end="65:50"><call pos:start="65:32" pos:end="65:50"><name pos:start="65:32" pos:end="65:46">bmdma_active_if</name><argument_list pos:start="65:47" pos:end="65:50">(<argument pos:start="65:48" pos:end="65:49"><expr pos:start="65:48" pos:end="65:49"><name pos:start="65:48" pos:end="65:49">bm</name></expr></argument>)</argument_list></call></expr></argument>, <argument pos:start="65:53" pos:end="65:53"><expr pos:start="65:53" pos:end="65:53"><literal type="number" pos:start="65:53" pos:end="65:53">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="75:5" pos:end="75:25"><expr pos:start="75:5" pos:end="75:24"><name pos:start="75:5" pos:end="75:11"><name pos:start="75:5" pos:end="75:6">bm</name><operator pos:start="75:7" pos:end="75:8">-&gt;</operator><name pos:start="75:9" pos:end="75:11">cmd</name></name> <operator pos:start="75:13" pos:end="75:13">=</operator> <name pos:start="75:15" pos:end="75:17">val</name> <operator pos:start="75:19" pos:end="75:19">&amp;</operator> <literal type="number" pos:start="75:21" pos:end="75:24">0x09</literal></expr>;</expr_stmt>
+
+</block_content>}</block></function>
+</unit>

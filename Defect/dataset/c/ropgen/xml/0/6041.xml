@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/6041.c" pos:tabs="8"><macro pos:start="1:1" pos:end="27:41"><name pos:start="1:1" pos:end="1:27">qcrypto_block_luks_load_key</name><argument_list pos:start="1:28" pos:end="27:41">(<argument pos:start="1:29" pos:end="1:47">QCryptoBlock *block</argument>,
+
+                            <argument pos:start="3:29" pos:end="3:57">QCryptoBlockLUKSKeySlot *slot</argument>,
+
+                            <argument pos:start="5:29" pos:end="5:48">const char *password</argument>,
+
+                            <argument pos:start="7:29" pos:end="7:60">QCryptoCipherAlgorithm cipheralg</argument>,
+
+                            <argument pos:start="9:29" pos:end="9:56">QCryptoCipherMode ciphermode</argument>,
+
+                            <argument pos:start="11:29" pos:end="11:53">QCryptoHashAlgorithm hash</argument>,
+
+                            <argument pos:start="13:29" pos:end="13:55">QCryptoIVGenAlgorithm ivalg</argument>,
+
+                            <argument pos:start="15:29" pos:end="15:62">QCryptoCipherAlgorithm ivcipheralg</argument>,
+
+                            <argument pos:start="17:29" pos:end="17:55">QCryptoHashAlgorithm ivhash</argument>,
+
+                            <argument pos:start="19:29" pos:end="19:46">uint8_t *masterkey</argument>,
+
+                            <argument pos:start="21:29" pos:end="21:47">size_t masterkeylen</argument>,
+
+                            <argument pos:start="23:29" pos:end="23:57">QCryptoBlockReadFunc readfunc</argument>,
+
+                            <argument pos:start="25:29" pos:end="25:40">void *opaque</argument>,
+
+                            <argument pos:start="27:29" pos:end="27:40">Error **errp</argument>)</argument_list></macro>
+
+<block pos:start="29:1" pos:end="311:1">{<block_content pos:start="31:5" pos:end="309:15">
+
+    <decl_stmt pos:start="31:5" pos:end="31:43"><decl pos:start="31:5" pos:end="31:42"><type pos:start="31:5" pos:end="31:22"><name pos:start="31:5" pos:end="31:20">QCryptoBlockLUKS</name> <modifier pos:start="31:22" pos:end="31:22">*</modifier></type><name pos:start="31:23" pos:end="31:26">luks</name> <init pos:start="31:28" pos:end="31:42">= <expr pos:start="31:30" pos:end="31:42"><name pos:start="31:30" pos:end="31:42"><name pos:start="31:30" pos:end="31:34">block</name><operator pos:start="31:35" pos:end="31:36">-&gt;</operator><name pos:start="31:37" pos:end="31:42">opaque</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="33:5" pos:end="33:22"><decl pos:start="33:5" pos:end="33:21"><type pos:start="33:5" pos:end="33:13"><name pos:start="33:5" pos:end="33:11">uint8_t</name> <modifier pos:start="33:13" pos:end="33:13">*</modifier></type><name pos:start="33:14" pos:end="33:21">splitkey</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="35:5" pos:end="35:23"><decl pos:start="35:5" pos:end="35:22"><type pos:start="35:5" pos:end="35:10"><name pos:start="35:5" pos:end="35:10">size_t</name></type> <name pos:start="35:12" pos:end="35:22">splitkeylen</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="37:5" pos:end="37:25"><decl pos:start="37:5" pos:end="37:24"><type pos:start="37:5" pos:end="37:13"><name pos:start="37:5" pos:end="37:11">uint8_t</name> <modifier pos:start="37:13" pos:end="37:13">*</modifier></type><name pos:start="37:14" pos:end="37:24">possiblekey</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="39:5" pos:end="39:17"><decl pos:start="39:5" pos:end="39:16"><type pos:start="39:5" pos:end="39:7"><name pos:start="39:5" pos:end="39:7">int</name></type> <name pos:start="39:9" pos:end="39:11">ret</name> <init pos:start="39:13" pos:end="39:16">= <expr pos:start="39:15" pos:end="39:16"><operator pos:start="39:15" pos:end="39:15">-</operator><literal type="number" pos:start="39:16" pos:end="39:16">1</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="41:5" pos:end="41:15"><decl pos:start="41:5" pos:end="41:14"><type pos:start="41:5" pos:end="41:11"><name pos:start="41:5" pos:end="41:11">ssize_t</name></type> <name pos:start="41:13" pos:end="41:14">rv</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="43:5" pos:end="43:33"><decl pos:start="43:5" pos:end="43:32"><type pos:start="43:5" pos:end="43:19"><name pos:start="43:5" pos:end="43:17">QCryptoCipher</name> <modifier pos:start="43:19" pos:end="43:19">*</modifier></type><name pos:start="43:20" pos:end="43:25">cipher</name> <init pos:start="43:27" pos:end="43:32">= <expr pos:start="43:29" pos:end="43:32"><name pos:start="43:29" pos:end="43:32">NULL</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="45:5" pos:end="45:53"><decl pos:start="45:5" pos:end="45:52"><type pos:start="45:5" pos:end="45:11"><name pos:start="45:5" pos:end="45:11">uint8_t</name></type> <name pos:start="45:13" pos:end="45:52"><name pos:start="45:13" pos:end="45:21">keydigest</name><index pos:start="45:22" pos:end="45:52">[<expr pos:start="45:23" pos:end="45:51"><name pos:start="45:23" pos:end="45:51">QCRYPTO_BLOCK_LUKS_DIGEST_LEN</name></expr>]</index></name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="47:5" pos:end="47:31"><decl pos:start="47:5" pos:end="47:30"><type pos:start="47:5" pos:end="47:18"><name pos:start="47:5" pos:end="47:16">QCryptoIVGen</name> <modifier pos:start="47:18" pos:end="47:18">*</modifier></type><name pos:start="47:19" pos:end="47:23">ivgen</name> <init pos:start="47:25" pos:end="47:30">= <expr pos:start="47:27" pos:end="47:30"><name pos:start="47:27" pos:end="47:30">NULL</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="49:5" pos:end="49:15"><decl pos:start="49:5" pos:end="49:14"><type pos:start="49:5" pos:end="49:10"><name pos:start="49:5" pos:end="49:10">size_t</name></type> <name pos:start="49:12" pos:end="49:14">niv</name></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="53:5" pos:end="57:5"><if pos:start="53:5" pos:end="57:5">if <condition pos:start="53:8" pos:end="53:60">(<expr pos:start="53:9" pos:end="53:59"><name pos:start="53:9" pos:end="53:20"><name pos:start="53:9" pos:end="53:12">slot</name><operator pos:start="53:13" pos:end="53:14">-&gt;</operator><name pos:start="53:15" pos:end="53:20">active</name></name> <operator pos:start="53:22" pos:end="53:23">!=</operator> <name pos:start="53:25" pos:end="53:59">QCRYPTO_BLOCK_LUKS_KEY_SLOT_ENABLED</name></expr>)</condition> <block pos:start="53:62" pos:end="57:5">{<block_content pos:start="55:9" pos:end="55:17">
+
+        <return pos:start="55:9" pos:end="55:17">return <expr pos:start="55:16" pos:end="55:16"><literal type="number" pos:start="55:16" pos:end="55:16">0</literal></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="61:5" pos:end="61:47"><expr pos:start="61:5" pos:end="61:46"><name pos:start="61:5" pos:end="61:15">splitkeylen</name> <operator pos:start="61:17" pos:end="61:17">=</operator> <name pos:start="61:19" pos:end="61:30">masterkeylen</name> <operator pos:start="61:32" pos:end="61:32">*</operator> <name pos:start="61:34" pos:end="61:46"><name pos:start="61:34" pos:end="61:37">slot</name><operator pos:start="61:38" pos:end="61:39">-&gt;</operator><name pos:start="61:40" pos:end="61:46">stripes</name></name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="63:5" pos:end="63:44"><expr pos:start="63:5" pos:end="63:43"><name pos:start="63:5" pos:end="63:12">splitkey</name> <operator pos:start="63:14" pos:end="63:14">=</operator> <call pos:start="63:16" pos:end="63:43"><name pos:start="63:16" pos:end="63:21">g_new0</name><argument_list pos:start="63:22" pos:end="63:43">(<argument pos:start="63:23" pos:end="63:29"><expr pos:start="63:23" pos:end="63:29"><name pos:start="63:23" pos:end="63:29">uint8_t</name></expr></argument>, <argument pos:start="63:32" pos:end="63:42"><expr pos:start="63:32" pos:end="63:42"><name pos:start="63:32" pos:end="63:42">splitkeylen</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="65:5" pos:end="65:48"><expr pos:start="65:5" pos:end="65:47"><name pos:start="65:5" pos:end="65:15">possiblekey</name> <operator pos:start="65:17" pos:end="65:17">=</operator> <call pos:start="65:19" pos:end="65:47"><name pos:start="65:19" pos:end="65:24">g_new0</name><argument_list pos:start="65:25" pos:end="65:47">(<argument pos:start="65:26" pos:end="65:32"><expr pos:start="65:26" pos:end="65:32"><name pos:start="65:26" pos:end="65:32">uint8_t</name></expr></argument>, <argument pos:start="65:35" pos:end="65:46"><expr pos:start="65:35" pos:end="65:46"><name pos:start="65:35" pos:end="65:46">masterkeylen</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="69:5" pos:end="81:7">/*
+
+     * The user password is used to generate a (possible)
+
+     * decryption key. This may or may not successfully
+
+     * decrypt the master key - we just blindly assume
+
+     * the key is correct and validate the results of
+
+     * decryption later.
+
+     */</comment>
+
+    <if_stmt pos:start="83:5" pos:end="97:5"><if pos:start="83:5" pos:end="97:5">if <condition pos:start="83:8" pos:end="93:33">(<expr pos:start="83:9" pos:end="93:32"><call pos:start="83:9" pos:end="93:28"><name pos:start="83:9" pos:end="83:22">qcrypto_pbkdf2</name><argument_list pos:start="83:23" pos:end="93:28">(<argument pos:start="83:24" pos:end="83:27"><expr pos:start="83:24" pos:end="83:27"><name pos:start="83:24" pos:end="83:27">hash</name></expr></argument>,
+
+                       <argument pos:start="85:24" pos:end="85:48"><expr pos:start="85:24" pos:end="85:48"><operator pos:start="85:24" pos:end="85:24">(</operator><specifier pos:start="85:25" pos:end="85:29">const</specifier> <name pos:start="85:31" pos:end="85:37">uint8_t</name> <operator pos:start="85:39" pos:end="85:39">*</operator><operator pos:start="85:40" pos:end="85:40">)</operator><name pos:start="85:41" pos:end="85:48">password</name></expr></argument>, <argument pos:start="85:51" pos:end="85:66"><expr pos:start="85:51" pos:end="85:66"><call pos:start="85:51" pos:end="85:66"><name pos:start="85:51" pos:end="85:56">strlen</name><argument_list pos:start="85:57" pos:end="85:66">(<argument pos:start="85:58" pos:end="85:65"><expr pos:start="85:58" pos:end="85:65"><name pos:start="85:58" pos:end="85:65">password</name></expr></argument>)</argument_list></call></expr></argument>,
+
+                       <argument pos:start="87:24" pos:end="87:33"><expr pos:start="87:24" pos:end="87:33"><name pos:start="87:24" pos:end="87:33"><name pos:start="87:24" pos:end="87:27">slot</name><operator pos:start="87:28" pos:end="87:29">-&gt;</operator><name pos:start="87:30" pos:end="87:33">salt</name></name></expr></argument>, <argument pos:start="87:36" pos:end="87:62"><expr pos:start="87:36" pos:end="87:62"><name pos:start="87:36" pos:end="87:62">QCRYPTO_BLOCK_LUKS_SALT_LEN</name></expr></argument>,
+
+                       <argument pos:start="89:24" pos:end="89:39"><expr pos:start="89:24" pos:end="89:39"><name pos:start="89:24" pos:end="89:39"><name pos:start="89:24" pos:end="89:27">slot</name><operator pos:start="89:28" pos:end="89:29">-&gt;</operator><name pos:start="89:30" pos:end="89:39">iterations</name></name></expr></argument>,
+
+                       <argument pos:start="91:24" pos:end="91:34"><expr pos:start="91:24" pos:end="91:34"><name pos:start="91:24" pos:end="91:34">possiblekey</name></expr></argument>, <argument pos:start="91:37" pos:end="91:48"><expr pos:start="91:37" pos:end="91:48"><name pos:start="91:37" pos:end="91:48">masterkeylen</name></expr></argument>,
+
+                       <argument pos:start="93:24" pos:end="93:27"><expr pos:start="93:24" pos:end="93:27"><name pos:start="93:24" pos:end="93:27">errp</name></expr></argument>)</argument_list></call> <operator pos:start="93:30" pos:end="93:30">&lt;</operator> <literal type="number" pos:start="93:32" pos:end="93:32">0</literal></expr>)</condition> <block pos:start="93:35" pos:end="97:5">{<block_content pos:start="95:9" pos:end="95:21">
+
+        <goto pos:start="95:9" pos:end="95:21">goto <name pos:start="95:14" pos:end="95:20">cleanup</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="101:5" pos:end="113:7">/*
+
+     * We need to read the master key material from the
+
+     * LUKS key material header. What we're reading is
+
+     * not the raw master key, but rather the data after
+
+     * it has been passed through AFSplit and the result
+
+     * then encrypted.
+
+     */</comment>
+
+    <expr_stmt pos:start="115:5" pos:end="123:26"><expr pos:start="115:5" pos:end="123:25"><name pos:start="115:5" pos:end="115:6">rv</name> <operator pos:start="115:8" pos:end="115:8">=</operator> <call pos:start="115:10" pos:end="123:25"><name pos:start="115:10" pos:end="115:17">readfunc</name><argument_list pos:start="115:18" pos:end="123:25">(<argument pos:start="115:19" pos:end="115:23"><expr pos:start="115:19" pos:end="115:23"><name pos:start="115:19" pos:end="115:23">block</name></expr></argument>,
+
+                  <argument pos:start="117:19" pos:end="117:67"><expr pos:start="117:19" pos:end="117:67"><name pos:start="117:19" pos:end="117:34"><name pos:start="117:19" pos:end="117:22">slot</name><operator pos:start="117:23" pos:end="117:24">-&gt;</operator><name pos:start="117:25" pos:end="117:34">key_offset</name></name> <operator pos:start="117:36" pos:end="117:36">*</operator> <name pos:start="117:38" pos:end="117:67">QCRYPTO_BLOCK_LUKS_SECTOR_SIZE</name></expr></argument>,
+
+                  <argument pos:start="119:19" pos:end="119:26"><expr pos:start="119:19" pos:end="119:26"><name pos:start="119:19" pos:end="119:26">splitkey</name></expr></argument>, <argument pos:start="119:29" pos:end="119:39"><expr pos:start="119:29" pos:end="119:39"><name pos:start="119:29" pos:end="119:39">splitkeylen</name></expr></argument>,
+
+                  <argument pos:start="121:19" pos:end="121:22"><expr pos:start="121:19" pos:end="121:22"><name pos:start="121:19" pos:end="121:22">errp</name></expr></argument>,
+
+                  <argument pos:start="123:19" pos:end="123:24"><expr pos:start="123:19" pos:end="123:24"><name pos:start="123:19" pos:end="123:24">opaque</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="125:5" pos:end="129:5"><if pos:start="125:5" pos:end="129:5">if <condition pos:start="125:8" pos:end="125:15">(<expr pos:start="125:9" pos:end="125:14"><name pos:start="125:9" pos:end="125:10">rv</name> <operator pos:start="125:12" pos:end="125:12">&lt;</operator> <literal type="number" pos:start="125:14" pos:end="125:14">0</literal></expr>)</condition> <block pos:start="125:17" pos:end="129:5">{<block_content pos:start="127:9" pos:end="127:21">
+
+        <goto pos:start="127:9" pos:end="127:21">goto <name pos:start="127:14" pos:end="127:20">cleanup</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+
+
+    <comment type="block" pos:start="135:5" pos:end="137:39">/* Setup the cipher/ivgen that we'll use to try to decrypt
+
+     * the split master key material */</comment>
+
+    <expr_stmt pos:start="139:5" pos:end="143:38"><expr pos:start="139:5" pos:end="143:37"><name pos:start="139:5" pos:end="139:10">cipher</name> <operator pos:start="139:12" pos:end="139:12">=</operator> <call pos:start="139:14" pos:end="143:37"><name pos:start="139:14" pos:end="139:31">qcrypto_cipher_new</name><argument_list pos:start="139:32" pos:end="143:37">(<argument pos:start="139:33" pos:end="139:41"><expr pos:start="139:33" pos:end="139:41"><name pos:start="139:33" pos:end="139:41">cipheralg</name></expr></argument>, <argument pos:start="139:44" pos:end="139:53"><expr pos:start="139:44" pos:end="139:53"><name pos:start="139:44" pos:end="139:53">ciphermode</name></expr></argument>,
+
+                                <argument pos:start="141:33" pos:end="141:43"><expr pos:start="141:33" pos:end="141:43"><name pos:start="141:33" pos:end="141:43">possiblekey</name></expr></argument>, <argument pos:start="141:46" pos:end="141:57"><expr pos:start="141:46" pos:end="141:57"><name pos:start="141:46" pos:end="141:57">masterkeylen</name></expr></argument>,
+
+                                <argument pos:start="143:33" pos:end="143:36"><expr pos:start="143:33" pos:end="143:36"><name pos:start="143:33" pos:end="143:36">errp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="145:5" pos:end="149:5"><if pos:start="145:5" pos:end="149:5">if <condition pos:start="145:8" pos:end="145:16">(<expr pos:start="145:9" pos:end="145:15"><operator pos:start="145:9" pos:end="145:9">!</operator><name pos:start="145:10" pos:end="145:15">cipher</name></expr>)</condition> <block pos:start="145:18" pos:end="149:5">{<block_content pos:start="147:9" pos:end="147:21">
+
+        <goto pos:start="147:9" pos:end="147:21">goto <name pos:start="147:14" pos:end="147:20">cleanup</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="153:5" pos:end="155:48"><expr pos:start="153:5" pos:end="155:47"><name pos:start="153:5" pos:end="153:7">niv</name> <operator pos:start="153:9" pos:end="153:9">=</operator> <call pos:start="153:11" pos:end="155:47"><name pos:start="153:11" pos:end="153:35">qcrypto_cipher_get_iv_len</name><argument_list pos:start="153:36" pos:end="155:47">(<argument pos:start="153:37" pos:end="153:45"><expr pos:start="153:37" pos:end="153:45"><name pos:start="153:37" pos:end="153:45">cipheralg</name></expr></argument>,
+
+                                    <argument pos:start="155:37" pos:end="155:46"><expr pos:start="155:37" pos:end="155:46"><name pos:start="155:37" pos:end="155:46">ciphermode</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="157:5" pos:end="165:36"><expr pos:start="157:5" pos:end="165:35"><name pos:start="157:5" pos:end="157:9">ivgen</name> <operator pos:start="157:11" pos:end="157:11">=</operator> <call pos:start="157:13" pos:end="165:35"><name pos:start="157:13" pos:end="157:29">qcrypto_ivgen_new</name><argument_list pos:start="157:30" pos:end="165:35">(<argument pos:start="157:31" pos:end="157:35"><expr pos:start="157:31" pos:end="157:35"><name pos:start="157:31" pos:end="157:35">ivalg</name></expr></argument>,
+
+                              <argument pos:start="159:31" pos:end="159:41"><expr pos:start="159:31" pos:end="159:41"><name pos:start="159:31" pos:end="159:41">ivcipheralg</name></expr></argument>,
+
+                              <argument pos:start="161:31" pos:end="161:36"><expr pos:start="161:31" pos:end="161:36"><name pos:start="161:31" pos:end="161:36">ivhash</name></expr></argument>,
+
+                              <argument pos:start="163:31" pos:end="163:41"><expr pos:start="163:31" pos:end="163:41"><name pos:start="163:31" pos:end="163:41">possiblekey</name></expr></argument>, <argument pos:start="163:44" pos:end="163:55"><expr pos:start="163:44" pos:end="163:55"><name pos:start="163:44" pos:end="163:55">masterkeylen</name></expr></argument>,
+
+                              <argument pos:start="165:31" pos:end="165:34"><expr pos:start="165:31" pos:end="165:34"><name pos:start="165:31" pos:end="165:34">errp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="167:5" pos:end="171:5"><if pos:start="167:5" pos:end="171:5">if <condition pos:start="167:8" pos:end="167:15">(<expr pos:start="167:9" pos:end="167:14"><operator pos:start="167:9" pos:end="167:9">!</operator><name pos:start="167:10" pos:end="167:14">ivgen</name></expr>)</condition> <block pos:start="167:17" pos:end="171:5">{<block_content pos:start="169:9" pos:end="169:21">
+
+        <goto pos:start="169:9" pos:end="169:21">goto <name pos:start="169:14" pos:end="169:20">cleanup</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+
+
+    <comment type="block" pos:start="177:5" pos:end="189:7">/*
+
+     * The master key needs to be decrypted in the same
+
+     * way that the block device payload will be decrypted
+
+     * later. In particular we'll be using the IV generator
+
+     * to reset the encryption cipher every time the master
+
+     * key crosses a sector boundary.
+
+     */</comment>
+
+    <if_stmt pos:start="191:5" pos:end="209:5"><if pos:start="191:5" pos:end="209:5">if <condition pos:start="191:8" pos:end="205:47">(<expr pos:start="191:9" pos:end="205:46"><call pos:start="191:9" pos:end="205:42"><name pos:start="191:9" pos:end="191:36">qcrypto_block_decrypt_helper</name><argument_list pos:start="191:37" pos:end="205:42">(<argument pos:start="191:38" pos:end="191:43"><expr pos:start="191:38" pos:end="191:43"><name pos:start="191:38" pos:end="191:43">cipher</name></expr></argument>,
+
+                                     <argument pos:start="193:38" pos:end="193:40"><expr pos:start="193:38" pos:end="193:40"><name pos:start="193:38" pos:end="193:40">niv</name></expr></argument>,
+
+                                     <argument pos:start="195:38" pos:end="195:42"><expr pos:start="195:38" pos:end="195:42"><name pos:start="195:38" pos:end="195:42">ivgen</name></expr></argument>,
+
+                                     <argument pos:start="197:38" pos:end="197:67"><expr pos:start="197:38" pos:end="197:67"><name pos:start="197:38" pos:end="197:67">QCRYPTO_BLOCK_LUKS_SECTOR_SIZE</name></expr></argument>,
+
+                                     <argument pos:start="199:38" pos:end="199:38"><expr pos:start="199:38" pos:end="199:38"><literal type="number" pos:start="199:38" pos:end="199:38">0</literal></expr></argument>,
+
+                                     <argument pos:start="201:38" pos:end="201:45"><expr pos:start="201:38" pos:end="201:45"><name pos:start="201:38" pos:end="201:45">splitkey</name></expr></argument>,
+
+                                     <argument pos:start="203:38" pos:end="203:48"><expr pos:start="203:38" pos:end="203:48"><name pos:start="203:38" pos:end="203:48">splitkeylen</name></expr></argument>,
+
+                                     <argument pos:start="205:38" pos:end="205:41"><expr pos:start="205:38" pos:end="205:41"><name pos:start="205:38" pos:end="205:41">errp</name></expr></argument>)</argument_list></call> <operator pos:start="205:44" pos:end="205:44">&lt;</operator> <literal type="number" pos:start="205:46" pos:end="205:46">0</literal></expr>)</condition> <block pos:start="205:49" pos:end="209:5">{<block_content pos:start="207:9" pos:end="207:21">
+
+        <goto pos:start="207:9" pos:end="207:21">goto <name pos:start="207:14" pos:end="207:20">cleanup</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="213:5" pos:end="219:7">/*
+
+     * Now we've decrypted the split master key, join
+
+     * it back together to get the actual master key.
+
+     */</comment>
+
+    <if_stmt pos:start="221:5" pos:end="235:5"><if pos:start="221:5" pos:end="235:5">if <condition pos:start="221:8" pos:end="231:41">(<expr pos:start="221:9" pos:end="231:40"><call pos:start="221:9" pos:end="231:36"><name pos:start="221:9" pos:end="221:30">qcrypto_afsplit_decode</name><argument_list pos:start="221:31" pos:end="231:36">(<argument pos:start="221:32" pos:end="221:35"><expr pos:start="221:32" pos:end="221:35"><name pos:start="221:32" pos:end="221:35">hash</name></expr></argument>,
+
+                               <argument pos:start="223:32" pos:end="223:43"><expr pos:start="223:32" pos:end="223:43"><name pos:start="223:32" pos:end="223:43">masterkeylen</name></expr></argument>,
+
+                               <argument pos:start="225:32" pos:end="225:44"><expr pos:start="225:32" pos:end="225:44"><name pos:start="225:32" pos:end="225:44"><name pos:start="225:32" pos:end="225:35">slot</name><operator pos:start="225:36" pos:end="225:37">-&gt;</operator><name pos:start="225:38" pos:end="225:44">stripes</name></name></expr></argument>,
+
+                               <argument pos:start="227:32" pos:end="227:39"><expr pos:start="227:32" pos:end="227:39"><name pos:start="227:32" pos:end="227:39">splitkey</name></expr></argument>,
+
+                               <argument pos:start="229:32" pos:end="229:40"><expr pos:start="229:32" pos:end="229:40"><name pos:start="229:32" pos:end="229:40">masterkey</name></expr></argument>,
+
+                               <argument pos:start="231:32" pos:end="231:35"><expr pos:start="231:32" pos:end="231:35"><name pos:start="231:32" pos:end="231:35">errp</name></expr></argument>)</argument_list></call> <operator pos:start="231:38" pos:end="231:38">&lt;</operator> <literal type="number" pos:start="231:40" pos:end="231:40">0</literal></expr>)</condition> <block pos:start="231:43" pos:end="235:5">{<block_content pos:start="233:9" pos:end="233:21">
+
+        <goto pos:start="233:9" pos:end="233:21">goto <name pos:start="233:14" pos:end="233:20">cleanup</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+
+
+    <comment type="block" pos:start="241:5" pos:end="255:7">/*
+
+     * We still don't know that the masterkey we got is valid,
+
+     * because we just blindly assumed the user's password
+
+     * was correct. This is where we now verify it. We are
+
+     * creating a hash of the master key using PBKDF and
+
+     * then comparing that to the hash stored in the key slot
+
+     * header
+
+     */</comment>
+
+    <if_stmt pos:start="257:5" pos:end="273:5"><if pos:start="257:5" pos:end="273:5">if <condition pos:start="257:8" pos:end="269:33">(<expr pos:start="257:9" pos:end="269:32"><call pos:start="257:9" pos:end="269:28"><name pos:start="257:9" pos:end="257:22">qcrypto_pbkdf2</name><argument_list pos:start="257:23" pos:end="269:28">(<argument pos:start="257:24" pos:end="257:27"><expr pos:start="257:24" pos:end="257:27"><name pos:start="257:24" pos:end="257:27">hash</name></expr></argument>,
+
+                       <argument pos:start="259:24" pos:end="259:32"><expr pos:start="259:24" pos:end="259:32"><name pos:start="259:24" pos:end="259:32">masterkey</name></expr></argument>, <argument pos:start="259:35" pos:end="259:46"><expr pos:start="259:35" pos:end="259:46"><name pos:start="259:35" pos:end="259:46">masterkeylen</name></expr></argument>,
+
+                       <argument pos:start="261:24" pos:end="261:51"><expr pos:start="261:24" pos:end="261:51"><name pos:start="261:24" pos:end="261:51"><name pos:start="261:24" pos:end="261:27">luks</name><operator pos:start="261:28" pos:end="261:29">-&gt;</operator><name pos:start="261:30" pos:end="261:35">header</name><operator pos:start="261:36" pos:end="261:36">.</operator><name pos:start="261:37" pos:end="261:51">master_key_salt</name></name></expr></argument>,
+
+                       <argument pos:start="263:24" pos:end="263:50"><expr pos:start="263:24" pos:end="263:50"><name pos:start="263:24" pos:end="263:50">QCRYPTO_BLOCK_LUKS_SALT_LEN</name></expr></argument>,
+
+                       <argument pos:start="265:24" pos:end="265:57"><expr pos:start="265:24" pos:end="265:57"><name pos:start="265:24" pos:end="265:57"><name pos:start="265:24" pos:end="265:27">luks</name><operator pos:start="265:28" pos:end="265:29">-&gt;</operator><name pos:start="265:30" pos:end="265:35">header</name><operator pos:start="265:36" pos:end="265:36">.</operator><name pos:start="265:37" pos:end="265:57">master_key_iterations</name></name></expr></argument>,
+
+                       <argument pos:start="267:24" pos:end="267:32"><expr pos:start="267:24" pos:end="267:32"><name pos:start="267:24" pos:end="267:32">keydigest</name></expr></argument>, <argument pos:start="267:35" pos:end="267:57"><expr pos:start="267:35" pos:end="267:57"><call pos:start="267:35" pos:end="267:57"><name pos:start="267:35" pos:end="267:46">G_N_ELEMENTS</name><argument_list pos:start="267:47" pos:end="267:57">(<argument pos:start="267:48" pos:end="267:56"><expr pos:start="267:48" pos:end="267:56"><name pos:start="267:48" pos:end="267:56">keydigest</name></expr></argument>)</argument_list></call></expr></argument>,
+
+                       <argument pos:start="269:24" pos:end="269:27"><expr pos:start="269:24" pos:end="269:27"><name pos:start="269:24" pos:end="269:27">errp</name></expr></argument>)</argument_list></call> <operator pos:start="269:30" pos:end="269:30">&lt;</operator> <literal type="number" pos:start="269:32" pos:end="269:32">0</literal></expr>)</condition> <block pos:start="269:35" pos:end="273:5">{<block_content pos:start="271:9" pos:end="271:21">
+
+        <goto pos:start="271:9" pos:end="271:21">goto <name pos:start="271:14" pos:end="271:20">cleanup</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="277:5" pos:end="287:5"><if pos:start="277:5" pos:end="287:5">if <condition pos:start="277:8" pos:end="279:51">(<expr pos:start="277:9" pos:end="279:50"><call pos:start="277:9" pos:end="279:45"><name pos:start="277:9" pos:end="277:14">memcmp</name><argument_list pos:start="277:15" pos:end="279:45">(<argument pos:start="277:16" pos:end="277:24"><expr pos:start="277:16" pos:end="277:24"><name pos:start="277:16" pos:end="277:24">keydigest</name></expr></argument>, <argument pos:start="277:27" pos:end="277:56"><expr pos:start="277:27" pos:end="277:56"><name pos:start="277:27" pos:end="277:56"><name pos:start="277:27" pos:end="277:30">luks</name><operator pos:start="277:31" pos:end="277:32">-&gt;</operator><name pos:start="277:33" pos:end="277:38">header</name><operator pos:start="277:39" pos:end="277:39">.</operator><name pos:start="277:40" pos:end="277:56">master_key_digest</name></name></expr></argument>,
+
+               <argument pos:start="279:16" pos:end="279:44"><expr pos:start="279:16" pos:end="279:44"><name pos:start="279:16" pos:end="279:44">QCRYPTO_BLOCK_LUKS_DIGEST_LEN</name></expr></argument>)</argument_list></call> <operator pos:start="279:47" pos:end="279:48">==</operator> <literal type="number" pos:start="279:50" pos:end="279:50">0</literal></expr>)</condition> <block pos:start="279:53" pos:end="287:5">{<block_content pos:start="283:9" pos:end="285:21">
+
+        <comment type="block" pos:start="281:9" pos:end="281:50">/* Success, we got the right master key */</comment>
+
+        <expr_stmt pos:start="283:9" pos:end="283:16"><expr pos:start="283:9" pos:end="283:15"><name pos:start="283:9" pos:end="283:11">ret</name> <operator pos:start="283:13" pos:end="283:13">=</operator> <literal type="number" pos:start="283:15" pos:end="283:15">1</literal></expr>;</expr_stmt>
+
+        <goto pos:start="285:9" pos:end="285:21">goto <name pos:start="285:14" pos:end="285:20">cleanup</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="291:5" pos:end="293:41">/* Fail, user's password was not valid for this key slot,
+
+     * tell caller to try another slot */</comment>
+
+    <expr_stmt pos:start="295:5" pos:end="295:12"><expr pos:start="295:5" pos:end="295:11"><name pos:start="295:5" pos:end="295:7">ret</name> <operator pos:start="295:9" pos:end="295:9">=</operator> <literal type="number" pos:start="295:11" pos:end="295:11">0</literal></expr>;</expr_stmt>
+
+
+
+ <label pos:start="299:2" pos:end="299:9"><name pos:start="299:2" pos:end="299:8">cleanup</name>:</label>
+
+    <expr_stmt pos:start="301:5" pos:end="301:30"><expr pos:start="301:5" pos:end="301:29"><call pos:start="301:5" pos:end="301:29"><name pos:start="301:5" pos:end="301:22">qcrypto_ivgen_free</name><argument_list pos:start="301:23" pos:end="301:29">(<argument pos:start="301:24" pos:end="301:28"><expr pos:start="301:24" pos:end="301:28"><name pos:start="301:24" pos:end="301:28">ivgen</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="303:5" pos:end="303:32"><expr pos:start="303:5" pos:end="303:31"><call pos:start="303:5" pos:end="303:31"><name pos:start="303:5" pos:end="303:23">qcrypto_cipher_free</name><argument_list pos:start="303:24" pos:end="303:31">(<argument pos:start="303:25" pos:end="303:30"><expr pos:start="303:25" pos:end="303:30"><name pos:start="303:25" pos:end="303:30">cipher</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="305:5" pos:end="305:21"><expr pos:start="305:5" pos:end="305:20"><call pos:start="305:5" pos:end="305:20"><name pos:start="305:5" pos:end="305:10">g_free</name><argument_list pos:start="305:11" pos:end="305:20">(<argument pos:start="305:12" pos:end="305:19"><expr pos:start="305:12" pos:end="305:19"><name pos:start="305:12" pos:end="305:19">splitkey</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="307:5" pos:end="307:24"><expr pos:start="307:5" pos:end="307:23"><call pos:start="307:5" pos:end="307:23"><name pos:start="307:5" pos:end="307:10">g_free</name><argument_list pos:start="307:11" pos:end="307:23">(<argument pos:start="307:12" pos:end="307:22"><expr pos:start="307:12" pos:end="307:22"><name pos:start="307:12" pos:end="307:22">possiblekey</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <return pos:start="309:5" pos:end="309:15">return <expr pos:start="309:12" pos:end="309:14"><name pos:start="309:12" pos:end="309:14">ret</name></expr>;</return>
+
+</block_content>}</block>
+</unit>

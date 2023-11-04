@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/3982.c" pos:tabs="8"><function pos:start="1:1" pos:end="230:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:28">ram_load_postcopy</name><parameter_list pos:start="1:29" pos:end="1:41">(<parameter pos:start="1:30" pos:end="1:40"><decl pos:start="1:30" pos:end="1:40"><type pos:start="1:30" pos:end="1:39"><name pos:start="1:30" pos:end="1:37">QEMUFile</name> <modifier pos:start="1:39" pos:end="1:39">*</modifier></type><name pos:start="1:40" pos:end="1:40">f</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="230:1">{<block_content pos:start="5:5" pos:end="228:15">
+
+    <decl_stmt pos:start="5:5" pos:end="5:27"><decl pos:start="5:5" pos:end="5:17"><type pos:start="5:5" pos:end="5:7"><name pos:start="5:5" pos:end="5:7">int</name></type> <name pos:start="5:9" pos:end="5:13">flags</name> <init pos:start="5:15" pos:end="5:17">= <expr pos:start="5:17" pos:end="5:17"><literal type="number" pos:start="5:17" pos:end="5:17">0</literal></expr></init></decl>, <decl pos:start="5:20" pos:end="5:26"><type ref="prev" pos:start="5:5" pos:end="5:7"/><name pos:start="5:20" pos:end="5:22">ret</name> <init pos:start="5:24" pos:end="5:26">= <expr pos:start="5:26" pos:end="5:26"><literal type="number" pos:start="5:26" pos:end="5:26">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:30"><decl pos:start="7:5" pos:end="7:29"><type pos:start="7:5" pos:end="7:8"><name pos:start="7:5" pos:end="7:8">bool</name></type> <name pos:start="7:10" pos:end="7:21">place_needed</name> <init pos:start="7:23" pos:end="7:29">= <expr pos:start="7:25" pos:end="7:29"><name pos:start="7:25" pos:end="7:29">false</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:71"><decl pos:start="9:5" pos:end="9:70"><type pos:start="9:5" pos:end="9:8"><name pos:start="9:5" pos:end="9:8">bool</name></type> <name pos:start="9:10" pos:end="9:28">matching_page_sizes</name> <init pos:start="9:30" pos:end="9:70">= <expr pos:start="9:32" pos:end="9:70"><name pos:start="9:32" pos:end="9:50">qemu_host_page_size</name> <operator pos:start="9:52" pos:end="9:53">==</operator> <name pos:start="9:55" pos:end="9:70">TARGET_PAGE_SIZE</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:67"><decl pos:start="11:5" pos:end="11:66"><type pos:start="11:5" pos:end="11:28"><name pos:start="11:5" pos:end="11:26">MigrationIncomingState</name> <modifier pos:start="11:28" pos:end="11:28">*</modifier></type><name pos:start="11:29" pos:end="11:31">mis</name> <init pos:start="11:33" pos:end="11:66">= <expr pos:start="11:35" pos:end="11:66"><call pos:start="11:35" pos:end="11:66"><name pos:start="11:35" pos:end="11:64">migration_incoming_get_current</name><argument_list pos:start="11:65" pos:end="11:66">()</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <comment type="block" pos:start="13:5" pos:end="13:47">/* Temporary page that is later 'placed' */</comment>
+
+    <decl_stmt pos:start="15:5" pos:end="15:58"><decl pos:start="15:5" pos:end="15:57"><type pos:start="15:5" pos:end="15:10"><name pos:start="15:5" pos:end="15:8">void</name> <modifier pos:start="15:10" pos:end="15:10">*</modifier></type><name pos:start="15:11" pos:end="15:28">postcopy_host_page</name> <init pos:start="15:30" pos:end="15:57">= <expr pos:start="15:32" pos:end="15:57"><call pos:start="15:32" pos:end="15:57"><name pos:start="15:32" pos:end="15:52">postcopy_get_tmp_page</name><argument_list pos:start="15:53" pos:end="15:57">(<argument pos:start="15:54" pos:end="15:56"><expr pos:start="15:54" pos:end="15:56"><name pos:start="15:54" pos:end="15:56">mis</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="17:5" pos:end="17:27"><decl pos:start="17:5" pos:end="17:26"><type pos:start="17:5" pos:end="17:10"><name pos:start="17:5" pos:end="17:8">void</name> <modifier pos:start="17:10" pos:end="17:10">*</modifier></type><name pos:start="17:11" pos:end="17:19">last_host</name> <init pos:start="17:21" pos:end="17:26">= <expr pos:start="17:23" pos:end="17:26"><name pos:start="17:23" pos:end="17:26">NULL</name></expr></init></decl>;</decl_stmt>
+
+
+
+    <while pos:start="21:5" pos:end="224:5">while <condition pos:start="21:11" pos:end="21:48">(<expr pos:start="21:12" pos:end="21:47"><operator pos:start="21:12" pos:end="21:12">!</operator><name pos:start="21:13" pos:end="21:15">ret</name> <operator pos:start="21:17" pos:end="21:18">&amp;&amp;</operator> <operator pos:start="21:20" pos:end="21:20">!</operator><operator pos:start="21:21" pos:end="21:21">(</operator><name pos:start="21:22" pos:end="21:26">flags</name> <operator pos:start="21:28" pos:end="21:28">&amp;</operator> <name pos:start="21:30" pos:end="21:46">RAM_SAVE_FLAG_EOS</name><operator pos:start="21:47" pos:end="21:47">)</operator></expr>)</condition> <block pos:start="21:50" pos:end="224:5">{<block_content pos:start="23:9" pos:end="222:9">
+
+        <decl_stmt pos:start="23:9" pos:end="23:24"><decl pos:start="23:9" pos:end="23:23"><type pos:start="23:9" pos:end="23:18"><name pos:start="23:9" pos:end="23:18">ram_addr_t</name></type> <name pos:start="23:20" pos:end="23:23">addr</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="25:9" pos:end="25:26"><decl pos:start="25:9" pos:end="25:25"><type pos:start="25:9" pos:end="25:14"><name pos:start="25:9" pos:end="25:12">void</name> <modifier pos:start="25:14" pos:end="25:14">*</modifier></type><name pos:start="25:15" pos:end="25:18">host</name> <init pos:start="25:20" pos:end="25:25">= <expr pos:start="25:22" pos:end="25:25"><name pos:start="25:22" pos:end="25:25">NULL</name></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="27:9" pos:end="27:33"><decl pos:start="27:9" pos:end="27:32"><type pos:start="27:9" pos:end="27:14"><name pos:start="27:9" pos:end="27:12">void</name> <modifier pos:start="27:14" pos:end="27:14">*</modifier></type><name pos:start="27:15" pos:end="27:25">page_buffer</name> <init pos:start="27:27" pos:end="27:32">= <expr pos:start="27:29" pos:end="27:32"><name pos:start="27:29" pos:end="27:32">NULL</name></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="29:9" pos:end="29:34"><decl pos:start="29:9" pos:end="29:33"><type pos:start="29:9" pos:end="29:14"><name pos:start="29:9" pos:end="29:12">void</name> <modifier pos:start="29:14" pos:end="29:14">*</modifier></type><name pos:start="29:15" pos:end="29:26">place_source</name> <init pos:start="29:28" pos:end="29:33">= <expr pos:start="29:30" pos:end="29:33"><name pos:start="29:30" pos:end="29:33">NULL</name></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="31:9" pos:end="31:19"><decl pos:start="31:9" pos:end="31:18"><type pos:start="31:9" pos:end="31:15"><name pos:start="31:9" pos:end="31:15">uint8_t</name></type> <name pos:start="31:17" pos:end="31:18">ch</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="33:9" pos:end="33:30"><decl pos:start="33:9" pos:end="33:29"><type pos:start="33:9" pos:end="33:12"><name pos:start="33:9" pos:end="33:12">bool</name></type> <name pos:start="33:14" pos:end="33:21">all_zero</name> <init pos:start="33:23" pos:end="33:29">= <expr pos:start="33:25" pos:end="33:29"><name pos:start="33:25" pos:end="33:29">false</name></expr></init></decl>;</decl_stmt>
+
+
+
+        <expr_stmt pos:start="37:9" pos:end="37:32"><expr pos:start="37:9" pos:end="37:31"><name pos:start="37:9" pos:end="37:12">addr</name> <operator pos:start="37:14" pos:end="37:14">=</operator> <call pos:start="37:16" pos:end="37:31"><name pos:start="37:16" pos:end="37:28">qemu_get_be64</name><argument_list pos:start="37:29" pos:end="37:31">(<argument pos:start="37:30" pos:end="37:30"><expr pos:start="37:30" pos:end="37:30"><name pos:start="37:30" pos:end="37:30">f</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="39:9" pos:end="39:41"><expr pos:start="39:9" pos:end="39:40"><name pos:start="39:9" pos:end="39:13">flags</name> <operator pos:start="39:15" pos:end="39:15">=</operator> <name pos:start="39:17" pos:end="39:20">addr</name> <operator pos:start="39:22" pos:end="39:22">&amp;</operator> <operator pos:start="39:24" pos:end="39:24">~</operator><name pos:start="39:25" pos:end="39:40">TARGET_PAGE_MASK</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="41:9" pos:end="41:33"><expr pos:start="41:9" pos:end="41:32"><name pos:start="41:9" pos:end="41:12">addr</name> <operator pos:start="41:14" pos:end="41:15">&amp;=</operator> <name pos:start="41:17" pos:end="41:32">TARGET_PAGE_MASK</name></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="45:9" pos:end="45:60"><expr pos:start="45:9" pos:end="45:59"><call pos:start="45:9" pos:end="45:59"><name pos:start="45:9" pos:end="45:36">trace_ram_load_postcopy_loop</name><argument_list pos:start="45:37" pos:end="45:59">(<argument pos:start="45:38" pos:end="45:51"><expr pos:start="45:38" pos:end="45:51"><operator pos:start="45:38" pos:end="45:38">(</operator><name pos:start="45:39" pos:end="45:46">uint64_t</name><operator pos:start="45:47" pos:end="45:47">)</operator><name pos:start="45:48" pos:end="45:51">addr</name></expr></argument>, <argument pos:start="45:54" pos:end="45:58"><expr pos:start="45:54" pos:end="45:58"><name pos:start="45:54" pos:end="45:58">flags</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="47:9" pos:end="47:29"><expr pos:start="47:9" pos:end="47:28"><name pos:start="47:9" pos:end="47:20">place_needed</name> <operator pos:start="47:22" pos:end="47:22">=</operator> <name pos:start="47:24" pos:end="47:28">false</name></expr>;</expr_stmt>
+
+        <if_stmt pos:start="49:9" pos:end="127:9"><if pos:start="49:9" pos:end="127:9">if <condition pos:start="49:12" pos:end="49:66">(<expr pos:start="49:13" pos:end="49:65"><name pos:start="49:13" pos:end="49:17">flags</name> <operator pos:start="49:19" pos:end="49:19">&amp;</operator> <operator pos:start="49:21" pos:end="49:21">(</operator><name pos:start="49:22" pos:end="49:43">RAM_SAVE_FLAG_COMPRESS</name> <operator pos:start="49:45" pos:end="49:45">|</operator> <name pos:start="49:47" pos:end="49:64">RAM_SAVE_FLAG_PAGE</name><operator pos:start="49:65" pos:end="49:65">)</operator></expr>)</condition> <block pos:start="49:68" pos:end="127:9">{<block_content pos:start="51:13" pos:end="125:46">
+
+            <expr_stmt pos:start="51:13" pos:end="51:59"><expr pos:start="51:13" pos:end="51:58"><name pos:start="51:13" pos:end="51:16">host</name> <operator pos:start="51:18" pos:end="51:18">=</operator> <call pos:start="51:20" pos:end="51:58"><name pos:start="51:20" pos:end="51:42">host_from_stream_offset</name><argument_list pos:start="51:43" pos:end="51:58">(<argument pos:start="51:44" pos:end="51:44"><expr pos:start="51:44" pos:end="51:44"><name pos:start="51:44" pos:end="51:44">f</name></expr></argument>, <argument pos:start="51:47" pos:end="51:50"><expr pos:start="51:47" pos:end="51:50"><name pos:start="51:47" pos:end="51:50">addr</name></expr></argument>, <argument pos:start="51:53" pos:end="51:57"><expr pos:start="51:53" pos:end="51:57"><name pos:start="51:53" pos:end="51:57">flags</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <if_stmt pos:start="53:13" pos:end="61:13"><if pos:start="53:13" pos:end="61:13">if <condition pos:start="53:16" pos:end="53:22">(<expr pos:start="53:17" pos:end="53:21"><operator pos:start="53:17" pos:end="53:17">!</operator><name pos:start="53:18" pos:end="53:21">host</name></expr>)</condition> <block pos:start="53:24" pos:end="61:13">{<block_content pos:start="55:17" pos:end="59:22">
+
+                <expr_stmt pos:start="55:17" pos:end="55:71"><expr pos:start="55:17" pos:end="55:70"><call pos:start="55:17" pos:end="55:70"><name pos:start="55:17" pos:end="55:28">error_report</name><argument_list pos:start="55:29" pos:end="55:70">(<argument pos:start="55:30" pos:end="55:63"><expr pos:start="55:30" pos:end="55:63"><literal type="string" pos:start="55:30" pos:end="55:50">"Illegal RAM offset "</literal> <name pos:start="55:52" pos:end="55:63">RAM_ADDR_FMT</name></expr></argument>, <argument pos:start="55:66" pos:end="55:69"><expr pos:start="55:66" pos:end="55:69"><name pos:start="55:66" pos:end="55:69">addr</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="57:17" pos:end="57:30"><expr pos:start="57:17" pos:end="57:29"><name pos:start="57:17" pos:end="57:19">ret</name> <operator pos:start="57:21" pos:end="57:21">=</operator> <operator pos:start="57:23" pos:end="57:23">-</operator><name pos:start="57:24" pos:end="57:29">EINVAL</name></expr>;</expr_stmt>
+
+                <break pos:start="59:17" pos:end="59:22">break;</break>
+
+            </block_content>}</block></if></if_stmt>
+
+            <expr_stmt pos:start="63:13" pos:end="63:31"><expr pos:start="63:13" pos:end="63:30"><name pos:start="63:13" pos:end="63:23">page_buffer</name> <operator pos:start="63:25" pos:end="63:25">=</operator> <name pos:start="63:27" pos:end="63:30">host</name></expr>;</expr_stmt>
+
+            <comment type="block" pos:start="65:13" pos:end="79:15">/*
+
+             * Postcopy requires that we place whole host pages atomically.
+
+             * To make it atomic, the data is read into a temporary page
+
+             * that's moved into place later.
+
+             * The migration protocol uses,  possibly smaller, target-pages
+
+             * however the source ensures it always sends all the components
+
+             * of a host page in order.
+
+             */</comment>
+
+            <expr_stmt pos:start="81:13" pos:end="83:67"><expr pos:start="81:13" pos:end="83:66"><name pos:start="81:13" pos:end="81:23">page_buffer</name> <operator pos:start="81:25" pos:end="81:25">=</operator> <name pos:start="81:27" pos:end="81:44">postcopy_host_page</name> <operator pos:start="81:46" pos:end="81:46">+</operator>
+
+                          <operator pos:start="83:27" pos:end="83:27">(</operator><operator pos:start="83:28" pos:end="83:28">(</operator><name pos:start="83:29" pos:end="83:37">uintptr_t</name><operator pos:start="83:38" pos:end="83:38">)</operator><name pos:start="83:39" pos:end="83:42">host</name> <operator pos:start="83:44" pos:end="83:44">&amp;</operator> <operator pos:start="83:46" pos:end="83:46">~</operator><name pos:start="83:47" pos:end="83:65">qemu_host_page_mask</name><operator pos:start="83:66" pos:end="83:66">)</operator></expr>;</expr_stmt>
+
+            <comment type="block" pos:start="85:13" pos:end="85:67">/* If all TP are zero then we can optimise the place */</comment>
+
+            <if_stmt pos:start="87:13" pos:end="107:13"><if pos:start="87:13" pos:end="91:13">if <condition pos:start="87:16" pos:end="87:58">(<expr pos:start="87:17" pos:end="87:57"><operator pos:start="87:17" pos:end="87:17">!</operator><operator pos:start="87:18" pos:end="87:18">(</operator><operator pos:start="87:19" pos:end="87:19">(</operator><name pos:start="87:20" pos:end="87:28">uintptr_t</name><operator pos:start="87:29" pos:end="87:29">)</operator><name pos:start="87:30" pos:end="87:33">host</name> <operator pos:start="87:35" pos:end="87:35">&amp;</operator> <operator pos:start="87:37" pos:end="87:37">~</operator><name pos:start="87:38" pos:end="87:56">qemu_host_page_mask</name><operator pos:start="87:57" pos:end="87:57">)</operator></expr>)</condition> <block pos:start="87:60" pos:end="91:13">{<block_content pos:start="89:17" pos:end="89:32">
+
+                <expr_stmt pos:start="89:17" pos:end="89:32"><expr pos:start="89:17" pos:end="89:31"><name pos:start="89:17" pos:end="89:24">all_zero</name> <operator pos:start="89:26" pos:end="89:26">=</operator> <name pos:start="89:28" pos:end="89:31">true</name></expr>;</expr_stmt>
+
+            </block_content>}</block></if> <else pos:start="91:15" pos:end="107:13">else <block pos:start="91:20" pos:end="107:13">{<block_content pos:start="95:17" pos:end="105:17">
+
+                <comment type="block" pos:start="93:17" pos:end="93:50">/* not the 1st TP within the HP */</comment>
+
+                <if_stmt pos:start="95:17" pos:end="105:17"><if pos:start="95:17" pos:end="105:17">if <condition pos:start="95:20" pos:end="95:59">(<expr pos:start="95:21" pos:end="95:58"><name pos:start="95:21" pos:end="95:24">host</name> <operator pos:start="95:26" pos:end="95:27">!=</operator> <operator pos:start="95:29" pos:end="95:29">(</operator><name pos:start="95:30" pos:end="95:38">last_host</name> <operator pos:start="95:40" pos:end="95:40">+</operator> <name pos:start="95:42" pos:end="95:57">TARGET_PAGE_SIZE</name><operator pos:start="95:58" pos:end="95:58">)</operator></expr>)</condition> <block pos:start="95:61" pos:end="105:17">{<block_content pos:start="97:21" pos:end="103:26">
+
+                    <expr_stmt pos:start="97:21" pos:end="99:51"><expr pos:start="97:21" pos:end="99:50"><call pos:start="97:21" pos:end="99:50"><name pos:start="97:21" pos:end="97:32">error_report</name><argument_list pos:start="97:33" pos:end="99:50">(<argument pos:start="97:34" pos:end="97:69"><expr pos:start="97:34" pos:end="97:69"><literal type="string" pos:start="97:34" pos:end="97:69">"Non-sequential target page %p/%p\n"</literal></expr></argument>,
+
+                                  <argument pos:start="99:35" pos:end="99:38"><expr pos:start="99:35" pos:end="99:38"><name pos:start="99:35" pos:end="99:38">host</name></expr></argument>, <argument pos:start="99:41" pos:end="99:49"><expr pos:start="99:41" pos:end="99:49"><name pos:start="99:41" pos:end="99:49">last_host</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="101:21" pos:end="101:34"><expr pos:start="101:21" pos:end="101:33"><name pos:start="101:21" pos:end="101:23">ret</name> <operator pos:start="101:25" pos:end="101:25">=</operator> <operator pos:start="101:27" pos:end="101:27">-</operator><name pos:start="101:28" pos:end="101:33">EINVAL</name></expr>;</expr_stmt>
+
+                    <break pos:start="103:21" pos:end="103:26">break;</break>
+
+                </block_content>}</block></if></if_stmt>
+
+            </block_content>}</block></else></if_stmt>
+
+
+
+
+
+            <comment type="block" pos:start="113:13" pos:end="119:15">/*
+
+             * If it's the last part of a host page then we place the host
+
+             * page
+
+             */</comment>
+
+            <expr_stmt pos:start="121:13" pos:end="123:64"><expr pos:start="121:13" pos:end="123:63"><name pos:start="121:13" pos:end="121:24">place_needed</name> <operator pos:start="121:26" pos:end="121:26">=</operator> <operator pos:start="121:28" pos:end="121:28">(</operator><operator pos:start="121:29" pos:end="121:29">(</operator><operator pos:start="121:30" pos:end="121:30">(</operator><name pos:start="121:31" pos:end="121:39">uintptr_t</name><operator pos:start="121:40" pos:end="121:40">)</operator><name pos:start="121:41" pos:end="121:44">host</name> <operator pos:start="121:46" pos:end="121:46">+</operator> <name pos:start="121:48" pos:end="121:63">TARGET_PAGE_SIZE</name><operator pos:start="121:64" pos:end="121:64">)</operator> <operator pos:start="121:66" pos:end="121:66">&amp;</operator>
+
+                                     <operator pos:start="123:38" pos:end="123:38">~</operator><name pos:start="123:39" pos:end="123:57">qemu_host_page_mask</name><operator pos:start="123:58" pos:end="123:58">)</operator> <operator pos:start="123:60" pos:end="123:61">==</operator> <literal type="number" pos:start="123:63" pos:end="123:63">0</literal></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="125:13" pos:end="125:46"><expr pos:start="125:13" pos:end="125:45"><name pos:start="125:13" pos:end="125:24">place_source</name> <operator pos:start="125:26" pos:end="125:26">=</operator> <name pos:start="125:28" pos:end="125:45">postcopy_host_page</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+
+        <switch pos:start="132:9" pos:end="190:9">switch <condition pos:start="132:16" pos:end="132:48">(<expr pos:start="132:17" pos:end="132:47"><name pos:start="132:17" pos:end="132:21">flags</name> <operator pos:start="132:23" pos:end="132:23">&amp;</operator> <operator pos:start="132:25" pos:end="132:25">~</operator><name pos:start="132:26" pos:end="132:47">RAM_SAVE_FLAG_CONTINUE</name></expr>)</condition> <block pos:start="132:50" pos:end="190:9">{<block_content pos:start="134:9" pos:end="188:26">
+
+        <case pos:start="134:9" pos:end="134:36">case <expr pos:start="134:14" pos:end="134:35"><name pos:start="134:14" pos:end="134:35">RAM_SAVE_FLAG_COMPRESS</name></expr>:</case>
+
+            <expr_stmt pos:start="136:13" pos:end="136:34"><expr pos:start="136:13" pos:end="136:33"><name pos:start="136:13" pos:end="136:14">ch</name> <operator pos:start="136:16" pos:end="136:16">=</operator> <call pos:start="136:18" pos:end="136:33"><name pos:start="136:18" pos:end="136:30">qemu_get_byte</name><argument_list pos:start="136:31" pos:end="136:33">(<argument pos:start="136:32" pos:end="136:32"><expr pos:start="136:32" pos:end="136:32"><name pos:start="136:32" pos:end="136:32">f</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="138:13" pos:end="138:54"><expr pos:start="138:13" pos:end="138:53"><call pos:start="138:13" pos:end="138:53"><name pos:start="138:13" pos:end="138:18">memset</name><argument_list pos:start="138:19" pos:end="138:53">(<argument pos:start="138:20" pos:end="138:30"><expr pos:start="138:20" pos:end="138:30"><name pos:start="138:20" pos:end="138:30">page_buffer</name></expr></argument>, <argument pos:start="138:33" pos:end="138:34"><expr pos:start="138:33" pos:end="138:34"><name pos:start="138:33" pos:end="138:34">ch</name></expr></argument>, <argument pos:start="138:37" pos:end="138:52"><expr pos:start="138:37" pos:end="138:52"><name pos:start="138:37" pos:end="138:52">TARGET_PAGE_SIZE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <if_stmt pos:start="140:13" pos:end="144:13"><if pos:start="140:13" pos:end="144:13">if <condition pos:start="140:16" pos:end="140:19">(<expr pos:start="140:17" pos:end="140:18"><name pos:start="140:17" pos:end="140:18">ch</name></expr>)</condition> <block pos:start="140:21" pos:end="144:13">{<block_content pos:start="142:17" pos:end="142:33">
+
+                <expr_stmt pos:start="142:17" pos:end="142:33"><expr pos:start="142:17" pos:end="142:32"><name pos:start="142:17" pos:end="142:24">all_zero</name> <operator pos:start="142:26" pos:end="142:26">=</operator> <name pos:start="142:28" pos:end="142:32">false</name></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <break pos:start="146:13" pos:end="146:18">break;</break>
+
+
+
+        <case pos:start="150:9" pos:end="150:32">case <expr pos:start="150:14" pos:end="150:31"><name pos:start="150:14" pos:end="150:31">RAM_SAVE_FLAG_PAGE</name></expr>:</case>
+
+            <expr_stmt pos:start="152:13" pos:end="152:29"><expr pos:start="152:13" pos:end="152:28"><name pos:start="152:13" pos:end="152:20">all_zero</name> <operator pos:start="152:22" pos:end="152:22">=</operator> <name pos:start="152:24" pos:end="152:28">false</name></expr>;</expr_stmt>
+
+            <if_stmt pos:start="154:13" pos:end="172:13"><if pos:start="154:13" pos:end="158:13">if <condition pos:start="154:16" pos:end="154:54">(<expr pos:start="154:17" pos:end="154:53"><operator pos:start="154:17" pos:end="154:17">!</operator><name pos:start="154:18" pos:end="154:29">place_needed</name> <operator pos:start="154:31" pos:end="154:32">||</operator> <operator pos:start="154:34" pos:end="154:34">!</operator><name pos:start="154:35" pos:end="154:53">matching_page_sizes</name></expr>)</condition> <block pos:start="154:56" pos:end="158:13">{<block_content pos:start="156:17" pos:end="156:66">
+
+                <expr_stmt pos:start="156:17" pos:end="156:66"><expr pos:start="156:17" pos:end="156:65"><call pos:start="156:17" pos:end="156:65"><name pos:start="156:17" pos:end="156:31">qemu_get_buffer</name><argument_list pos:start="156:32" pos:end="156:65">(<argument pos:start="156:33" pos:end="156:33"><expr pos:start="156:33" pos:end="156:33"><name pos:start="156:33" pos:end="156:33">f</name></expr></argument>, <argument pos:start="156:36" pos:end="156:46"><expr pos:start="156:36" pos:end="156:46"><name pos:start="156:36" pos:end="156:46">page_buffer</name></expr></argument>, <argument pos:start="156:49" pos:end="156:64"><expr pos:start="156:49" pos:end="156:64"><name pos:start="156:49" pos:end="156:64">TARGET_PAGE_SIZE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if> <else pos:start="158:15" pos:end="172:13">else <block pos:start="158:20" pos:end="172:13">{<block_content pos:start="168:17" pos:end="170:59">
+
+                <comment type="block" pos:start="160:17" pos:end="166:19">/* Avoids the qemu_file copy during postcopy, which is
+
+                 * going to do a copy later; can only do it when we
+
+                 * do this read in one go (matching page sizes)
+
+                 */</comment>
+
+                <expr_stmt pos:start="168:17" pos:end="170:59"><expr pos:start="168:17" pos:end="170:58"><call pos:start="168:17" pos:end="170:58"><name pos:start="168:17" pos:end="168:40">qemu_get_buffer_in_place</name><argument_list pos:start="168:41" pos:end="170:58">(<argument pos:start="168:42" pos:end="168:42"><expr pos:start="168:42" pos:end="168:42"><name pos:start="168:42" pos:end="168:42">f</name></expr></argument>, <argument pos:start="168:45" pos:end="168:69"><expr pos:start="168:45" pos:end="168:69"><operator pos:start="168:45" pos:end="168:45">(</operator><name pos:start="168:46" pos:end="168:52">uint8_t</name> <operator pos:start="168:54" pos:end="168:54">*</operator><operator pos:start="168:55" pos:end="168:55">*</operator><operator pos:start="168:56" pos:end="168:56">)</operator><operator pos:start="168:57" pos:end="168:57">&amp;</operator><name pos:start="168:58" pos:end="168:69">place_source</name></expr></argument>,
+
+                                         <argument pos:start="170:42" pos:end="170:57"><expr pos:start="170:42" pos:end="170:57"><name pos:start="170:42" pos:end="170:57">TARGET_PAGE_SIZE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></else></if_stmt>
+
+            <break pos:start="174:13" pos:end="174:18">break;</break>
+
+        <case pos:start="176:9" pos:end="176:31">case <expr pos:start="176:14" pos:end="176:30"><name pos:start="176:14" pos:end="176:30">RAM_SAVE_FLAG_EOS</name></expr>:</case>
+
+            <comment type="block" pos:start="178:13" pos:end="178:29">/* normal exit */</comment>
+
+            <break pos:start="180:13" pos:end="180:18">break;</break>
+
+        <default pos:start="182:9" pos:end="182:16">default:</default>
+
+            <expr_stmt pos:start="184:13" pos:end="186:52"><expr pos:start="184:13" pos:end="186:51"><call pos:start="184:13" pos:end="186:51"><name pos:start="184:13" pos:end="184:24">error_report</name><argument_list pos:start="184:25" pos:end="186:51">(<argument pos:start="184:26" pos:end="186:43"><expr pos:start="184:26" pos:end="186:43"><literal type="string" pos:start="184:26" pos:end="184:70">"Unknown combination of migration flags: %#x"</literal>
+
+                         <literal type="string" pos:start="186:26" pos:end="186:43">" (postcopy mode)"</literal></expr></argument>, <argument pos:start="186:46" pos:end="186:50"><expr pos:start="186:46" pos:end="186:50"><name pos:start="186:46" pos:end="186:50">flags</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="188:13" pos:end="188:26"><expr pos:start="188:13" pos:end="188:25"><name pos:start="188:13" pos:end="188:15">ret</name> <operator pos:start="188:17" pos:end="188:17">=</operator> <operator pos:start="188:19" pos:end="188:19">-</operator><name pos:start="188:20" pos:end="188:25">EINVAL</name></expr>;</expr_stmt>
+
+        </block_content>}</block></switch>
+
+
+
+        <if_stmt pos:start="194:9" pos:end="216:9"><if pos:start="194:9" pos:end="216:9">if <condition pos:start="194:12" pos:end="194:25">(<expr pos:start="194:13" pos:end="194:24"><name pos:start="194:13" pos:end="194:24">place_needed</name></expr>)</condition> <block pos:start="194:27" pos:end="216:9">{<block_content pos:start="198:13" pos:end="214:13">
+
+            <comment type="block" pos:start="196:13" pos:end="196:75">/* This gets called at the last target page in the host page */</comment>
+
+            <if_stmt pos:start="198:13" pos:end="214:13"><if pos:start="198:13" pos:end="206:13">if <condition pos:start="198:16" pos:end="198:25">(<expr pos:start="198:17" pos:end="198:24"><name pos:start="198:17" pos:end="198:24">all_zero</name></expr>)</condition> <block pos:start="198:27" pos:end="206:13">{<block_content pos:start="200:17" pos:end="204:68">
+
+                <expr_stmt pos:start="200:17" pos:end="204:68"><expr pos:start="200:17" pos:end="204:67"><name pos:start="200:17" pos:end="200:19">ret</name> <operator pos:start="200:21" pos:end="200:21">=</operator> <call pos:start="200:23" pos:end="204:67"><name pos:start="200:23" pos:end="200:46">postcopy_place_page_zero</name><argument_list pos:start="200:47" pos:end="204:67">(<argument pos:start="200:48" pos:end="200:50"><expr pos:start="200:48" pos:end="200:50"><name pos:start="200:48" pos:end="200:50">mis</name></expr></argument>,
+
+                                               <argument pos:start="202:48" pos:end="204:66"><expr pos:start="202:48" pos:end="204:66"><name pos:start="202:48" pos:end="202:51">host</name> <operator pos:start="202:53" pos:end="202:53">+</operator> <name pos:start="202:55" pos:end="202:70">TARGET_PAGE_SIZE</name> <operator pos:start="202:72" pos:end="202:72">-</operator>
+
+                                               <name pos:start="204:48" pos:end="204:66">qemu_host_page_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if> <else pos:start="206:15" pos:end="214:13">else <block pos:start="206:20" pos:end="214:13">{<block_content pos:start="208:17" pos:end="212:61">
+
+                <expr_stmt pos:start="208:17" pos:end="212:61"><expr pos:start="208:17" pos:end="212:60"><name pos:start="208:17" pos:end="208:19">ret</name> <operator pos:start="208:21" pos:end="208:21">=</operator> <call pos:start="208:23" pos:end="212:60"><name pos:start="208:23" pos:end="208:41">postcopy_place_page</name><argument_list pos:start="208:42" pos:end="212:60">(<argument pos:start="208:43" pos:end="208:45"><expr pos:start="208:43" pos:end="208:45"><name pos:start="208:43" pos:end="208:45">mis</name></expr></argument>, <argument pos:start="208:48" pos:end="210:66"><expr pos:start="208:48" pos:end="210:66"><name pos:start="208:48" pos:end="208:51">host</name> <operator pos:start="208:53" pos:end="208:53">+</operator> <name pos:start="208:55" pos:end="208:70">TARGET_PAGE_SIZE</name> <operator pos:start="208:72" pos:end="208:72">-</operator>
+
+                                               <name pos:start="210:48" pos:end="210:66">qemu_host_page_size</name></expr></argument>,
+
+                                               <argument pos:start="212:48" pos:end="212:59"><expr pos:start="212:48" pos:end="212:59"><name pos:start="212:48" pos:end="212:59">place_source</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></else></if_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <if_stmt pos:start="218:9" pos:end="222:9"><if pos:start="218:9" pos:end="222:9">if <condition pos:start="218:12" pos:end="218:17">(<expr pos:start="218:13" pos:end="218:16"><operator pos:start="218:13" pos:end="218:13">!</operator><name pos:start="218:14" pos:end="218:16">ret</name></expr>)</condition> <block pos:start="218:19" pos:end="222:9">{<block_content pos:start="220:13" pos:end="220:41">
+
+            <expr_stmt pos:start="220:13" pos:end="220:41"><expr pos:start="220:13" pos:end="220:40"><name pos:start="220:13" pos:end="220:15">ret</name> <operator pos:start="220:17" pos:end="220:17">=</operator> <call pos:start="220:19" pos:end="220:40"><name pos:start="220:19" pos:end="220:37">qemu_file_get_error</name><argument_list pos:start="220:38" pos:end="220:40">(<argument pos:start="220:39" pos:end="220:39"><expr pos:start="220:39" pos:end="220:39"><name pos:start="220:39" pos:end="220:39">f</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></while>
+
+
+
+    <return pos:start="228:5" pos:end="228:15">return <expr pos:start="228:12" pos:end="228:14"><name pos:start="228:12" pos:end="228:14">ret</name></expr>;</return>
+
+</block_content>}</block></function></unit>

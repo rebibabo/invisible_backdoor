@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/2440.c" pos:tabs="8"><function pos:start="1:1" pos:end="73:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:36">handle_port_status_write</name><parameter_list pos:start="1:37" pos:end="1:74">(<parameter pos:start="1:38" pos:end="1:49"><decl pos:start="1:38" pos:end="1:49"><type pos:start="1:38" pos:end="1:49"><name pos:start="1:38" pos:end="1:46">EHCIState</name> <modifier pos:start="1:48" pos:end="1:48">*</modifier></type><name pos:start="1:49" pos:end="1:49">s</name></decl></parameter>, <parameter pos:start="1:52" pos:end="1:59"><decl pos:start="1:52" pos:end="1:59"><type pos:start="1:52" pos:end="1:59"><name pos:start="1:52" pos:end="1:54">int</name></type> <name pos:start="1:56" pos:end="1:59">port</name></decl></parameter>, <parameter pos:start="1:62" pos:end="1:73"><decl pos:start="1:62" pos:end="1:73"><type pos:start="1:62" pos:end="1:73"><name pos:start="1:62" pos:end="1:69">uint32_t</name></type> <name pos:start="1:71" pos:end="1:73">val</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="73:1">{<block_content pos:start="5:5" pos:end="71:19">
+
+    <decl_stmt pos:start="5:5" pos:end="5:40"><decl pos:start="5:5" pos:end="5:39"><type pos:start="5:5" pos:end="5:14"><name pos:start="5:5" pos:end="5:12">uint32_t</name> <modifier pos:start="5:14" pos:end="5:14">*</modifier></type><name pos:start="5:15" pos:end="5:20">portsc</name> <init pos:start="5:22" pos:end="5:39">= <expr pos:start="5:24" pos:end="5:39"><operator pos:start="5:24" pos:end="5:24">&amp;</operator><name pos:start="5:25" pos:end="5:39"><name pos:start="5:25" pos:end="5:25">s</name><operator pos:start="5:26" pos:end="5:27">-&gt;</operator><name pos:start="5:28" pos:end="5:33">portsc</name><index pos:start="5:34" pos:end="5:39">[<expr pos:start="5:35" pos:end="5:38"><name pos:start="5:35" pos:end="5:38">port</name></expr>]</index></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:40"><decl pos:start="7:5" pos:end="7:39"><type pos:start="7:5" pos:end="7:15"><name pos:start="7:5" pos:end="7:13">USBDevice</name> <modifier pos:start="7:15" pos:end="7:15">*</modifier></type><name pos:start="7:16" pos:end="7:18">dev</name> <init pos:start="7:20" pos:end="7:39">= <expr pos:start="7:22" pos:end="7:39"><name pos:start="7:22" pos:end="7:35"><name pos:start="7:22" pos:end="7:22">s</name><operator pos:start="7:23" pos:end="7:24">-&gt;</operator><name pos:start="7:25" pos:end="7:29">ports</name><index pos:start="7:30" pos:end="7:35">[<expr pos:start="7:31" pos:end="7:34"><name pos:start="7:31" pos:end="7:34">port</name></expr>]</index></name><operator pos:start="7:36" pos:end="7:36">.</operator><name pos:start="7:37" pos:end="7:39">dev</name></expr></init></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="11:5" pos:end="11:24">/* Clear rwc bits */</comment>
+
+    <expr_stmt pos:start="13:5" pos:end="13:40"><expr pos:start="13:5" pos:end="13:39"><operator pos:start="13:5" pos:end="13:5">*</operator><name pos:start="13:6" pos:end="13:11">portsc</name> <operator pos:start="13:13" pos:end="13:14">&amp;=</operator> <operator pos:start="13:16" pos:end="13:16">~</operator><operator pos:start="13:17" pos:end="13:17">(</operator><name pos:start="13:18" pos:end="13:20">val</name> <operator pos:start="13:22" pos:end="13:22">&amp;</operator> <name pos:start="13:24" pos:end="13:38">PORTSC_RWC_MASK</name><operator pos:start="13:39" pos:end="13:39">)</operator></expr>;</expr_stmt>
+
+    <comment type="block" pos:start="15:5" pos:end="15:54">/* The guest may clear, but not set the PED bit */</comment>
+
+    <expr_stmt pos:start="17:5" pos:end="17:33"><expr pos:start="17:5" pos:end="17:32"><operator pos:start="17:5" pos:end="17:5">*</operator><name pos:start="17:6" pos:end="17:11">portsc</name> <operator pos:start="17:13" pos:end="17:14">&amp;=</operator> <name pos:start="17:16" pos:end="17:18">val</name> <operator pos:start="17:20" pos:end="17:20">|</operator> <operator pos:start="17:22" pos:end="17:22">~</operator><name pos:start="17:23" pos:end="17:32">PORTSC_PED</name></expr>;</expr_stmt>
+
+    <comment type="block" pos:start="19:5" pos:end="19:77">/* POWNER is masked out by RO_MASK as it is RO when we've no companion */</comment>
+
+    <expr_stmt pos:start="21:5" pos:end="21:42"><expr pos:start="21:5" pos:end="21:41"><call pos:start="21:5" pos:end="21:41"><name pos:start="21:5" pos:end="21:27">handle_port_owner_write</name><argument_list pos:start="21:28" pos:end="21:41">(<argument pos:start="21:29" pos:end="21:29"><expr pos:start="21:29" pos:end="21:29"><name pos:start="21:29" pos:end="21:29">s</name></expr></argument>, <argument pos:start="21:32" pos:end="21:35"><expr pos:start="21:32" pos:end="21:35"><name pos:start="21:32" pos:end="21:35">port</name></expr></argument>, <argument pos:start="21:38" pos:end="21:40"><expr pos:start="21:38" pos:end="21:40"><name pos:start="21:38" pos:end="21:40">val</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <comment type="block" pos:start="23:5" pos:end="23:35">/* And finally apply RO_MASK */</comment>
+
+    <expr_stmt pos:start="25:5" pos:end="25:26"><expr pos:start="25:5" pos:end="25:25"><name pos:start="25:5" pos:end="25:7">val</name> <operator pos:start="25:9" pos:end="25:10">&amp;=</operator> <name pos:start="25:12" pos:end="25:25">PORTSC_RO_MASK</name></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="29:5" pos:end="33:5"><if pos:start="29:5" pos:end="33:5">if <condition pos:start="29:8" pos:end="29:60">(<expr pos:start="29:9" pos:end="29:59"><operator pos:start="29:9" pos:end="29:9">(</operator><name pos:start="29:10" pos:end="29:12">val</name> <operator pos:start="29:14" pos:end="29:14">&amp;</operator> <name pos:start="29:16" pos:end="29:28">PORTSC_PRESET</name><operator pos:start="29:29" pos:end="29:29">)</operator> <operator pos:start="29:31" pos:end="29:32">&amp;&amp;</operator> <operator pos:start="29:34" pos:end="29:34">!</operator><operator pos:start="29:35" pos:end="29:35">(</operator><operator pos:start="29:36" pos:end="29:36">*</operator><name pos:start="29:37" pos:end="29:42">portsc</name> <operator pos:start="29:44" pos:end="29:44">&amp;</operator> <name pos:start="29:46" pos:end="29:58">PORTSC_PRESET</name><operator pos:start="29:59" pos:end="29:59">)</operator></expr>)</condition> <block pos:start="29:62" pos:end="33:5">{<block_content pos:start="31:9" pos:end="31:43">
+
+        <expr_stmt pos:start="31:9" pos:end="31:43"><expr pos:start="31:9" pos:end="31:42"><call pos:start="31:9" pos:end="31:42"><name pos:start="31:9" pos:end="31:33">trace_usb_ehci_port_reset</name><argument_list pos:start="31:34" pos:end="31:42">(<argument pos:start="31:35" pos:end="31:38"><expr pos:start="31:35" pos:end="31:38"><name pos:start="31:35" pos:end="31:38">port</name></expr></argument>, <argument pos:start="31:41" pos:end="31:41"><expr pos:start="31:41" pos:end="31:41"><literal type="number" pos:start="31:41" pos:end="31:41">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="37:5" pos:end="65:5"><if pos:start="37:5" pos:end="65:5">if <condition pos:start="37:8" pos:end="37:59">(<expr pos:start="37:9" pos:end="37:58"><operator pos:start="37:9" pos:end="37:9">!</operator><operator pos:start="37:10" pos:end="37:10">(</operator><name pos:start="37:11" pos:end="37:13">val</name> <operator pos:start="37:15" pos:end="37:15">&amp;</operator> <name pos:start="37:17" pos:end="37:29">PORTSC_PRESET</name><operator pos:start="37:30" pos:end="37:30">)</operator> <operator pos:start="37:32" pos:end="37:33">&amp;&amp;</operator><operator pos:start="37:34" pos:end="37:34">(</operator><operator pos:start="37:35" pos:end="37:35">*</operator><name pos:start="37:36" pos:end="37:41">portsc</name> <operator pos:start="37:43" pos:end="37:43">&amp;</operator> <name pos:start="37:45" pos:end="37:57">PORTSC_PRESET</name><operator pos:start="37:58" pos:end="37:58">)</operator></expr>)</condition> <block pos:start="37:61" pos:end="65:5">{<block_content pos:start="39:9" pos:end="63:9">
+
+        <expr_stmt pos:start="39:9" pos:end="39:43"><expr pos:start="39:9" pos:end="39:42"><call pos:start="39:9" pos:end="39:42"><name pos:start="39:9" pos:end="39:33">trace_usb_ehci_port_reset</name><argument_list pos:start="39:34" pos:end="39:42">(<argument pos:start="39:35" pos:end="39:38"><expr pos:start="39:35" pos:end="39:38"><name pos:start="39:35" pos:end="39:38">port</name></expr></argument>, <argument pos:start="39:41" pos:end="39:41"><expr pos:start="39:41" pos:end="39:41"><literal type="number" pos:start="39:41" pos:end="39:41">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="41:9" pos:end="47:9"><if pos:start="41:9" pos:end="47:9">if <condition pos:start="41:12" pos:end="41:33">(<expr pos:start="41:13" pos:end="41:32"><name pos:start="41:13" pos:end="41:15">dev</name> <operator pos:start="41:17" pos:end="41:18">&amp;&amp;</operator> <name pos:start="41:20" pos:end="41:32"><name pos:start="41:20" pos:end="41:22">dev</name><operator pos:start="41:23" pos:end="41:24">-&gt;</operator><name pos:start="41:25" pos:end="41:32">attached</name></name></expr>)</condition> <block pos:start="41:35" pos:end="47:9">{<block_content pos:start="43:13" pos:end="45:35">
+
+            <expr_stmt pos:start="43:13" pos:end="43:44"><expr pos:start="43:13" pos:end="43:43"><call pos:start="43:13" pos:end="43:43"><name pos:start="43:13" pos:end="43:26">usb_port_reset</name><argument_list pos:start="43:27" pos:end="43:43">(<argument pos:start="43:28" pos:end="43:42"><expr pos:start="43:28" pos:end="43:42"><operator pos:start="43:28" pos:end="43:28">&amp;</operator><name pos:start="43:29" pos:end="43:42"><name pos:start="43:29" pos:end="43:29">s</name><operator pos:start="43:30" pos:end="43:31">-&gt;</operator><name pos:start="43:32" pos:end="43:36">ports</name><index pos:start="43:37" pos:end="43:42">[<expr pos:start="43:38" pos:end="43:41"><name pos:start="43:38" pos:end="43:41">port</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="45:13" pos:end="45:35"><expr pos:start="45:13" pos:end="45:34"><operator pos:start="45:13" pos:end="45:13">*</operator><name pos:start="45:14" pos:end="45:19">portsc</name> <operator pos:start="45:21" pos:end="45:22">&amp;=</operator> <operator pos:start="45:24" pos:end="45:24">~</operator><name pos:start="45:25" pos:end="45:34">PORTSC_CSC</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <comment type="block" pos:start="51:9" pos:end="57:11">/*
+
+         *  Table 2.16 Set the enable bit(and enable bit change) to indicate
+
+         *  to SW that this port has a high speed device attached
+
+         */</comment>
+
+        <if_stmt pos:start="59:9" pos:end="63:9"><if pos:start="59:9" pos:end="63:9">if <condition pos:start="59:12" pos:end="59:75">(<expr pos:start="59:13" pos:end="59:74"><name pos:start="59:13" pos:end="59:15">dev</name> <operator pos:start="59:17" pos:end="59:18">&amp;&amp;</operator> <name pos:start="59:20" pos:end="59:32"><name pos:start="59:20" pos:end="59:22">dev</name><operator pos:start="59:23" pos:end="59:24">-&gt;</operator><name pos:start="59:25" pos:end="59:32">attached</name></name> <operator pos:start="59:34" pos:end="59:35">&amp;&amp;</operator> <operator pos:start="59:37" pos:end="59:37">(</operator><name pos:start="59:38" pos:end="59:51"><name pos:start="59:38" pos:end="59:40">dev</name><operator pos:start="59:41" pos:end="59:42">-&gt;</operator><name pos:start="59:43" pos:end="59:51">speedmask</name></name> <operator pos:start="59:53" pos:end="59:53">&amp;</operator> <name pos:start="59:55" pos:end="59:73">USB_SPEED_MASK_HIGH</name><operator pos:start="59:74" pos:end="59:74">)</operator></expr>)</condition> <block pos:start="59:77" pos:end="63:9">{<block_content pos:start="61:13" pos:end="61:30">
+
+            <expr_stmt pos:start="61:13" pos:end="61:30"><expr pos:start="61:13" pos:end="61:29"><name pos:start="61:13" pos:end="61:15">val</name> <operator pos:start="61:17" pos:end="61:18">|=</operator> <name pos:start="61:20" pos:end="61:29">PORTSC_PED</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="69:5" pos:end="69:31"><expr pos:start="69:5" pos:end="69:30"><operator pos:start="69:5" pos:end="69:5">*</operator><name pos:start="69:6" pos:end="69:11">portsc</name> <operator pos:start="69:13" pos:end="69:14">&amp;=</operator> <operator pos:start="69:16" pos:end="69:16">~</operator><name pos:start="69:17" pos:end="69:30">PORTSC_RO_MASK</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="71:5" pos:end="71:19"><expr pos:start="71:5" pos:end="71:18"><operator pos:start="71:5" pos:end="71:5">*</operator><name pos:start="71:6" pos:end="71:11">portsc</name> <operator pos:start="71:13" pos:end="71:14">|=</operator> <name pos:start="71:16" pos:end="71:18">val</name></expr>;</expr_stmt>
+
+</block_content>}</block></function>
+</unit>

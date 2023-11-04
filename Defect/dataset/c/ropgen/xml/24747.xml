@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/24747.c" pos:tabs="8"><macro pos:start="1:1" pos:end="3:45"><name pos:start="1:1" pos:end="1:14">vdi_co_pwritev</name><argument_list pos:start="1:15" pos:end="3:45">(<argument pos:start="1:16" pos:end="1:35">BlockDriverState *bs</argument>, <argument pos:start="1:38" pos:end="1:52">uint64_t offset</argument>, <argument pos:start="1:55" pos:end="1:68">uint64_t bytes</argument>,
+
+               <argument pos:start="3:16" pos:end="3:33">QEMUIOVector *qiov</argument>, <argument pos:start="3:36" pos:end="3:44">int flags</argument>)</argument_list></macro>
+
+<block pos:start="5:1" pos:end="257:1">{<block_content pos:start="7:5" pos:end="255:15">
+
+    <decl_stmt pos:start="7:5" pos:end="7:33"><decl pos:start="7:5" pos:end="7:32"><type pos:start="7:5" pos:end="7:18"><name pos:start="7:5" pos:end="7:16">BDRVVdiState</name> <modifier pos:start="7:18" pos:end="7:18">*</modifier></type><name pos:start="7:19" pos:end="7:19">s</name> <init pos:start="7:21" pos:end="7:32">= <expr pos:start="7:23" pos:end="7:32"><name pos:start="7:23" pos:end="7:32"><name pos:start="7:23" pos:end="7:24">bs</name><operator pos:start="7:25" pos:end="7:26">-&gt;</operator><name pos:start="7:27" pos:end="7:32">opaque</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:28"><decl pos:start="9:5" pos:end="9:27"><type pos:start="9:5" pos:end="9:16"><name pos:start="9:5" pos:end="9:16">QEMUIOVector</name></type> <name pos:start="9:18" pos:end="9:27">local_qiov</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:24"><decl pos:start="11:5" pos:end="11:23"><type pos:start="11:5" pos:end="11:12"><name pos:start="11:5" pos:end="11:12">uint32_t</name></type> <name pos:start="11:14" pos:end="11:23">bmap_entry</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:25"><decl pos:start="13:5" pos:end="13:24"><type pos:start="13:5" pos:end="13:12"><name pos:start="13:5" pos:end="13:12">uint32_t</name></type> <name pos:start="13:14" pos:end="13:24">block_index</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:29"><decl pos:start="15:5" pos:end="15:28"><type pos:start="15:5" pos:end="15:12"><name pos:start="15:5" pos:end="15:12">uint32_t</name></type> <name pos:start="15:14" pos:end="15:28">offset_in_block</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="17:5" pos:end="17:21"><decl pos:start="17:5" pos:end="17:20"><type pos:start="17:5" pos:end="17:12"><name pos:start="17:5" pos:end="17:12">uint32_t</name></type> <name pos:start="17:14" pos:end="17:20">n_bytes</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:42"><decl pos:start="19:5" pos:end="19:41"><type pos:start="19:5" pos:end="19:12"><name pos:start="19:5" pos:end="19:12">uint32_t</name></type> <name pos:start="19:14" pos:end="19:23">bmap_first</name> <init pos:start="19:25" pos:end="19:41">= <expr pos:start="19:27" pos:end="19:41"><name pos:start="19:27" pos:end="19:41">VDI_UNALLOCATED</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="21:5" pos:end="21:41"><decl pos:start="21:5" pos:end="21:40"><type pos:start="21:5" pos:end="21:12"><name pos:start="21:5" pos:end="21:12">uint32_t</name></type> <name pos:start="21:14" pos:end="21:22">bmap_last</name> <init pos:start="21:24" pos:end="21:40">= <expr pos:start="21:26" pos:end="21:40"><name pos:start="21:26" pos:end="21:40">VDI_UNALLOCATED</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="23:5" pos:end="23:26"><decl pos:start="23:5" pos:end="23:25"><type pos:start="23:5" pos:end="23:13"><name pos:start="23:5" pos:end="23:11">uint8_t</name> <modifier pos:start="23:13" pos:end="23:13">*</modifier></type><name pos:start="23:14" pos:end="23:18">block</name> <init pos:start="23:20" pos:end="23:25">= <expr pos:start="23:22" pos:end="23:25"><name pos:start="23:22" pos:end="23:25">NULL</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="25:5" pos:end="25:28"><decl pos:start="25:5" pos:end="25:27"><type pos:start="25:5" pos:end="25:12"><name pos:start="25:5" pos:end="25:12">uint64_t</name></type> <name pos:start="25:14" pos:end="25:23">bytes_done</name> <init pos:start="25:25" pos:end="25:27">= <expr pos:start="25:27" pos:end="25:27"><literal type="number" pos:start="25:27" pos:end="25:27">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="27:5" pos:end="27:16"><decl pos:start="27:5" pos:end="27:15"><type pos:start="27:5" pos:end="27:7"><name pos:start="27:5" pos:end="27:7">int</name></type> <name pos:start="27:9" pos:end="27:11">ret</name> <init pos:start="27:13" pos:end="27:15">= <expr pos:start="27:15" pos:end="27:15"><literal type="number" pos:start="27:15" pos:end="27:15">0</literal></expr></init></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="31:5" pos:end="31:17"><expr pos:start="31:5" pos:end="31:16"><call pos:start="31:5" pos:end="31:16"><name pos:start="31:5" pos:end="31:10">logout</name><argument_list pos:start="31:11" pos:end="31:16">(<argument pos:start="31:12" pos:end="31:15"><expr pos:start="31:12" pos:end="31:15"><literal type="string" pos:start="31:12" pos:end="31:15">"\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="35:5" pos:end="35:45"><expr pos:start="35:5" pos:end="35:44"><call pos:start="35:5" pos:end="35:44"><name pos:start="35:5" pos:end="35:19">qemu_iovec_init</name><argument_list pos:start="35:20" pos:end="35:44">(<argument pos:start="35:21" pos:end="35:31"><expr pos:start="35:21" pos:end="35:31"><operator pos:start="35:21" pos:end="35:21">&amp;</operator><name pos:start="35:22" pos:end="35:31">local_qiov</name></expr></argument>, <argument pos:start="35:34" pos:end="35:43"><expr pos:start="35:34" pos:end="35:43"><name pos:start="35:34" pos:end="35:43"><name pos:start="35:34" pos:end="35:37">qiov</name><operator pos:start="35:38" pos:end="35:39">-&gt;</operator><name pos:start="35:40" pos:end="35:43">niov</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <while pos:start="39:5" pos:end="173:5">while <condition pos:start="39:11" pos:end="39:33">(<expr pos:start="39:12" pos:end="39:32"><name pos:start="39:12" pos:end="39:14">ret</name> <operator pos:start="39:16" pos:end="39:17">&gt;=</operator> <literal type="number" pos:start="39:19" pos:end="39:19">0</literal> <operator pos:start="39:21" pos:end="39:22">&amp;&amp;</operator> <name pos:start="39:24" pos:end="39:28">bytes</name> <operator pos:start="39:30" pos:end="39:30">&gt;</operator> <literal type="number" pos:start="39:32" pos:end="39:32">0</literal></expr>)</condition> <block pos:start="39:35" pos:end="173:5">{<block_content pos:start="41:9" pos:end="171:46">
+
+        <expr_stmt pos:start="41:9" pos:end="41:45"><expr pos:start="41:9" pos:end="41:44"><name pos:start="41:9" pos:end="41:19">block_index</name> <operator pos:start="41:21" pos:end="41:21">=</operator> <name pos:start="41:23" pos:end="41:28">offset</name> <operator pos:start="41:30" pos:end="41:30">/</operator> <name pos:start="41:32" pos:end="41:44"><name pos:start="41:32" pos:end="41:32">s</name><operator pos:start="41:33" pos:end="41:34">-&gt;</operator><name pos:start="41:35" pos:end="41:44">block_size</name></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="43:9" pos:end="43:49"><expr pos:start="43:9" pos:end="43:48"><name pos:start="43:9" pos:end="43:23">offset_in_block</name> <operator pos:start="43:25" pos:end="43:25">=</operator> <name pos:start="43:27" pos:end="43:32">offset</name> <operator pos:start="43:34" pos:end="43:34">%</operator> <name pos:start="43:36" pos:end="43:48"><name pos:start="43:36" pos:end="43:36">s</name><operator pos:start="43:37" pos:end="43:38">-&gt;</operator><name pos:start="43:39" pos:end="43:48">block_size</name></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="45:9" pos:end="45:62"><expr pos:start="45:9" pos:end="45:61"><name pos:start="45:9" pos:end="45:15">n_bytes</name> <operator pos:start="45:17" pos:end="45:17">=</operator> <call pos:start="45:19" pos:end="45:61"><name pos:start="45:19" pos:end="45:21">MIN</name><argument_list pos:start="45:22" pos:end="45:61">(<argument pos:start="45:23" pos:end="45:27"><expr pos:start="45:23" pos:end="45:27"><name pos:start="45:23" pos:end="45:27">bytes</name></expr></argument>, <argument pos:start="45:30" pos:end="45:60"><expr pos:start="45:30" pos:end="45:60"><name pos:start="45:30" pos:end="45:42"><name pos:start="45:30" pos:end="45:30">s</name><operator pos:start="45:31" pos:end="45:32">-&gt;</operator><name pos:start="45:33" pos:end="45:42">block_size</name></name> <operator pos:start="45:44" pos:end="45:44">-</operator> <name pos:start="45:46" pos:end="45:60">offset_in_block</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="49:9" pos:end="51:32"><expr pos:start="49:9" pos:end="51:31"><call pos:start="49:9" pos:end="51:31"><name pos:start="49:9" pos:end="49:14">logout</name><argument_list pos:start="49:15" pos:end="51:31">(<argument pos:start="49:16" pos:end="49:69"><expr pos:start="49:16" pos:end="49:69"><literal type="string" pos:start="49:16" pos:end="49:57">"will write %u bytes starting at offset %"</literal> <name pos:start="49:59" pos:end="49:64">PRIu64</name> <literal type="string" pos:start="49:66" pos:end="49:69">"\n"</literal></expr></argument>,
+
+               <argument pos:start="51:16" pos:end="51:22"><expr pos:start="51:16" pos:end="51:22"><name pos:start="51:16" pos:end="51:22">n_bytes</name></expr></argument>, <argument pos:start="51:25" pos:end="51:30"><expr pos:start="51:25" pos:end="51:30"><name pos:start="51:25" pos:end="51:30">offset</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <comment type="block" pos:start="55:9" pos:end="55:38">/* prepare next AIO request */</comment>
+
+        <expr_stmt pos:start="57:9" pos:end="57:55"><expr pos:start="57:9" pos:end="57:54"><name pos:start="57:9" pos:end="57:18">bmap_entry</name> <operator pos:start="57:20" pos:end="57:20">=</operator> <call pos:start="57:22" pos:end="57:54"><name pos:start="57:22" pos:end="57:32">le32_to_cpu</name><argument_list pos:start="57:33" pos:end="57:54">(<argument pos:start="57:34" pos:end="57:53"><expr pos:start="57:34" pos:end="57:53"><name pos:start="57:34" pos:end="57:53"><name pos:start="57:34" pos:end="57:34">s</name><operator pos:start="57:35" pos:end="57:36">-&gt;</operator><name pos:start="57:37" pos:end="57:40">bmap</name><index pos:start="57:41" pos:end="57:53">[<expr pos:start="57:42" pos:end="57:52"><name pos:start="57:42" pos:end="57:52">block_index</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="59:9" pos:end="159:9"><if pos:start="59:9" pos:end="119:9">if <condition pos:start="59:12" pos:end="59:42">(<expr pos:start="59:13" pos:end="59:41"><operator pos:start="59:13" pos:end="59:13">!</operator><call pos:start="59:14" pos:end="59:41"><name pos:start="59:14" pos:end="59:29">VDI_IS_ALLOCATED</name><argument_list pos:start="59:30" pos:end="59:41">(<argument pos:start="59:31" pos:end="59:40"><expr pos:start="59:31" pos:end="59:40"><name pos:start="59:31" pos:end="59:40">bmap_entry</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="59:44" pos:end="119:9">{<block_content pos:start="63:13" pos:end="117:49">
+
+            <comment type="block" pos:start="61:13" pos:end="61:53">/* Allocate new block and write to it. */</comment>
+
+            <decl_stmt pos:start="63:13" pos:end="63:33"><decl pos:start="63:13" pos:end="63:32"><type pos:start="63:13" pos:end="63:20"><name pos:start="63:13" pos:end="63:20">uint64_t</name></type> <name pos:start="63:22" pos:end="63:32">data_offset</name></decl>;</decl_stmt>
+
+            <expr_stmt pos:start="65:13" pos:end="65:52"><expr pos:start="65:13" pos:end="65:51"><name pos:start="65:13" pos:end="65:22">bmap_entry</name> <operator pos:start="65:24" pos:end="65:24">=</operator> <name pos:start="65:26" pos:end="65:51"><name pos:start="65:26" pos:end="65:26">s</name><operator pos:start="65:27" pos:end="65:28">-&gt;</operator><name pos:start="65:29" pos:end="65:34">header</name><operator pos:start="65:35" pos:end="65:35">.</operator><name pos:start="65:36" pos:end="65:51">blocks_allocated</name></name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="67:13" pos:end="67:59"><expr pos:start="67:13" pos:end="67:58"><name pos:start="67:13" pos:end="67:32"><name pos:start="67:13" pos:end="67:13">s</name><operator pos:start="67:14" pos:end="67:15">-&gt;</operator><name pos:start="67:16" pos:end="67:19">bmap</name><index pos:start="67:20" pos:end="67:32">[<expr pos:start="67:21" pos:end="67:31"><name pos:start="67:21" pos:end="67:31">block_index</name></expr>]</index></name> <operator pos:start="67:34" pos:end="67:34">=</operator> <call pos:start="67:36" pos:end="67:58"><name pos:start="67:36" pos:end="67:46">cpu_to_le32</name><argument_list pos:start="67:47" pos:end="67:58">(<argument pos:start="67:48" pos:end="67:57"><expr pos:start="67:48" pos:end="67:57"><name pos:start="67:48" pos:end="67:57">bmap_entry</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="69:13" pos:end="69:41"><expr pos:start="69:13" pos:end="69:40"><name pos:start="69:13" pos:end="69:38"><name pos:start="69:13" pos:end="69:13">s</name><operator pos:start="69:14" pos:end="69:15">-&gt;</operator><name pos:start="69:16" pos:end="69:21">header</name><operator pos:start="69:22" pos:end="69:22">.</operator><name pos:start="69:23" pos:end="69:38">blocks_allocated</name></name><operator pos:start="69:39" pos:end="69:40">++</operator></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="71:13" pos:end="73:63"><expr pos:start="71:13" pos:end="73:62"><name pos:start="71:13" pos:end="71:23">data_offset</name> <operator pos:start="71:25" pos:end="71:25">=</operator> <name pos:start="71:27" pos:end="71:47"><name pos:start="71:27" pos:end="71:27">s</name><operator pos:start="71:28" pos:end="71:29">-&gt;</operator><name pos:start="71:30" pos:end="71:35">header</name><operator pos:start="71:36" pos:end="71:36">.</operator><name pos:start="71:37" pos:end="71:47">offset_data</name></name> <operator pos:start="71:49" pos:end="71:49">+</operator>
+
+                          <operator pos:start="73:27" pos:end="73:27">(</operator><name pos:start="73:28" pos:end="73:35">uint64_t</name><operator pos:start="73:36" pos:end="73:36">)</operator><name pos:start="73:37" pos:end="73:46">bmap_entry</name> <operator pos:start="73:48" pos:end="73:48">*</operator> <name pos:start="73:50" pos:end="73:62"><name pos:start="73:50" pos:end="73:50">s</name><operator pos:start="73:51" pos:end="73:52">-&gt;</operator><name pos:start="73:53" pos:end="73:62">block_size</name></name></expr>;</expr_stmt>
+
+            <if_stmt pos:start="75:13" pos:end="81:13"><if pos:start="75:13" pos:end="81:13">if <condition pos:start="75:16" pos:end="75:30">(<expr pos:start="75:17" pos:end="75:29"><name pos:start="75:17" pos:end="75:21">block</name> <operator pos:start="75:23" pos:end="75:24">==</operator> <name pos:start="75:26" pos:end="75:29">NULL</name></expr>)</condition> <block pos:start="75:32" pos:end="81:13">{<block_content pos:start="77:17" pos:end="79:41">
+
+                <expr_stmt pos:start="77:17" pos:end="77:48"><expr pos:start="77:17" pos:end="77:47"><name pos:start="77:17" pos:end="77:21">block</name> <operator pos:start="77:23" pos:end="77:23">=</operator> <call pos:start="77:25" pos:end="77:47"><name pos:start="77:25" pos:end="77:32">g_malloc</name><argument_list pos:start="77:33" pos:end="77:47">(<argument pos:start="77:34" pos:end="77:46"><expr pos:start="77:34" pos:end="77:46"><name pos:start="77:34" pos:end="77:46"><name pos:start="77:34" pos:end="77:34">s</name><operator pos:start="77:35" pos:end="77:36">-&gt;</operator><name pos:start="77:37" pos:end="77:46">block_size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="79:17" pos:end="79:41"><expr pos:start="79:17" pos:end="79:40"><name pos:start="79:17" pos:end="79:26">bmap_first</name> <operator pos:start="79:28" pos:end="79:28">=</operator> <name pos:start="79:30" pos:end="79:40">block_index</name></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <expr_stmt pos:start="83:13" pos:end="83:36"><expr pos:start="83:13" pos:end="83:35"><name pos:start="83:13" pos:end="83:21">bmap_last</name> <operator pos:start="83:23" pos:end="83:23">=</operator> <name pos:start="83:25" pos:end="83:35">block_index</name></expr>;</expr_stmt>
+
+            <comment type="block" pos:start="85:13" pos:end="85:77">/* Copy data to be written to new block and zero unused parts. */</comment>
+
+            <expr_stmt pos:start="87:13" pos:end="87:46"><expr pos:start="87:13" pos:end="87:45"><call pos:start="87:13" pos:end="87:45"><name pos:start="87:13" pos:end="87:18">memset</name><argument_list pos:start="87:19" pos:end="87:45">(<argument pos:start="87:20" pos:end="87:24"><expr pos:start="87:20" pos:end="87:24"><name pos:start="87:20" pos:end="87:24">block</name></expr></argument>, <argument pos:start="87:27" pos:end="87:27"><expr pos:start="87:27" pos:end="87:27"><literal type="number" pos:start="87:27" pos:end="87:27">0</literal></expr></argument>, <argument pos:start="87:30" pos:end="87:44"><expr pos:start="87:30" pos:end="87:44"><name pos:start="87:30" pos:end="87:44">offset_in_block</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="89:13" pos:end="91:39"><expr pos:start="89:13" pos:end="91:38"><call pos:start="89:13" pos:end="91:38"><name pos:start="89:13" pos:end="89:29">qemu_iovec_to_buf</name><argument_list pos:start="89:30" pos:end="91:38">(<argument pos:start="89:31" pos:end="89:34"><expr pos:start="89:31" pos:end="89:34"><name pos:start="89:31" pos:end="89:34">qiov</name></expr></argument>, <argument pos:start="89:37" pos:end="89:46"><expr pos:start="89:37" pos:end="89:46"><name pos:start="89:37" pos:end="89:46">bytes_done</name></expr></argument>, <argument pos:start="89:49" pos:end="89:71"><expr pos:start="89:49" pos:end="89:71"><name pos:start="89:49" pos:end="89:53">block</name> <operator pos:start="89:55" pos:end="89:55">+</operator> <name pos:start="89:57" pos:end="89:71">offset_in_block</name></expr></argument>,
+
+                              <argument pos:start="91:31" pos:end="91:37"><expr pos:start="91:31" pos:end="91:37"><name pos:start="91:31" pos:end="91:37">n_bytes</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="93:13" pos:end="95:62"><expr pos:start="93:13" pos:end="95:61"><call pos:start="93:13" pos:end="95:61"><name pos:start="93:13" pos:end="93:18">memset</name><argument_list pos:start="93:19" pos:end="95:61">(<argument pos:start="93:20" pos:end="93:52"><expr pos:start="93:20" pos:end="93:52"><name pos:start="93:20" pos:end="93:24">block</name> <operator pos:start="93:26" pos:end="93:26">+</operator> <name pos:start="93:28" pos:end="93:42">offset_in_block</name> <operator pos:start="93:44" pos:end="93:44">+</operator> <name pos:start="93:46" pos:end="93:52">n_bytes</name></expr></argument>, <argument pos:start="93:55" pos:end="93:55"><expr pos:start="93:55" pos:end="93:55"><literal type="number" pos:start="93:55" pos:end="93:55">0</literal></expr></argument>,
+
+                   <argument pos:start="95:20" pos:end="95:60"><expr pos:start="95:20" pos:end="95:60"><name pos:start="95:20" pos:end="95:32"><name pos:start="95:20" pos:end="95:20">s</name><operator pos:start="95:21" pos:end="95:22">-&gt;</operator><name pos:start="95:23" pos:end="95:32">block_size</name></name> <operator pos:start="95:34" pos:end="95:34">-</operator> <name pos:start="95:36" pos:end="95:42">n_bytes</name> <operator pos:start="95:44" pos:end="95:44">-</operator> <name pos:start="95:46" pos:end="95:60">offset_in_block</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <comment type="block" pos:start="99:13" pos:end="111:70">/* Note that this coroutine does not yield anywhere from reading the
+
+             * bmap entry until here, so in regards to all the coroutines trying
+
+             * to write to this cluster, the one doing the allocation will
+
+             * always be the first to try to acquire the lock.
+
+             * Therefore, it is also the first that will actually be able to
+
+             * acquire the lock and thus the padded cluster is written before
+
+             * the other coroutines can write to the affected area. */</comment>
+
+            <expr_stmt pos:start="113:13" pos:end="113:47"><expr pos:start="113:13" pos:end="113:46"><call pos:start="113:13" pos:end="113:46"><name pos:start="113:13" pos:end="113:30">qemu_co_mutex_lock</name><argument_list pos:start="113:31" pos:end="113:46">(<argument pos:start="113:32" pos:end="113:45"><expr pos:start="113:32" pos:end="113:45"><operator pos:start="113:32" pos:end="113:32">&amp;</operator><name pos:start="113:33" pos:end="113:45"><name pos:start="113:33" pos:end="113:33">s</name><operator pos:start="113:34" pos:end="113:35">-&gt;</operator><name pos:start="113:36" pos:end="113:45">write_lock</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="115:13" pos:end="115:75"><expr pos:start="115:13" pos:end="115:74"><name pos:start="115:13" pos:end="115:15">ret</name> <operator pos:start="115:17" pos:end="115:17">=</operator> <call pos:start="115:19" pos:end="115:74"><name pos:start="115:19" pos:end="115:29">bdrv_pwrite</name><argument_list pos:start="115:30" pos:end="115:74">(<argument pos:start="115:31" pos:end="115:38"><expr pos:start="115:31" pos:end="115:38"><name pos:start="115:31" pos:end="115:38"><name pos:start="115:31" pos:end="115:32">bs</name><operator pos:start="115:33" pos:end="115:34">-&gt;</operator><name pos:start="115:35" pos:end="115:38">file</name></name></expr></argument>, <argument pos:start="115:41" pos:end="115:51"><expr pos:start="115:41" pos:end="115:51"><name pos:start="115:41" pos:end="115:51">data_offset</name></expr></argument>, <argument pos:start="115:54" pos:end="115:58"><expr pos:start="115:54" pos:end="115:58"><name pos:start="115:54" pos:end="115:58">block</name></expr></argument>, <argument pos:start="115:61" pos:end="115:73"><expr pos:start="115:61" pos:end="115:73"><name pos:start="115:61" pos:end="115:73"><name pos:start="115:61" pos:end="115:61">s</name><operator pos:start="115:62" pos:end="115:63">-&gt;</operator><name pos:start="115:64" pos:end="115:73">block_size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="117:13" pos:end="117:49"><expr pos:start="117:13" pos:end="117:48"><call pos:start="117:13" pos:end="117:48"><name pos:start="117:13" pos:end="117:32">qemu_co_mutex_unlock</name><argument_list pos:start="117:33" pos:end="117:48">(<argument pos:start="117:34" pos:end="117:47"><expr pos:start="117:34" pos:end="117:47"><operator pos:start="117:34" pos:end="117:34">&amp;</operator><name pos:start="117:35" pos:end="117:47"><name pos:start="117:35" pos:end="117:35">s</name><operator pos:start="117:36" pos:end="117:37">-&gt;</operator><name pos:start="117:38" pos:end="117:47">write_lock</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="119:11" pos:end="159:9">else <block pos:start="119:16" pos:end="159:9">{<block_content pos:start="121:13" pos:end="157:50">
+
+            <decl_stmt pos:start="121:13" pos:end="125:51"><decl pos:start="121:13" pos:end="125:50"><type pos:start="121:13" pos:end="121:20"><name pos:start="121:13" pos:end="121:20">uint64_t</name></type> <name pos:start="121:22" pos:end="121:32">data_offset</name> <init pos:start="121:34" pos:end="125:50">= <expr pos:start="121:36" pos:end="125:50"><name pos:start="121:36" pos:end="121:56"><name pos:start="121:36" pos:end="121:36">s</name><operator pos:start="121:37" pos:end="121:38">-&gt;</operator><name pos:start="121:39" pos:end="121:44">header</name><operator pos:start="121:45" pos:end="121:45">.</operator><name pos:start="121:46" pos:end="121:56">offset_data</name></name> <operator pos:start="121:58" pos:end="121:58">+</operator>
+
+                                   <operator pos:start="123:36" pos:end="123:36">(</operator><name pos:start="123:37" pos:end="123:44">uint64_t</name><operator pos:start="123:45" pos:end="123:45">)</operator><name pos:start="123:46" pos:end="123:55">bmap_entry</name> <operator pos:start="123:57" pos:end="123:57">*</operator> <name pos:start="123:59" pos:end="123:71"><name pos:start="123:59" pos:end="123:59">s</name><operator pos:start="123:60" pos:end="123:61">-&gt;</operator><name pos:start="123:62" pos:end="123:71">block_size</name></name> <operator pos:start="123:73" pos:end="123:73">+</operator>
+
+                                   <name pos:start="125:36" pos:end="125:50">offset_in_block</name></expr></init></decl>;</decl_stmt>
+
+            <expr_stmt pos:start="127:13" pos:end="127:47"><expr pos:start="127:13" pos:end="127:46"><call pos:start="127:13" pos:end="127:46"><name pos:start="127:13" pos:end="127:30">qemu_co_mutex_lock</name><argument_list pos:start="127:31" pos:end="127:46">(<argument pos:start="127:32" pos:end="127:45"><expr pos:start="127:32" pos:end="127:45"><operator pos:start="127:32" pos:end="127:32">&amp;</operator><name pos:start="127:33" pos:end="127:45"><name pos:start="127:33" pos:end="127:33">s</name><operator pos:start="127:34" pos:end="127:35">-&gt;</operator><name pos:start="127:36" pos:end="127:45">write_lock</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <comment type="block" pos:start="129:13" pos:end="143:74">/* This lock is only used to make sure the following write operation
+
+             * is executed after the write issued by the coroutine allocating
+
+             * this cluster, therefore we do not need to keep it locked.
+
+             * As stated above, the allocating coroutine will always try to lock
+
+             * the mutex before all the other concurrent accesses to that
+
+             * cluster, therefore at this point we can be absolutely certain
+
+             * that that write operation has returned (there may be other writes
+
+             * in flight, but they do not concern this very operation). */</comment>
+
+            <expr_stmt pos:start="145:13" pos:end="145:49"><expr pos:start="145:13" pos:end="145:48"><call pos:start="145:13" pos:end="145:48"><name pos:start="145:13" pos:end="145:32">qemu_co_mutex_unlock</name><argument_list pos:start="145:33" pos:end="145:48">(<argument pos:start="145:34" pos:end="145:47"><expr pos:start="145:34" pos:end="145:47"><operator pos:start="145:34" pos:end="145:34">&amp;</operator><name pos:start="145:35" pos:end="145:47"><name pos:start="145:35" pos:end="145:35">s</name><operator pos:start="145:36" pos:end="145:37">-&gt;</operator><name pos:start="145:38" pos:end="145:47">write_lock</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <expr_stmt pos:start="149:13" pos:end="149:42"><expr pos:start="149:13" pos:end="149:41"><call pos:start="149:13" pos:end="149:41"><name pos:start="149:13" pos:end="149:28">qemu_iovec_reset</name><argument_list pos:start="149:29" pos:end="149:41">(<argument pos:start="149:30" pos:end="149:40"><expr pos:start="149:30" pos:end="149:40"><operator pos:start="149:30" pos:end="149:30">&amp;</operator><name pos:start="149:31" pos:end="149:40">local_qiov</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="151:13" pos:end="151:70"><expr pos:start="151:13" pos:end="151:69"><call pos:start="151:13" pos:end="151:69"><name pos:start="151:13" pos:end="151:29">qemu_iovec_concat</name><argument_list pos:start="151:30" pos:end="151:69">(<argument pos:start="151:31" pos:end="151:41"><expr pos:start="151:31" pos:end="151:41"><operator pos:start="151:31" pos:end="151:31">&amp;</operator><name pos:start="151:32" pos:end="151:41">local_qiov</name></expr></argument>, <argument pos:start="151:44" pos:end="151:47"><expr pos:start="151:44" pos:end="151:47"><name pos:start="151:44" pos:end="151:47">qiov</name></expr></argument>, <argument pos:start="151:50" pos:end="151:59"><expr pos:start="151:50" pos:end="151:59"><name pos:start="151:50" pos:end="151:59">bytes_done</name></expr></argument>, <argument pos:start="151:62" pos:end="151:68"><expr pos:start="151:62" pos:end="151:68"><name pos:start="151:62" pos:end="151:68">n_bytes</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <expr_stmt pos:start="155:13" pos:end="157:50"><expr pos:start="155:13" pos:end="157:49"><name pos:start="155:13" pos:end="155:15">ret</name> <operator pos:start="155:17" pos:end="155:17">=</operator> <call pos:start="155:19" pos:end="157:49"><name pos:start="155:19" pos:end="155:33">bdrv_co_pwritev</name><argument_list pos:start="155:34" pos:end="157:49">(<argument pos:start="155:35" pos:end="155:42"><expr pos:start="155:35" pos:end="155:42"><name pos:start="155:35" pos:end="155:42"><name pos:start="155:35" pos:end="155:36">bs</name><operator pos:start="155:37" pos:end="155:38">-&gt;</operator><name pos:start="155:39" pos:end="155:42">file</name></name></expr></argument>, <argument pos:start="155:45" pos:end="155:55"><expr pos:start="155:45" pos:end="155:55"><name pos:start="155:45" pos:end="155:55">data_offset</name></expr></argument>, <argument pos:start="155:58" pos:end="155:64"><expr pos:start="155:58" pos:end="155:64"><name pos:start="155:58" pos:end="155:64">n_bytes</name></expr></argument>,
+
+                                  <argument pos:start="157:35" pos:end="157:45"><expr pos:start="157:35" pos:end="157:45"><operator pos:start="157:35" pos:end="157:35">&amp;</operator><name pos:start="157:36" pos:end="157:45">local_qiov</name></expr></argument>, <argument pos:start="157:48" pos:end="157:48"><expr pos:start="157:48" pos:end="157:48"><literal type="number" pos:start="157:48" pos:end="157:48">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+
+
+        <expr_stmt pos:start="163:9" pos:end="163:25"><expr pos:start="163:9" pos:end="163:24"><name pos:start="163:9" pos:end="163:13">bytes</name> <operator pos:start="163:15" pos:end="163:16">-=</operator> <name pos:start="163:18" pos:end="163:24">n_bytes</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="165:9" pos:end="165:26"><expr pos:start="165:9" pos:end="165:25"><name pos:start="165:9" pos:end="165:14">offset</name> <operator pos:start="165:16" pos:end="165:17">+=</operator> <name pos:start="165:19" pos:end="165:25">n_bytes</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="167:9" pos:end="167:30"><expr pos:start="167:9" pos:end="167:29"><name pos:start="167:9" pos:end="167:18">bytes_done</name> <operator pos:start="167:20" pos:end="167:21">+=</operator> <name pos:start="167:23" pos:end="167:29">n_bytes</name></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="171:9" pos:end="171:46"><expr pos:start="171:9" pos:end="171:45"><call pos:start="171:9" pos:end="171:45"><name pos:start="171:9" pos:end="171:14">logout</name><argument_list pos:start="171:15" pos:end="171:45">(<argument pos:start="171:16" pos:end="171:35"><expr pos:start="171:16" pos:end="171:35"><literal type="string" pos:start="171:16" pos:end="171:35">"%u bytes written\n"</literal></expr></argument>, <argument pos:start="171:38" pos:end="171:44"><expr pos:start="171:38" pos:end="171:44"><name pos:start="171:38" pos:end="171:44">n_bytes</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></while>
+
+
+
+    <expr_stmt pos:start="177:5" pos:end="177:36"><expr pos:start="177:5" pos:end="177:35"><call pos:start="177:5" pos:end="177:35"><name pos:start="177:5" pos:end="177:22">qemu_iovec_destroy</name><argument_list pos:start="177:23" pos:end="177:35">(<argument pos:start="177:24" pos:end="177:34"><expr pos:start="177:24" pos:end="177:34"><operator pos:start="177:24" pos:end="177:24">&amp;</operator><name pos:start="177:25" pos:end="177:34">local_qiov</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="181:5" pos:end="181:36"><expr pos:start="181:5" pos:end="181:35"><call pos:start="181:5" pos:end="181:35"><name pos:start="181:5" pos:end="181:10">logout</name><argument_list pos:start="181:11" pos:end="181:35">(<argument pos:start="181:12" pos:end="181:34"><expr pos:start="181:12" pos:end="181:34"><literal type="string" pos:start="181:12" pos:end="181:34">"finished data write\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="183:5" pos:end="187:5"><if pos:start="183:5" pos:end="187:5">if <condition pos:start="183:8" pos:end="183:16">(<expr pos:start="183:9" pos:end="183:15"><name pos:start="183:9" pos:end="183:11">ret</name> <operator pos:start="183:13" pos:end="183:13">&lt;</operator> <literal type="number" pos:start="183:15" pos:end="183:15">0</literal></expr>)</condition> <block pos:start="183:18" pos:end="187:5">{<block_content pos:start="185:9" pos:end="185:19">
+
+        <return pos:start="185:9" pos:end="185:19">return <expr pos:start="185:16" pos:end="185:18"><name pos:start="185:16" pos:end="185:18">ret</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="191:5" pos:end="251:5"><if pos:start="191:5" pos:end="251:5">if <condition pos:start="191:8" pos:end="191:14">(<expr pos:start="191:9" pos:end="191:13"><name pos:start="191:9" pos:end="191:13">block</name></expr>)</condition> <block pos:start="191:16" pos:end="251:5">{<block_content pos:start="195:9" pos:end="249:60">
+
+        <comment type="block" pos:start="193:9" pos:end="193:52">/* One or more new blocks were allocated. */</comment>
+
+        <decl_stmt pos:start="195:9" pos:end="195:48"><decl pos:start="195:9" pos:end="195:47"><type pos:start="195:9" pos:end="195:19"><name pos:start="195:9" pos:end="195:17">VdiHeader</name> <modifier pos:start="195:19" pos:end="195:19">*</modifier></type><name pos:start="195:20" pos:end="195:25">header</name> <init pos:start="195:27" pos:end="195:47">= <expr pos:start="195:29" pos:end="195:47"><operator pos:start="195:29" pos:end="195:29">(</operator><name pos:start="195:30" pos:end="195:38">VdiHeader</name> <operator pos:start="195:40" pos:end="195:40">*</operator><operator pos:start="195:41" pos:end="195:41">)</operator> <name pos:start="195:43" pos:end="195:47">block</name></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="197:9" pos:end="197:22"><decl pos:start="197:9" pos:end="197:21"><type pos:start="197:9" pos:end="197:17"><name pos:start="197:9" pos:end="197:15">uint8_t</name> <modifier pos:start="197:17" pos:end="197:17">*</modifier></type><name pos:start="197:18" pos:end="197:21">base</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="199:9" pos:end="199:24"><decl pos:start="199:9" pos:end="199:23"><type pos:start="199:9" pos:end="199:16"><name pos:start="199:9" pos:end="199:16">uint64_t</name></type> <name pos:start="199:18" pos:end="199:23">offset</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="201:9" pos:end="201:27"><decl pos:start="201:9" pos:end="201:26"><type pos:start="201:9" pos:end="201:16"><name pos:start="201:9" pos:end="201:16">uint32_t</name></type> <name pos:start="201:18" pos:end="201:26">n_sectors</name></decl>;</decl_stmt>
+
+
+
+        <expr_stmt pos:start="205:9" pos:end="205:48"><expr pos:start="205:9" pos:end="205:47"><call pos:start="205:9" pos:end="205:47"><name pos:start="205:9" pos:end="205:14">logout</name><argument_list pos:start="205:15" pos:end="205:47">(<argument pos:start="205:16" pos:end="205:46"><expr pos:start="205:16" pos:end="205:46"><literal type="string" pos:start="205:16" pos:end="205:46">"now writing modified header\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="207:9" pos:end="207:45"><expr pos:start="207:9" pos:end="207:44"><call pos:start="207:9" pos:end="207:44"><name pos:start="207:9" pos:end="207:14">assert</name><argument_list pos:start="207:15" pos:end="207:44">(<argument pos:start="207:16" pos:end="207:43"><expr pos:start="207:16" pos:end="207:43"><call pos:start="207:16" pos:end="207:43"><name pos:start="207:16" pos:end="207:31">VDI_IS_ALLOCATED</name><argument_list pos:start="207:32" pos:end="207:43">(<argument pos:start="207:33" pos:end="207:42"><expr pos:start="207:33" pos:end="207:42"><name pos:start="207:33" pos:end="207:42">bmap_first</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="209:9" pos:end="209:28"><expr pos:start="209:9" pos:end="209:27"><operator pos:start="209:9" pos:end="209:9">*</operator><name pos:start="209:10" pos:end="209:15">header</name> <operator pos:start="209:17" pos:end="209:17">=</operator> <name pos:start="209:19" pos:end="209:27"><name pos:start="209:19" pos:end="209:19">s</name><operator pos:start="209:20" pos:end="209:21">-&gt;</operator><name pos:start="209:22" pos:end="209:27">header</name></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="211:9" pos:end="211:33"><expr pos:start="211:9" pos:end="211:32"><call pos:start="211:9" pos:end="211:32"><name pos:start="211:9" pos:end="211:24">vdi_header_to_le</name><argument_list pos:start="211:25" pos:end="211:32">(<argument pos:start="211:26" pos:end="211:31"><expr pos:start="211:26" pos:end="211:31"><name pos:start="211:26" pos:end="211:31">header</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="213:9" pos:end="213:48"><expr pos:start="213:9" pos:end="213:47"><name pos:start="213:9" pos:end="213:11">ret</name> <operator pos:start="213:13" pos:end="213:13">=</operator> <call pos:start="213:15" pos:end="213:47"><name pos:start="213:15" pos:end="213:24">bdrv_write</name><argument_list pos:start="213:25" pos:end="213:47">(<argument pos:start="213:26" pos:end="213:33"><expr pos:start="213:26" pos:end="213:33"><name pos:start="213:26" pos:end="213:33"><name pos:start="213:26" pos:end="213:27">bs</name><operator pos:start="213:28" pos:end="213:29">-&gt;</operator><name pos:start="213:30" pos:end="213:33">file</name></name></expr></argument>, <argument pos:start="213:36" pos:end="213:36"><expr pos:start="213:36" pos:end="213:36"><literal type="number" pos:start="213:36" pos:end="213:36">0</literal></expr></argument>, <argument pos:start="213:39" pos:end="213:43"><expr pos:start="213:39" pos:end="213:43"><name pos:start="213:39" pos:end="213:43">block</name></expr></argument>, <argument pos:start="213:46" pos:end="213:46"><expr pos:start="213:46" pos:end="213:46"><literal type="number" pos:start="213:46" pos:end="213:46">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="215:9" pos:end="215:22"><expr pos:start="215:9" pos:end="215:21"><call pos:start="215:9" pos:end="215:21"><name pos:start="215:9" pos:end="215:14">g_free</name><argument_list pos:start="215:15" pos:end="215:21">(<argument pos:start="215:16" pos:end="215:20"><expr pos:start="215:16" pos:end="215:20"><name pos:start="215:16" pos:end="215:20">block</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="217:9" pos:end="217:21"><expr pos:start="217:9" pos:end="217:20"><name pos:start="217:9" pos:end="217:13">block</name> <operator pos:start="217:15" pos:end="217:15">=</operator> <name pos:start="217:17" pos:end="217:20">NULL</name></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="221:9" pos:end="225:9"><if pos:start="221:9" pos:end="225:9">if <condition pos:start="221:12" pos:end="221:20">(<expr pos:start="221:13" pos:end="221:19"><name pos:start="221:13" pos:end="221:15">ret</name> <operator pos:start="221:17" pos:end="221:17">&lt;</operator> <literal type="number" pos:start="221:19" pos:end="221:19">0</literal></expr>)</condition> <block pos:start="221:22" pos:end="225:9">{<block_content pos:start="223:13" pos:end="223:23">
+
+            <return pos:start="223:13" pos:end="223:23">return <expr pos:start="223:20" pos:end="223:22"><name pos:start="223:20" pos:end="223:22">ret</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="229:9" pos:end="231:38"><expr pos:start="229:9" pos:end="231:37"><call pos:start="229:9" pos:end="231:37"><name pos:start="229:9" pos:end="229:14">logout</name><argument_list pos:start="229:15" pos:end="231:37">(<argument pos:start="229:16" pos:end="229:63"><expr pos:start="229:16" pos:end="229:63"><literal type="string" pos:start="229:16" pos:end="229:63">"now writing modified block map entry %u...%u\n"</literal></expr></argument>,
+
+               <argument pos:start="231:16" pos:end="231:25"><expr pos:start="231:16" pos:end="231:25"><name pos:start="231:16" pos:end="231:25">bmap_first</name></expr></argument>, <argument pos:start="231:28" pos:end="231:36"><expr pos:start="231:28" pos:end="231:36"><name pos:start="231:28" pos:end="231:36">bmap_last</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <comment type="block" pos:start="233:9" pos:end="233:52">/* Write modified sectors from block map. */</comment>
+
+        <expr_stmt pos:start="235:9" pos:end="235:55"><expr pos:start="235:9" pos:end="235:54"><name pos:start="235:9" pos:end="235:18">bmap_first</name> <operator pos:start="235:20" pos:end="235:21">/=</operator> <operator pos:start="235:23" pos:end="235:23">(</operator><name pos:start="235:24" pos:end="235:34">SECTOR_SIZE</name> <operator pos:start="235:36" pos:end="235:36">/</operator> <sizeof pos:start="235:38" pos:end="235:53">sizeof<argument_list pos:start="235:44" pos:end="235:53">(<argument pos:start="235:45" pos:end="235:52"><expr pos:start="235:45" pos:end="235:52"><name pos:start="235:45" pos:end="235:52">uint32_t</name></expr></argument>)</argument_list></sizeof><operator pos:start="235:54" pos:end="235:54">)</operator></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="237:9" pos:end="237:54"><expr pos:start="237:9" pos:end="237:53"><name pos:start="237:9" pos:end="237:17">bmap_last</name> <operator pos:start="237:19" pos:end="237:20">/=</operator> <operator pos:start="237:22" pos:end="237:22">(</operator><name pos:start="237:23" pos:end="237:33">SECTOR_SIZE</name> <operator pos:start="237:35" pos:end="237:35">/</operator> <sizeof pos:start="237:37" pos:end="237:52">sizeof<argument_list pos:start="237:43" pos:end="237:52">(<argument pos:start="237:44" pos:end="237:51"><expr pos:start="237:44" pos:end="237:51"><name pos:start="237:44" pos:end="237:51">uint32_t</name></expr></argument>)</argument_list></sizeof><operator pos:start="237:53" pos:end="237:53">)</operator></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="239:9" pos:end="239:47"><expr pos:start="239:9" pos:end="239:46"><name pos:start="239:9" pos:end="239:17">n_sectors</name> <operator pos:start="239:19" pos:end="239:19">=</operator> <name pos:start="239:21" pos:end="239:29">bmap_last</name> <operator pos:start="239:31" pos:end="239:31">-</operator> <name pos:start="239:33" pos:end="239:42">bmap_first</name> <operator pos:start="239:44" pos:end="239:44">+</operator> <literal type="number" pos:start="239:46" pos:end="239:46">1</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="241:9" pos:end="241:45"><expr pos:start="241:9" pos:end="241:44"><name pos:start="241:9" pos:end="241:14">offset</name> <operator pos:start="241:16" pos:end="241:16">=</operator> <name pos:start="241:18" pos:end="241:31"><name pos:start="241:18" pos:end="241:18">s</name><operator pos:start="241:19" pos:end="241:20">-&gt;</operator><name pos:start="241:21" pos:end="241:31">bmap_sector</name></name> <operator pos:start="241:33" pos:end="241:33">+</operator> <name pos:start="241:35" pos:end="241:44">bmap_first</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="243:9" pos:end="243:67"><expr pos:start="243:9" pos:end="243:66"><name pos:start="243:9" pos:end="243:12">base</name> <operator pos:start="243:14" pos:end="243:14">=</operator> <operator pos:start="243:16" pos:end="243:16">(</operator><operator pos:start="243:17" pos:end="243:17">(</operator><name pos:start="243:18" pos:end="243:24">uint8_t</name> <operator pos:start="243:26" pos:end="243:26">*</operator><operator pos:start="243:27" pos:end="243:27">)</operator><operator pos:start="243:28" pos:end="243:28">&amp;</operator><name pos:start="243:29" pos:end="243:38"><name pos:start="243:29" pos:end="243:29">s</name><operator pos:start="243:30" pos:end="243:31">-&gt;</operator><name pos:start="243:32" pos:end="243:35">bmap</name><index pos:start="243:36" pos:end="243:38">[<expr pos:start="243:37" pos:end="243:37"><literal type="number" pos:start="243:37" pos:end="243:37">0</literal></expr>]</index></name><operator pos:start="243:39" pos:end="243:39">)</operator> <operator pos:start="243:41" pos:end="243:41">+</operator> <name pos:start="243:43" pos:end="243:52">bmap_first</name> <operator pos:start="243:54" pos:end="243:54">*</operator> <name pos:start="243:56" pos:end="243:66">SECTOR_SIZE</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="245:9" pos:end="247:38"><expr pos:start="245:9" pos:end="247:37"><call pos:start="245:9" pos:end="247:37"><name pos:start="245:9" pos:end="245:14">logout</name><argument_list pos:start="245:15" pos:end="247:37">(<argument pos:start="245:16" pos:end="245:73"><expr pos:start="245:16" pos:end="245:73"><literal type="string" pos:start="245:16" pos:end="245:73">"will write %u block map sectors starting from entry %u\n"</literal></expr></argument>,
+
+               <argument pos:start="247:16" pos:end="247:24"><expr pos:start="247:16" pos:end="247:24"><name pos:start="247:16" pos:end="247:24">n_sectors</name></expr></argument>, <argument pos:start="247:27" pos:end="247:36"><expr pos:start="247:27" pos:end="247:36"><name pos:start="247:27" pos:end="247:36">bmap_first</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="249:9" pos:end="249:60"><expr pos:start="249:9" pos:end="249:59"><name pos:start="249:9" pos:end="249:11">ret</name> <operator pos:start="249:13" pos:end="249:13">=</operator> <call pos:start="249:15" pos:end="249:59"><name pos:start="249:15" pos:end="249:24">bdrv_write</name><argument_list pos:start="249:25" pos:end="249:59">(<argument pos:start="249:26" pos:end="249:33"><expr pos:start="249:26" pos:end="249:33"><name pos:start="249:26" pos:end="249:33"><name pos:start="249:26" pos:end="249:27">bs</name><operator pos:start="249:28" pos:end="249:29">-&gt;</operator><name pos:start="249:30" pos:end="249:33">file</name></name></expr></argument>, <argument pos:start="249:36" pos:end="249:41"><expr pos:start="249:36" pos:end="249:41"><name pos:start="249:36" pos:end="249:41">offset</name></expr></argument>, <argument pos:start="249:44" pos:end="249:47"><expr pos:start="249:44" pos:end="249:47"><name pos:start="249:44" pos:end="249:47">base</name></expr></argument>, <argument pos:start="249:50" pos:end="249:58"><expr pos:start="249:50" pos:end="249:58"><name pos:start="249:50" pos:end="249:58">n_sectors</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <return pos:start="255:5" pos:end="255:15">return <expr pos:start="255:12" pos:end="255:14"><name pos:start="255:12" pos:end="255:14">ret</name></expr>;</return>
+
+</block_content>}</block>
+</unit>

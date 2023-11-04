@@ -1,0 +1,609 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/1077.c" pos:tabs="8"><function pos:start="1:1" pos:end="607:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">bool</name></type> <name pos:start="1:13" pos:end="1:30">get_phys_addr_lpae</name><parameter_list pos:start="1:31" pos:end="7:74">(<parameter pos:start="1:32" pos:end="1:47"><decl pos:start="1:32" pos:end="1:47"><type pos:start="1:32" pos:end="1:47"><name pos:start="1:32" pos:end="1:42">CPUARMState</name> <modifier pos:start="1:44" pos:end="1:44">*</modifier></type><name pos:start="1:45" pos:end="1:47">env</name></decl></parameter>, <parameter pos:start="1:50" pos:end="1:69"><decl pos:start="1:50" pos:end="1:69"><type pos:start="1:50" pos:end="1:69"><name pos:start="1:50" pos:end="1:61">target_ulong</name></type> <name pos:start="1:63" pos:end="1:69">address</name></decl></parameter>,
+
+                               <parameter pos:start="3:32" pos:end="3:46"><decl pos:start="3:32" pos:end="3:46"><type pos:start="3:32" pos:end="3:46"><name pos:start="3:32" pos:end="3:34">int</name></type> <name pos:start="3:36" pos:end="3:46">access_type</name></decl></parameter>, <parameter pos:start="3:49" pos:end="3:65"><decl pos:start="3:49" pos:end="3:65"><type pos:start="3:49" pos:end="3:65"><name pos:start="3:49" pos:end="3:57">ARMMMUIdx</name></type> <name pos:start="3:59" pos:end="3:65">mmu_idx</name></decl></parameter>,
+
+                               <parameter pos:start="5:32" pos:end="5:47"><decl pos:start="5:32" pos:end="5:47"><type pos:start="5:32" pos:end="5:47"><name pos:start="5:32" pos:end="5:37">hwaddr</name> <modifier pos:start="5:39" pos:end="5:39">*</modifier></type><name pos:start="5:40" pos:end="5:47">phys_ptr</name></decl></parameter>, <parameter pos:start="5:50" pos:end="5:68"><decl pos:start="5:50" pos:end="5:68"><type pos:start="5:50" pos:end="5:68"><name pos:start="5:50" pos:end="5:59">MemTxAttrs</name> <modifier pos:start="5:61" pos:end="5:61">*</modifier></type><name pos:start="5:62" pos:end="5:68">txattrs</name></decl></parameter>, <parameter pos:start="5:71" pos:end="5:79"><decl pos:start="5:71" pos:end="5:79"><type pos:start="5:71" pos:end="5:79"><name pos:start="5:71" pos:end="5:73">int</name> <modifier pos:start="5:75" pos:end="5:75">*</modifier></type><name pos:start="5:76" pos:end="5:79">prot</name></decl></parameter>,
+
+                               <parameter pos:start="7:32" pos:end="7:58"><decl pos:start="7:32" pos:end="7:58"><type pos:start="7:32" pos:end="7:58"><name pos:start="7:32" pos:end="7:43">target_ulong</name> <modifier pos:start="7:45" pos:end="7:45">*</modifier></type><name pos:start="7:46" pos:end="7:58">page_size_ptr</name></decl></parameter>, <parameter pos:start="7:61" pos:end="7:73"><decl pos:start="7:61" pos:end="7:73"><type pos:start="7:61" pos:end="7:73"><name pos:start="7:61" pos:end="7:68">uint32_t</name> <modifier pos:start="7:70" pos:end="7:70">*</modifier></type><name pos:start="7:71" pos:end="7:73">fsr</name></decl></parameter>)</parameter_list>
+
+<block pos:start="9:1" pos:end="607:1">{<block_content pos:start="11:5" pos:end="605:16">
+
+    <decl_stmt pos:start="11:5" pos:end="11:39"><decl pos:start="11:5" pos:end="11:38"><type pos:start="11:5" pos:end="11:12"><name pos:start="11:5" pos:end="11:10">ARMCPU</name> <modifier pos:start="11:12" pos:end="11:12">*</modifier></type><name pos:start="11:13" pos:end="11:15">cpu</name> <init pos:start="11:17" pos:end="11:38">= <expr pos:start="11:19" pos:end="11:38"><call pos:start="11:19" pos:end="11:38"><name pos:start="11:19" pos:end="11:33">arm_env_get_cpu</name><argument_list pos:start="11:34" pos:end="11:38">(<argument pos:start="11:35" pos:end="11:37"><expr pos:start="11:35" pos:end="11:37"><name pos:start="11:35" pos:end="11:37">env</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:28"><decl pos:start="13:5" pos:end="13:27"><type pos:start="13:5" pos:end="13:14"><name pos:start="13:5" pos:end="13:12">CPUState</name> <modifier pos:start="13:14" pos:end="13:14">*</modifier></type><name pos:start="13:15" pos:end="13:16">cs</name> <init pos:start="13:18" pos:end="13:27">= <expr pos:start="13:20" pos:end="13:27"><call pos:start="13:20" pos:end="13:27"><name pos:start="13:20" pos:end="13:22">CPU</name><argument_list pos:start="13:23" pos:end="13:27">(<argument pos:start="13:24" pos:end="13:26"><expr pos:start="13:24" pos:end="13:26"><name pos:start="13:24" pos:end="13:26">cpu</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <comment type="block" pos:start="15:5" pos:end="15:57">/* Read an LPAE long-descriptor translation table. */</comment>
+
+    <decl_stmt pos:start="17:5" pos:end="17:48"><decl pos:start="17:5" pos:end="17:47"><type pos:start="17:5" pos:end="17:16"><name pos:start="17:5" pos:end="17:16">MMUFaultType</name></type> <name pos:start="17:18" pos:end="17:27">fault_type</name> <init pos:start="17:29" pos:end="17:47">= <expr pos:start="17:31" pos:end="17:47"><name pos:start="17:31" pos:end="17:47">translation_fault</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:23"><decl pos:start="19:5" pos:end="19:22"><type pos:start="19:5" pos:end="19:12"><name pos:start="19:5" pos:end="19:12">uint32_t</name></type> <name pos:start="19:14" pos:end="19:18">level</name> <init pos:start="19:20" pos:end="19:22">= <expr pos:start="19:22" pos:end="19:22"><literal type="number" pos:start="19:22" pos:end="19:22">1</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="21:5" pos:end="21:21"><decl pos:start="21:5" pos:end="21:20"><type pos:start="21:5" pos:end="21:12"><name pos:start="21:5" pos:end="21:12">uint32_t</name></type> <name pos:start="21:14" pos:end="21:16">epd</name> <init pos:start="21:18" pos:end="21:20">= <expr pos:start="21:20" pos:end="21:20"><literal type="number" pos:start="21:20" pos:end="21:20">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="23:5" pos:end="23:23"><decl pos:start="23:5" pos:end="23:16"><type pos:start="23:5" pos:end="23:11"><name pos:start="23:5" pos:end="23:11">int32_t</name></type> <name pos:start="23:13" pos:end="23:16">t0sz</name></decl>, <decl pos:start="23:19" pos:end="23:22"><type ref="prev" pos:start="23:5" pos:end="23:11"/><name pos:start="23:19" pos:end="23:22">t1sz</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="25:5" pos:end="25:16"><decl pos:start="25:5" pos:end="25:15"><type pos:start="25:5" pos:end="25:12"><name pos:start="25:5" pos:end="25:12">uint32_t</name></type> <name pos:start="25:14" pos:end="25:15">tg</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="27:5" pos:end="27:18"><decl pos:start="27:5" pos:end="27:17"><type pos:start="27:5" pos:end="27:12"><name pos:start="27:5" pos:end="27:12">uint64_t</name></type> <name pos:start="27:14" pos:end="27:17">ttbr</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="29:5" pos:end="29:20"><decl pos:start="29:5" pos:end="29:19"><type pos:start="29:5" pos:end="29:7"><name pos:start="29:5" pos:end="29:7">int</name></type> <name pos:start="29:9" pos:end="29:19">ttbr_select</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="31:5" pos:end="31:30"><decl pos:start="31:5" pos:end="31:19"><type pos:start="31:5" pos:end="31:10"><name pos:start="31:5" pos:end="31:10">hwaddr</name></type> <name pos:start="31:12" pos:end="31:19">descaddr</name></decl>, <decl pos:start="31:22" pos:end="31:29"><type ref="prev" pos:start="31:5" pos:end="31:10"/><name pos:start="31:22" pos:end="31:29">descmask</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="33:5" pos:end="33:24"><decl pos:start="33:5" pos:end="33:23"><type pos:start="33:5" pos:end="33:12"><name pos:start="33:5" pos:end="33:12">uint32_t</name></type> <name pos:start="33:14" pos:end="33:23">tableattrs</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="35:5" pos:end="35:27"><decl pos:start="35:5" pos:end="35:26"><type pos:start="35:5" pos:end="35:16"><name pos:start="35:5" pos:end="35:16">target_ulong</name></type> <name pos:start="35:18" pos:end="35:26">page_size</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="37:5" pos:end="37:19"><decl pos:start="37:5" pos:end="37:18"><type pos:start="37:5" pos:end="37:12"><name pos:start="37:5" pos:end="37:12">uint32_t</name></type> <name pos:start="37:14" pos:end="37:18">attrs</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="39:5" pos:end="39:23"><decl pos:start="39:5" pos:end="39:22"><type pos:start="39:5" pos:end="39:11"><name pos:start="39:5" pos:end="39:11">int32_t</name></type> <name pos:start="39:13" pos:end="39:18">stride</name> <init pos:start="39:20" pos:end="39:22">= <expr pos:start="39:22" pos:end="39:22"><literal type="number" pos:start="39:22" pos:end="39:22">9</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="41:5" pos:end="41:25"><decl pos:start="41:5" pos:end="41:24"><type pos:start="41:5" pos:end="41:11"><name pos:start="41:5" pos:end="41:11">int32_t</name></type> <name pos:start="41:13" pos:end="41:19">va_size</name> <init pos:start="41:21" pos:end="41:24">= <expr pos:start="41:23" pos:end="41:24"><literal type="number" pos:start="41:23" pos:end="41:24">32</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="43:5" pos:end="43:18"><decl pos:start="43:5" pos:end="43:17"><type pos:start="43:5" pos:end="43:7"><name pos:start="43:5" pos:end="43:7">int</name></type> <name pos:start="43:9" pos:end="43:17">inputsize</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="45:5" pos:end="45:20"><decl pos:start="45:5" pos:end="45:19"><type pos:start="45:5" pos:end="45:11"><name pos:start="45:5" pos:end="45:11">int32_t</name></type> <name pos:start="45:13" pos:end="45:15">tbi</name> <init pos:start="45:17" pos:end="45:19">= <expr pos:start="45:19" pos:end="45:19"><literal type="number" pos:start="45:19" pos:end="45:19">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="47:5" pos:end="47:40"><decl pos:start="47:5" pos:end="47:39"><type pos:start="47:5" pos:end="47:9"><name pos:start="47:5" pos:end="47:7">TCR</name> <modifier pos:start="47:9" pos:end="47:9">*</modifier></type><name pos:start="47:10" pos:end="47:12">tcr</name> <init pos:start="47:14" pos:end="47:39">= <expr pos:start="47:16" pos:end="47:39"><call pos:start="47:16" pos:end="47:39"><name pos:start="47:16" pos:end="47:25">regime_tcr</name><argument_list pos:start="47:26" pos:end="47:39">(<argument pos:start="47:27" pos:end="47:29"><expr pos:start="47:27" pos:end="47:29"><name pos:start="47:27" pos:end="47:29">env</name></expr></argument>, <argument pos:start="47:32" pos:end="47:38"><expr pos:start="47:32" pos:end="47:38"><name pos:start="47:32" pos:end="47:38">mmu_idx</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="49:5" pos:end="49:24"><decl pos:start="49:5" pos:end="49:10"><type pos:start="49:5" pos:end="49:7"><name pos:start="49:5" pos:end="49:7">int</name></type> <name pos:start="49:9" pos:end="49:10">ap</name></decl>, <decl pos:start="49:13" pos:end="49:14"><type ref="prev" pos:start="49:5" pos:end="49:7"/><name pos:start="49:13" pos:end="49:14">ns</name></decl>, <decl pos:start="49:17" pos:end="49:18"><type ref="prev" pos:start="49:5" pos:end="49:7"/><name pos:start="49:17" pos:end="49:18">xn</name></decl>, <decl pos:start="49:21" pos:end="49:23"><type ref="prev" pos:start="49:5" pos:end="49:7"/><name pos:start="49:21" pos:end="49:23">pxn</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="51:5" pos:end="51:42"><decl pos:start="51:5" pos:end="51:41"><type pos:start="51:5" pos:end="51:12"><name pos:start="51:5" pos:end="51:12">uint32_t</name></type> <name pos:start="51:14" pos:end="51:15">el</name> <init pos:start="51:17" pos:end="51:41">= <expr pos:start="51:19" pos:end="51:41"><call pos:start="51:19" pos:end="51:41"><name pos:start="51:19" pos:end="51:27">regime_el</name><argument_list pos:start="51:28" pos:end="51:41">(<argument pos:start="51:29" pos:end="51:31"><expr pos:start="51:29" pos:end="51:31"><name pos:start="51:29" pos:end="51:31">env</name></expr></argument>, <argument pos:start="51:34" pos:end="51:40"><expr pos:start="51:34" pos:end="51:40"><name pos:start="51:34" pos:end="51:40">mmu_idx</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="53:5" pos:end="53:28"><decl pos:start="53:5" pos:end="53:27"><type pos:start="53:5" pos:end="53:8"><name pos:start="53:5" pos:end="53:8">bool</name></type> <name pos:start="53:10" pos:end="53:20">ttbr1_valid</name> <init pos:start="53:22" pos:end="53:27">= <expr pos:start="53:24" pos:end="53:27"><name pos:start="53:24" pos:end="53:27">true</name></expr></init></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="57:5" pos:end="67:7">/* TODO:
+
+     * This code does not handle the different format TCR for VTCR_EL2.
+
+     * This code also does not support shareability levels.
+
+     * Attribute and permission bit handling should also be checked when adding
+
+     * support for those page table walks.
+
+     */</comment>
+
+    <if_stmt pos:start="69:5" pos:end="121:5"><if pos:start="69:5" pos:end="111:5">if <condition pos:start="69:8" pos:end="69:32">(<expr pos:start="69:9" pos:end="69:31"><call pos:start="69:9" pos:end="69:31"><name pos:start="69:9" pos:end="69:22">arm_el_is_aa64</name><argument_list pos:start="69:23" pos:end="69:31">(<argument pos:start="69:24" pos:end="69:26"><expr pos:start="69:24" pos:end="69:26"><name pos:start="69:24" pos:end="69:26">env</name></expr></argument>, <argument pos:start="69:29" pos:end="69:30"><expr pos:start="69:29" pos:end="69:30"><name pos:start="69:29" pos:end="69:30">el</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="69:34" pos:end="111:5">{<block_content pos:start="71:9" pos:end="109:9">
+
+        <expr_stmt pos:start="71:9" pos:end="71:21"><expr pos:start="71:9" pos:end="71:20"><name pos:start="71:9" pos:end="71:15">va_size</name> <operator pos:start="71:17" pos:end="71:17">=</operator> <literal type="number" pos:start="71:19" pos:end="71:20">64</literal></expr>;</expr_stmt>
+
+        <if_stmt pos:start="73:9" pos:end="93:9"><if pos:start="73:9" pos:end="81:9">if <condition pos:start="73:12" pos:end="73:19">(<expr pos:start="73:13" pos:end="73:18"><name pos:start="73:13" pos:end="73:14">el</name> <operator pos:start="73:16" pos:end="73:16">&gt;</operator> <literal type="number" pos:start="73:18" pos:end="73:18">1</literal></expr>)</condition> <block pos:start="73:21" pos:end="81:9">{<block_content pos:start="75:13" pos:end="79:13">
+
+            <if_stmt pos:start="75:13" pos:end="79:13"><if pos:start="75:13" pos:end="79:13">if <condition pos:start="75:16" pos:end="75:42">(<expr pos:start="75:17" pos:end="75:41"><name pos:start="75:17" pos:end="75:23">mmu_idx</name> <operator pos:start="75:25" pos:end="75:26">!=</operator> <name pos:start="75:28" pos:end="75:41">ARMMMUIdx_S2NS</name></expr>)</condition> <block pos:start="75:44" pos:end="79:13">{<block_content pos:start="77:17" pos:end="77:53">
+
+                <expr_stmt pos:start="77:17" pos:end="77:53"><expr pos:start="77:17" pos:end="77:52"><name pos:start="77:17" pos:end="77:19">tbi</name> <operator pos:start="77:21" pos:end="77:21">=</operator> <call pos:start="77:23" pos:end="77:52"><name pos:start="77:23" pos:end="77:31">extract64</name><argument_list pos:start="77:32" pos:end="77:52">(<argument pos:start="77:33" pos:end="77:44"><expr pos:start="77:33" pos:end="77:44"><name pos:start="77:33" pos:end="77:44"><name pos:start="77:33" pos:end="77:35">tcr</name><operator pos:start="77:36" pos:end="77:37">-&gt;</operator><name pos:start="77:38" pos:end="77:44">raw_tcr</name></name></expr></argument>, <argument pos:start="77:47" pos:end="77:48"><expr pos:start="77:47" pos:end="77:48"><literal type="number" pos:start="77:47" pos:end="77:48">20</literal></expr></argument>, <argument pos:start="77:51" pos:end="77:51"><expr pos:start="77:51" pos:end="77:51"><literal type="number" pos:start="77:51" pos:end="77:51">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+        </block_content>}</block></if> <else pos:start="81:11" pos:end="93:9">else <block pos:start="81:16" pos:end="93:9">{<block_content pos:start="83:13" pos:end="91:13">
+
+            <if_stmt pos:start="83:13" pos:end="91:13"><if pos:start="83:13" pos:end="87:13">if <condition pos:start="83:16" pos:end="83:42">(<expr pos:start="83:17" pos:end="83:41"><call pos:start="83:17" pos:end="83:41"><name pos:start="83:17" pos:end="83:25">extract64</name><argument_list pos:start="83:26" pos:end="83:41">(<argument pos:start="83:27" pos:end="83:33"><expr pos:start="83:27" pos:end="83:33"><name pos:start="83:27" pos:end="83:33">address</name></expr></argument>, <argument pos:start="83:36" pos:end="83:37"><expr pos:start="83:36" pos:end="83:37"><literal type="number" pos:start="83:36" pos:end="83:37">55</literal></expr></argument>, <argument pos:start="83:40" pos:end="83:40"><expr pos:start="83:40" pos:end="83:40"><literal type="number" pos:start="83:40" pos:end="83:40">1</literal></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="83:44" pos:end="87:13">{<block_content pos:start="85:17" pos:end="85:53">
+
+                <expr_stmt pos:start="85:17" pos:end="85:53"><expr pos:start="85:17" pos:end="85:52"><name pos:start="85:17" pos:end="85:19">tbi</name> <operator pos:start="85:21" pos:end="85:21">=</operator> <call pos:start="85:23" pos:end="85:52"><name pos:start="85:23" pos:end="85:31">extract64</name><argument_list pos:start="85:32" pos:end="85:52">(<argument pos:start="85:33" pos:end="85:44"><expr pos:start="85:33" pos:end="85:44"><name pos:start="85:33" pos:end="85:44"><name pos:start="85:33" pos:end="85:35">tcr</name><operator pos:start="85:36" pos:end="85:37">-&gt;</operator><name pos:start="85:38" pos:end="85:44">raw_tcr</name></name></expr></argument>, <argument pos:start="85:47" pos:end="85:48"><expr pos:start="85:47" pos:end="85:48"><literal type="number" pos:start="85:47" pos:end="85:48">38</literal></expr></argument>, <argument pos:start="85:51" pos:end="85:51"><expr pos:start="85:51" pos:end="85:51"><literal type="number" pos:start="85:51" pos:end="85:51">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if> <else pos:start="87:15" pos:end="91:13">else <block pos:start="87:20" pos:end="91:13">{<block_content pos:start="89:17" pos:end="89:53">
+
+                <expr_stmt pos:start="89:17" pos:end="89:53"><expr pos:start="89:17" pos:end="89:52"><name pos:start="89:17" pos:end="89:19">tbi</name> <operator pos:start="89:21" pos:end="89:21">=</operator> <call pos:start="89:23" pos:end="89:52"><name pos:start="89:23" pos:end="89:31">extract64</name><argument_list pos:start="89:32" pos:end="89:52">(<argument pos:start="89:33" pos:end="89:44"><expr pos:start="89:33" pos:end="89:44"><name pos:start="89:33" pos:end="89:44"><name pos:start="89:33" pos:end="89:35">tcr</name><operator pos:start="89:36" pos:end="89:37">-&gt;</operator><name pos:start="89:38" pos:end="89:44">raw_tcr</name></name></expr></argument>, <argument pos:start="89:47" pos:end="89:48"><expr pos:start="89:47" pos:end="89:48"><literal type="number" pos:start="89:47" pos:end="89:48">37</literal></expr></argument>, <argument pos:start="89:51" pos:end="89:51"><expr pos:start="89:51" pos:end="89:51"><literal type="number" pos:start="89:51" pos:end="89:51">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></else></if_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+        <expr_stmt pos:start="95:9" pos:end="95:17"><expr pos:start="95:9" pos:end="95:16"><name pos:start="95:9" pos:end="95:11">tbi</name> <operator pos:start="95:13" pos:end="95:14">*=</operator> <literal type="number" pos:start="95:16" pos:end="95:16">8</literal></expr>;</expr_stmt>
+
+
+
+        <comment type="block" pos:start="99:9" pos:end="103:11">/* If we are in 64-bit EL2 or EL3 then there is no TTBR1, so mark it
+
+         * invalid.
+
+         */</comment>
+
+        <if_stmt pos:start="105:9" pos:end="109:9"><if pos:start="105:9" pos:end="109:9">if <condition pos:start="105:12" pos:end="105:19">(<expr pos:start="105:13" pos:end="105:18"><name pos:start="105:13" pos:end="105:14">el</name> <operator pos:start="105:16" pos:end="105:16">&gt;</operator> <literal type="number" pos:start="105:18" pos:end="105:18">1</literal></expr>)</condition> <block pos:start="105:21" pos:end="109:9">{<block_content pos:start="107:13" pos:end="107:32">
+
+            <expr_stmt pos:start="107:13" pos:end="107:32"><expr pos:start="107:13" pos:end="107:31"><name pos:start="107:13" pos:end="107:23">ttbr1_valid</name> <operator pos:start="107:25" pos:end="107:25">=</operator> <name pos:start="107:27" pos:end="107:31">false</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if> <else pos:start="111:7" pos:end="121:5">else <block pos:start="111:12" pos:end="121:5">{<block_content pos:start="115:9" pos:end="119:9">
+
+        <comment type="block" pos:start="113:9" pos:end="113:39">/* There is no TTBR1 for EL2 */</comment>
+
+        <if_stmt pos:start="115:9" pos:end="119:9"><if pos:start="115:9" pos:end="119:9">if <condition pos:start="115:12" pos:end="115:20">(<expr pos:start="115:13" pos:end="115:19"><name pos:start="115:13" pos:end="115:14">el</name> <operator pos:start="115:16" pos:end="115:17">==</operator> <literal type="number" pos:start="115:19" pos:end="115:19">2</literal></expr>)</condition> <block pos:start="115:22" pos:end="119:9">{<block_content pos:start="117:13" pos:end="117:32">
+
+            <expr_stmt pos:start="117:13" pos:end="117:32"><expr pos:start="117:13" pos:end="117:31"><name pos:start="117:13" pos:end="117:23">ttbr1_valid</name> <operator pos:start="117:25" pos:end="117:25">=</operator> <name pos:start="117:27" pos:end="117:31">false</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <comment type="block" pos:start="125:5" pos:end="133:7">/* Determine whether this address is in the region controlled by
+
+     * TTBR0 or TTBR1 (or if it is in neither region and should fault).
+
+     * This is a Non-secure PL0/1 stage 1 translation, so controlled by
+
+     * TTBCR/TTBR0/TTBR1 in accordance with ARM ARM DDI0406C table B-32:
+
+     */</comment>
+
+    <if_stmt pos:start="135:5" pos:end="175:5"><if pos:start="135:5" pos:end="145:5">if <condition pos:start="135:8" pos:end="135:22">(<expr pos:start="135:9" pos:end="135:21"><name pos:start="135:9" pos:end="135:15">va_size</name> <operator pos:start="135:17" pos:end="135:18">==</operator> <literal type="number" pos:start="135:20" pos:end="135:21">64</literal></expr>)</condition> <block pos:start="135:24" pos:end="145:5">{<block_content pos:start="139:9" pos:end="143:29">
+
+        <comment type="block" pos:start="137:9" pos:end="137:35">/* AArch64 translation.  */</comment>
+
+        <expr_stmt pos:start="139:9" pos:end="139:45"><expr pos:start="139:9" pos:end="139:44"><name pos:start="139:9" pos:end="139:12">t0sz</name> <operator pos:start="139:14" pos:end="139:14">=</operator> <call pos:start="139:16" pos:end="139:44"><name pos:start="139:16" pos:end="139:24">extract32</name><argument_list pos:start="139:25" pos:end="139:44">(<argument pos:start="139:26" pos:end="139:37"><expr pos:start="139:26" pos:end="139:37"><name pos:start="139:26" pos:end="139:37"><name pos:start="139:26" pos:end="139:28">tcr</name><operator pos:start="139:29" pos:end="139:30">-&gt;</operator><name pos:start="139:31" pos:end="139:37">raw_tcr</name></name></expr></argument>, <argument pos:start="139:40" pos:end="139:40"><expr pos:start="139:40" pos:end="139:40"><literal type="number" pos:start="139:40" pos:end="139:40">0</literal></expr></argument>, <argument pos:start="139:43" pos:end="139:43"><expr pos:start="139:43" pos:end="139:43"><literal type="number" pos:start="139:43" pos:end="139:43">6</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="141:9" pos:end="141:29"><expr pos:start="141:9" pos:end="141:28"><name pos:start="141:9" pos:end="141:12">t0sz</name> <operator pos:start="141:14" pos:end="141:14">=</operator> <call pos:start="141:16" pos:end="141:28"><name pos:start="141:16" pos:end="141:18">MIN</name><argument_list pos:start="141:19" pos:end="141:28">(<argument pos:start="141:20" pos:end="141:23"><expr pos:start="141:20" pos:end="141:23"><name pos:start="141:20" pos:end="141:23">t0sz</name></expr></argument>, <argument pos:start="141:26" pos:end="141:27"><expr pos:start="141:26" pos:end="141:27"><literal type="number" pos:start="141:26" pos:end="141:27">39</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="143:9" pos:end="143:29"><expr pos:start="143:9" pos:end="143:28"><name pos:start="143:9" pos:end="143:12">t0sz</name> <operator pos:start="143:14" pos:end="143:14">=</operator> <call pos:start="143:16" pos:end="143:28"><name pos:start="143:16" pos:end="143:18">MAX</name><argument_list pos:start="143:19" pos:end="143:28">(<argument pos:start="143:20" pos:end="143:23"><expr pos:start="143:20" pos:end="143:23"><name pos:start="143:20" pos:end="143:23">t0sz</name></expr></argument>, <argument pos:start="143:26" pos:end="143:27"><expr pos:start="143:26" pos:end="143:27"><literal type="number" pos:start="143:26" pos:end="143:27">16</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <if type="elseif" pos:start="145:7" pos:end="151:5">else if <condition pos:start="145:15" pos:end="145:41">(<expr pos:start="145:16" pos:end="145:40"><name pos:start="145:16" pos:end="145:22">mmu_idx</name> <operator pos:start="145:24" pos:end="145:25">!=</operator> <name pos:start="145:27" pos:end="145:40">ARMMMUIdx_S2NS</name></expr>)</condition> <block pos:start="145:43" pos:end="151:5">{<block_content pos:start="149:9" pos:end="149:45">
+
+        <comment type="block" pos:start="147:9" pos:end="147:43">/* AArch32 stage 1 translation.  */</comment>
+
+        <expr_stmt pos:start="149:9" pos:end="149:45"><expr pos:start="149:9" pos:end="149:44"><name pos:start="149:9" pos:end="149:12">t0sz</name> <operator pos:start="149:14" pos:end="149:14">=</operator> <call pos:start="149:16" pos:end="149:44"><name pos:start="149:16" pos:end="149:24">extract32</name><argument_list pos:start="149:25" pos:end="149:44">(<argument pos:start="149:26" pos:end="149:37"><expr pos:start="149:26" pos:end="149:37"><name pos:start="149:26" pos:end="149:37"><name pos:start="149:26" pos:end="149:28">tcr</name><operator pos:start="149:29" pos:end="149:30">-&gt;</operator><name pos:start="149:31" pos:end="149:37">raw_tcr</name></name></expr></argument>, <argument pos:start="149:40" pos:end="149:40"><expr pos:start="149:40" pos:end="149:40"><literal type="number" pos:start="149:40" pos:end="149:40">0</literal></expr></argument>, <argument pos:start="149:43" pos:end="149:43"><expr pos:start="149:43" pos:end="149:43"><literal type="number" pos:start="149:43" pos:end="149:43">3</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="151:7" pos:end="175:5">else <block pos:start="151:12" pos:end="175:5">{<block_content pos:start="155:9" pos:end="173:9">
+
+        <comment type="block" pos:start="153:9" pos:end="153:43">/* AArch32 stage 2 translation.  */</comment>
+
+        <decl_stmt pos:start="155:9" pos:end="155:50"><decl pos:start="155:9" pos:end="155:49"><type pos:start="155:9" pos:end="155:12"><name pos:start="155:9" pos:end="155:12">bool</name></type> <name pos:start="155:14" pos:end="155:17">sext</name> <init pos:start="155:19" pos:end="155:49">= <expr pos:start="155:21" pos:end="155:49"><call pos:start="155:21" pos:end="155:49"><name pos:start="155:21" pos:end="155:29">extract32</name><argument_list pos:start="155:30" pos:end="155:49">(<argument pos:start="155:31" pos:end="155:42"><expr pos:start="155:31" pos:end="155:42"><name pos:start="155:31" pos:end="155:42"><name pos:start="155:31" pos:end="155:33">tcr</name><operator pos:start="155:34" pos:end="155:35">-&gt;</operator><name pos:start="155:36" pos:end="155:42">raw_tcr</name></name></expr></argument>, <argument pos:start="155:45" pos:end="155:45"><expr pos:start="155:45" pos:end="155:45"><literal type="number" pos:start="155:45" pos:end="155:45">4</literal></expr></argument>, <argument pos:start="155:48" pos:end="155:48"><expr pos:start="155:48" pos:end="155:48"><literal type="number" pos:start="155:48" pos:end="155:48">1</literal></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="157:9" pos:end="157:50"><decl pos:start="157:9" pos:end="157:49"><type pos:start="157:9" pos:end="157:12"><name pos:start="157:9" pos:end="157:12">bool</name></type> <name pos:start="157:14" pos:end="157:17">sign</name> <init pos:start="157:19" pos:end="157:49">= <expr pos:start="157:21" pos:end="157:49"><call pos:start="157:21" pos:end="157:49"><name pos:start="157:21" pos:end="157:29">extract32</name><argument_list pos:start="157:30" pos:end="157:49">(<argument pos:start="157:31" pos:end="157:42"><expr pos:start="157:31" pos:end="157:42"><name pos:start="157:31" pos:end="157:42"><name pos:start="157:31" pos:end="157:33">tcr</name><operator pos:start="157:34" pos:end="157:35">-&gt;</operator><name pos:start="157:36" pos:end="157:42">raw_tcr</name></name></expr></argument>, <argument pos:start="157:45" pos:end="157:45"><expr pos:start="157:45" pos:end="157:45"><literal type="number" pos:start="157:45" pos:end="157:45">3</literal></expr></argument>, <argument pos:start="157:48" pos:end="157:48"><expr pos:start="157:48" pos:end="157:48"><literal type="number" pos:start="157:48" pos:end="157:48">1</literal></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <expr_stmt pos:start="159:9" pos:end="159:46"><expr pos:start="159:9" pos:end="159:45"><name pos:start="159:9" pos:end="159:12">t0sz</name> <operator pos:start="159:14" pos:end="159:14">=</operator> <call pos:start="159:16" pos:end="159:45"><name pos:start="159:16" pos:end="159:25">sextract32</name><argument_list pos:start="159:26" pos:end="159:45">(<argument pos:start="159:27" pos:end="159:38"><expr pos:start="159:27" pos:end="159:38"><name pos:start="159:27" pos:end="159:38"><name pos:start="159:27" pos:end="159:29">tcr</name><operator pos:start="159:30" pos:end="159:31">-&gt;</operator><name pos:start="159:32" pos:end="159:38">raw_tcr</name></name></expr></argument>, <argument pos:start="159:41" pos:end="159:41"><expr pos:start="159:41" pos:end="159:41"><literal type="number" pos:start="159:41" pos:end="159:41">0</literal></expr></argument>, <argument pos:start="159:44" pos:end="159:44"><expr pos:start="159:44" pos:end="159:44"><literal type="number" pos:start="159:44" pos:end="159:44">4</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <comment type="block" pos:start="163:9" pos:end="165:60">/* If the sign-extend bit is not the same as t0sz[3], the result
+
+         * is unpredictable. Flag this as a guest error.  */</comment>
+
+        <if_stmt pos:start="167:9" pos:end="173:9"><if pos:start="167:9" pos:end="173:9">if <condition pos:start="167:12" pos:end="167:25">(<expr pos:start="167:13" pos:end="167:24"><name pos:start="167:13" pos:end="167:16">sign</name> <operator pos:start="167:18" pos:end="167:19">!=</operator> <name pos:start="167:21" pos:end="167:24">sext</name></expr>)</condition> <block pos:start="167:27" pos:end="173:9">{<block_content pos:start="169:13" pos:end="171:72">
+
+            <expr_stmt pos:start="169:13" pos:end="171:72"><expr pos:start="169:13" pos:end="171:71"><call pos:start="169:13" pos:end="171:71"><name pos:start="169:13" pos:end="169:25">qemu_log_mask</name><argument_list pos:start="169:26" pos:end="171:71">(<argument pos:start="169:27" pos:end="169:41"><expr pos:start="169:27" pos:end="169:41"><name pos:start="169:27" pos:end="169:41">LOG_GUEST_ERROR</name></expr></argument>,
+
+                          <argument pos:start="171:27" pos:end="171:70"><expr pos:start="171:27" pos:end="171:70"><literal type="string" pos:start="171:27" pos:end="171:70">"AArch32: VTCR.S / VTCR.T0SZ[3] missmatch\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+    <expr_stmt pos:start="177:5" pos:end="177:42"><expr pos:start="177:5" pos:end="177:41"><name pos:start="177:5" pos:end="177:8">t1sz</name> <operator pos:start="177:10" pos:end="177:10">=</operator> <call pos:start="177:12" pos:end="177:41"><name pos:start="177:12" pos:end="177:20">extract32</name><argument_list pos:start="177:21" pos:end="177:41">(<argument pos:start="177:22" pos:end="177:33"><expr pos:start="177:22" pos:end="177:33"><name pos:start="177:22" pos:end="177:33"><name pos:start="177:22" pos:end="177:24">tcr</name><operator pos:start="177:25" pos:end="177:26">-&gt;</operator><name pos:start="177:27" pos:end="177:33">raw_tcr</name></name></expr></argument>, <argument pos:start="177:36" pos:end="177:37"><expr pos:start="177:36" pos:end="177:37"><literal type="number" pos:start="177:36" pos:end="177:37">16</literal></expr></argument>, <argument pos:start="177:40" pos:end="177:40"><expr pos:start="177:40" pos:end="177:40"><literal type="number" pos:start="177:40" pos:end="177:40">6</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="179:5" pos:end="185:5"><if pos:start="179:5" pos:end="185:5">if <condition pos:start="179:8" pos:end="179:22">(<expr pos:start="179:9" pos:end="179:21"><name pos:start="179:9" pos:end="179:15">va_size</name> <operator pos:start="179:17" pos:end="179:18">==</operator> <literal type="number" pos:start="179:20" pos:end="179:21">64</literal></expr>)</condition> <block pos:start="179:24" pos:end="185:5">{<block_content pos:start="181:9" pos:end="183:29">
+
+        <expr_stmt pos:start="181:9" pos:end="181:29"><expr pos:start="181:9" pos:end="181:28"><name pos:start="181:9" pos:end="181:12">t1sz</name> <operator pos:start="181:14" pos:end="181:14">=</operator> <call pos:start="181:16" pos:end="181:28"><name pos:start="181:16" pos:end="181:18">MIN</name><argument_list pos:start="181:19" pos:end="181:28">(<argument pos:start="181:20" pos:end="181:23"><expr pos:start="181:20" pos:end="181:23"><name pos:start="181:20" pos:end="181:23">t1sz</name></expr></argument>, <argument pos:start="181:26" pos:end="181:27"><expr pos:start="181:26" pos:end="181:27"><literal type="number" pos:start="181:26" pos:end="181:27">39</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="183:9" pos:end="183:29"><expr pos:start="183:9" pos:end="183:28"><name pos:start="183:9" pos:end="183:12">t1sz</name> <operator pos:start="183:14" pos:end="183:14">=</operator> <call pos:start="183:16" pos:end="183:28"><name pos:start="183:16" pos:end="183:18">MAX</name><argument_list pos:start="183:19" pos:end="183:28">(<argument pos:start="183:20" pos:end="183:23"><expr pos:start="183:20" pos:end="183:23"><name pos:start="183:20" pos:end="183:23">t1sz</name></expr></argument>, <argument pos:start="183:26" pos:end="183:27"><expr pos:start="183:26" pos:end="183:27"><literal type="number" pos:start="183:26" pos:end="183:27">16</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <if_stmt pos:start="187:5" pos:end="221:5"><if pos:start="187:5" pos:end="193:5">if <condition pos:start="187:8" pos:end="187:64">(<expr pos:start="187:9" pos:end="187:63"><name pos:start="187:9" pos:end="187:12">t0sz</name> <operator pos:start="187:14" pos:end="187:15">&amp;&amp;</operator> <operator pos:start="187:17" pos:end="187:17">!</operator><call pos:start="187:18" pos:end="187:63"><name pos:start="187:18" pos:end="187:26">extract64</name><argument_list pos:start="187:27" pos:end="187:63">(<argument pos:start="187:28" pos:end="187:34"><expr pos:start="187:28" pos:end="187:34"><name pos:start="187:28" pos:end="187:34">address</name></expr></argument>, <argument pos:start="187:37" pos:end="187:50"><expr pos:start="187:37" pos:end="187:50"><name pos:start="187:37" pos:end="187:43">va_size</name> <operator pos:start="187:45" pos:end="187:45">-</operator> <name pos:start="187:47" pos:end="187:50">t0sz</name></expr></argument>, <argument pos:start="187:53" pos:end="187:62"><expr pos:start="187:53" pos:end="187:62"><name pos:start="187:53" pos:end="187:56">t0sz</name> <operator pos:start="187:58" pos:end="187:58">-</operator> <name pos:start="187:60" pos:end="187:62">tbi</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="187:66" pos:end="193:5">{<block_content pos:start="191:9" pos:end="191:24">
+
+        <comment type="block" pos:start="189:9" pos:end="189:75">/* there is a ttbr0 region and we are in it (high bits all zero) */</comment>
+
+        <expr_stmt pos:start="191:9" pos:end="191:24"><expr pos:start="191:9" pos:end="191:23"><name pos:start="191:9" pos:end="191:19">ttbr_select</name> <operator pos:start="191:21" pos:end="191:21">=</operator> <literal type="number" pos:start="191:23" pos:end="191:23">0</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <if type="elseif" pos:start="193:7" pos:end="201:5">else if <condition pos:start="193:15" pos:end="195:64">(<expr pos:start="193:16" pos:end="195:63"><name pos:start="193:16" pos:end="193:26">ttbr1_valid</name> <operator pos:start="193:28" pos:end="193:29">&amp;&amp;</operator> <name pos:start="193:31" pos:end="193:34">t1sz</name> <operator pos:start="193:36" pos:end="193:37">&amp;&amp;</operator>
+
+               <operator pos:start="195:16" pos:end="195:16">!</operator><call pos:start="195:17" pos:end="195:63"><name pos:start="195:17" pos:end="195:25">extract64</name><argument_list pos:start="195:26" pos:end="195:63">(<argument pos:start="195:27" pos:end="195:34"><expr pos:start="195:27" pos:end="195:34"><operator pos:start="195:27" pos:end="195:27">~</operator><name pos:start="195:28" pos:end="195:34">address</name></expr></argument>, <argument pos:start="195:37" pos:end="195:50"><expr pos:start="195:37" pos:end="195:50"><name pos:start="195:37" pos:end="195:43">va_size</name> <operator pos:start="195:45" pos:end="195:45">-</operator> <name pos:start="195:47" pos:end="195:50">t1sz</name></expr></argument>, <argument pos:start="195:53" pos:end="195:62"><expr pos:start="195:53" pos:end="195:62"><name pos:start="195:53" pos:end="195:56">t1sz</name> <operator pos:start="195:58" pos:end="195:58">-</operator> <name pos:start="195:60" pos:end="195:62">tbi</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="195:66" pos:end="201:5">{<block_content pos:start="199:9" pos:end="199:24">
+
+        <comment type="block" pos:start="197:9" pos:end="197:74">/* there is a ttbr1 region and we are in it (high bits all one) */</comment>
+
+        <expr_stmt pos:start="199:9" pos:end="199:24"><expr pos:start="199:9" pos:end="199:23"><name pos:start="199:9" pos:end="199:19">ttbr_select</name> <operator pos:start="199:21" pos:end="199:21">=</operator> <literal type="number" pos:start="199:23" pos:end="199:23">1</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <if type="elseif" pos:start="201:7" pos:end="207:5">else if <condition pos:start="201:15" pos:end="201:21">(<expr pos:start="201:16" pos:end="201:20"><operator pos:start="201:16" pos:end="201:16">!</operator><name pos:start="201:17" pos:end="201:20">t0sz</name></expr>)</condition> <block pos:start="201:23" pos:end="207:5">{<block_content pos:start="205:9" pos:end="205:24">
+
+        <comment type="block" pos:start="203:9" pos:end="203:66">/* ttbr0 region is "everything not in the ttbr1 region" */</comment>
+
+        <expr_stmt pos:start="205:9" pos:end="205:24"><expr pos:start="205:9" pos:end="205:23"><name pos:start="205:9" pos:end="205:19">ttbr_select</name> <operator pos:start="205:21" pos:end="205:21">=</operator> <literal type="number" pos:start="205:23" pos:end="205:23">0</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <if type="elseif" pos:start="207:7" pos:end="213:5">else if <condition pos:start="207:15" pos:end="207:36">(<expr pos:start="207:16" pos:end="207:35"><operator pos:start="207:16" pos:end="207:16">!</operator><name pos:start="207:17" pos:end="207:20">t1sz</name> <operator pos:start="207:22" pos:end="207:23">&amp;&amp;</operator> <name pos:start="207:25" pos:end="207:35">ttbr1_valid</name></expr>)</condition> <block pos:start="207:38" pos:end="213:5">{<block_content pos:start="211:9" pos:end="211:24">
+
+        <comment type="block" pos:start="209:9" pos:end="209:66">/* ttbr1 region is "everything not in the ttbr0 region" */</comment>
+
+        <expr_stmt pos:start="211:9" pos:end="211:24"><expr pos:start="211:9" pos:end="211:23"><name pos:start="211:9" pos:end="211:19">ttbr_select</name> <operator pos:start="211:21" pos:end="211:21">=</operator> <literal type="number" pos:start="211:23" pos:end="211:23">1</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="213:7" pos:end="221:5">else <block pos:start="213:12" pos:end="221:5">{<block_content pos:start="217:9" pos:end="219:22">
+
+        <comment type="block" pos:start="215:9" pos:end="215:77">/* in the gap between the two regions, this is a Translation fault */</comment>
+
+        <expr_stmt pos:start="217:9" pos:end="217:39"><expr pos:start="217:9" pos:end="217:38"><name pos:start="217:9" pos:end="217:18">fault_type</name> <operator pos:start="217:20" pos:end="217:20">=</operator> <name pos:start="217:22" pos:end="217:38">translation_fault</name></expr>;</expr_stmt>
+
+        <goto pos:start="219:9" pos:end="219:22">goto <name pos:start="219:14" pos:end="219:21">do_fault</name>;</goto>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <comment type="block" pos:start="225:5" pos:end="237:7">/* Note that QEMU ignores shareability and cacheability attributes,
+
+     * so we don't need to do anything with the SH, ORGN, IRGN fields
+
+     * in the TTBCR.  Similarly, TTBCR:A1 selects whether we get the
+
+     * ASID from TTBR0 or TTBR1, but QEMU's TLB doesn't currently
+
+     * implement any ASID-like capability so we can ignore it (instead
+
+     * we will always flush the TLB any time the ASID is changed).
+
+     */</comment>
+
+    <if_stmt pos:start="239:5" pos:end="297:5"><if pos:start="239:5" pos:end="267:5">if <condition pos:start="239:8" pos:end="239:25">(<expr pos:start="239:9" pos:end="239:24"><name pos:start="239:9" pos:end="239:19">ttbr_select</name> <operator pos:start="239:21" pos:end="239:22">==</operator> <literal type="number" pos:start="239:24" pos:end="239:24">0</literal></expr>)</condition> <block pos:start="239:27" pos:end="267:5">{<block_content pos:start="241:9" pos:end="265:9">
+
+        <expr_stmt pos:start="241:9" pos:end="241:44"><expr pos:start="241:9" pos:end="241:43"><name pos:start="241:9" pos:end="241:12">ttbr</name> <operator pos:start="241:14" pos:end="241:14">=</operator> <call pos:start="241:16" pos:end="241:43"><name pos:start="241:16" pos:end="241:26">regime_ttbr</name><argument_list pos:start="241:27" pos:end="241:43">(<argument pos:start="241:28" pos:end="241:30"><expr pos:start="241:28" pos:end="241:30"><name pos:start="241:28" pos:end="241:30">env</name></expr></argument>, <argument pos:start="241:33" pos:end="241:39"><expr pos:start="241:33" pos:end="241:39"><name pos:start="241:33" pos:end="241:39">mmu_idx</name></expr></argument>, <argument pos:start="241:42" pos:end="241:42"><expr pos:start="241:42" pos:end="241:42"><literal type="number" pos:start="241:42" pos:end="241:42">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="243:9" pos:end="247:9"><if pos:start="243:9" pos:end="247:9">if <condition pos:start="243:12" pos:end="243:19">(<expr pos:start="243:13" pos:end="243:18"><name pos:start="243:13" pos:end="243:14">el</name> <operator pos:start="243:16" pos:end="243:16">&lt;</operator> <literal type="number" pos:start="243:18" pos:end="243:18">2</literal></expr>)</condition> <block pos:start="243:21" pos:end="247:9">{<block_content pos:start="245:13" pos:end="245:48">
+
+            <expr_stmt pos:start="245:13" pos:end="245:48"><expr pos:start="245:13" pos:end="245:47"><name pos:start="245:13" pos:end="245:15">epd</name> <operator pos:start="245:17" pos:end="245:17">=</operator> <call pos:start="245:19" pos:end="245:47"><name pos:start="245:19" pos:end="245:27">extract32</name><argument_list pos:start="245:28" pos:end="245:47">(<argument pos:start="245:29" pos:end="245:40"><expr pos:start="245:29" pos:end="245:40"><name pos:start="245:29" pos:end="245:40"><name pos:start="245:29" pos:end="245:31">tcr</name><operator pos:start="245:32" pos:end="245:33">-&gt;</operator><name pos:start="245:34" pos:end="245:40">raw_tcr</name></name></expr></argument>, <argument pos:start="245:43" pos:end="245:43"><expr pos:start="245:43" pos:end="245:43"><literal type="number" pos:start="245:43" pos:end="245:43">7</literal></expr></argument>, <argument pos:start="245:46" pos:end="245:46"><expr pos:start="245:46" pos:end="245:46"><literal type="number" pos:start="245:46" pos:end="245:46">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="249:9" pos:end="249:35"><expr pos:start="249:9" pos:end="249:34"><name pos:start="249:9" pos:end="249:17">inputsize</name> <operator pos:start="249:19" pos:end="249:19">=</operator> <name pos:start="249:21" pos:end="249:27">va_size</name> <operator pos:start="249:29" pos:end="249:29">-</operator> <name pos:start="249:31" pos:end="249:34">t0sz</name></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="253:9" pos:end="253:44"><expr pos:start="253:9" pos:end="253:43"><name pos:start="253:9" pos:end="253:10">tg</name> <operator pos:start="253:12" pos:end="253:12">=</operator> <call pos:start="253:14" pos:end="253:43"><name pos:start="253:14" pos:end="253:22">extract32</name><argument_list pos:start="253:23" pos:end="253:43">(<argument pos:start="253:24" pos:end="253:35"><expr pos:start="253:24" pos:end="253:35"><name pos:start="253:24" pos:end="253:35"><name pos:start="253:24" pos:end="253:26">tcr</name><operator pos:start="253:27" pos:end="253:28">-&gt;</operator><name pos:start="253:29" pos:end="253:35">raw_tcr</name></name></expr></argument>, <argument pos:start="253:38" pos:end="253:39"><expr pos:start="253:38" pos:end="253:39"><literal type="number" pos:start="253:38" pos:end="253:39">14</literal></expr></argument>, <argument pos:start="253:42" pos:end="253:42"><expr pos:start="253:42" pos:end="253:42"><literal type="number" pos:start="253:42" pos:end="253:42">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="255:9" pos:end="259:9"><if pos:start="255:9" pos:end="259:9">if <condition pos:start="255:12" pos:end="255:20">(<expr pos:start="255:13" pos:end="255:19"><name pos:start="255:13" pos:end="255:14">tg</name> <operator pos:start="255:16" pos:end="255:17">==</operator> <literal type="number" pos:start="255:19" pos:end="255:19">1</literal></expr>)</condition> <block pos:start="255:22" pos:end="259:9">{<block_content pos:start="257:13" pos:end="257:24"> <comment type="block" pos:start="255:24" pos:end="255:39">/* 64KB pages */</comment>
+
+            <expr_stmt pos:start="257:13" pos:end="257:24"><expr pos:start="257:13" pos:end="257:23"><name pos:start="257:13" pos:end="257:18">stride</name> <operator pos:start="257:20" pos:end="257:20">=</operator> <literal type="number" pos:start="257:22" pos:end="257:23">13</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <if_stmt pos:start="261:9" pos:end="265:9"><if pos:start="261:9" pos:end="265:9">if <condition pos:start="261:12" pos:end="261:20">(<expr pos:start="261:13" pos:end="261:19"><name pos:start="261:13" pos:end="261:14">tg</name> <operator pos:start="261:16" pos:end="261:17">==</operator> <literal type="number" pos:start="261:19" pos:end="261:19">2</literal></expr>)</condition> <block pos:start="261:22" pos:end="265:9">{<block_content pos:start="263:13" pos:end="263:24"> <comment type="block" pos:start="261:24" pos:end="261:39">/* 16KB pages */</comment>
+
+            <expr_stmt pos:start="263:13" pos:end="263:24"><expr pos:start="263:13" pos:end="263:23"><name pos:start="263:13" pos:end="263:18">stride</name> <operator pos:start="263:20" pos:end="263:20">=</operator> <literal type="number" pos:start="263:22" pos:end="263:23">11</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if> <else pos:start="267:7" pos:end="297:5">else <block pos:start="267:12" pos:end="297:5">{<block_content pos:start="271:9" pos:end="295:9">
+
+        <comment type="block" pos:start="269:9" pos:end="269:54">/* We should only be here if TTBR1 is valid */</comment>
+
+        <expr_stmt pos:start="271:9" pos:end="271:28"><expr pos:start="271:9" pos:end="271:27"><call pos:start="271:9" pos:end="271:27"><name pos:start="271:9" pos:end="271:14">assert</name><argument_list pos:start="271:15" pos:end="271:27">(<argument pos:start="271:16" pos:end="271:26"><expr pos:start="271:16" pos:end="271:26"><name pos:start="271:16" pos:end="271:26">ttbr1_valid</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="275:9" pos:end="275:44"><expr pos:start="275:9" pos:end="275:43"><name pos:start="275:9" pos:end="275:12">ttbr</name> <operator pos:start="275:14" pos:end="275:14">=</operator> <call pos:start="275:16" pos:end="275:43"><name pos:start="275:16" pos:end="275:26">regime_ttbr</name><argument_list pos:start="275:27" pos:end="275:43">(<argument pos:start="275:28" pos:end="275:30"><expr pos:start="275:28" pos:end="275:30"><name pos:start="275:28" pos:end="275:30">env</name></expr></argument>, <argument pos:start="275:33" pos:end="275:39"><expr pos:start="275:33" pos:end="275:39"><name pos:start="275:33" pos:end="275:39">mmu_idx</name></expr></argument>, <argument pos:start="275:42" pos:end="275:42"><expr pos:start="275:42" pos:end="275:42"><literal type="number" pos:start="275:42" pos:end="275:42">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="277:9" pos:end="277:45"><expr pos:start="277:9" pos:end="277:44"><name pos:start="277:9" pos:end="277:11">epd</name> <operator pos:start="277:13" pos:end="277:13">=</operator> <call pos:start="277:15" pos:end="277:44"><name pos:start="277:15" pos:end="277:23">extract32</name><argument_list pos:start="277:24" pos:end="277:44">(<argument pos:start="277:25" pos:end="277:36"><expr pos:start="277:25" pos:end="277:36"><name pos:start="277:25" pos:end="277:36"><name pos:start="277:25" pos:end="277:27">tcr</name><operator pos:start="277:28" pos:end="277:29">-&gt;</operator><name pos:start="277:30" pos:end="277:36">raw_tcr</name></name></expr></argument>, <argument pos:start="277:39" pos:end="277:40"><expr pos:start="277:39" pos:end="277:40"><literal type="number" pos:start="277:39" pos:end="277:40">23</literal></expr></argument>, <argument pos:start="277:43" pos:end="277:43"><expr pos:start="277:43" pos:end="277:43"><literal type="number" pos:start="277:43" pos:end="277:43">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="279:9" pos:end="279:35"><expr pos:start="279:9" pos:end="279:34"><name pos:start="279:9" pos:end="279:17">inputsize</name> <operator pos:start="279:19" pos:end="279:19">=</operator> <name pos:start="279:21" pos:end="279:27">va_size</name> <operator pos:start="279:29" pos:end="279:29">-</operator> <name pos:start="279:31" pos:end="279:34">t1sz</name></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="283:9" pos:end="283:44"><expr pos:start="283:9" pos:end="283:43"><name pos:start="283:9" pos:end="283:10">tg</name> <operator pos:start="283:12" pos:end="283:12">=</operator> <call pos:start="283:14" pos:end="283:43"><name pos:start="283:14" pos:end="283:22">extract32</name><argument_list pos:start="283:23" pos:end="283:43">(<argument pos:start="283:24" pos:end="283:35"><expr pos:start="283:24" pos:end="283:35"><name pos:start="283:24" pos:end="283:35"><name pos:start="283:24" pos:end="283:26">tcr</name><operator pos:start="283:27" pos:end="283:28">-&gt;</operator><name pos:start="283:29" pos:end="283:35">raw_tcr</name></name></expr></argument>, <argument pos:start="283:38" pos:end="283:39"><expr pos:start="283:38" pos:end="283:39"><literal type="number" pos:start="283:38" pos:end="283:39">30</literal></expr></argument>, <argument pos:start="283:42" pos:end="283:42"><expr pos:start="283:42" pos:end="283:42"><literal type="number" pos:start="283:42" pos:end="283:42">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="285:9" pos:end="289:9"><if pos:start="285:9" pos:end="289:9">if <condition pos:start="285:12" pos:end="285:20">(<expr pos:start="285:13" pos:end="285:19"><name pos:start="285:13" pos:end="285:14">tg</name> <operator pos:start="285:16" pos:end="285:17">==</operator> <literal type="number" pos:start="285:19" pos:end="285:19">3</literal></expr>)</condition>  <block pos:start="285:23" pos:end="289:9">{<block_content pos:start="287:13" pos:end="287:24"> <comment type="block" pos:start="285:25" pos:end="285:40">/* 64KB pages */</comment>
+
+            <expr_stmt pos:start="287:13" pos:end="287:24"><expr pos:start="287:13" pos:end="287:23"><name pos:start="287:13" pos:end="287:18">stride</name> <operator pos:start="287:20" pos:end="287:20">=</operator> <literal type="number" pos:start="287:22" pos:end="287:23">13</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <if_stmt pos:start="291:9" pos:end="295:9"><if pos:start="291:9" pos:end="295:9">if <condition pos:start="291:12" pos:end="291:20">(<expr pos:start="291:13" pos:end="291:19"><name pos:start="291:13" pos:end="291:14">tg</name> <operator pos:start="291:16" pos:end="291:17">==</operator> <literal type="number" pos:start="291:19" pos:end="291:19">1</literal></expr>)</condition> <block pos:start="291:22" pos:end="295:9">{<block_content pos:start="293:13" pos:end="293:24"> <comment type="block" pos:start="291:24" pos:end="291:39">/* 16KB pages */</comment>
+
+            <expr_stmt pos:start="293:13" pos:end="293:24"><expr pos:start="293:13" pos:end="293:23"><name pos:start="293:13" pos:end="293:18">stride</name> <operator pos:start="293:20" pos:end="293:20">=</operator> <literal type="number" pos:start="293:22" pos:end="293:23">11</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <comment type="block" pos:start="301:5" pos:end="305:7">/* Here we should have set up all the parameters for the translation:
+
+     * va_size, inputsize, ttbr, epd, stride, tbi
+
+     */</comment>
+
+
+
+    <if_stmt pos:start="309:5" pos:end="319:5"><if pos:start="309:5" pos:end="319:5">if <condition pos:start="309:8" pos:end="309:12">(<expr pos:start="309:9" pos:end="309:11"><name pos:start="309:9" pos:end="309:11">epd</name></expr>)</condition> <block pos:start="309:14" pos:end="319:5">{<block_content pos:start="317:9" pos:end="317:22">
+
+        <comment type="block" pos:start="311:9" pos:end="315:11">/* Translation table walk disabled =&gt; Translation fault on TLB miss
+
+         * Note: This is always 0 on 64-bit EL2 and EL3.
+
+         */</comment>
+
+        <goto pos:start="317:9" pos:end="317:22">goto <name pos:start="317:14" pos:end="317:21">do_fault</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="323:5" pos:end="401:5"><if pos:start="323:5" pos:end="349:5">if <condition pos:start="323:8" pos:end="323:34">(<expr pos:start="323:9" pos:end="323:33"><name pos:start="323:9" pos:end="323:15">mmu_idx</name> <operator pos:start="323:17" pos:end="323:18">!=</operator> <name pos:start="323:20" pos:end="323:33">ARMMMUIdx_S2NS</name></expr>)</condition> <block pos:start="323:36" pos:end="349:5">{<block_content pos:start="347:9" pos:end="347:45">
+
+        <comment type="block" pos:start="325:9" pos:end="345:11">/* The starting level depends on the virtual address size (which can
+
+         * be up to 48 bits) and the translation granule size. It indicates
+
+         * the number of strides (stride bits at a time) needed to
+
+         * consume the bits of the input address. In the pseudocode this is:
+
+         *  level = 4 - RoundUp((inputsize - grainsize) / stride)
+
+         * where their 'inputsize' is our 'inputsize', 'grainsize' is
+
+         * our 'stride + 3' and 'stride' is our 'stride'.
+
+         * Applying the usual "rounded up m/n is (m+n-1)/n" and simplifying:
+
+         * = 4 - (inputsize - stride - 3 + stride - 1) / stride
+
+         * = 4 - (inputsize - 4) / stride;
+
+         */</comment>
+
+        <expr_stmt pos:start="347:9" pos:end="347:45"><expr pos:start="347:9" pos:end="347:44"><name pos:start="347:9" pos:end="347:13">level</name> <operator pos:start="347:15" pos:end="347:15">=</operator> <literal type="number" pos:start="347:17" pos:end="347:19">4</literal> <operator pos:start="347:19" pos:end="347:19">-</operator> <operator pos:start="347:21" pos:end="347:21">(</operator><name pos:start="347:22" pos:end="347:30">inputsize</name> <operator pos:start="347:32" pos:end="347:32">-</operator> <literal type="number" pos:start="347:34" pos:end="347:34">4</literal><operator pos:start="347:35" pos:end="347:35">)</operator> <operator pos:start="347:37" pos:end="347:37">/</operator> <name pos:start="347:39" pos:end="347:44">stride</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="349:7" pos:end="401:5">else <block pos:start="349:12" pos:end="401:5">{<block_content pos:start="357:9" pos:end="399:9">
+
+        <comment type="block" pos:start="351:9" pos:end="355:11">/* For stage 2 translations the starting level is specified by the
+
+         * VTCR_EL2.SL0 field (whose interpretation depends on the page size)
+
+         */</comment>
+
+        <decl_stmt pos:start="357:9" pos:end="357:55"><decl pos:start="357:9" pos:end="357:54"><type pos:start="357:9" pos:end="357:11"><name pos:start="357:9" pos:end="357:11">int</name></type> <name pos:start="357:13" pos:end="357:22">startlevel</name> <init pos:start="357:24" pos:end="357:54">= <expr pos:start="357:26" pos:end="357:54"><call pos:start="357:26" pos:end="357:54"><name pos:start="357:26" pos:end="357:34">extract32</name><argument_list pos:start="357:35" pos:end="357:54">(<argument pos:start="357:36" pos:end="357:47"><expr pos:start="357:36" pos:end="357:47"><name pos:start="357:36" pos:end="357:47"><name pos:start="357:36" pos:end="357:38">tcr</name><operator pos:start="357:39" pos:end="357:40">-&gt;</operator><name pos:start="357:41" pos:end="357:47">raw_tcr</name></name></expr></argument>, <argument pos:start="357:50" pos:end="357:50"><expr pos:start="357:50" pos:end="357:50"><literal type="number" pos:start="357:50" pos:end="357:50">6</literal></expr></argument>, <argument pos:start="357:53" pos:end="357:53"><expr pos:start="357:53" pos:end="357:53"><literal type="number" pos:start="357:53" pos:end="357:53">2</literal></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="359:9" pos:end="359:16"><decl pos:start="359:9" pos:end="359:15"><type pos:start="359:9" pos:end="359:12"><name pos:start="359:9" pos:end="359:12">bool</name></type> <name pos:start="359:14" pos:end="359:15">ok</name></decl>;</decl_stmt>
+
+
+
+        <if_stmt pos:start="363:9" pos:end="375:9"><if pos:start="363:9" pos:end="369:9">if <condition pos:start="363:12" pos:end="363:41">(<expr pos:start="363:13" pos:end="363:40"><name pos:start="363:13" pos:end="363:19">va_size</name> <operator pos:start="363:21" pos:end="363:22">==</operator> <literal type="number" pos:start="363:24" pos:end="363:25">32</literal> <operator pos:start="363:27" pos:end="363:28">||</operator> <name pos:start="363:30" pos:end="363:35">stride</name> <operator pos:start="363:37" pos:end="363:38">==</operator> <literal type="number" pos:start="363:40" pos:end="363:40">9</literal></expr>)</condition> <block pos:start="363:43" pos:end="369:9">{<block_content pos:start="367:13" pos:end="367:35">
+
+            <comment type="block" pos:start="365:13" pos:end="365:38">/* AArch32 or 4KB pages */</comment>
+
+            <expr_stmt pos:start="367:13" pos:end="367:35"><expr pos:start="367:13" pos:end="367:34"><name pos:start="367:13" pos:end="367:17">level</name> <operator pos:start="367:19" pos:end="367:19">=</operator> <literal type="number" pos:start="367:21" pos:end="367:23">2</literal> <operator pos:start="367:23" pos:end="367:23">-</operator> <name pos:start="367:25" pos:end="367:34">startlevel</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="369:11" pos:end="375:9">else <block pos:start="369:16" pos:end="375:9">{<block_content pos:start="373:13" pos:end="373:35">
+
+            <comment type="block" pos:start="371:13" pos:end="371:36">/* 16KB or 64KB pages */</comment>
+
+            <expr_stmt pos:start="373:13" pos:end="373:35"><expr pos:start="373:13" pos:end="373:34"><name pos:start="373:13" pos:end="373:17">level</name> <operator pos:start="373:19" pos:end="373:19">=</operator> <literal type="number" pos:start="373:21" pos:end="373:23">3</literal> <operator pos:start="373:23" pos:end="373:23">-</operator> <name pos:start="373:25" pos:end="373:34">startlevel</name></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+
+
+        <comment type="block" pos:start="379:9" pos:end="379:53">/* Check that the starting level is valid. */</comment>
+
+        <expr_stmt pos:start="381:9" pos:end="383:52"><expr pos:start="381:9" pos:end="383:51"><name pos:start="381:9" pos:end="381:10">ok</name> <operator pos:start="381:12" pos:end="381:12">=</operator> <call pos:start="381:14" pos:end="383:51"><name pos:start="381:14" pos:end="381:32">check_s2_startlevel</name><argument_list pos:start="381:33" pos:end="383:51">(<argument pos:start="381:34" pos:end="381:36"><expr pos:start="381:34" pos:end="381:36"><name pos:start="381:34" pos:end="381:36">cpu</name></expr></argument>, <argument pos:start="381:39" pos:end="381:51"><expr pos:start="381:39" pos:end="381:51"><name pos:start="381:39" pos:end="381:45">va_size</name> <operator pos:start="381:47" pos:end="381:48">==</operator> <literal type="number" pos:start="381:50" pos:end="381:51">64</literal></expr></argument>, <argument pos:start="381:54" pos:end="381:58"><expr pos:start="381:54" pos:end="381:58"><name pos:start="381:54" pos:end="381:58">level</name></expr></argument>,
+
+                                 <argument pos:start="383:34" pos:end="383:42"><expr pos:start="383:34" pos:end="383:42"><name pos:start="383:34" pos:end="383:42">inputsize</name></expr></argument>, <argument pos:start="383:45" pos:end="383:50"><expr pos:start="383:45" pos:end="383:50"><name pos:start="383:45" pos:end="383:50">stride</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="385:9" pos:end="399:9"><if pos:start="385:9" pos:end="399:9">if <condition pos:start="385:12" pos:end="385:16">(<expr pos:start="385:13" pos:end="385:15"><operator pos:start="385:13" pos:end="385:13">!</operator><name pos:start="385:14" pos:end="385:15">ok</name></expr>)</condition> <block pos:start="385:18" pos:end="399:9">{<block_content pos:start="393:13" pos:end="397:26">
+
+            <comment type="block" pos:start="387:13" pos:end="391:15">/* AArch64 reports these as level 0 faults.
+
+             * AArch32 reports these as level 1 faults.
+
+             */</comment>
+
+            <expr_stmt pos:start="393:13" pos:end="393:42"><expr pos:start="393:13" pos:end="393:41"><name pos:start="393:13" pos:end="393:17">level</name> <operator pos:start="393:19" pos:end="393:19">=</operator> <ternary pos:start="393:21" pos:end="393:41"><condition pos:start="393:21" pos:end="393:35"><expr pos:start="393:21" pos:end="393:33"><name pos:start="393:21" pos:end="393:27">va_size</name> <operator pos:start="393:29" pos:end="393:30">==</operator> <literal type="number" pos:start="393:32" pos:end="393:33">64</literal></expr> ?</condition><then pos:start="393:37" pos:end="393:37"> <expr pos:start="393:37" pos:end="393:37"><literal type="number" pos:start="393:37" pos:end="393:37">0</literal></expr> </then><else pos:start="393:39" pos:end="393:41">: <expr pos:start="393:41" pos:end="393:41"><literal type="number" pos:start="393:41" pos:end="393:41">1</literal></expr></else></ternary></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="395:13" pos:end="395:43"><expr pos:start="395:13" pos:end="395:42"><name pos:start="395:13" pos:end="395:22">fault_type</name> <operator pos:start="395:24" pos:end="395:24">=</operator> <name pos:start="395:26" pos:end="395:42">translation_fault</name></expr>;</expr_stmt>
+
+            <goto pos:start="397:13" pos:end="397:26">goto <name pos:start="397:18" pos:end="397:25">do_fault</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <comment type="block" pos:start="405:5" pos:end="411:7">/* Clear the vaddr bits which aren't part of the within-region address,
+
+     * so that we don't have to special case things when calculating the
+
+     * first descriptor address.
+
+     */</comment>
+
+    <if_stmt pos:start="413:5" pos:end="417:5"><if pos:start="413:5" pos:end="417:5">if <condition pos:start="413:8" pos:end="413:29">(<expr pos:start="413:9" pos:end="413:28"><name pos:start="413:9" pos:end="413:15">va_size</name> <operator pos:start="413:17" pos:end="413:18">!=</operator> <name pos:start="413:20" pos:end="413:28">inputsize</name></expr>)</condition> <block pos:start="413:31" pos:end="417:5">{<block_content pos:start="415:9" pos:end="415:43">
+
+        <expr_stmt pos:start="415:9" pos:end="415:43"><expr pos:start="415:9" pos:end="415:42"><name pos:start="415:9" pos:end="415:15">address</name> <operator pos:start="415:17" pos:end="415:18">&amp;=</operator> <operator pos:start="415:20" pos:end="415:20">(</operator><literal type="number" pos:start="415:21" pos:end="415:24">1ULL</literal> <operator pos:start="415:26" pos:end="415:27">&lt;&lt;</operator> <name pos:start="415:29" pos:end="415:37">inputsize</name><operator pos:start="415:38" pos:end="415:38">)</operator> <operator pos:start="415:40" pos:end="415:40">-</operator> <literal type="number" pos:start="415:42" pos:end="415:42">1</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="421:5" pos:end="421:42"><expr pos:start="421:5" pos:end="421:41"><name pos:start="421:5" pos:end="421:12">descmask</name> <operator pos:start="421:14" pos:end="421:14">=</operator> <operator pos:start="421:16" pos:end="421:16">(</operator><literal type="number" pos:start="421:17" pos:end="421:20">1ULL</literal> <operator pos:start="421:22" pos:end="421:23">&lt;&lt;</operator> <operator pos:start="421:25" pos:end="421:25">(</operator><name pos:start="421:26" pos:end="421:31">stride</name> <operator pos:start="421:33" pos:end="421:33">+</operator> <literal type="number" pos:start="421:35" pos:end="421:35">3</literal><operator pos:start="421:36" pos:end="421:36">)</operator><operator pos:start="421:37" pos:end="421:37">)</operator> <operator pos:start="421:39" pos:end="421:39">-</operator> <literal type="number" pos:start="421:41" pos:end="421:41">1</literal></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="425:5" pos:end="425:66">/* Now we can extract the actual base address from the TTBR */</comment>
+
+    <expr_stmt pos:start="427:5" pos:end="427:38"><expr pos:start="427:5" pos:end="427:37"><name pos:start="427:5" pos:end="427:12">descaddr</name> <operator pos:start="427:14" pos:end="427:14">=</operator> <call pos:start="427:16" pos:end="427:37"><name pos:start="427:16" pos:end="427:24">extract64</name><argument_list pos:start="427:25" pos:end="427:37">(<argument pos:start="427:26" pos:end="427:29"><expr pos:start="427:26" pos:end="427:29"><name pos:start="427:26" pos:end="427:29">ttbr</name></expr></argument>, <argument pos:start="427:32" pos:end="427:32"><expr pos:start="427:32" pos:end="427:32"><literal type="number" pos:start="427:32" pos:end="427:32">0</literal></expr></argument>, <argument pos:start="427:35" pos:end="427:36"><expr pos:start="427:35" pos:end="427:36"><literal type="number" pos:start="427:35" pos:end="427:36">48</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="429:5" pos:end="429:70"><expr pos:start="429:5" pos:end="429:69"><name pos:start="429:5" pos:end="429:12">descaddr</name> <operator pos:start="429:14" pos:end="429:15">&amp;=</operator> <operator pos:start="429:17" pos:end="429:17">~</operator><operator pos:start="429:18" pos:end="429:18">(</operator><operator pos:start="429:19" pos:end="429:19">(</operator><literal type="number" pos:start="429:20" pos:end="429:23">1ULL</literal> <operator pos:start="429:25" pos:end="429:26">&lt;&lt;</operator> <operator pos:start="429:28" pos:end="429:28">(</operator><name pos:start="429:29" pos:end="429:37">inputsize</name> <operator pos:start="429:39" pos:end="429:39">-</operator> <operator pos:start="429:41" pos:end="429:41">(</operator><name pos:start="429:42" pos:end="429:47">stride</name> <operator pos:start="429:49" pos:end="429:49">*</operator> <operator pos:start="429:51" pos:end="429:51">(</operator><literal type="number" pos:start="429:52" pos:end="429:54">4</literal> <operator pos:start="429:54" pos:end="429:54">-</operator> <name pos:start="429:56" pos:end="429:60">level</name><operator pos:start="429:61" pos:end="429:61">)</operator><operator pos:start="429:62" pos:end="429:62">)</operator><operator pos:start="429:63" pos:end="429:63">)</operator><operator pos:start="429:64" pos:end="429:64">)</operator> <operator pos:start="429:66" pos:end="429:66">-</operator> <literal type="number" pos:start="429:68" pos:end="429:68">1</literal><operator pos:start="429:69" pos:end="429:69">)</operator></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="433:5" pos:end="441:7">/* Secure accesses start with the page table in secure memory and
+
+     * can be downgraded to non-secure at any step. Non-secure accesses
+
+     * remain non-secure. We implement this by just ORing in the NSTable/NS
+
+     * bits at each step.
+
+     */</comment>
+
+    <expr_stmt pos:start="443:5" pos:end="443:63"><expr pos:start="443:5" pos:end="443:62"><name pos:start="443:5" pos:end="443:14">tableattrs</name> <operator pos:start="443:16" pos:end="443:16">=</operator> <ternary pos:start="443:18" pos:end="443:62"><condition pos:start="443:18" pos:end="443:49"><expr pos:start="443:18" pos:end="443:47"><call pos:start="443:18" pos:end="443:47"><name pos:start="443:18" pos:end="443:33">regime_is_secure</name><argument_list pos:start="443:34" pos:end="443:47">(<argument pos:start="443:35" pos:end="443:37"><expr pos:start="443:35" pos:end="443:37"><name pos:start="443:35" pos:end="443:37">env</name></expr></argument>, <argument pos:start="443:40" pos:end="443:46"><expr pos:start="443:40" pos:end="443:46"><name pos:start="443:40" pos:end="443:46">mmu_idx</name></expr></argument>)</argument_list></call></expr> ?</condition><then pos:start="443:51" pos:end="443:51"> <expr pos:start="443:51" pos:end="443:51"><literal type="number" pos:start="443:51" pos:end="443:51">0</literal></expr> </then><else pos:start="443:53" pos:end="443:62">: <expr pos:start="443:55" pos:end="443:62"><operator pos:start="443:55" pos:end="443:55">(</operator><literal type="number" pos:start="443:56" pos:end="443:56">1</literal> <operator pos:start="443:58" pos:end="443:59">&lt;&lt;</operator> <literal type="number" pos:start="443:61" pos:end="443:61">4</literal><operator pos:start="443:62" pos:end="443:62">)</operator></expr></else></ternary></expr>;</expr_stmt>
+
+    <for pos:start="445:5" pos:end="533:5">for <control pos:start="445:9" pos:end="445:12">(<init pos:start="445:10" pos:end="445:10">;</init><condition pos:start="445:11" pos:end="445:11">;</condition><incr/>)</control> <block pos:start="445:14" pos:end="533:5">{<block_content pos:start="447:9" pos:end="531:14">
+
+        <decl_stmt pos:start="447:9" pos:end="447:28"><decl pos:start="447:9" pos:end="447:27"><type pos:start="447:9" pos:end="447:16"><name pos:start="447:9" pos:end="447:16">uint64_t</name></type> <name pos:start="447:18" pos:end="447:27">descriptor</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="449:9" pos:end="449:21"><decl pos:start="449:9" pos:end="449:20"><type pos:start="449:9" pos:end="449:12"><name pos:start="449:9" pos:end="449:12">bool</name></type> <name pos:start="449:14" pos:end="449:20">nstable</name></decl>;</decl_stmt>
+
+
+
+        <expr_stmt pos:start="453:9" pos:end="453:67"><expr pos:start="453:9" pos:end="453:66"><name pos:start="453:9" pos:end="453:16">descaddr</name> <operator pos:start="453:18" pos:end="453:19">|=</operator> <operator pos:start="453:21" pos:end="453:21">(</operator><name pos:start="453:22" pos:end="453:28">address</name> <operator pos:start="453:30" pos:end="453:31">&gt;&gt;</operator> <operator pos:start="453:33" pos:end="453:33">(</operator><name pos:start="453:34" pos:end="453:39">stride</name> <operator pos:start="453:41" pos:end="453:41">*</operator> <operator pos:start="453:43" pos:end="453:43">(</operator><literal type="number" pos:start="453:44" pos:end="453:46">4</literal> <operator pos:start="453:46" pos:end="453:46">-</operator> <name pos:start="453:48" pos:end="453:52">level</name><operator pos:start="453:53" pos:end="453:53">)</operator><operator pos:start="453:54" pos:end="453:54">)</operator><operator pos:start="453:55" pos:end="453:55">)</operator> <operator pos:start="453:57" pos:end="453:57">&amp;</operator> <name pos:start="453:59" pos:end="453:66">descmask</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="455:9" pos:end="455:26"><expr pos:start="455:9" pos:end="455:25"><name pos:start="455:9" pos:end="455:16">descaddr</name> <operator pos:start="455:18" pos:end="455:19">&amp;=</operator> <operator pos:start="455:21" pos:end="455:21">~</operator><literal type="number" pos:start="455:22" pos:end="455:25">7ULL</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="457:9" pos:end="457:46"><expr pos:start="457:9" pos:end="457:45"><name pos:start="457:9" pos:end="457:15">nstable</name> <operator pos:start="457:17" pos:end="457:17">=</operator> <call pos:start="457:19" pos:end="457:45"><name pos:start="457:19" pos:end="457:27">extract32</name><argument_list pos:start="457:28" pos:end="457:45">(<argument pos:start="457:29" pos:end="457:38"><expr pos:start="457:29" pos:end="457:38"><name pos:start="457:29" pos:end="457:38">tableattrs</name></expr></argument>, <argument pos:start="457:41" pos:end="457:41"><expr pos:start="457:41" pos:end="457:41"><literal type="number" pos:start="457:41" pos:end="457:41">4</literal></expr></argument>, <argument pos:start="457:44" pos:end="457:44"><expr pos:start="457:44" pos:end="457:44"><literal type="number" pos:start="457:44" pos:end="457:44">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="459:9" pos:end="459:57"><expr pos:start="459:9" pos:end="459:56"><name pos:start="459:9" pos:end="459:18">descriptor</name> <operator pos:start="459:20" pos:end="459:20">=</operator> <call pos:start="459:22" pos:end="459:56"><name pos:start="459:22" pos:end="459:32">arm_ldq_ptw</name><argument_list pos:start="459:33" pos:end="459:56">(<argument pos:start="459:34" pos:end="459:35"><expr pos:start="459:34" pos:end="459:35"><name pos:start="459:34" pos:end="459:35">cs</name></expr></argument>, <argument pos:start="459:38" pos:end="459:45"><expr pos:start="459:38" pos:end="459:45"><name pos:start="459:38" pos:end="459:45">descaddr</name></expr></argument>, <argument pos:start="459:48" pos:end="459:55"><expr pos:start="459:48" pos:end="459:55"><operator pos:start="459:48" pos:end="459:48">!</operator><name pos:start="459:49" pos:end="459:55">nstable</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="461:9" pos:end="469:9"><if pos:start="461:9" pos:end="469:9">if <condition pos:start="461:12" pos:end="463:48">(<expr pos:start="461:13" pos:end="463:47"><operator pos:start="461:13" pos:end="461:13">!</operator><operator pos:start="461:14" pos:end="461:14">(</operator><name pos:start="461:15" pos:end="461:24">descriptor</name> <operator pos:start="461:26" pos:end="461:26">&amp;</operator> <literal type="number" pos:start="461:28" pos:end="461:28">1</literal><operator pos:start="461:29" pos:end="461:29">)</operator> <operator pos:start="461:31" pos:end="461:32">||</operator>
+
+            <operator pos:start="463:13" pos:end="463:13">(</operator><operator pos:start="463:14" pos:end="463:14">!</operator><operator pos:start="463:15" pos:end="463:15">(</operator><name pos:start="463:16" pos:end="463:25">descriptor</name> <operator pos:start="463:27" pos:end="463:27">&amp;</operator> <literal type="number" pos:start="463:29" pos:end="463:29">2</literal><operator pos:start="463:30" pos:end="463:30">)</operator> <operator pos:start="463:32" pos:end="463:33">&amp;&amp;</operator> <operator pos:start="463:35" pos:end="463:35">(</operator><name pos:start="463:36" pos:end="463:40">level</name> <operator pos:start="463:42" pos:end="463:43">==</operator> <literal type="number" pos:start="463:45" pos:end="463:45">3</literal><operator pos:start="463:46" pos:end="463:46">)</operator><operator pos:start="463:47" pos:end="463:47">)</operator></expr>)</condition> <block pos:start="463:50" pos:end="469:9">{<block_content pos:start="467:13" pos:end="467:26">
+
+            <comment type="block" pos:start="465:13" pos:end="465:59">/* Invalid, or the Reserved level 3 encoding */</comment>
+
+            <goto pos:start="467:13" pos:end="467:26">goto <name pos:start="467:18" pos:end="467:25">do_fault</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="471:9" pos:end="471:48"><expr pos:start="471:9" pos:end="471:47"><name pos:start="471:9" pos:end="471:16">descaddr</name> <operator pos:start="471:18" pos:end="471:18">=</operator> <name pos:start="471:20" pos:end="471:29">descriptor</name> <operator pos:start="471:31" pos:end="471:31">&amp;</operator> <literal type="number" pos:start="471:33" pos:end="471:47">0xfffffff000ULL</literal></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="475:9" pos:end="493:9"><if pos:start="475:9" pos:end="493:9">if <condition pos:start="475:12" pos:end="475:44">(<expr pos:start="475:13" pos:end="475:43"><operator pos:start="475:13" pos:end="475:13">(</operator><name pos:start="475:14" pos:end="475:23">descriptor</name> <operator pos:start="475:25" pos:end="475:25">&amp;</operator> <literal type="number" pos:start="475:27" pos:end="475:27">2</literal><operator pos:start="475:28" pos:end="475:28">)</operator> <operator pos:start="475:30" pos:end="475:31">&amp;&amp;</operator> <operator pos:start="475:33" pos:end="475:33">(</operator><name pos:start="475:34" pos:end="475:38">level</name> <operator pos:start="475:40" pos:end="475:40">&lt;</operator> <literal type="number" pos:start="475:42" pos:end="475:42">3</literal><operator pos:start="475:43" pos:end="475:43">)</operator></expr>)</condition> <block pos:start="475:46" pos:end="493:9">{<block_content pos:start="487:13" pos:end="491:21">
+
+            <comment type="block" pos:start="477:13" pos:end="485:15">/* Table entry. The top five bits are attributes which  may
+
+             * propagate down through lower levels of the table (and
+
+             * which are all arranged so that 0 means "no effect", so
+
+             * we can gather them up by ORing in the bits at each level).
+
+             */</comment>
+
+            <expr_stmt pos:start="487:13" pos:end="487:55"><expr pos:start="487:13" pos:end="487:54"><name pos:start="487:13" pos:end="487:22">tableattrs</name> <operator pos:start="487:24" pos:end="487:25">|=</operator> <call pos:start="487:27" pos:end="487:54"><name pos:start="487:27" pos:end="487:35">extract64</name><argument_list pos:start="487:36" pos:end="487:54">(<argument pos:start="487:37" pos:end="487:46"><expr pos:start="487:37" pos:end="487:46"><name pos:start="487:37" pos:end="487:46">descriptor</name></expr></argument>, <argument pos:start="487:49" pos:end="487:50"><expr pos:start="487:49" pos:end="487:50"><literal type="number" pos:start="487:49" pos:end="487:50">59</literal></expr></argument>, <argument pos:start="487:53" pos:end="487:53"><expr pos:start="487:53" pos:end="487:53"><literal type="number" pos:start="487:53" pos:end="487:53">5</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="489:13" pos:end="489:20"><expr pos:start="489:13" pos:end="489:19"><name pos:start="489:13" pos:end="489:17">level</name><operator pos:start="489:18" pos:end="489:19">++</operator></expr>;</expr_stmt>
+
+            <continue pos:start="491:13" pos:end="491:21">continue;</continue>
+
+        </block_content>}</block></if></if_stmt>
+
+        <comment type="block" pos:start="495:9" pos:end="501:11">/* Block entry at level 1 or 2, or page entry at level 3.
+
+         * These are basically the same thing, although the number
+
+         * of bits we pull in from the vaddr varies.
+
+         */</comment>
+
+        <expr_stmt pos:start="503:9" pos:end="503:59"><expr pos:start="503:9" pos:end="503:58"><name pos:start="503:9" pos:end="503:17">page_size</name> <operator pos:start="503:19" pos:end="503:19">=</operator> <operator pos:start="503:21" pos:end="503:21">(</operator><literal type="number" pos:start="503:22" pos:end="503:25">1ULL</literal> <operator pos:start="503:27" pos:end="503:28">&lt;&lt;</operator> <operator pos:start="503:30" pos:end="503:30">(</operator><operator pos:start="503:31" pos:end="503:31">(</operator><name pos:start="503:32" pos:end="503:37">stride</name> <operator pos:start="503:39" pos:end="503:39">*</operator> <operator pos:start="503:41" pos:end="503:41">(</operator><literal type="number" pos:start="503:42" pos:end="503:44">4</literal> <operator pos:start="503:44" pos:end="503:44">-</operator> <name pos:start="503:46" pos:end="503:50">level</name><operator pos:start="503:51" pos:end="503:51">)</operator><operator pos:start="503:52" pos:end="503:52">)</operator> <operator pos:start="503:54" pos:end="503:54">+</operator> <literal type="number" pos:start="503:56" pos:end="503:56">3</literal><operator pos:start="503:57" pos:end="503:57">)</operator><operator pos:start="503:58" pos:end="503:58">)</operator></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="505:9" pos:end="505:48"><expr pos:start="505:9" pos:end="505:47"><name pos:start="505:9" pos:end="505:16">descaddr</name> <operator pos:start="505:18" pos:end="505:19">|=</operator> <operator pos:start="505:21" pos:end="505:21">(</operator><name pos:start="505:22" pos:end="505:28">address</name> <operator pos:start="505:30" pos:end="505:30">&amp;</operator> <operator pos:start="505:32" pos:end="505:32">(</operator><name pos:start="505:33" pos:end="505:41">page_size</name> <operator pos:start="505:43" pos:end="505:43">-</operator> <literal type="number" pos:start="505:45" pos:end="505:45">1</literal><operator pos:start="505:46" pos:end="505:46">)</operator><operator pos:start="505:47" pos:end="505:47">)</operator></expr>;</expr_stmt>
+
+        <comment type="block" pos:start="507:9" pos:end="507:79">/* Extract attributes from the descriptor and merge with table attrs */</comment>
+
+        <expr_stmt pos:start="509:9" pos:end="511:52"><expr pos:start="509:9" pos:end="511:51"><name pos:start="509:9" pos:end="509:13">attrs</name> <operator pos:start="509:15" pos:end="509:15">=</operator> <call pos:start="509:17" pos:end="509:44"><name pos:start="509:17" pos:end="509:25">extract64</name><argument_list pos:start="509:26" pos:end="509:44">(<argument pos:start="509:27" pos:end="509:36"><expr pos:start="509:27" pos:end="509:36"><name pos:start="509:27" pos:end="509:36">descriptor</name></expr></argument>, <argument pos:start="509:39" pos:end="509:39"><expr pos:start="509:39" pos:end="509:39"><literal type="number" pos:start="509:39" pos:end="509:39">2</literal></expr></argument>, <argument pos:start="509:42" pos:end="509:43"><expr pos:start="509:42" pos:end="509:43"><literal type="number" pos:start="509:42" pos:end="509:43">10</literal></expr></argument>)</argument_list></call>
+
+            <operator pos:start="511:13" pos:end="511:13">|</operator> <operator pos:start="511:15" pos:end="511:15">(</operator><call pos:start="511:16" pos:end="511:44"><name pos:start="511:16" pos:end="511:24">extract64</name><argument_list pos:start="511:25" pos:end="511:44">(<argument pos:start="511:26" pos:end="511:35"><expr pos:start="511:26" pos:end="511:35"><name pos:start="511:26" pos:end="511:35">descriptor</name></expr></argument>, <argument pos:start="511:38" pos:end="511:39"><expr pos:start="511:38" pos:end="511:39"><literal type="number" pos:start="511:38" pos:end="511:39">52</literal></expr></argument>, <argument pos:start="511:42" pos:end="511:43"><expr pos:start="511:42" pos:end="511:43"><literal type="number" pos:start="511:42" pos:end="511:43">12</literal></expr></argument>)</argument_list></call> <operator pos:start="511:46" pos:end="511:47">&lt;&lt;</operator> <literal type="number" pos:start="511:49" pos:end="511:50">10</literal><operator pos:start="511:51" pos:end="511:51">)</operator></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="513:9" pos:end="513:51"><expr pos:start="513:9" pos:end="513:50"><name pos:start="513:9" pos:end="513:13">attrs</name> <operator pos:start="513:15" pos:end="513:16">|=</operator> <call pos:start="513:18" pos:end="513:44"><name pos:start="513:18" pos:end="513:26">extract32</name><argument_list pos:start="513:27" pos:end="513:44">(<argument pos:start="513:28" pos:end="513:37"><expr pos:start="513:28" pos:end="513:37"><name pos:start="513:28" pos:end="513:37">tableattrs</name></expr></argument>, <argument pos:start="513:40" pos:end="513:40"><expr pos:start="513:40" pos:end="513:40"><literal type="number" pos:start="513:40" pos:end="513:40">0</literal></expr></argument>, <argument pos:start="513:43" pos:end="513:43"><expr pos:start="513:43" pos:end="513:43"><literal type="number" pos:start="513:43" pos:end="513:43">2</literal></expr></argument>)</argument_list></call> <operator pos:start="513:46" pos:end="513:47">&lt;&lt;</operator> <literal type="number" pos:start="513:49" pos:end="513:50">11</literal></expr>;</expr_stmt> <comment type="block" pos:start="513:53" pos:end="513:65">/* XN, PXN */</comment>
+
+        <expr_stmt pos:start="515:9" pos:end="515:50"><expr pos:start="515:9" pos:end="515:49"><name pos:start="515:9" pos:end="515:13">attrs</name> <operator pos:start="515:15" pos:end="515:16">|=</operator> <call pos:start="515:18" pos:end="515:44"><name pos:start="515:18" pos:end="515:26">extract32</name><argument_list pos:start="515:27" pos:end="515:44">(<argument pos:start="515:28" pos:end="515:37"><expr pos:start="515:28" pos:end="515:37"><name pos:start="515:28" pos:end="515:37">tableattrs</name></expr></argument>, <argument pos:start="515:40" pos:end="515:40"><expr pos:start="515:40" pos:end="515:40"><literal type="number" pos:start="515:40" pos:end="515:40">3</literal></expr></argument>, <argument pos:start="515:43" pos:end="515:43"><expr pos:start="515:43" pos:end="515:43"><literal type="number" pos:start="515:43" pos:end="515:43">1</literal></expr></argument>)</argument_list></call> <operator pos:start="515:46" pos:end="515:47">&lt;&lt;</operator> <literal type="number" pos:start="515:49" pos:end="515:49">5</literal></expr>;</expr_stmt> <comment type="block" pos:start="515:52" pos:end="515:76">/* APTable[1] =&gt; AP[2] */</comment>
+
+        <comment type="block" pos:start="517:9" pos:end="521:11">/* The sense of AP[1] vs APTable[0] is reversed, as APTable[0] == 1
+
+         * means "force PL1 access only", which means forcing AP[1] to 0.
+
+         */</comment>
+
+        <if_stmt pos:start="523:9" pos:end="527:9"><if pos:start="523:9" pos:end="527:9">if <condition pos:start="523:12" pos:end="523:40">(<expr pos:start="523:13" pos:end="523:39"><call pos:start="523:13" pos:end="523:39"><name pos:start="523:13" pos:end="523:21">extract32</name><argument_list pos:start="523:22" pos:end="523:39">(<argument pos:start="523:23" pos:end="523:32"><expr pos:start="523:23" pos:end="523:32"><name pos:start="523:23" pos:end="523:32">tableattrs</name></expr></argument>, <argument pos:start="523:35" pos:end="523:35"><expr pos:start="523:35" pos:end="523:35"><literal type="number" pos:start="523:35" pos:end="523:35">2</literal></expr></argument>, <argument pos:start="523:38" pos:end="523:38"><expr pos:start="523:38" pos:end="523:38"><literal type="number" pos:start="523:38" pos:end="523:38">1</literal></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="523:42" pos:end="527:9">{<block_content pos:start="525:13" pos:end="525:31">
+
+            <expr_stmt pos:start="525:13" pos:end="525:31"><expr pos:start="525:13" pos:end="525:30"><name pos:start="525:13" pos:end="525:17">attrs</name> <operator pos:start="525:19" pos:end="525:20">&amp;=</operator> <operator pos:start="525:22" pos:end="525:22">~</operator><operator pos:start="525:23" pos:end="525:23">(</operator><literal type="number" pos:start="525:24" pos:end="525:24">1</literal> <operator pos:start="525:26" pos:end="525:27">&lt;&lt;</operator> <literal type="number" pos:start="525:29" pos:end="525:29">4</literal><operator pos:start="525:30" pos:end="525:30">)</operator></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="529:9" pos:end="529:30"><expr pos:start="529:9" pos:end="529:29"><name pos:start="529:9" pos:end="529:13">attrs</name> <operator pos:start="529:15" pos:end="529:16">|=</operator> <name pos:start="529:18" pos:end="529:24">nstable</name> <operator pos:start="529:26" pos:end="529:27">&lt;&lt;</operator> <literal type="number" pos:start="529:29" pos:end="529:29">3</literal></expr>;</expr_stmt> <comment type="block" pos:start="529:32" pos:end="529:39">/* NS */</comment>
+
+        <break pos:start="531:9" pos:end="531:14">break;</break>
+
+    </block_content>}</block></for>
+
+    <comment type="block" pos:start="535:5" pos:end="539:7">/* Here descaddr is the final physical address, and attributes
+
+     * are all in attrs.
+
+     */</comment>
+
+    <expr_stmt pos:start="541:5" pos:end="541:30"><expr pos:start="541:5" pos:end="541:29"><name pos:start="541:5" pos:end="541:14">fault_type</name> <operator pos:start="541:16" pos:end="541:16">=</operator> <name pos:start="541:18" pos:end="541:29">access_fault</name></expr>;</expr_stmt>
+
+    <if_stmt pos:start="543:5" pos:end="549:5"><if pos:start="543:5" pos:end="549:5">if <condition pos:start="543:8" pos:end="543:32">(<expr pos:start="543:9" pos:end="543:31"><operator pos:start="543:9" pos:end="543:9">(</operator><name pos:start="543:10" pos:end="543:14">attrs</name> <operator pos:start="543:16" pos:end="543:16">&amp;</operator> <operator pos:start="543:18" pos:end="543:18">(</operator><literal type="number" pos:start="543:19" pos:end="543:19">1</literal> <operator pos:start="543:21" pos:end="543:22">&lt;&lt;</operator> <literal type="number" pos:start="543:24" pos:end="543:24">8</literal><operator pos:start="543:25" pos:end="543:25">)</operator><operator pos:start="543:26" pos:end="543:26">)</operator> <operator pos:start="543:28" pos:end="543:29">==</operator> <literal type="number" pos:start="543:31" pos:end="543:31">0</literal></expr>)</condition> <block pos:start="543:34" pos:end="549:5">{<block_content pos:start="547:9" pos:end="547:22">
+
+        <comment type="block" pos:start="545:9" pos:end="545:25">/* Access flag */</comment>
+
+        <goto pos:start="547:9" pos:end="547:22">goto <name pos:start="547:14" pos:end="547:21">do_fault</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="553:5" pos:end="553:32"><expr pos:start="553:5" pos:end="553:31"><name pos:start="553:5" pos:end="553:6">ap</name> <operator pos:start="553:8" pos:end="553:8">=</operator> <call pos:start="553:10" pos:end="553:31"><name pos:start="553:10" pos:end="553:18">extract32</name><argument_list pos:start="553:19" pos:end="553:31">(<argument pos:start="553:20" pos:end="553:24"><expr pos:start="553:20" pos:end="553:24"><name pos:start="553:20" pos:end="553:24">attrs</name></expr></argument>, <argument pos:start="553:27" pos:end="553:27"><expr pos:start="553:27" pos:end="553:27"><literal type="number" pos:start="553:27" pos:end="553:27">4</literal></expr></argument>, <argument pos:start="553:30" pos:end="553:30"><expr pos:start="553:30" pos:end="553:30"><literal type="number" pos:start="553:30" pos:end="553:30">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="555:5" pos:end="555:32"><expr pos:start="555:5" pos:end="555:31"><name pos:start="555:5" pos:end="555:6">ns</name> <operator pos:start="555:8" pos:end="555:8">=</operator> <call pos:start="555:10" pos:end="555:31"><name pos:start="555:10" pos:end="555:18">extract32</name><argument_list pos:start="555:19" pos:end="555:31">(<argument pos:start="555:20" pos:end="555:24"><expr pos:start="555:20" pos:end="555:24"><name pos:start="555:20" pos:end="555:24">attrs</name></expr></argument>, <argument pos:start="555:27" pos:end="555:27"><expr pos:start="555:27" pos:end="555:27"><literal type="number" pos:start="555:27" pos:end="555:27">3</literal></expr></argument>, <argument pos:start="555:30" pos:end="555:30"><expr pos:start="555:30" pos:end="555:30"><literal type="number" pos:start="555:30" pos:end="555:30">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="557:5" pos:end="557:33"><expr pos:start="557:5" pos:end="557:32"><name pos:start="557:5" pos:end="557:6">xn</name> <operator pos:start="557:8" pos:end="557:8">=</operator> <call pos:start="557:10" pos:end="557:32"><name pos:start="557:10" pos:end="557:18">extract32</name><argument_list pos:start="557:19" pos:end="557:32">(<argument pos:start="557:20" pos:end="557:24"><expr pos:start="557:20" pos:end="557:24"><name pos:start="557:20" pos:end="557:24">attrs</name></expr></argument>, <argument pos:start="557:27" pos:end="557:28"><expr pos:start="557:27" pos:end="557:28"><literal type="number" pos:start="557:27" pos:end="557:28">12</literal></expr></argument>, <argument pos:start="557:31" pos:end="557:31"><expr pos:start="557:31" pos:end="557:31"><literal type="number" pos:start="557:31" pos:end="557:31">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="559:5" pos:end="559:34"><expr pos:start="559:5" pos:end="559:33"><name pos:start="559:5" pos:end="559:7">pxn</name> <operator pos:start="559:9" pos:end="559:9">=</operator> <call pos:start="559:11" pos:end="559:33"><name pos:start="559:11" pos:end="559:19">extract32</name><argument_list pos:start="559:20" pos:end="559:33">(<argument pos:start="559:21" pos:end="559:25"><expr pos:start="559:21" pos:end="559:25"><name pos:start="559:21" pos:end="559:25">attrs</name></expr></argument>, <argument pos:start="559:28" pos:end="559:29"><expr pos:start="559:28" pos:end="559:29"><literal type="number" pos:start="559:28" pos:end="559:29">11</literal></expr></argument>, <argument pos:start="559:32" pos:end="559:32"><expr pos:start="559:32" pos:end="559:32"><literal type="number" pos:start="559:32" pos:end="559:32">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="563:5" pos:end="563:69"><expr pos:start="563:5" pos:end="563:68"><operator pos:start="563:5" pos:end="563:5">*</operator><name pos:start="563:6" pos:end="563:9">prot</name> <operator pos:start="563:11" pos:end="563:11">=</operator> <call pos:start="563:13" pos:end="563:68"><name pos:start="563:13" pos:end="563:22">get_S1prot</name><argument_list pos:start="563:23" pos:end="563:68">(<argument pos:start="563:24" pos:end="563:26"><expr pos:start="563:24" pos:end="563:26"><name pos:start="563:24" pos:end="563:26">env</name></expr></argument>, <argument pos:start="563:29" pos:end="563:35"><expr pos:start="563:29" pos:end="563:35"><name pos:start="563:29" pos:end="563:35">mmu_idx</name></expr></argument>, <argument pos:start="563:38" pos:end="563:50"><expr pos:start="563:38" pos:end="563:50"><name pos:start="563:38" pos:end="563:44">va_size</name> <operator pos:start="563:46" pos:end="563:47">==</operator> <literal type="number" pos:start="563:49" pos:end="563:50">64</literal></expr></argument>, <argument pos:start="563:53" pos:end="563:54"><expr pos:start="563:53" pos:end="563:54"><name pos:start="563:53" pos:end="563:54">ap</name></expr></argument>, <argument pos:start="563:57" pos:end="563:58"><expr pos:start="563:57" pos:end="563:58"><name pos:start="563:57" pos:end="563:58">ns</name></expr></argument>, <argument pos:start="563:61" pos:end="563:62"><expr pos:start="563:61" pos:end="563:62"><name pos:start="563:61" pos:end="563:62">xn</name></expr></argument>, <argument pos:start="563:65" pos:end="563:67"><expr pos:start="563:65" pos:end="563:67"><name pos:start="563:65" pos:end="563:67">pxn</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="567:5" pos:end="567:34"><expr pos:start="567:5" pos:end="567:33"><name pos:start="567:5" pos:end="567:14">fault_type</name> <operator pos:start="567:16" pos:end="567:16">=</operator> <name pos:start="567:18" pos:end="567:33">permission_fault</name></expr>;</expr_stmt>
+
+    <if_stmt pos:start="569:5" pos:end="573:5"><if pos:start="569:5" pos:end="573:5">if <condition pos:start="569:8" pos:end="569:38">(<expr pos:start="569:9" pos:end="569:37"><operator pos:start="569:9" pos:end="569:9">!</operator><operator pos:start="569:10" pos:end="569:10">(</operator><operator pos:start="569:11" pos:end="569:11">*</operator><name pos:start="569:12" pos:end="569:15">prot</name> <operator pos:start="569:17" pos:end="569:17">&amp;</operator> <operator pos:start="569:19" pos:end="569:19">(</operator><literal type="number" pos:start="569:20" pos:end="569:20">1</literal> <operator pos:start="569:22" pos:end="569:23">&lt;&lt;</operator> <name pos:start="569:25" pos:end="569:35">access_type</name><operator pos:start="569:36" pos:end="569:36">)</operator><operator pos:start="569:37" pos:end="569:37">)</operator></expr>)</condition> <block pos:start="569:40" pos:end="573:5">{<block_content pos:start="571:9" pos:end="571:22">
+
+        <goto pos:start="571:9" pos:end="571:22">goto <name pos:start="571:14" pos:end="571:21">do_fault</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="577:5" pos:end="589:5"><if pos:start="577:5" pos:end="589:5">if <condition pos:start="577:8" pos:end="577:11">(<expr pos:start="577:9" pos:end="577:10"><name pos:start="577:9" pos:end="577:10">ns</name></expr>)</condition> <block pos:start="577:13" pos:end="589:5">{<block_content pos:start="587:9" pos:end="587:32">
+
+        <comment type="block" pos:start="579:9" pos:end="585:11">/* The NS bit will (as required by the architecture) have no effect if
+
+         * the CPU doesn't support TZ or this is a non-secure translation
+
+         * regime, because the attribute will already be non-secure.
+
+         */</comment>
+
+        <expr_stmt pos:start="587:9" pos:end="587:32"><expr pos:start="587:9" pos:end="587:31"><name pos:start="587:9" pos:end="587:23"><name pos:start="587:9" pos:end="587:15">txattrs</name><operator pos:start="587:16" pos:end="587:17">-&gt;</operator><name pos:start="587:18" pos:end="587:23">secure</name></name> <operator pos:start="587:25" pos:end="587:25">=</operator> <name pos:start="587:27" pos:end="587:31">false</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <expr_stmt pos:start="591:5" pos:end="591:25"><expr pos:start="591:5" pos:end="591:24"><operator pos:start="591:5" pos:end="591:5">*</operator><name pos:start="591:6" pos:end="591:13">phys_ptr</name> <operator pos:start="591:15" pos:end="591:15">=</operator> <name pos:start="591:17" pos:end="591:24">descaddr</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="593:5" pos:end="593:31"><expr pos:start="593:5" pos:end="593:30"><operator pos:start="593:5" pos:end="593:5">*</operator><name pos:start="593:6" pos:end="593:18">page_size_ptr</name> <operator pos:start="593:20" pos:end="593:20">=</operator> <name pos:start="593:22" pos:end="593:30">page_size</name></expr>;</expr_stmt>
+
+    <return pos:start="595:5" pos:end="595:17">return <expr pos:start="595:12" pos:end="595:16"><name pos:start="595:12" pos:end="595:16">false</name></expr>;</return>
+
+
+
+<label pos:start="599:1" pos:end="599:9"><name pos:start="599:1" pos:end="599:8">do_fault</name>:</label>
+
+    <comment type="block" pos:start="601:5" pos:end="601:48">/* Long-descriptor format IFSR/DFSR value */</comment>
+
+    <expr_stmt pos:start="603:5" pos:end="603:48"><expr pos:start="603:5" pos:end="603:47"><operator pos:start="603:5" pos:end="603:5">*</operator><name pos:start="603:6" pos:end="603:8">fsr</name> <operator pos:start="603:10" pos:end="603:10">=</operator> <operator pos:start="603:12" pos:end="603:12">(</operator><literal type="number" pos:start="603:13" pos:end="603:13">1</literal> <operator pos:start="603:15" pos:end="603:16">&lt;&lt;</operator> <literal type="number" pos:start="603:18" pos:end="603:18">9</literal><operator pos:start="603:19" pos:end="603:19">)</operator> <operator pos:start="603:21" pos:end="603:21">|</operator> <operator pos:start="603:23" pos:end="603:23">(</operator><name pos:start="603:24" pos:end="603:33">fault_type</name> <operator pos:start="603:35" pos:end="603:36">&lt;&lt;</operator> <literal type="number" pos:start="603:38" pos:end="603:38">2</literal><operator pos:start="603:39" pos:end="603:39">)</operator> <operator pos:start="603:41" pos:end="603:41">|</operator> <name pos:start="603:43" pos:end="603:47">level</name></expr>;</expr_stmt>
+
+    <return pos:start="605:5" pos:end="605:16">return <expr pos:start="605:12" pos:end="605:15"><name pos:start="605:12" pos:end="605:15">true</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

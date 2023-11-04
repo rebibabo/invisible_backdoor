@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/1570.c" pos:tabs="8"><function pos:start="1:1" pos:end="81:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:40">virtio_balloon_receive_stats</name><parameter_list pos:start="1:41" pos:end="1:75">(<parameter pos:start="1:42" pos:end="1:59"><decl pos:start="1:42" pos:end="1:59"><type pos:start="1:42" pos:end="1:59"><name pos:start="1:42" pos:end="1:53">VirtIODevice</name> <modifier pos:start="1:55" pos:end="1:55">*</modifier></type><name pos:start="1:56" pos:end="1:59">vdev</name></decl></parameter>, <parameter pos:start="1:62" pos:end="1:74"><decl pos:start="1:62" pos:end="1:74"><type pos:start="1:62" pos:end="1:74"><name pos:start="1:62" pos:end="1:70">VirtQueue</name> <modifier pos:start="1:72" pos:end="1:72">*</modifier></type><name pos:start="1:73" pos:end="1:74">vq</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="81:1">{<block_content pos:start="5:5" pos:end="79:5">
+
+    <decl_stmt pos:start="5:5" pos:end="5:44"><decl pos:start="5:5" pos:end="5:43"><type pos:start="5:5" pos:end="5:19"><name pos:start="5:5" pos:end="5:17">VirtIOBalloon</name> <modifier pos:start="5:19" pos:end="5:19">*</modifier></type><name pos:start="5:20" pos:end="5:20">s</name> <init pos:start="5:22" pos:end="5:43">= <expr pos:start="5:24" pos:end="5:43"><call pos:start="5:24" pos:end="5:43"><name pos:start="5:24" pos:end="5:37">VIRTIO_BALLOON</name><argument_list pos:start="5:38" pos:end="5:43">(<argument pos:start="5:39" pos:end="5:42"><expr pos:start="5:39" pos:end="5:42"><name pos:start="5:39" pos:end="5:42">vdev</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:47"><decl pos:start="7:5" pos:end="7:46"><type pos:start="7:5" pos:end="7:22"><name pos:start="7:5" pos:end="7:20">VirtQueueElement</name> <modifier pos:start="7:22" pos:end="7:22">*</modifier></type><name pos:start="7:23" pos:end="7:26">elem</name> <init pos:start="7:28" pos:end="7:46">= <expr pos:start="7:30" pos:end="7:46"><operator pos:start="7:30" pos:end="7:30">&amp;</operator><name pos:start="7:31" pos:end="7:46"><name pos:start="7:31" pos:end="7:31">s</name><operator pos:start="7:32" pos:end="7:33">-&gt;</operator><name pos:start="7:34" pos:end="7:46">stats_vq_elem</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:27"><decl pos:start="9:5" pos:end="9:26"><type pos:start="9:5" pos:end="9:21"><name pos:start="9:5" pos:end="9:21">VirtIOBalloonStat</name></type> <name pos:start="9:23" pos:end="9:26">stat</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:22"><decl pos:start="11:5" pos:end="11:21"><type pos:start="11:5" pos:end="11:10"><name pos:start="11:5" pos:end="11:10">size_t</name></type> <name pos:start="11:12" pos:end="11:17">offset</name> <init pos:start="11:19" pos:end="11:21">= <expr pos:start="11:21" pos:end="11:21"><literal type="number" pos:start="11:21" pos:end="11:21">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:20"><decl pos:start="13:5" pos:end="13:19"><type pos:start="13:5" pos:end="13:16"><name pos:start="13:5" pos:end="13:16">qemu_timeval</name></type> <name pos:start="13:18" pos:end="13:19">tv</name></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="17:5" pos:end="21:5"><if pos:start="17:5" pos:end="21:5">if <condition pos:start="17:8" pos:end="17:33">(<expr pos:start="17:9" pos:end="17:32"><operator pos:start="17:9" pos:end="17:9">!</operator><call pos:start="17:10" pos:end="17:32"><name pos:start="17:10" pos:end="17:22">virtqueue_pop</name><argument_list pos:start="17:23" pos:end="17:32">(<argument pos:start="17:24" pos:end="17:25"><expr pos:start="17:24" pos:end="17:25"><name pos:start="17:24" pos:end="17:25">vq</name></expr></argument>, <argument pos:start="17:28" pos:end="17:31"><expr pos:start="17:28" pos:end="17:31"><name pos:start="17:28" pos:end="17:31">elem</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="17:35" pos:end="21:5">{<block_content pos:start="19:9" pos:end="19:17">
+
+        <goto pos:start="19:9" pos:end="19:17">goto <name pos:start="19:14" pos:end="19:16">out</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="25:5" pos:end="31:7">/* Initialize the stats to get rid of any stale values.  This is only
+
+     * needed to handle the case where a guest supports fewer stats than it
+
+     * used to (ie. it has booted into an old kernel).
+
+     */</comment>
+
+    <expr_stmt pos:start="33:5" pos:end="33:19"><expr pos:start="33:5" pos:end="33:18"><call pos:start="33:5" pos:end="33:18"><name pos:start="33:5" pos:end="33:15">reset_stats</name><argument_list pos:start="33:16" pos:end="33:18">(<argument pos:start="33:17" pos:end="33:17"><expr pos:start="33:17" pos:end="33:17"><name pos:start="33:17" pos:end="33:17">s</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <while pos:start="37:5" pos:end="53:5">while <condition pos:start="37:11" pos:end="39:27">(<expr pos:start="37:12" pos:end="39:26"><call pos:start="37:12" pos:end="37:79"><name pos:start="37:12" pos:end="37:21">iov_to_buf</name><argument_list pos:start="37:22" pos:end="37:79">(<argument pos:start="37:23" pos:end="37:34"><expr pos:start="37:23" pos:end="37:34"><name pos:start="37:23" pos:end="37:34"><name pos:start="37:23" pos:end="37:26">elem</name><operator pos:start="37:27" pos:end="37:28">-&gt;</operator><name pos:start="37:29" pos:end="37:34">out_sg</name></name></expr></argument>, <argument pos:start="37:37" pos:end="37:49"><expr pos:start="37:37" pos:end="37:49"><name pos:start="37:37" pos:end="37:49"><name pos:start="37:37" pos:end="37:40">elem</name><operator pos:start="37:41" pos:end="37:42">-&gt;</operator><name pos:start="37:43" pos:end="37:49">out_num</name></name></expr></argument>, <argument pos:start="37:52" pos:end="37:57"><expr pos:start="37:52" pos:end="37:57"><name pos:start="37:52" pos:end="37:57">offset</name></expr></argument>, <argument pos:start="37:60" pos:end="37:64"><expr pos:start="37:60" pos:end="37:64"><operator pos:start="37:60" pos:end="37:60">&amp;</operator><name pos:start="37:61" pos:end="37:64">stat</name></expr></argument>, <argument pos:start="37:67" pos:end="37:78"><expr pos:start="37:67" pos:end="37:78"><sizeof pos:start="37:67" pos:end="37:78">sizeof<argument_list pos:start="37:73" pos:end="37:78">(<argument pos:start="37:74" pos:end="37:77"><expr pos:start="37:74" pos:end="37:77"><name pos:start="37:74" pos:end="37:77">stat</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call>
+
+           <operator pos:start="39:12" pos:end="39:13">==</operator> <sizeof pos:start="39:15" pos:end="39:26">sizeof<argument_list pos:start="39:21" pos:end="39:26">(<argument pos:start="39:22" pos:end="39:25"><expr pos:start="39:22" pos:end="39:25"><name pos:start="39:22" pos:end="39:25">stat</name></expr></argument>)</argument_list></sizeof></expr>)</condition> <block pos:start="39:29" pos:end="53:5">{<block_content pos:start="41:9" pos:end="51:32">
+
+        <decl_stmt pos:start="41:9" pos:end="41:54"><decl pos:start="41:9" pos:end="41:53"><type pos:start="41:9" pos:end="41:16"><name pos:start="41:9" pos:end="41:16">uint16_t</name></type> <name pos:start="41:18" pos:end="41:20">tag</name> <init pos:start="41:22" pos:end="41:53">= <expr pos:start="41:24" pos:end="41:53"><call pos:start="41:24" pos:end="41:53"><name pos:start="41:24" pos:end="41:37">virtio_tswap16</name><argument_list pos:start="41:38" pos:end="41:53">(<argument pos:start="41:39" pos:end="41:42"><expr pos:start="41:39" pos:end="41:42"><name pos:start="41:39" pos:end="41:42">vdev</name></expr></argument>, <argument pos:start="41:45" pos:end="41:52"><expr pos:start="41:45" pos:end="41:52"><name pos:start="41:45" pos:end="41:52"><name pos:start="41:45" pos:end="41:48">stat</name><operator pos:start="41:49" pos:end="41:49">.</operator><name pos:start="41:50" pos:end="41:52">tag</name></name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="43:9" pos:end="43:54"><decl pos:start="43:9" pos:end="43:53"><type pos:start="43:9" pos:end="43:16"><name pos:start="43:9" pos:end="43:16">uint64_t</name></type> <name pos:start="43:18" pos:end="43:20">val</name> <init pos:start="43:22" pos:end="43:53">= <expr pos:start="43:24" pos:end="43:53"><call pos:start="43:24" pos:end="43:53"><name pos:start="43:24" pos:end="43:37">virtio_tswap64</name><argument_list pos:start="43:38" pos:end="43:53">(<argument pos:start="43:39" pos:end="43:42"><expr pos:start="43:39" pos:end="43:42"><name pos:start="43:39" pos:end="43:42">vdev</name></expr></argument>, <argument pos:start="43:45" pos:end="43:52"><expr pos:start="43:45" pos:end="43:52"><name pos:start="43:45" pos:end="43:52"><name pos:start="43:45" pos:end="43:48">stat</name><operator pos:start="43:49" pos:end="43:49">.</operator><name pos:start="43:50" pos:end="43:52">val</name></name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+
+
+        <expr_stmt pos:start="47:9" pos:end="47:31"><expr pos:start="47:9" pos:end="47:30"><name pos:start="47:9" pos:end="47:14">offset</name> <operator pos:start="47:16" pos:end="47:17">+=</operator> <sizeof pos:start="47:19" pos:end="47:30">sizeof<argument_list pos:start="47:25" pos:end="47:30">(<argument pos:start="47:26" pos:end="47:29"><expr pos:start="47:26" pos:end="47:29"><name pos:start="47:26" pos:end="47:29">stat</name></expr></argument>)</argument_list></sizeof></expr>;</expr_stmt>
+
+        <if_stmt pos:start="49:9" pos:end="51:32"><if pos:start="49:9" pos:end="51:32">if <condition pos:start="49:12" pos:end="49:38">(<expr pos:start="49:13" pos:end="49:37"><name pos:start="49:13" pos:end="49:15">tag</name> <operator pos:start="49:17" pos:end="49:17">&lt;</operator> <name pos:start="49:19" pos:end="49:37">VIRTIO_BALLOON_S_NR</name></expr>)</condition><block type="pseudo" pos:start="51:13" pos:end="51:32"><block_content pos:start="51:13" pos:end="51:32">
+
+            <expr_stmt pos:start="51:13" pos:end="51:32"><expr pos:start="51:13" pos:end="51:31"><name pos:start="51:13" pos:end="51:25"><name pos:start="51:13" pos:end="51:13">s</name><operator pos:start="51:14" pos:end="51:15">-&gt;</operator><name pos:start="51:16" pos:end="51:20">stats</name><index pos:start="51:21" pos:end="51:25">[<expr pos:start="51:22" pos:end="51:24"><name pos:start="51:22" pos:end="51:24">tag</name></expr>]</index></name> <operator pos:start="51:27" pos:end="51:27">=</operator> <name pos:start="51:29" pos:end="51:31">val</name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+    </block_content>}</block></while>
+
+    <expr_stmt pos:start="55:5" pos:end="55:32"><expr pos:start="55:5" pos:end="55:31"><name pos:start="55:5" pos:end="55:22"><name pos:start="55:5" pos:end="55:5">s</name><operator pos:start="55:6" pos:end="55:7">-&gt;</operator><name pos:start="55:8" pos:end="55:22">stats_vq_offset</name></name> <operator pos:start="55:24" pos:end="55:24">=</operator> <name pos:start="55:26" pos:end="55:31">offset</name></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="59:5" pos:end="65:5"><if pos:start="59:5" pos:end="65:5">if <condition pos:start="59:8" pos:end="59:35">(<expr pos:start="59:9" pos:end="59:34"><call pos:start="59:9" pos:end="59:30"><name pos:start="59:9" pos:end="59:25">qemu_gettimeofday</name><argument_list pos:start="59:26" pos:end="59:30">(<argument pos:start="59:27" pos:end="59:29"><expr pos:start="59:27" pos:end="59:29"><operator pos:start="59:27" pos:end="59:27">&amp;</operator><name pos:start="59:28" pos:end="59:29">tv</name></expr></argument>)</argument_list></call> <operator pos:start="59:32" pos:end="59:32">&lt;</operator> <literal type="number" pos:start="59:34" pos:end="59:34">0</literal></expr>)</condition> <block pos:start="59:37" pos:end="65:5">{<block_content pos:start="61:9" pos:end="63:17">
+
+        <expr_stmt pos:start="61:9" pos:end="61:78"><expr pos:start="61:9" pos:end="61:77"><call pos:start="61:9" pos:end="61:77"><name pos:start="61:9" pos:end="61:15">fprintf</name><argument_list pos:start="61:16" pos:end="61:77">(<argument pos:start="61:17" pos:end="61:22"><expr pos:start="61:17" pos:end="61:22"><name pos:start="61:17" pos:end="61:22">stderr</name></expr></argument>, <argument pos:start="61:25" pos:end="61:66"><expr pos:start="61:25" pos:end="61:66"><literal type="string" pos:start="61:25" pos:end="61:66">"warning: %s: failed to get time of day\n"</literal></expr></argument>, <argument pos:start="61:69" pos:end="61:76"><expr pos:start="61:69" pos:end="61:76"><name pos:start="61:69" pos:end="61:76">__func__</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <goto pos:start="63:9" pos:end="63:17">goto <name pos:start="63:14" pos:end="63:16">out</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="69:5" pos:end="69:37"><expr pos:start="69:5" pos:end="69:36"><name pos:start="69:5" pos:end="69:24"><name pos:start="69:5" pos:end="69:5">s</name><operator pos:start="69:6" pos:end="69:7">-&gt;</operator><name pos:start="69:8" pos:end="69:24">stats_last_update</name></name> <operator pos:start="69:26" pos:end="69:26">=</operator> <name pos:start="69:28" pos:end="69:36"><name pos:start="69:28" pos:end="69:29">tv</name><operator pos:start="69:30" pos:end="69:30">.</operator><name pos:start="69:31" pos:end="69:36">tv_sec</name></name></expr>;</expr_stmt>
+
+
+
+<label pos:start="73:1" pos:end="73:4"><name pos:start="73:1" pos:end="73:3">out</name>:</label>
+
+    <if_stmt pos:start="75:5" pos:end="79:5"><if pos:start="75:5" pos:end="79:5">if <condition pos:start="75:8" pos:end="75:33">(<expr pos:start="75:9" pos:end="75:32"><call pos:start="75:9" pos:end="75:32"><name pos:start="75:9" pos:end="75:29">balloon_stats_enabled</name><argument_list pos:start="75:30" pos:end="75:32">(<argument pos:start="75:31" pos:end="75:31"><expr pos:start="75:31" pos:end="75:31"><name pos:start="75:31" pos:end="75:31">s</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="75:35" pos:end="79:5">{<block_content pos:start="77:9" pos:end="77:62">
+
+        <expr_stmt pos:start="77:9" pos:end="77:62"><expr pos:start="77:9" pos:end="77:61"><call pos:start="77:9" pos:end="77:61"><name pos:start="77:9" pos:end="77:34">balloon_stats_change_timer</name><argument_list pos:start="77:35" pos:end="77:61">(<argument pos:start="77:36" pos:end="77:36"><expr pos:start="77:36" pos:end="77:36"><name pos:start="77:36" pos:end="77:36">s</name></expr></argument>, <argument pos:start="77:39" pos:end="77:60"><expr pos:start="77:39" pos:end="77:60"><name pos:start="77:39" pos:end="77:60"><name pos:start="77:39" pos:end="77:39">s</name><operator pos:start="77:40" pos:end="77:41">-&gt;</operator><name pos:start="77:42" pos:end="77:60">stats_poll_interval</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+</block_content>}</block></function>
+</unit>

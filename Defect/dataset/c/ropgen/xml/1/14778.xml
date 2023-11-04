@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/14778.c" pos:tabs="8"><function pos:start="1:1" pos:end="123:1"><type pos:start="1:1" pos:end="1:14"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:14">int64_t</name></type> <name pos:start="1:16" pos:end="1:34">alloc_clusters_imrt</name><parameter_list pos:start="1:35" pos:end="9:63">(<parameter pos:start="1:36" pos:end="1:55"><decl pos:start="1:36" pos:end="1:55"><type pos:start="1:36" pos:end="1:55"><name pos:start="1:36" pos:end="1:51">BlockDriverState</name> <modifier pos:start="1:53" pos:end="1:53">*</modifier></type><name pos:start="1:54" pos:end="1:55">bs</name></decl></parameter>,
+
+                                   <parameter pos:start="3:36" pos:end="3:52"><decl pos:start="3:36" pos:end="3:52"><type pos:start="3:36" pos:end="3:52"><name pos:start="3:36" pos:end="3:38">int</name></type> <name pos:start="3:40" pos:end="3:52">cluster_count</name></decl></parameter>,
+
+                                   <parameter pos:start="5:36" pos:end="5:60"><decl pos:start="5:36" pos:end="5:60"><type pos:start="5:36" pos:end="5:60"><name pos:start="5:36" pos:end="5:43">uint16_t</name> <modifier pos:start="5:45" pos:end="5:45">*</modifier><modifier pos:start="5:46" pos:end="5:46">*</modifier></type><name pos:start="5:47" pos:end="5:60">refcount_table</name></decl></parameter>,
+
+                                   <parameter pos:start="7:36" pos:end="7:60"><decl pos:start="7:36" pos:end="7:60"><type pos:start="7:36" pos:end="7:60"><name pos:start="7:36" pos:end="7:42">int64_t</name> <modifier pos:start="7:44" pos:end="7:44">*</modifier></type><name pos:start="7:45" pos:end="7:60">imrt_nb_clusters</name></decl></parameter>,
+
+                                   <parameter pos:start="9:36" pos:end="9:62"><decl pos:start="9:36" pos:end="9:62"><type pos:start="9:36" pos:end="9:62"><name pos:start="9:36" pos:end="9:42">int64_t</name> <modifier pos:start="9:44" pos:end="9:44">*</modifier></type><name pos:start="9:45" pos:end="9:62">first_free_cluster</name></decl></parameter>)</parameter_list>
+
+<block pos:start="11:1" pos:end="123:1">{<block_content pos:start="13:5" pos:end="121:38">
+
+    <decl_stmt pos:start="13:5" pos:end="13:34"><decl pos:start="13:5" pos:end="13:33"><type pos:start="13:5" pos:end="13:19"><name pos:start="13:5" pos:end="13:17">BDRVQcowState</name> <modifier pos:start="13:19" pos:end="13:19">*</modifier></type><name pos:start="13:20" pos:end="13:20">s</name> <init pos:start="13:22" pos:end="13:33">= <expr pos:start="13:24" pos:end="13:33"><name pos:start="13:24" pos:end="13:33"><name pos:start="13:24" pos:end="13:25">bs</name><operator pos:start="13:26" pos:end="13:27">-&gt;</operator><name pos:start="13:28" pos:end="13:33">opaque</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:45"><decl pos:start="15:5" pos:end="15:41"><type pos:start="15:5" pos:end="15:11"><name pos:start="15:5" pos:end="15:11">int64_t</name></type> <name pos:start="15:13" pos:end="15:19">cluster</name> <init pos:start="15:21" pos:end="15:41">= <expr pos:start="15:23" pos:end="15:41"><operator pos:start="15:23" pos:end="15:23">*</operator><name pos:start="15:24" pos:end="15:41">first_free_cluster</name></expr></init></decl>, <decl pos:start="15:44" pos:end="15:44"><type ref="prev" pos:start="15:5" pos:end="15:11"/><name pos:start="15:44" pos:end="15:44">i</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="17:5" pos:end="17:26"><decl pos:start="17:5" pos:end="17:25"><type pos:start="17:5" pos:end="17:8"><name pos:start="17:5" pos:end="17:8">bool</name></type> <name pos:start="17:10" pos:end="17:18">first_gap</name> <init pos:start="17:20" pos:end="17:25">= <expr pos:start="17:22" pos:end="17:25"><name pos:start="17:22" pos:end="17:25">true</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:33"><decl pos:start="19:5" pos:end="19:32"><type pos:start="19:5" pos:end="19:7"><name pos:start="19:5" pos:end="19:7">int</name></type> <name pos:start="19:9" pos:end="19:32">contiguous_free_clusters</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="21:5" pos:end="21:12"><decl pos:start="21:5" pos:end="21:11"><type pos:start="21:5" pos:end="21:7"><name pos:start="21:5" pos:end="21:7">int</name></type> <name pos:start="21:9" pos:end="21:11">ret</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="25:5" pos:end="27:36">/* Starting at *first_free_cluster, find a range of at least cluster_count
+
+     * continuously free clusters */</comment>
+
+    <for pos:start="29:5" pos:end="61:5">for <control pos:start="29:9" pos:end="35:19">(<init pos:start="29:10" pos:end="29:38"><expr pos:start="29:10" pos:end="29:37"><name pos:start="29:10" pos:end="29:33">contiguous_free_clusters</name> <operator pos:start="29:35" pos:end="29:35">=</operator> <literal type="number" pos:start="29:37" pos:end="29:37">0</literal></expr>;</init>
+
+         <condition pos:start="31:10" pos:end="33:50"><expr pos:start="31:10" pos:end="33:49"><name pos:start="31:10" pos:end="31:16">cluster</name> <operator pos:start="31:18" pos:end="31:18">&lt;</operator> <operator pos:start="31:20" pos:end="31:20">*</operator><name pos:start="31:21" pos:end="31:36">imrt_nb_clusters</name> <operator pos:start="31:38" pos:end="31:39">&amp;&amp;</operator>
+
+         <name pos:start="33:10" pos:end="33:33">contiguous_free_clusters</name> <operator pos:start="33:35" pos:end="33:35">&lt;</operator> <name pos:start="33:37" pos:end="33:49">cluster_count</name></expr>;</condition>
+
+         <incr pos:start="35:10" pos:end="35:18"><expr pos:start="35:10" pos:end="35:18"><name pos:start="35:10" pos:end="35:16">cluster</name><operator pos:start="35:17" pos:end="35:18">++</operator></expr></incr>)</control>
+
+    <block pos:start="37:5" pos:end="61:5">{<block_content pos:start="39:9" pos:end="59:9">
+
+        <if_stmt pos:start="39:9" pos:end="59:9"><if pos:start="39:9" pos:end="55:9">if <condition pos:start="39:12" pos:end="39:40">(<expr pos:start="39:13" pos:end="39:39"><operator pos:start="39:13" pos:end="39:13">!</operator><operator pos:start="39:14" pos:end="39:14">(</operator><operator pos:start="39:15" pos:end="39:15">*</operator><name pos:start="39:16" pos:end="39:29">refcount_table</name><operator pos:start="39:30" pos:end="39:30">)</operator><index pos:start="39:31" pos:end="39:39">[<expr pos:start="39:32" pos:end="39:38"><name pos:start="39:32" pos:end="39:38">cluster</name></expr>]</index></expr>)</condition> <block pos:start="39:42" pos:end="55:9">{<block_content pos:start="41:13" pos:end="53:13">
+
+            <expr_stmt pos:start="41:13" pos:end="41:39"><expr pos:start="41:13" pos:end="41:38"><name pos:start="41:13" pos:end="41:36">contiguous_free_clusters</name><operator pos:start="41:37" pos:end="41:38">++</operator></expr>;</expr_stmt>
+
+            <if_stmt pos:start="43:13" pos:end="53:13"><if pos:start="43:13" pos:end="53:13">if <condition pos:start="43:16" pos:end="43:26">(<expr pos:start="43:17" pos:end="43:25"><name pos:start="43:17" pos:end="43:25">first_gap</name></expr>)</condition> <block pos:start="43:28" pos:end="53:13">{<block_content pos:start="49:17" pos:end="51:34">
+
+                <comment type="block" pos:start="45:17" pos:end="47:53">/* If this is the first free cluster found, update
+
+                 * *first_free_cluster accordingly */</comment>
+
+                <expr_stmt pos:start="49:17" pos:end="49:46"><expr pos:start="49:17" pos:end="49:45"><operator pos:start="49:17" pos:end="49:17">*</operator><name pos:start="49:18" pos:end="49:35">first_free_cluster</name> <operator pos:start="49:37" pos:end="49:37">=</operator> <name pos:start="49:39" pos:end="49:45">cluster</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="51:17" pos:end="51:34"><expr pos:start="51:17" pos:end="51:33"><name pos:start="51:17" pos:end="51:25">first_gap</name> <operator pos:start="51:27" pos:end="51:27">=</operator> <name pos:start="51:29" pos:end="51:33">false</name></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+        </block_content>}</block></if> <if type="elseif" pos:start="55:11" pos:end="59:9">else if <condition pos:start="55:19" pos:end="55:44">(<expr pos:start="55:20" pos:end="55:43"><name pos:start="55:20" pos:end="55:43">contiguous_free_clusters</name></expr>)</condition> <block pos:start="55:46" pos:end="59:9">{<block_content pos:start="57:13" pos:end="57:41">
+
+            <expr_stmt pos:start="57:13" pos:end="57:41"><expr pos:start="57:13" pos:end="57:40"><name pos:start="57:13" pos:end="57:36">contiguous_free_clusters</name> <operator pos:start="57:38" pos:end="57:38">=</operator> <literal type="number" pos:start="57:40" pos:end="57:40">0</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></for>
+
+
+
+    <comment type="block" pos:start="65:5" pos:end="71:44">/* If contiguous_free_clusters is greater than zero, it contains the number
+
+     * of continuously free clusters until the current cluster; the first free
+
+     * cluster in the current "gap" is therefore
+
+     * cluster - contiguous_free_clusters */</comment>
+
+
+
+    <comment type="block" pos:start="75:5" pos:end="77:69">/* If no such range could be found, grow the in-memory refcount table
+
+     * accordingly to append free clusters at the end of the image */</comment>
+
+    <if_stmt pos:start="79:5" pos:end="105:5"><if pos:start="79:5" pos:end="105:5">if <condition pos:start="79:8" pos:end="79:49">(<expr pos:start="79:9" pos:end="79:48"><name pos:start="79:9" pos:end="79:32">contiguous_free_clusters</name> <operator pos:start="79:34" pos:end="79:34">&lt;</operator> <name pos:start="79:36" pos:end="79:48">cluster_count</name></expr>)</condition> <block pos:start="79:51" pos:end="105:5">{<block_content pos:start="93:9" pos:end="103:9">
+
+        <comment type="block" pos:start="81:9" pos:end="91:28">/* contiguous_free_clusters clusters are already empty at the image end;
+
+         * we need cluster_count clusters; therefore, we have to allocate
+
+         * cluster_count - contiguous_free_clusters new clusters at the end of
+
+         * the image (which is the current value of cluster; note that cluster
+
+         * may exceed old_imrt_nb_clusters if *first_free_cluster pointed beyond
+
+         * the image end) */</comment>
+
+        <expr_stmt pos:start="93:9" pos:end="97:65"><expr pos:start="93:9" pos:end="97:64"><name pos:start="93:9" pos:end="93:11">ret</name> <operator pos:start="93:13" pos:end="93:13">=</operator> <call pos:start="93:15" pos:end="97:64"><name pos:start="93:15" pos:end="93:36">realloc_refcount_array</name><argument_list pos:start="93:37" pos:end="97:64">(<argument pos:start="93:38" pos:end="93:38"><expr pos:start="93:38" pos:end="93:38"><name pos:start="93:38" pos:end="93:38">s</name></expr></argument>, <argument pos:start="93:41" pos:end="93:54"><expr pos:start="93:41" pos:end="93:54"><name pos:start="93:41" pos:end="93:54">refcount_table</name></expr></argument>, <argument pos:start="93:57" pos:end="93:72"><expr pos:start="93:57" pos:end="93:72"><name pos:start="93:57" pos:end="93:72">imrt_nb_clusters</name></expr></argument>,
+
+                                     <argument pos:start="95:38" pos:end="97:63"><expr pos:start="95:38" pos:end="97:63"><name pos:start="95:38" pos:end="95:44">cluster</name> <operator pos:start="95:46" pos:end="95:46">+</operator> <name pos:start="95:48" pos:end="95:60">cluster_count</name>
+
+                                     <operator pos:start="97:38" pos:end="97:38">-</operator> <name pos:start="97:40" pos:end="97:63">contiguous_free_clusters</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="99:9" pos:end="103:9"><if pos:start="99:9" pos:end="103:9">if <condition pos:start="99:12" pos:end="99:20">(<expr pos:start="99:13" pos:end="99:19"><name pos:start="99:13" pos:end="99:15">ret</name> <operator pos:start="99:17" pos:end="99:17">&lt;</operator> <literal type="number" pos:start="99:19" pos:end="99:19">0</literal></expr>)</condition> <block pos:start="99:22" pos:end="103:9">{<block_content pos:start="101:13" pos:end="101:23">
+
+            <return pos:start="101:13" pos:end="101:23">return <expr pos:start="101:20" pos:end="101:22"><name pos:start="101:20" pos:end="101:22">ret</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="109:5" pos:end="109:43">/* Go back to the first free cluster */</comment>
+
+    <expr_stmt pos:start="111:5" pos:end="111:40"><expr pos:start="111:5" pos:end="111:39"><name pos:start="111:5" pos:end="111:11">cluster</name> <operator pos:start="111:13" pos:end="111:14">-=</operator> <name pos:start="111:16" pos:end="111:39">contiguous_free_clusters</name></expr>;</expr_stmt>
+
+    <for pos:start="113:5" pos:end="117:5">for <control pos:start="113:9" pos:end="113:39">(<init pos:start="113:10" pos:end="113:15"><expr pos:start="113:10" pos:end="113:14"><name pos:start="113:10" pos:end="113:10">i</name> <operator pos:start="113:12" pos:end="113:12">=</operator> <literal type="number" pos:start="113:14" pos:end="113:14">0</literal></expr>;</init> <condition pos:start="113:17" pos:end="113:34"><expr pos:start="113:17" pos:end="113:33"><name pos:start="113:17" pos:end="113:17">i</name> <operator pos:start="113:19" pos:end="113:19">&lt;</operator> <name pos:start="113:21" pos:end="113:33">cluster_count</name></expr>;</condition> <incr pos:start="113:36" pos:end="113:38"><expr pos:start="113:36" pos:end="113:38"><name pos:start="113:36" pos:end="113:36">i</name><operator pos:start="113:37" pos:end="113:38">++</operator></expr></incr>)</control> <block pos:start="113:41" pos:end="117:5">{<block_content pos:start="115:9" pos:end="115:43">
+
+        <expr_stmt pos:start="115:9" pos:end="115:43"><expr pos:start="115:9" pos:end="115:42"><operator pos:start="115:9" pos:end="115:9">(</operator><operator pos:start="115:10" pos:end="115:10">*</operator><name pos:start="115:11" pos:end="115:24">refcount_table</name><operator pos:start="115:25" pos:end="115:25">)</operator><index pos:start="115:26" pos:end="115:38">[<expr pos:start="115:27" pos:end="115:37"><name pos:start="115:27" pos:end="115:33">cluster</name> <operator pos:start="115:35" pos:end="115:35">+</operator> <name pos:start="115:37" pos:end="115:37">i</name></expr>]</index> <operator pos:start="115:40" pos:end="115:40">=</operator> <literal type="number" pos:start="115:42" pos:end="115:42">1</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></for>
+
+
+
+    <return pos:start="121:5" pos:end="121:38">return <expr pos:start="121:12" pos:end="121:37"><name pos:start="121:12" pos:end="121:18">cluster</name> <operator pos:start="121:20" pos:end="121:21">&lt;&lt;</operator> <name pos:start="121:23" pos:end="121:37"><name pos:start="121:23" pos:end="121:23">s</name><operator pos:start="121:24" pos:end="121:25">-&gt;</operator><name pos:start="121:26" pos:end="121:37">cluster_bits</name></name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

@@ -1,0 +1,761 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/23750.c" pos:tabs="8"><function pos:start="1:1" pos:end="759:1"><type pos:start="1:1" pos:end="1:4"><name pos:start="1:1" pos:end="1:4">void</name></type> <name pos:start="1:6" pos:end="1:26">gen_intermediate_code</name><parameter_list pos:start="1:27" pos:end="1:62">(<parameter pos:start="1:28" pos:end="1:39"><decl pos:start="1:28" pos:end="1:39"><type pos:start="1:28" pos:end="1:39"><name pos:start="1:28" pos:end="1:35">CPUState</name> <modifier pos:start="1:37" pos:end="1:37">*</modifier></type><name pos:start="1:38" pos:end="1:39">cs</name></decl></parameter>, <parameter pos:start="1:42" pos:end="1:61"><decl pos:start="1:42" pos:end="1:61"><type pos:start="1:42" pos:end="1:61"><name pos:start="1:42" pos:end="1:57">TranslationBlock</name> <modifier pos:start="1:59" pos:end="1:59">*</modifier></type><name pos:start="1:60" pos:end="1:61">tb</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="759:1">{<block_content pos:start="5:5" pos:end="757:27">
+
+    <decl_stmt pos:start="5:5" pos:end="5:35"><decl pos:start="5:5" pos:end="5:34"><type pos:start="5:5" pos:end="5:17"><name pos:start="5:5" pos:end="5:15">CPUARMState</name> <modifier pos:start="5:17" pos:end="5:17">*</modifier></type><name pos:start="5:18" pos:end="5:20">env</name> <init pos:start="5:22" pos:end="5:34">= <expr pos:start="5:24" pos:end="5:34"><name pos:start="5:24" pos:end="5:34"><name pos:start="5:24" pos:end="5:25">cs</name><operator pos:start="5:26" pos:end="5:27">-&gt;</operator><name pos:start="5:28" pos:end="5:34">env_ptr</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:39"><decl pos:start="7:5" pos:end="7:38"><type pos:start="7:5" pos:end="7:12"><name pos:start="7:5" pos:end="7:10">ARMCPU</name> <modifier pos:start="7:12" pos:end="7:12">*</modifier></type><name pos:start="7:13" pos:end="7:15">cpu</name> <init pos:start="7:17" pos:end="7:38">= <expr pos:start="7:19" pos:end="7:38"><call pos:start="7:19" pos:end="7:38"><name pos:start="7:19" pos:end="7:33">arm_env_get_cpu</name><argument_list pos:start="7:34" pos:end="7:38">(<argument pos:start="7:35" pos:end="7:37"><expr pos:start="7:35" pos:end="7:37"><name pos:start="7:35" pos:end="7:37">env</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:33"><decl pos:start="9:5" pos:end="9:20"><type pos:start="9:5" pos:end="9:16"><name pos:start="9:5" pos:end="9:16">DisasContext</name></type> <name pos:start="9:18" pos:end="9:20">dc1</name></decl>, <decl pos:start="9:23" pos:end="9:32"><type ref="prev" pos:start="9:5" pos:end="9:16"><modifier pos:start="9:23" pos:end="9:23">*</modifier></type><name pos:start="9:24" pos:end="9:25">dc</name> <init pos:start="9:27" pos:end="9:32">= <expr pos:start="9:29" pos:end="9:32"><operator pos:start="9:29" pos:end="9:29">&amp;</operator><name pos:start="9:30" pos:end="9:32">dc1</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:26"><decl pos:start="11:5" pos:end="11:25"><type pos:start="11:5" pos:end="11:16"><name pos:start="11:5" pos:end="11:16">target_ulong</name></type> <name pos:start="11:18" pos:end="11:25">pc_start</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:33"><decl pos:start="13:5" pos:end="13:32"><type pos:start="13:5" pos:end="13:16"><name pos:start="13:5" pos:end="13:16">target_ulong</name></type> <name pos:start="13:18" pos:end="13:32">next_page_start</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:18"><decl pos:start="15:5" pos:end="15:17"><type pos:start="15:5" pos:end="15:7"><name pos:start="15:5" pos:end="15:7">int</name></type> <name pos:start="15:9" pos:end="15:17">num_insns</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="17:5" pos:end="17:18"><decl pos:start="17:5" pos:end="17:17"><type pos:start="17:5" pos:end="17:7"><name pos:start="17:5" pos:end="17:7">int</name></type> <name pos:start="17:9" pos:end="17:17">max_insns</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:21"><decl pos:start="19:5" pos:end="19:20"><type pos:start="19:5" pos:end="19:8"><name pos:start="19:5" pos:end="19:8">bool</name></type> <name pos:start="19:10" pos:end="19:20">end_of_page</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="23:5" pos:end="23:36">/* generate intermediate code */</comment>
+
+
+
+    <comment type="block" pos:start="27:5" pos:end="31:7">/* The A64 decoder has its own top level loop, because it doesn't need
+
+     * the A32/T32 complexity to do with conditional execution/IT blocks/etc.
+
+     */</comment>
+
+    <if_stmt pos:start="33:5" pos:end="39:5"><if pos:start="33:5" pos:end="39:5">if <condition pos:start="33:8" pos:end="33:44">(<expr pos:start="33:9" pos:end="33:43"><call pos:start="33:9" pos:end="33:43"><name pos:start="33:9" pos:end="33:32">ARM_TBFLAG_AARCH64_STATE</name><argument_list pos:start="33:33" pos:end="33:43">(<argument pos:start="33:34" pos:end="33:42"><expr pos:start="33:34" pos:end="33:42"><name pos:start="33:34" pos:end="33:42"><name pos:start="33:34" pos:end="33:35">tb</name><operator pos:start="33:36" pos:end="33:37">-&gt;</operator><name pos:start="33:38" pos:end="33:42">flags</name></name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="33:46" pos:end="39:5">{<block_content pos:start="35:9" pos:end="37:15">
+
+        <expr_stmt pos:start="35:9" pos:end="35:42"><expr pos:start="35:9" pos:end="35:41"><call pos:start="35:9" pos:end="35:41"><name pos:start="35:9" pos:end="35:33">gen_intermediate_code_a64</name><argument_list pos:start="35:34" pos:end="35:41">(<argument pos:start="35:35" pos:end="35:36"><expr pos:start="35:35" pos:end="35:36"><name pos:start="35:35" pos:end="35:36">cs</name></expr></argument>, <argument pos:start="35:39" pos:end="35:40"><expr pos:start="35:39" pos:end="35:40"><name pos:start="35:39" pos:end="35:40">tb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="37:9" pos:end="37:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="43:5" pos:end="43:22"><expr pos:start="43:5" pos:end="43:21"><name pos:start="43:5" pos:end="43:12">pc_start</name> <operator pos:start="43:14" pos:end="43:14">=</operator> <name pos:start="43:16" pos:end="43:21"><name pos:start="43:16" pos:end="43:17">tb</name><operator pos:start="43:18" pos:end="43:19">-&gt;</operator><name pos:start="43:20" pos:end="43:21">pc</name></name></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="47:5" pos:end="47:16"><expr pos:start="47:5" pos:end="47:15"><name pos:start="47:5" pos:end="47:10"><name pos:start="47:5" pos:end="47:6">dc</name><operator pos:start="47:7" pos:end="47:8">-&gt;</operator><name pos:start="47:9" pos:end="47:10">tb</name></name> <operator pos:start="47:12" pos:end="47:12">=</operator> <name pos:start="47:14" pos:end="47:15">tb</name></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="51:5" pos:end="51:28"><expr pos:start="51:5" pos:end="51:27"><name pos:start="51:5" pos:end="51:14"><name pos:start="51:5" pos:end="51:6">dc</name><operator pos:start="51:7" pos:end="51:8">-&gt;</operator><name pos:start="51:9" pos:end="51:14">is_jmp</name></name> <operator pos:start="51:16" pos:end="51:16">=</operator> <name pos:start="51:18" pos:end="51:27">DISAS_NEXT</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="53:5" pos:end="53:22"><expr pos:start="53:5" pos:end="53:21"><name pos:start="53:5" pos:end="53:10"><name pos:start="53:5" pos:end="53:6">dc</name><operator pos:start="53:7" pos:end="53:8">-&gt;</operator><name pos:start="53:9" pos:end="53:10">pc</name></name> <operator pos:start="53:12" pos:end="53:12">=</operator> <name pos:start="53:14" pos:end="53:21">pc_start</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="55:5" pos:end="55:52"><expr pos:start="55:5" pos:end="55:51"><name pos:start="55:5" pos:end="55:26"><name pos:start="55:5" pos:end="55:6">dc</name><operator pos:start="55:7" pos:end="55:8">-&gt;</operator><name pos:start="55:9" pos:end="55:26">singlestep_enabled</name></name> <operator pos:start="55:28" pos:end="55:28">=</operator> <name pos:start="55:30" pos:end="55:51"><name pos:start="55:30" pos:end="55:31">cs</name><operator pos:start="55:32" pos:end="55:33">-&gt;</operator><name pos:start="55:34" pos:end="55:51">singlestep_enabled</name></name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="57:5" pos:end="57:20"><expr pos:start="57:5" pos:end="57:19"><name pos:start="57:5" pos:end="57:15"><name pos:start="57:5" pos:end="57:6">dc</name><operator pos:start="57:7" pos:end="57:8">-&gt;</operator><name pos:start="57:9" pos:end="57:15">condjmp</name></name> <operator pos:start="57:17" pos:end="57:17">=</operator> <literal type="number" pos:start="57:19" pos:end="57:19">0</literal></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="61:5" pos:end="61:20"><expr pos:start="61:5" pos:end="61:19"><name pos:start="61:5" pos:end="61:15"><name pos:start="61:5" pos:end="61:6">dc</name><operator pos:start="61:7" pos:end="61:8">-&gt;</operator><name pos:start="61:9" pos:end="61:15">aarch64</name></name> <operator pos:start="61:17" pos:end="61:17">=</operator> <literal type="number" pos:start="61:19" pos:end="61:19">0</literal></expr>;</expr_stmt>
+
+    <comment type="block" pos:start="63:5" pos:end="67:7">/* If we are coming from secure EL0 in a system with a 32-bit EL3, then
+
+     * there is no secure EL1, so we route exceptions to EL3.
+
+     */</comment>
+
+    <expr_stmt pos:start="69:5" pos:end="71:55"><expr pos:start="69:5" pos:end="71:54"><name pos:start="69:5" pos:end="69:28"><name pos:start="69:5" pos:end="69:6">dc</name><operator pos:start="69:7" pos:end="69:8">-&gt;</operator><name pos:start="69:9" pos:end="69:28">secure_routed_to_el3</name></name> <operator pos:start="69:30" pos:end="69:30">=</operator> <call pos:start="69:32" pos:end="69:64"><name pos:start="69:32" pos:end="69:42">arm_feature</name><argument_list pos:start="69:43" pos:end="69:64">(<argument pos:start="69:44" pos:end="69:46"><expr pos:start="69:44" pos:end="69:46"><name pos:start="69:44" pos:end="69:46">env</name></expr></argument>, <argument pos:start="69:49" pos:end="69:63"><expr pos:start="69:49" pos:end="69:63"><name pos:start="69:49" pos:end="69:63">ARM_FEATURE_EL3</name></expr></argument>)</argument_list></call> <operator pos:start="69:66" pos:end="69:67">&amp;&amp;</operator>
+
+                               <operator pos:start="71:32" pos:end="71:32">!</operator><call pos:start="71:33" pos:end="71:54"><name pos:start="71:33" pos:end="71:46">arm_el_is_aa64</name><argument_list pos:start="71:47" pos:end="71:54">(<argument pos:start="71:48" pos:end="71:50"><expr pos:start="71:48" pos:end="71:50"><name pos:start="71:48" pos:end="71:50">env</name></expr></argument>, <argument pos:start="71:53" pos:end="71:53"><expr pos:start="71:53" pos:end="71:53"><literal type="number" pos:start="71:53" pos:end="71:53">3</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="73:5" pos:end="73:44"><expr pos:start="73:5" pos:end="73:43"><name pos:start="73:5" pos:end="73:13"><name pos:start="73:5" pos:end="73:6">dc</name><operator pos:start="73:7" pos:end="73:8">-&gt;</operator><name pos:start="73:9" pos:end="73:13">thumb</name></name> <operator pos:start="73:15" pos:end="73:15">=</operator> <call pos:start="73:17" pos:end="73:43"><name pos:start="73:17" pos:end="73:32">ARM_TBFLAG_THUMB</name><argument_list pos:start="73:33" pos:end="73:43">(<argument pos:start="73:34" pos:end="73:42"><expr pos:start="73:34" pos:end="73:42"><name pos:start="73:34" pos:end="73:42"><name pos:start="73:34" pos:end="73:35">tb</name><operator pos:start="73:36" pos:end="73:37">-&gt;</operator><name pos:start="73:38" pos:end="73:42">flags</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="75:5" pos:end="75:48"><expr pos:start="75:5" pos:end="75:47"><name pos:start="75:5" pos:end="75:15"><name pos:start="75:5" pos:end="75:6">dc</name><operator pos:start="75:7" pos:end="75:8">-&gt;</operator><name pos:start="75:9" pos:end="75:15">sctlr_b</name></name> <operator pos:start="75:17" pos:end="75:17">=</operator> <call pos:start="75:19" pos:end="75:47"><name pos:start="75:19" pos:end="75:36">ARM_TBFLAG_SCTLR_B</name><argument_list pos:start="75:37" pos:end="75:47">(<argument pos:start="75:38" pos:end="75:46"><expr pos:start="75:38" pos:end="75:46"><name pos:start="75:38" pos:end="75:46"><name pos:start="75:38" pos:end="75:39">tb</name><operator pos:start="75:40" pos:end="75:41">-&gt;</operator><name pos:start="75:42" pos:end="75:46">flags</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="77:5" pos:end="77:64"><expr pos:start="77:5" pos:end="77:63"><name pos:start="77:5" pos:end="77:15"><name pos:start="77:5" pos:end="77:6">dc</name><operator pos:start="77:7" pos:end="77:8">-&gt;</operator><name pos:start="77:9" pos:end="77:15">be_data</name></name> <operator pos:start="77:17" pos:end="77:17">=</operator> <ternary pos:start="77:19" pos:end="77:63"><condition pos:start="77:19" pos:end="77:49"><expr pos:start="77:19" pos:end="77:47"><call pos:start="77:19" pos:end="77:47"><name pos:start="77:19" pos:end="77:36">ARM_TBFLAG_BE_DATA</name><argument_list pos:start="77:37" pos:end="77:47">(<argument pos:start="77:38" pos:end="77:46"><expr pos:start="77:38" pos:end="77:46"><name pos:start="77:38" pos:end="77:46"><name pos:start="77:38" pos:end="77:39">tb</name><operator pos:start="77:40" pos:end="77:41">-&gt;</operator><name pos:start="77:42" pos:end="77:46">flags</name></name></expr></argument>)</argument_list></call></expr> ?</condition><then pos:start="77:51" pos:end="77:55"> <expr pos:start="77:51" pos:end="77:55"><name pos:start="77:51" pos:end="77:55">MO_BE</name></expr> </then><else pos:start="77:57" pos:end="77:63">: <expr pos:start="77:59" pos:end="77:63"><name pos:start="77:59" pos:end="77:63">MO_LE</name></expr></else></ternary></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="79:5" pos:end="79:68"><expr pos:start="79:5" pos:end="79:67"><name pos:start="79:5" pos:end="79:21"><name pos:start="79:5" pos:end="79:6">dc</name><operator pos:start="79:7" pos:end="79:8">-&gt;</operator><name pos:start="79:9" pos:end="79:21">condexec_mask</name></name> <operator pos:start="79:23" pos:end="79:23">=</operator> <operator pos:start="79:25" pos:end="79:25">(</operator><call pos:start="79:26" pos:end="79:55"><name pos:start="79:26" pos:end="79:44">ARM_TBFLAG_CONDEXEC</name><argument_list pos:start="79:45" pos:end="79:55">(<argument pos:start="79:46" pos:end="79:54"><expr pos:start="79:46" pos:end="79:54"><name pos:start="79:46" pos:end="79:54"><name pos:start="79:46" pos:end="79:47">tb</name><operator pos:start="79:48" pos:end="79:49">-&gt;</operator><name pos:start="79:50" pos:end="79:54">flags</name></name></expr></argument>)</argument_list></call> <operator pos:start="79:57" pos:end="79:57">&amp;</operator> <literal type="number" pos:start="79:59" pos:end="79:61">0xf</literal><operator pos:start="79:62" pos:end="79:62">)</operator> <operator pos:start="79:64" pos:end="79:65">&lt;&lt;</operator> <literal type="number" pos:start="79:67" pos:end="79:67">1</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="81:5" pos:end="81:60"><expr pos:start="81:5" pos:end="81:59"><name pos:start="81:5" pos:end="81:21"><name pos:start="81:5" pos:end="81:6">dc</name><operator pos:start="81:7" pos:end="81:8">-&gt;</operator><name pos:start="81:9" pos:end="81:21">condexec_cond</name></name> <operator pos:start="81:23" pos:end="81:23">=</operator> <call pos:start="81:25" pos:end="81:54"><name pos:start="81:25" pos:end="81:43">ARM_TBFLAG_CONDEXEC</name><argument_list pos:start="81:44" pos:end="81:54">(<argument pos:start="81:45" pos:end="81:53"><expr pos:start="81:45" pos:end="81:53"><name pos:start="81:45" pos:end="81:53"><name pos:start="81:45" pos:end="81:46">tb</name><operator pos:start="81:47" pos:end="81:48">-&gt;</operator><name pos:start="81:49" pos:end="81:53">flags</name></name></expr></argument>)</argument_list></call> <operator pos:start="81:56" pos:end="81:57">&gt;&gt;</operator> <literal type="number" pos:start="81:59" pos:end="81:59">4</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="83:5" pos:end="83:73"><expr pos:start="83:5" pos:end="83:72"><name pos:start="83:5" pos:end="83:15"><name pos:start="83:5" pos:end="83:6">dc</name><operator pos:start="83:7" pos:end="83:8">-&gt;</operator><name pos:start="83:9" pos:end="83:15">mmu_idx</name></name> <operator pos:start="83:17" pos:end="83:17">=</operator> <call pos:start="83:19" pos:end="83:72"><name pos:start="83:19" pos:end="83:37">core_to_arm_mmu_idx</name><argument_list pos:start="83:38" pos:end="83:72">(<argument pos:start="83:39" pos:end="83:41"><expr pos:start="83:39" pos:end="83:41"><name pos:start="83:39" pos:end="83:41">env</name></expr></argument>, <argument pos:start="83:44" pos:end="83:71"><expr pos:start="83:44" pos:end="83:71"><call pos:start="83:44" pos:end="83:71"><name pos:start="83:44" pos:end="83:60">ARM_TBFLAG_MMUIDX</name><argument_list pos:start="83:61" pos:end="83:71">(<argument pos:start="83:62" pos:end="83:70"><expr pos:start="83:62" pos:end="83:70"><name pos:start="83:62" pos:end="83:70"><name pos:start="83:62" pos:end="83:63">tb</name><operator pos:start="83:64" pos:end="83:65">-&gt;</operator><name pos:start="83:66" pos:end="83:70">flags</name></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="85:5" pos:end="88:0"><expr pos:start="85:5" pos:end="85:51"><name pos:start="85:5" pos:end="85:18"><name pos:start="85:5" pos:end="85:6">dc</name><operator pos:start="85:7" pos:end="85:8">-&gt;</operator><name pos:start="85:9" pos:end="85:18">current_el</name></name> <operator pos:start="85:20" pos:end="85:20">=</operator> <call pos:start="85:22" pos:end="85:51"><name pos:start="85:22" pos:end="85:38">arm_mmu_idx_to_el</name><argument_list pos:start="85:39" pos:end="85:51">(<argument pos:start="85:40" pos:end="85:50"><expr pos:start="85:40" pos:end="85:50"><name pos:start="85:40" pos:end="85:50"><name pos:start="85:40" pos:end="85:41">dc</name><operator pos:start="85:42" pos:end="85:43">-&gt;</operator><name pos:start="85:44" pos:end="85:50">mmu_idx</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+<cpp:if pos:start="87:1" pos:end="87:30">#<cpp:directive pos:start="87:2" pos:end="87:3">if</cpp:directive> <expr pos:start="87:5" pos:end="87:30"><operator pos:start="87:5" pos:end="87:5">!</operator><call pos:start="87:6" pos:end="87:30"><name pos:start="87:6" pos:end="87:12">defined</name><argument_list pos:start="87:13" pos:end="87:30">(<argument pos:start="87:14" pos:end="87:29"><expr pos:start="87:14" pos:end="87:29"><name pos:start="87:14" pos:end="87:29">CONFIG_USER_ONLY</name></expr></argument>)</argument_list></call></expr></cpp:if>
+
+    <expr_stmt pos:start="89:5" pos:end="92:0"><expr pos:start="89:5" pos:end="89:36"><name pos:start="89:5" pos:end="89:12"><name pos:start="89:5" pos:end="89:6">dc</name><operator pos:start="89:7" pos:end="89:8">-&gt;</operator><name pos:start="89:9" pos:end="89:12">user</name></name> <operator pos:start="89:14" pos:end="89:14">=</operator> <operator pos:start="89:16" pos:end="89:16">(</operator><name pos:start="89:17" pos:end="89:30"><name pos:start="89:17" pos:end="89:18">dc</name><operator pos:start="89:19" pos:end="89:20">-&gt;</operator><name pos:start="89:21" pos:end="89:30">current_el</name></name> <operator pos:start="89:32" pos:end="89:33">==</operator> <literal type="number" pos:start="89:35" pos:end="89:35">0</literal><operator pos:start="89:36" pos:end="89:36">)</operator></expr>;</expr_stmt>
+
+<cpp:endif pos:start="91:1" pos:end="91:6">#<cpp:directive pos:start="91:2" pos:end="91:6">endif</cpp:directive></cpp:endif>
+
+    <expr_stmt pos:start="93:5" pos:end="93:38"><expr pos:start="93:5" pos:end="93:37"><name pos:start="93:5" pos:end="93:10"><name pos:start="93:5" pos:end="93:6">dc</name><operator pos:start="93:7" pos:end="93:8">-&gt;</operator><name pos:start="93:9" pos:end="93:10">ns</name></name> <operator pos:start="93:12" pos:end="93:12">=</operator> <call pos:start="93:14" pos:end="93:37"><name pos:start="93:14" pos:end="93:26">ARM_TBFLAG_NS</name><argument_list pos:start="93:27" pos:end="93:37">(<argument pos:start="93:28" pos:end="93:36"><expr pos:start="93:28" pos:end="93:36"><name pos:start="93:28" pos:end="93:36"><name pos:start="93:28" pos:end="93:29">tb</name><operator pos:start="93:30" pos:end="93:31">-&gt;</operator><name pos:start="93:32" pos:end="93:36">flags</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="95:5" pos:end="95:52"><expr pos:start="95:5" pos:end="95:51"><name pos:start="95:5" pos:end="95:18"><name pos:start="95:5" pos:end="95:6">dc</name><operator pos:start="95:7" pos:end="95:8">-&gt;</operator><name pos:start="95:9" pos:end="95:18">fp_excp_el</name></name> <operator pos:start="95:20" pos:end="95:20">=</operator> <call pos:start="95:22" pos:end="95:51"><name pos:start="95:22" pos:end="95:40">ARM_TBFLAG_FPEXC_EL</name><argument_list pos:start="95:41" pos:end="95:51">(<argument pos:start="95:42" pos:end="95:50"><expr pos:start="95:42" pos:end="95:50"><name pos:start="95:42" pos:end="95:50"><name pos:start="95:42" pos:end="95:43">tb</name><operator pos:start="95:44" pos:end="95:45">-&gt;</operator><name pos:start="95:46" pos:end="95:50">flags</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="97:5" pos:end="97:50"><expr pos:start="97:5" pos:end="97:49"><name pos:start="97:5" pos:end="97:19"><name pos:start="97:5" pos:end="97:6">dc</name><operator pos:start="97:7" pos:end="97:8">-&gt;</operator><name pos:start="97:9" pos:end="97:19">vfp_enabled</name></name> <operator pos:start="97:21" pos:end="97:21">=</operator> <call pos:start="97:23" pos:end="97:49"><name pos:start="97:23" pos:end="97:38">ARM_TBFLAG_VFPEN</name><argument_list pos:start="97:39" pos:end="97:49">(<argument pos:start="97:40" pos:end="97:48"><expr pos:start="97:40" pos:end="97:48"><name pos:start="97:40" pos:end="97:48"><name pos:start="97:40" pos:end="97:41">tb</name><operator pos:start="97:42" pos:end="97:43">-&gt;</operator><name pos:start="97:44" pos:end="97:48">flags</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="99:5" pos:end="99:47"><expr pos:start="99:5" pos:end="99:46"><name pos:start="99:5" pos:end="99:15"><name pos:start="99:5" pos:end="99:6">dc</name><operator pos:start="99:7" pos:end="99:8">-&gt;</operator><name pos:start="99:9" pos:end="99:15">vec_len</name></name> <operator pos:start="99:17" pos:end="99:17">=</operator> <call pos:start="99:19" pos:end="99:46"><name pos:start="99:19" pos:end="99:35">ARM_TBFLAG_VECLEN</name><argument_list pos:start="99:36" pos:end="99:46">(<argument pos:start="99:37" pos:end="99:45"><expr pos:start="99:37" pos:end="99:45"><name pos:start="99:37" pos:end="99:45"><name pos:start="99:37" pos:end="99:38">tb</name><operator pos:start="99:39" pos:end="99:40">-&gt;</operator><name pos:start="99:41" pos:end="99:45">flags</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="101:5" pos:end="101:53"><expr pos:start="101:5" pos:end="101:52"><name pos:start="101:5" pos:end="101:18"><name pos:start="101:5" pos:end="101:6">dc</name><operator pos:start="101:7" pos:end="101:8">-&gt;</operator><name pos:start="101:9" pos:end="101:18">vec_stride</name></name> <operator pos:start="101:20" pos:end="101:20">=</operator> <call pos:start="101:22" pos:end="101:52"><name pos:start="101:22" pos:end="101:41">ARM_TBFLAG_VECSTRIDE</name><argument_list pos:start="101:42" pos:end="101:52">(<argument pos:start="101:43" pos:end="101:51"><expr pos:start="101:43" pos:end="101:51"><name pos:start="101:43" pos:end="101:51"><name pos:start="101:43" pos:end="101:44">tb</name><operator pos:start="101:45" pos:end="101:46">-&gt;</operator><name pos:start="101:47" pos:end="101:51">flags</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="103:5" pos:end="103:53"><expr pos:start="103:5" pos:end="103:52"><name pos:start="103:5" pos:end="103:16"><name pos:start="103:5" pos:end="103:6">dc</name><operator pos:start="103:7" pos:end="103:8">-&gt;</operator><name pos:start="103:9" pos:end="103:16">c15_cpar</name></name> <operator pos:start="103:18" pos:end="103:18">=</operator> <call pos:start="103:20" pos:end="103:52"><name pos:start="103:20" pos:end="103:41">ARM_TBFLAG_XSCALE_CPAR</name><argument_list pos:start="103:42" pos:end="103:52">(<argument pos:start="103:43" pos:end="103:51"><expr pos:start="103:43" pos:end="103:51"><name pos:start="103:43" pos:end="103:51"><name pos:start="103:43" pos:end="103:44">tb</name><operator pos:start="103:45" pos:end="103:46">-&gt;</operator><name pos:start="103:47" pos:end="103:51">flags</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="105:5" pos:end="105:57"><expr pos:start="105:5" pos:end="105:56"><name pos:start="105:5" pos:end="105:24"><name pos:start="105:5" pos:end="105:6">dc</name><operator pos:start="105:7" pos:end="105:8">-&gt;</operator><name pos:start="105:9" pos:end="105:24">v7m_handler_mode</name></name> <operator pos:start="105:26" pos:end="105:26">=</operator> <call pos:start="105:28" pos:end="105:56"><name pos:start="105:28" pos:end="105:45">ARM_TBFLAG_HANDLER</name><argument_list pos:start="105:46" pos:end="105:56">(<argument pos:start="105:47" pos:end="105:55"><expr pos:start="105:47" pos:end="105:55"><name pos:start="105:47" pos:end="105:55"><name pos:start="105:47" pos:end="105:48">tb</name><operator pos:start="105:49" pos:end="105:50">-&gt;</operator><name pos:start="105:51" pos:end="105:55">flags</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="107:5" pos:end="107:31"><expr pos:start="107:5" pos:end="107:30"><name pos:start="107:5" pos:end="107:15"><name pos:start="107:5" pos:end="107:6">dc</name><operator pos:start="107:7" pos:end="107:8">-&gt;</operator><name pos:start="107:9" pos:end="107:15">cp_regs</name></name> <operator pos:start="107:17" pos:end="107:17">=</operator> <name pos:start="107:19" pos:end="107:30"><name pos:start="107:19" pos:end="107:21">cpu</name><operator pos:start="107:22" pos:end="107:23">-&gt;</operator><name pos:start="107:24" pos:end="107:30">cp_regs</name></name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="109:5" pos:end="109:33"><expr pos:start="109:5" pos:end="109:32"><name pos:start="109:5" pos:end="109:16"><name pos:start="109:5" pos:end="109:6">dc</name><operator pos:start="109:7" pos:end="109:8">-&gt;</operator><name pos:start="109:9" pos:end="109:16">features</name></name> <operator pos:start="109:18" pos:end="109:18">=</operator> <name pos:start="109:20" pos:end="109:32"><name pos:start="109:20" pos:end="109:22">env</name><operator pos:start="109:23" pos:end="109:24">-&gt;</operator><name pos:start="109:25" pos:end="109:32">features</name></name></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="113:5" pos:end="141:7">/* Single step state. The code-generation logic here is:
+
+     *  SS_ACTIVE == 0:
+
+     *   generate code with no special handling for single-stepping (except
+
+     *   that anything that can make us go to SS_ACTIVE == 1 must end the TB;
+
+     *   this happens anyway because those changes are all system register or
+
+     *   PSTATE writes).
+
+     *  SS_ACTIVE == 1, PSTATE.SS == 1: (active-not-pending)
+
+     *   emit code for one insn
+
+     *   emit code to clear PSTATE.SS
+
+     *   emit code to generate software step exception for completed step
+
+     *   end TB (as usual for having generated an exception)
+
+     *  SS_ACTIVE == 1, PSTATE.SS == 0: (active-pending)
+
+     *   emit code to generate a software step exception
+
+     *   end the TB
+
+     */</comment>
+
+    <expr_stmt pos:start="143:5" pos:end="143:52"><expr pos:start="143:5" pos:end="143:51"><name pos:start="143:5" pos:end="143:17"><name pos:start="143:5" pos:end="143:6">dc</name><operator pos:start="143:7" pos:end="143:8">-&gt;</operator><name pos:start="143:9" pos:end="143:17">ss_active</name></name> <operator pos:start="143:19" pos:end="143:19">=</operator> <call pos:start="143:21" pos:end="143:51"><name pos:start="143:21" pos:end="143:40">ARM_TBFLAG_SS_ACTIVE</name><argument_list pos:start="143:41" pos:end="143:51">(<argument pos:start="143:42" pos:end="143:50"><expr pos:start="143:42" pos:end="143:50"><name pos:start="143:42" pos:end="143:50"><name pos:start="143:42" pos:end="143:43">tb</name><operator pos:start="143:44" pos:end="143:45">-&gt;</operator><name pos:start="143:46" pos:end="143:50">flags</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="145:5" pos:end="145:52"><expr pos:start="145:5" pos:end="145:51"><name pos:start="145:5" pos:end="145:17"><name pos:start="145:5" pos:end="145:6">dc</name><operator pos:start="145:7" pos:end="145:8">-&gt;</operator><name pos:start="145:9" pos:end="145:17">pstate_ss</name></name> <operator pos:start="145:19" pos:end="145:19">=</operator> <call pos:start="145:21" pos:end="145:51"><name pos:start="145:21" pos:end="145:40">ARM_TBFLAG_PSTATE_SS</name><argument_list pos:start="145:41" pos:end="145:51">(<argument pos:start="145:42" pos:end="145:50"><expr pos:start="145:42" pos:end="145:50"><name pos:start="145:42" pos:end="145:50"><name pos:start="145:42" pos:end="145:43">tb</name><operator pos:start="145:44" pos:end="145:45">-&gt;</operator><name pos:start="145:46" pos:end="145:50">flags</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="147:5" pos:end="147:24"><expr pos:start="147:5" pos:end="147:23"><name pos:start="147:5" pos:end="147:15"><name pos:start="147:5" pos:end="147:6">dc</name><operator pos:start="147:7" pos:end="147:8">-&gt;</operator><name pos:start="147:9" pos:end="147:15">is_ldex</name></name> <operator pos:start="147:17" pos:end="147:17">=</operator> <name pos:start="147:19" pos:end="147:23">false</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="149:5" pos:end="149:27"><expr pos:start="149:5" pos:end="149:26"><name pos:start="149:5" pos:end="149:18"><name pos:start="149:5" pos:end="149:6">dc</name><operator pos:start="149:7" pos:end="149:8">-&gt;</operator><name pos:start="149:9" pos:end="149:18">ss_same_el</name></name> <operator pos:start="149:20" pos:end="149:20">=</operator> <name pos:start="149:22" pos:end="149:26">false</name></expr>;</expr_stmt> <comment type="block" pos:start="149:29" pos:end="149:74">/* Can't be true since EL_d must be AArch64 */</comment>
+
+
+
+    <expr_stmt pos:start="153:5" pos:end="153:33"><expr pos:start="153:5" pos:end="153:32"><name pos:start="153:5" pos:end="153:11">cpu_F0s</name> <operator pos:start="153:13" pos:end="153:13">=</operator> <call pos:start="153:15" pos:end="153:32"><name pos:start="153:15" pos:end="153:30">tcg_temp_new_i32</name><argument_list pos:start="153:31" pos:end="153:32">()</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="155:5" pos:end="155:33"><expr pos:start="155:5" pos:end="155:32"><name pos:start="155:5" pos:end="155:11">cpu_F1s</name> <operator pos:start="155:13" pos:end="155:13">=</operator> <call pos:start="155:15" pos:end="155:32"><name pos:start="155:15" pos:end="155:30">tcg_temp_new_i32</name><argument_list pos:start="155:31" pos:end="155:32">()</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="157:5" pos:end="157:33"><expr pos:start="157:5" pos:end="157:32"><name pos:start="157:5" pos:end="157:11">cpu_F0d</name> <operator pos:start="157:13" pos:end="157:13">=</operator> <call pos:start="157:15" pos:end="157:32"><name pos:start="157:15" pos:end="157:30">tcg_temp_new_i64</name><argument_list pos:start="157:31" pos:end="157:32">()</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="159:5" pos:end="159:33"><expr pos:start="159:5" pos:end="159:32"><name pos:start="159:5" pos:end="159:11">cpu_F1d</name> <operator pos:start="159:13" pos:end="159:13">=</operator> <call pos:start="159:15" pos:end="159:32"><name pos:start="159:15" pos:end="159:30">tcg_temp_new_i64</name><argument_list pos:start="159:31" pos:end="159:32">()</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="161:5" pos:end="161:21"><expr pos:start="161:5" pos:end="161:20"><name pos:start="161:5" pos:end="161:10">cpu_V0</name> <operator pos:start="161:12" pos:end="161:12">=</operator> <name pos:start="161:14" pos:end="161:20">cpu_F0d</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="163:5" pos:end="163:21"><expr pos:start="163:5" pos:end="163:20"><name pos:start="163:5" pos:end="163:10">cpu_V1</name> <operator pos:start="163:12" pos:end="163:12">=</operator> <name pos:start="163:14" pos:end="163:20">cpu_F1d</name></expr>;</expr_stmt>
+
+    <comment type="block" pos:start="165:5" pos:end="165:60">/* FIXME: cpu_M0 can probably be the same as cpu_V0.  */</comment>
+
+    <expr_stmt pos:start="167:5" pos:end="167:32"><expr pos:start="167:5" pos:end="167:31"><name pos:start="167:5" pos:end="167:10">cpu_M0</name> <operator pos:start="167:12" pos:end="167:12">=</operator> <call pos:start="167:14" pos:end="167:31"><name pos:start="167:14" pos:end="167:29">tcg_temp_new_i64</name><argument_list pos:start="167:30" pos:end="167:31">()</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="169:5" pos:end="169:71"><expr pos:start="169:5" pos:end="169:70"><name pos:start="169:5" pos:end="169:19">next_page_start</name> <operator pos:start="169:21" pos:end="169:21">=</operator> <operator pos:start="169:23" pos:end="169:23">(</operator><name pos:start="169:24" pos:end="169:31">pc_start</name> <operator pos:start="169:33" pos:end="169:33">&amp;</operator> <name pos:start="169:35" pos:end="169:50">TARGET_PAGE_MASK</name><operator pos:start="169:51" pos:end="169:51">)</operator> <operator pos:start="169:53" pos:end="169:53">+</operator> <name pos:start="169:55" pos:end="169:70">TARGET_PAGE_SIZE</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="171:5" pos:end="171:18"><expr pos:start="171:5" pos:end="171:17"><name pos:start="171:5" pos:end="171:13">num_insns</name> <operator pos:start="171:15" pos:end="171:15">=</operator> <literal type="number" pos:start="171:17" pos:end="171:17">0</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="173:5" pos:end="173:43"><expr pos:start="173:5" pos:end="173:42"><name pos:start="173:5" pos:end="173:13">max_insns</name> <operator pos:start="173:15" pos:end="173:15">=</operator> <name pos:start="173:17" pos:end="173:26"><name pos:start="173:17" pos:end="173:18">tb</name><operator pos:start="173:19" pos:end="173:20">-&gt;</operator><name pos:start="173:21" pos:end="173:26">cflags</name></name> <operator pos:start="173:28" pos:end="173:28">&amp;</operator> <name pos:start="173:30" pos:end="173:42">CF_COUNT_MASK</name></expr>;</expr_stmt>
+
+    <if_stmt pos:start="175:5" pos:end="179:5"><if pos:start="175:5" pos:end="179:5">if <condition pos:start="175:8" pos:end="175:23">(<expr pos:start="175:9" pos:end="175:22"><name pos:start="175:9" pos:end="175:17">max_insns</name> <operator pos:start="175:19" pos:end="175:20">==</operator> <literal type="number" pos:start="175:22" pos:end="175:22">0</literal></expr>)</condition> <block pos:start="175:25" pos:end="179:5">{<block_content pos:start="177:9" pos:end="177:34">
+
+        <expr_stmt pos:start="177:9" pos:end="177:34"><expr pos:start="177:9" pos:end="177:33"><name pos:start="177:9" pos:end="177:17">max_insns</name> <operator pos:start="177:19" pos:end="177:19">=</operator> <name pos:start="177:21" pos:end="177:33">CF_COUNT_MASK</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <if_stmt pos:start="181:5" pos:end="185:5"><if pos:start="181:5" pos:end="185:5">if <condition pos:start="181:8" pos:end="181:34">(<expr pos:start="181:9" pos:end="181:33"><name pos:start="181:9" pos:end="181:17">max_insns</name> <operator pos:start="181:19" pos:end="181:19">&gt;</operator> <name pos:start="181:21" pos:end="181:33">TCG_MAX_INSNS</name></expr>)</condition> <block pos:start="181:36" pos:end="185:5">{<block_content pos:start="183:9" pos:end="183:34">
+
+        <expr_stmt pos:start="183:9" pos:end="183:34"><expr pos:start="183:9" pos:end="183:33"><name pos:start="183:9" pos:end="183:17">max_insns</name> <operator pos:start="183:19" pos:end="183:19">=</operator> <name pos:start="183:21" pos:end="183:33">TCG_MAX_INSNS</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="189:5" pos:end="189:21"><expr pos:start="189:5" pos:end="189:20"><call pos:start="189:5" pos:end="189:20"><name pos:start="189:5" pos:end="189:16">gen_tb_start</name><argument_list pos:start="189:17" pos:end="189:20">(<argument pos:start="189:18" pos:end="189:19"><expr pos:start="189:18" pos:end="189:19"><name pos:start="189:18" pos:end="189:19">tb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="193:5" pos:end="193:27"><expr pos:start="193:5" pos:end="193:26"><call pos:start="193:5" pos:end="193:26"><name pos:start="193:5" pos:end="193:24">tcg_clear_temp_count</name><argument_list pos:start="193:25" pos:end="193:26">()</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="197:5" pos:end="253:7">/* A note on handling of the condexec (IT) bits:
+
+     *
+
+     * We want to avoid the overhead of having to write the updated condexec
+
+     * bits back to the CPUARMState for every instruction in an IT block. So:
+
+     * (1) if the condexec bits are not already zero then we write
+
+     * zero back into the CPUARMState now. This avoids complications trying
+
+     * to do it at the end of the block. (For example if we don't do this
+
+     * it's hard to identify whether we can safely skip writing condexec
+
+     * at the end of the TB, which we definitely want to do for the case
+
+     * where a TB doesn't do anything with the IT state at all.)
+
+     * (2) if we are going to leave the TB then we call gen_set_condexec()
+
+     * which will write the correct value into CPUARMState if zero is wrong.
+
+     * This is done both for leaving the TB at the end, and for leaving
+
+     * it because of an exception we know will happen, which is done in
+
+     * gen_exception_insn(). The latter is necessary because we need to
+
+     * leave the TB with the PC/IT state just prior to execution of the
+
+     * instruction which caused the exception.
+
+     * (3) if we leave the TB unexpectedly (eg a data abort on a load)
+
+     * then the CPUARMState will be wrong and we need to reset it.
+
+     * This is handled in the same way as restoration of the
+
+     * PC in these situations; we save the value of the condexec bits
+
+     * for each PC via tcg_gen_insn_start(), and restore_state_to_opc()
+
+     * then uses this to restore them after an exception.
+
+     *
+
+     * Note that there are no instructions which can read the condexec
+
+     * bits, and none which can write non-static values to them, so
+
+     * we don't need to care about whether CPUARMState is correct in the
+
+     * middle of a TB.
+
+     */</comment>
+
+
+
+    <comment type="block" pos:start="257:5" pos:end="259:65">/* Reset the conditional execution bits immediately. This avoids
+
+       complications trying to do it at the end of the block.  */</comment>
+
+    <if_stmt pos:start="261:5" pos:end="271:7"><if pos:start="261:5" pos:end="271:7">if <condition pos:start="261:8" pos:end="261:47">(<expr pos:start="261:9" pos:end="261:46"><name pos:start="261:9" pos:end="261:25"><name pos:start="261:9" pos:end="261:10">dc</name><operator pos:start="261:11" pos:end="261:12">-&gt;</operator><name pos:start="261:13" pos:end="261:25">condexec_mask</name></name> <operator pos:start="261:27" pos:end="261:28">||</operator> <name pos:start="261:30" pos:end="261:46"><name pos:start="261:30" pos:end="261:31">dc</name><operator pos:start="261:32" pos:end="261:33">-&gt;</operator><name pos:start="261:34" pos:end="261:46">condexec_cond</name></name></expr>)</condition>
+
+      <block pos:start="263:7" pos:end="271:7">{<block_content pos:start="265:9" pos:end="269:44">
+
+        <decl_stmt pos:start="265:9" pos:end="265:42"><decl pos:start="265:9" pos:end="265:41"><type pos:start="265:9" pos:end="265:16"><name pos:start="265:9" pos:end="265:16">TCGv_i32</name></type> <name pos:start="265:18" pos:end="265:20">tmp</name> <init pos:start="265:22" pos:end="265:41">= <expr pos:start="265:24" pos:end="265:41"><call pos:start="265:24" pos:end="265:41"><name pos:start="265:24" pos:end="265:39">tcg_temp_new_i32</name><argument_list pos:start="265:40" pos:end="265:41">()</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <expr_stmt pos:start="267:9" pos:end="267:33"><expr pos:start="267:9" pos:end="267:32"><call pos:start="267:9" pos:end="267:32"><name pos:start="267:9" pos:end="267:24">tcg_gen_movi_i32</name><argument_list pos:start="267:25" pos:end="267:32">(<argument pos:start="267:26" pos:end="267:28"><expr pos:start="267:26" pos:end="267:28"><name pos:start="267:26" pos:end="267:28">tmp</name></expr></argument>, <argument pos:start="267:31" pos:end="267:31"><expr pos:start="267:31" pos:end="267:31"><literal type="number" pos:start="267:31" pos:end="267:31">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="269:9" pos:end="269:44"><expr pos:start="269:9" pos:end="269:43"><call pos:start="269:9" pos:end="269:43"><name pos:start="269:9" pos:end="269:23">store_cpu_field</name><argument_list pos:start="269:24" pos:end="269:43">(<argument pos:start="269:25" pos:end="269:27"><expr pos:start="269:25" pos:end="269:27"><name pos:start="269:25" pos:end="269:27">tmp</name></expr></argument>, <argument pos:start="269:30" pos:end="269:42"><expr pos:start="269:30" pos:end="269:42"><name pos:start="269:30" pos:end="269:42">condexec_bits</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+      </block_content>}</block></if></if_stmt>
+
+    <do pos:start="273:5" pos:end="499:36">do <block pos:start="273:8" pos:end="491:5">{<block_content pos:start="275:9" pos:end="487:76">
+
+        <expr_stmt pos:start="275:9" pos:end="275:48"><expr pos:start="275:9" pos:end="275:47"><name pos:start="275:9" pos:end="275:26"><name pos:start="275:9" pos:end="275:10">dc</name><operator pos:start="275:11" pos:end="275:12">-&gt;</operator><name pos:start="275:13" pos:end="275:26">insn_start_idx</name></name> <operator pos:start="275:28" pos:end="275:28">=</operator> <call pos:start="275:30" pos:end="275:47"><name pos:start="275:30" pos:end="275:45">tcg_op_buf_count</name><argument_list pos:start="275:46" pos:end="275:47">()</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="277:9" pos:end="281:30"><expr pos:start="277:9" pos:end="281:29"><call pos:start="277:9" pos:end="281:29"><name pos:start="277:9" pos:end="277:26">tcg_gen_insn_start</name><argument_list pos:start="277:27" pos:end="281:29">(<argument pos:start="277:28" pos:end="277:33"><expr pos:start="277:28" pos:end="277:33"><name pos:start="277:28" pos:end="277:33"><name pos:start="277:28" pos:end="277:29">dc</name><operator pos:start="277:30" pos:end="277:31">-&gt;</operator><name pos:start="277:32" pos:end="277:33">pc</name></name></expr></argument>,
+
+                           <argument pos:start="279:28" pos:end="279:78"><expr pos:start="279:28" pos:end="279:78"><operator pos:start="279:28" pos:end="279:28">(</operator><name pos:start="279:29" pos:end="279:45"><name pos:start="279:29" pos:end="279:30">dc</name><operator pos:start="279:31" pos:end="279:32">-&gt;</operator><name pos:start="279:33" pos:end="279:45">condexec_cond</name></name> <operator pos:start="279:47" pos:end="279:48">&lt;&lt;</operator> <literal type="number" pos:start="279:50" pos:end="279:50">4</literal><operator pos:start="279:51" pos:end="279:51">)</operator> <operator pos:start="279:53" pos:end="279:53">|</operator> <operator pos:start="279:55" pos:end="279:55">(</operator><name pos:start="279:56" pos:end="279:72"><name pos:start="279:56" pos:end="279:57">dc</name><operator pos:start="279:58" pos:end="279:59">-&gt;</operator><name pos:start="279:60" pos:end="279:72">condexec_mask</name></name> <operator pos:start="279:74" pos:end="279:75">&gt;&gt;</operator> <literal type="number" pos:start="279:77" pos:end="279:77">1</literal><operator pos:start="279:78" pos:end="279:78">)</operator></expr></argument>,
+
+                           <argument pos:start="281:28" pos:end="281:28"><expr pos:start="281:28" pos:end="281:28"><literal type="number" pos:start="281:28" pos:end="281:28">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="283:9" pos:end="288:0"><expr pos:start="283:9" pos:end="283:19"><name pos:start="283:9" pos:end="283:17">num_insns</name><operator pos:start="283:18" pos:end="283:19">++</operator></expr>;</expr_stmt>
+
+
+
+<cpp:ifdef pos:start="287:1" pos:end="287:23">#<cpp:directive pos:start="287:2" pos:end="287:6">ifdef</cpp:directive> <name pos:start="287:8" pos:end="287:23">CONFIG_USER_ONLY</name></cpp:ifdef>
+
+        <comment type="block" pos:start="289:9" pos:end="289:55">/* Intercept jump to the magic kernel page.  */</comment>
+
+        <if_stmt pos:start="291:9" pos:end="306:0"><if pos:start="291:9" pos:end="306:0">if <condition pos:start="291:12" pos:end="291:33">(<expr pos:start="291:13" pos:end="291:32"><name pos:start="291:13" pos:end="291:18"><name pos:start="291:13" pos:end="291:14">dc</name><operator pos:start="291:15" pos:end="291:16">-&gt;</operator><name pos:start="291:17" pos:end="291:18">pc</name></name> <operator pos:start="291:20" pos:end="291:21">&gt;=</operator> <literal type="number" pos:start="291:23" pos:end="291:32">0xffff0000</literal></expr>)</condition> <block pos:start="291:35" pos:end="306:0">{<block_content pos:start="297:13" pos:end="301:18">
+
+            <comment type="block" pos:start="293:13" pos:end="295:47">/* We always get here via a jump, so know we are not in a
+
+               conditional execution block.  */</comment>
+
+            <expr_stmt pos:start="297:13" pos:end="297:53"><expr pos:start="297:13" pos:end="297:52"><call pos:start="297:13" pos:end="297:52"><name pos:start="297:13" pos:end="297:34">gen_exception_internal</name><argument_list pos:start="297:35" pos:end="297:52">(<argument pos:start="297:36" pos:end="297:51"><expr pos:start="297:36" pos:end="297:51"><name pos:start="297:36" pos:end="297:51">EXCP_KERNEL_TRAP</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="299:13" pos:end="299:40"><expr pos:start="299:13" pos:end="299:39"><name pos:start="299:13" pos:end="299:22"><name pos:start="299:13" pos:end="299:14">dc</name><operator pos:start="299:15" pos:end="299:16">-&gt;</operator><name pos:start="299:17" pos:end="299:22">is_jmp</name></name> <operator pos:start="299:24" pos:end="299:24">=</operator> <name pos:start="299:26" pos:end="299:39">DISAS_NORETURN</name></expr>;</expr_stmt>
+
+            <break pos:start="301:13" pos:end="301:18">break;</break>
+
+        </block_content>}</block></if></if_stmt>
+
+<cpp:endif pos:start="305:1" pos:end="305:6">#<cpp:directive pos:start="305:2" pos:end="305:6">endif</cpp:directive></cpp:endif>
+
+
+
+        <if_stmt pos:start="309:9" pos:end="359:9"><if pos:start="309:9" pos:end="359:9">if <condition pos:start="309:12" pos:end="309:54">(<expr pos:start="309:13" pos:end="309:53"><call pos:start="309:13" pos:end="309:53"><name pos:start="309:13" pos:end="309:20">unlikely</name><argument_list pos:start="309:21" pos:end="309:53">(<argument pos:start="309:22" pos:end="309:52"><expr pos:start="309:22" pos:end="309:52"><operator pos:start="309:22" pos:end="309:22">!</operator><call pos:start="309:23" pos:end="309:52"><name pos:start="309:23" pos:end="309:34">QTAILQ_EMPTY</name><argument_list pos:start="309:35" pos:end="309:52">(<argument pos:start="309:36" pos:end="309:51"><expr pos:start="309:36" pos:end="309:51"><operator pos:start="309:36" pos:end="309:36">&amp;</operator><name pos:start="309:37" pos:end="309:51"><name pos:start="309:37" pos:end="309:38">cs</name><operator pos:start="309:39" pos:end="309:40">-&gt;</operator><name pos:start="309:41" pos:end="309:51">breakpoints</name></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="309:56" pos:end="359:9">{<block_content pos:start="311:13" pos:end="357:13">
+
+            <decl_stmt pos:start="311:13" pos:end="311:30"><decl pos:start="311:13" pos:end="311:29"><type pos:start="311:13" pos:end="311:27"><name pos:start="311:13" pos:end="311:25">CPUBreakpoint</name> <modifier pos:start="311:27" pos:end="311:27">*</modifier></type><name pos:start="311:28" pos:end="311:29">bp</name></decl>;</decl_stmt>
+
+            <macro pos:start="313:13" pos:end="313:55"><name pos:start="313:13" pos:end="313:26">QTAILQ_FOREACH</name><argument_list pos:start="313:27" pos:end="313:55">(<argument pos:start="313:28" pos:end="313:29">bp</argument>, <argument pos:start="313:32" pos:end="313:47">&amp;cs-&gt;breakpoints</argument>, <argument pos:start="313:50" pos:end="313:54">entry</argument>)</argument_list></macro> <block pos:start="313:57" pos:end="357:13">{<block_content pos:start="315:17" pos:end="355:17">
+
+                <if_stmt pos:start="315:17" pos:end="355:17"><if pos:start="315:17" pos:end="355:17">if <condition pos:start="315:20" pos:end="315:37">(<expr pos:start="315:21" pos:end="315:36"><name pos:start="315:21" pos:end="315:26"><name pos:start="315:21" pos:end="315:22">bp</name><operator pos:start="315:23" pos:end="315:24">-&gt;</operator><name pos:start="315:25" pos:end="315:26">pc</name></name> <operator pos:start="315:28" pos:end="315:29">==</operator> <name pos:start="315:31" pos:end="315:36"><name pos:start="315:31" pos:end="315:32">dc</name><operator pos:start="315:33" pos:end="315:34">-&gt;</operator><name pos:start="315:35" pos:end="315:36">pc</name></name></expr>)</condition> <block pos:start="315:39" pos:end="355:17">{<block_content pos:start="317:21" pos:end="353:26">
+
+                    <if_stmt pos:start="317:21" pos:end="351:21"><if pos:start="317:21" pos:end="329:21">if <condition pos:start="317:24" pos:end="317:43">(<expr pos:start="317:25" pos:end="317:42"><name pos:start="317:25" pos:end="317:33"><name pos:start="317:25" pos:end="317:26">bp</name><operator pos:start="317:27" pos:end="317:28">-&gt;</operator><name pos:start="317:29" pos:end="317:33">flags</name></name> <operator pos:start="317:35" pos:end="317:35">&amp;</operator> <name pos:start="317:37" pos:end="317:42">BP_CPU</name></expr>)</condition> <block pos:start="317:45" pos:end="329:21">{<block_content pos:start="319:25" pos:end="327:50">
+
+                        <expr_stmt pos:start="319:25" pos:end="319:45"><expr pos:start="319:25" pos:end="319:44"><call pos:start="319:25" pos:end="319:44"><name pos:start="319:25" pos:end="319:40">gen_set_condexec</name><argument_list pos:start="319:41" pos:end="319:44">(<argument pos:start="319:42" pos:end="319:43"><expr pos:start="319:42" pos:end="319:43"><name pos:start="319:42" pos:end="319:43">dc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="321:25" pos:end="321:50"><expr pos:start="321:25" pos:end="321:49"><call pos:start="321:25" pos:end="321:49"><name pos:start="321:25" pos:end="321:37">gen_set_pc_im</name><argument_list pos:start="321:38" pos:end="321:49">(<argument pos:start="321:39" pos:end="321:40"><expr pos:start="321:39" pos:end="321:40"><name pos:start="321:39" pos:end="321:40">dc</name></expr></argument>, <argument pos:start="321:43" pos:end="321:48"><expr pos:start="321:43" pos:end="321:48"><name pos:start="321:43" pos:end="321:48"><name pos:start="321:43" pos:end="321:44">dc</name><operator pos:start="321:45" pos:end="321:46">-&gt;</operator><name pos:start="321:47" pos:end="321:48">pc</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="323:25" pos:end="323:62"><expr pos:start="323:25" pos:end="323:61"><call pos:start="323:25" pos:end="323:61"><name pos:start="323:25" pos:end="323:52">gen_helper_check_breakpoints</name><argument_list pos:start="323:53" pos:end="323:61">(<argument pos:start="323:54" pos:end="323:60"><expr pos:start="323:54" pos:end="323:60"><name pos:start="323:54" pos:end="323:60">cpu_env</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                        <comment type="block" pos:start="325:25" pos:end="325:84">/* End the TB early; it's likely not going to be executed */</comment>
+
+                        <expr_stmt pos:start="327:25" pos:end="327:50"><expr pos:start="327:25" pos:end="327:49"><name pos:start="327:25" pos:end="327:34"><name pos:start="327:25" pos:end="327:26">dc</name><operator pos:start="327:27" pos:end="327:28">-&gt;</operator><name pos:start="327:29" pos:end="327:34">is_jmp</name></name> <operator pos:start="327:36" pos:end="327:36">=</operator> <name pos:start="327:38" pos:end="327:49">DISAS_UPDATE</name></expr>;</expr_stmt>
+
+                    </block_content>}</block></if> <else pos:start="329:23" pos:end="351:21">else <block pos:start="329:28" pos:end="351:21">{<block_content pos:start="331:25" pos:end="349:45">
+
+                        <expr_stmt pos:start="331:25" pos:end="331:71"><expr pos:start="331:25" pos:end="331:70"><call pos:start="331:25" pos:end="331:70"><name pos:start="331:25" pos:end="331:51">gen_exception_internal_insn</name><argument_list pos:start="331:52" pos:end="331:70">(<argument pos:start="331:53" pos:end="331:54"><expr pos:start="331:53" pos:end="331:54"><name pos:start="331:53" pos:end="331:54">dc</name></expr></argument>, <argument pos:start="331:57" pos:end="331:57"><expr pos:start="331:57" pos:end="331:57"><literal type="number" pos:start="331:57" pos:end="331:57">0</literal></expr></argument>, <argument pos:start="331:60" pos:end="331:69"><expr pos:start="331:60" pos:end="331:69"><name pos:start="331:60" pos:end="331:69">EXCP_DEBUG</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                        <comment type="block" pos:start="333:25" pos:end="341:67">/* The address covered by the breakpoint must be
+
+                           included in [tb-&gt;pc, tb-&gt;pc + tb-&gt;size) in order
+
+                           to for it to be properly cleared -- thus we
+
+                           increment the PC here so that the logic setting
+
+                           tb-&gt;size below does the right thing.  */</comment>
+
+                        <comment type="block" pos:start="343:25" pos:end="345:63">/* TODO: Advance PC by correct instruction length to
+
+                         * avoid disassembler error messages */</comment>
+
+                        <expr_stmt pos:start="347:25" pos:end="347:36"><expr pos:start="347:25" pos:end="347:35"><name pos:start="347:25" pos:end="347:30"><name pos:start="347:25" pos:end="347:26">dc</name><operator pos:start="347:27" pos:end="347:28">-&gt;</operator><name pos:start="347:29" pos:end="347:30">pc</name></name> <operator pos:start="347:32" pos:end="347:33">+=</operator> <literal type="number" pos:start="347:35" pos:end="347:35">2</literal></expr>;</expr_stmt>
+
+                        <goto pos:start="349:25" pos:end="349:45">goto <name pos:start="349:30" pos:end="349:44">done_generating</name>;</goto>
+
+                    </block_content>}</block></else></if_stmt>
+
+                    <break pos:start="353:21" pos:end="353:26">break;</break>
+
+                </block_content>}</block></if></if_stmt>
+
+            </block_content>}</block>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <if_stmt pos:start="363:9" pos:end="367:9"><if pos:start="363:9" pos:end="367:9">if <condition pos:start="363:12" pos:end="363:64">(<expr pos:start="363:13" pos:end="363:63"><name pos:start="363:13" pos:end="363:21">num_insns</name> <operator pos:start="363:23" pos:end="363:24">==</operator> <name pos:start="363:26" pos:end="363:34">max_insns</name> <operator pos:start="363:36" pos:end="363:37">&amp;&amp;</operator> <operator pos:start="363:39" pos:end="363:39">(</operator><name pos:start="363:40" pos:end="363:49"><name pos:start="363:40" pos:end="363:41">tb</name><operator pos:start="363:42" pos:end="363:43">-&gt;</operator><name pos:start="363:44" pos:end="363:49">cflags</name></name> <operator pos:start="363:51" pos:end="363:51">&amp;</operator> <name pos:start="363:53" pos:end="363:62">CF_LAST_IO</name><operator pos:start="363:63" pos:end="363:63">)</operator></expr>)</condition> <block pos:start="363:66" pos:end="367:9">{<block_content pos:start="365:13" pos:end="365:27">
+
+            <expr_stmt pos:start="365:13" pos:end="365:27"><expr pos:start="365:13" pos:end="365:26"><call pos:start="365:13" pos:end="365:26"><name pos:start="365:13" pos:end="365:24">gen_io_start</name><argument_list pos:start="365:25" pos:end="365:26">()</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <if_stmt pos:start="371:9" pos:end="401:9"><if pos:start="371:9" pos:end="401:9">if <condition pos:start="371:12" pos:end="371:44">(<expr pos:start="371:13" pos:end="371:43"><name pos:start="371:13" pos:end="371:25"><name pos:start="371:13" pos:end="371:14">dc</name><operator pos:start="371:15" pos:end="371:16">-&gt;</operator><name pos:start="371:17" pos:end="371:25">ss_active</name></name> <operator pos:start="371:27" pos:end="371:28">&amp;&amp;</operator> <operator pos:start="371:30" pos:end="371:30">!</operator><name pos:start="371:31" pos:end="371:43"><name pos:start="371:31" pos:end="371:32">dc</name><operator pos:start="371:33" pos:end="371:34">-&gt;</operator><name pos:start="371:35" pos:end="371:43">pstate_ss</name></name></expr>)</condition> <block pos:start="371:46" pos:end="401:9">{<block_content pos:start="393:13" pos:end="399:33">
+
+            <comment type="block" pos:start="373:13" pos:end="391:15">/* Singlestep state is Active-pending.
+
+             * If we're in this state at the start of a TB then either
+
+             *  a) we just took an exception to an EL which is being debugged
+
+             *     and this is the first insn in the exception handler
+
+             *  b) debug exceptions were masked and we just unmasked them
+
+             *     without changing EL (eg by clearing PSTATE.D)
+
+             * In either case we're going to take a swstep exception in the
+
+             * "did not step an insn" case, and so the syndrome ISV and EX
+
+             * bits should be zero.
+
+             */</comment>
+
+            <expr_stmt pos:start="393:13" pos:end="393:35"><expr pos:start="393:13" pos:end="393:34"><call pos:start="393:13" pos:end="393:34"><name pos:start="393:13" pos:end="393:18">assert</name><argument_list pos:start="393:19" pos:end="393:34">(<argument pos:start="393:20" pos:end="393:33"><expr pos:start="393:20" pos:end="393:33"><name pos:start="393:20" pos:end="393:28">num_insns</name> <operator pos:start="393:30" pos:end="393:31">==</operator> <literal type="number" pos:start="393:33" pos:end="393:33">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="395:13" pos:end="397:52"><expr pos:start="395:13" pos:end="397:51"><call pos:start="395:13" pos:end="397:51"><name pos:start="395:13" pos:end="395:25">gen_exception</name><argument_list pos:start="395:26" pos:end="397:51">(<argument pos:start="395:27" pos:end="395:35"><expr pos:start="395:27" pos:end="395:35"><name pos:start="395:27" pos:end="395:35">EXCP_UDEF</name></expr></argument>, <argument pos:start="395:38" pos:end="395:69"><expr pos:start="395:38" pos:end="395:69"><call pos:start="395:38" pos:end="395:69"><name pos:start="395:38" pos:end="395:47">syn_swstep</name><argument_list pos:start="395:48" pos:end="395:69">(<argument pos:start="395:49" pos:end="395:62"><expr pos:start="395:49" pos:end="395:62"><name pos:start="395:49" pos:end="395:62"><name pos:start="395:49" pos:end="395:50">dc</name><operator pos:start="395:51" pos:end="395:52">-&gt;</operator><name pos:start="395:53" pos:end="395:62">ss_same_el</name></name></expr></argument>, <argument pos:start="395:65" pos:end="395:65"><expr pos:start="395:65" pos:end="395:65"><literal type="number" pos:start="395:65" pos:end="395:65">0</literal></expr></argument>, <argument pos:start="395:68" pos:end="395:68"><expr pos:start="395:68" pos:end="395:68"><literal type="number" pos:start="395:68" pos:end="395:68">0</literal></expr></argument>)</argument_list></call></expr></argument>,
+
+                          <argument pos:start="397:27" pos:end="397:50"><expr pos:start="397:27" pos:end="397:50"><call pos:start="397:27" pos:end="397:50"><name pos:start="397:27" pos:end="397:46">default_exception_el</name><argument_list pos:start="397:47" pos:end="397:50">(<argument pos:start="397:48" pos:end="397:49"><expr pos:start="397:48" pos:end="397:49"><name pos:start="397:48" pos:end="397:49">dc</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <goto pos:start="399:13" pos:end="399:33">goto <name pos:start="399:18" pos:end="399:32">done_generating</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <if_stmt pos:start="405:9" pos:end="433:9"><if pos:start="405:9" pos:end="425:9">if <condition pos:start="405:12" pos:end="405:22">(<expr pos:start="405:13" pos:end="405:21"><name pos:start="405:13" pos:end="405:21"><name pos:start="405:13" pos:end="405:14">dc</name><operator pos:start="405:15" pos:end="405:16">-&gt;</operator><name pos:start="405:17" pos:end="405:21">thumb</name></name></expr>)</condition> <block pos:start="405:24" pos:end="425:9">{<block_content pos:start="407:13" pos:end="423:13">
+
+            <expr_stmt pos:start="407:13" pos:end="407:38"><expr pos:start="407:13" pos:end="407:37"><call pos:start="407:13" pos:end="407:37"><name pos:start="407:13" pos:end="407:28">disas_thumb_insn</name><argument_list pos:start="407:29" pos:end="407:37">(<argument pos:start="407:30" pos:end="407:32"><expr pos:start="407:30" pos:end="407:32"><name pos:start="407:30" pos:end="407:32">env</name></expr></argument>, <argument pos:start="407:35" pos:end="407:36"><expr pos:start="407:35" pos:end="407:36"><name pos:start="407:35" pos:end="407:36">dc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <if_stmt pos:start="409:13" pos:end="423:13"><if pos:start="409:13" pos:end="423:13">if <condition pos:start="409:16" pos:end="409:34">(<expr pos:start="409:17" pos:end="409:33"><name pos:start="409:17" pos:end="409:33"><name pos:start="409:17" pos:end="409:18">dc</name><operator pos:start="409:19" pos:end="409:20">-&gt;</operator><name pos:start="409:21" pos:end="409:33">condexec_mask</name></name></expr>)</condition> <block pos:start="409:36" pos:end="423:13">{<block_content pos:start="411:17" pos:end="421:17">
+
+                <expr_stmt pos:start="411:17" pos:end="413:68"><expr pos:start="411:17" pos:end="413:67"><name pos:start="411:17" pos:end="411:33"><name pos:start="411:17" pos:end="411:18">dc</name><operator pos:start="411:19" pos:end="411:20">-&gt;</operator><name pos:start="411:21" pos:end="411:33">condexec_cond</name></name> <operator pos:start="411:35" pos:end="411:35">=</operator> <operator pos:start="411:37" pos:end="411:37">(</operator><name pos:start="411:38" pos:end="411:54"><name pos:start="411:38" pos:end="411:39">dc</name><operator pos:start="411:40" pos:end="411:41">-&gt;</operator><name pos:start="411:42" pos:end="411:54">condexec_cond</name></name> <operator pos:start="411:56" pos:end="411:56">&amp;</operator> <literal type="number" pos:start="411:58" pos:end="411:60">0xe</literal><operator pos:start="411:61" pos:end="411:61">)</operator>
+
+                                   <operator pos:start="413:36" pos:end="413:36">|</operator> <operator pos:start="413:38" pos:end="413:38">(</operator><operator pos:start="413:39" pos:end="413:39">(</operator><name pos:start="413:40" pos:end="413:56"><name pos:start="413:40" pos:end="413:41">dc</name><operator pos:start="413:42" pos:end="413:43">-&gt;</operator><name pos:start="413:44" pos:end="413:56">condexec_mask</name></name> <operator pos:start="413:58" pos:end="413:59">&gt;&gt;</operator> <literal type="number" pos:start="413:61" pos:end="413:61">4</literal><operator pos:start="413:62" pos:end="413:62">)</operator> <operator pos:start="413:64" pos:end="413:64">&amp;</operator> <literal type="number" pos:start="413:66" pos:end="413:66">1</literal><operator pos:start="413:67" pos:end="413:67">)</operator></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="415:17" pos:end="415:68"><expr pos:start="415:17" pos:end="415:67"><name pos:start="415:17" pos:end="415:33"><name pos:start="415:17" pos:end="415:18">dc</name><operator pos:start="415:19" pos:end="415:20">-&gt;</operator><name pos:start="415:21" pos:end="415:33">condexec_mask</name></name> <operator pos:start="415:35" pos:end="415:35">=</operator> <operator pos:start="415:37" pos:end="415:37">(</operator><name pos:start="415:38" pos:end="415:54"><name pos:start="415:38" pos:end="415:39">dc</name><operator pos:start="415:40" pos:end="415:41">-&gt;</operator><name pos:start="415:42" pos:end="415:54">condexec_mask</name></name> <operator pos:start="415:56" pos:end="415:57">&lt;&lt;</operator> <literal type="number" pos:start="415:59" pos:end="415:59">1</literal><operator pos:start="415:60" pos:end="415:60">)</operator> <operator pos:start="415:62" pos:end="415:62">&amp;</operator> <literal type="number" pos:start="415:64" pos:end="415:67">0x1f</literal></expr>;</expr_stmt>
+
+                <if_stmt pos:start="417:17" pos:end="421:17"><if pos:start="417:17" pos:end="421:17">if <condition pos:start="417:20" pos:end="417:43">(<expr pos:start="417:21" pos:end="417:42"><name pos:start="417:21" pos:end="417:37"><name pos:start="417:21" pos:end="417:22">dc</name><operator pos:start="417:23" pos:end="417:24">-&gt;</operator><name pos:start="417:25" pos:end="417:37">condexec_mask</name></name> <operator pos:start="417:39" pos:end="417:40">==</operator> <literal type="number" pos:start="417:42" pos:end="417:42">0</literal></expr>)</condition> <block pos:start="417:45" pos:end="421:17">{<block_content pos:start="419:21" pos:end="419:42">
+
+                    <expr_stmt pos:start="419:21" pos:end="419:42"><expr pos:start="419:21" pos:end="419:41"><name pos:start="419:21" pos:end="419:37"><name pos:start="419:21" pos:end="419:22">dc</name><operator pos:start="419:23" pos:end="419:24">-&gt;</operator><name pos:start="419:25" pos:end="419:37">condexec_cond</name></name> <operator pos:start="419:39" pos:end="419:39">=</operator> <literal type="number" pos:start="419:41" pos:end="419:41">0</literal></expr>;</expr_stmt>
+
+                </block_content>}</block></if></if_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+        </block_content>}</block></if> <else pos:start="425:11" pos:end="433:9">else <block pos:start="425:16" pos:end="433:9">{<block_content pos:start="427:13" pos:end="431:37">
+
+            <decl_stmt pos:start="427:13" pos:end="427:71"><decl pos:start="427:13" pos:end="427:70"><type pos:start="427:13" pos:end="427:24"><name pos:start="427:13" pos:end="427:20">unsigned</name> <name pos:start="427:22" pos:end="427:24">int</name></type> <name pos:start="427:26" pos:end="427:29">insn</name> <init pos:start="427:31" pos:end="427:70">= <expr pos:start="427:33" pos:end="427:70"><call pos:start="427:33" pos:end="427:70"><name pos:start="427:33" pos:end="427:44">arm_ldl_code</name><argument_list pos:start="427:45" pos:end="427:70">(<argument pos:start="427:46" pos:end="427:48"><expr pos:start="427:46" pos:end="427:48"><name pos:start="427:46" pos:end="427:48">env</name></expr></argument>, <argument pos:start="427:51" pos:end="427:56"><expr pos:start="427:51" pos:end="427:56"><name pos:start="427:51" pos:end="427:56"><name pos:start="427:51" pos:end="427:52">dc</name><operator pos:start="427:53" pos:end="427:54">-&gt;</operator><name pos:start="427:55" pos:end="427:56">pc</name></name></expr></argument>, <argument pos:start="427:59" pos:end="427:69"><expr pos:start="427:59" pos:end="427:69"><name pos:start="427:59" pos:end="427:69"><name pos:start="427:59" pos:end="427:60">dc</name><operator pos:start="427:61" pos:end="427:62">-&gt;</operator><name pos:start="427:63" pos:end="427:69">sctlr_b</name></name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+            <expr_stmt pos:start="429:13" pos:end="429:24"><expr pos:start="429:13" pos:end="429:23"><name pos:start="429:13" pos:end="429:18"><name pos:start="429:13" pos:end="429:14">dc</name><operator pos:start="429:15" pos:end="429:16">-&gt;</operator><name pos:start="429:17" pos:end="429:18">pc</name></name> <operator pos:start="429:20" pos:end="429:21">+=</operator> <literal type="number" pos:start="429:23" pos:end="429:23">4</literal></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="431:13" pos:end="431:37"><expr pos:start="431:13" pos:end="431:36"><call pos:start="431:13" pos:end="431:36"><name pos:start="431:13" pos:end="431:26">disas_arm_insn</name><argument_list pos:start="431:27" pos:end="431:36">(<argument pos:start="431:28" pos:end="431:29"><expr pos:start="431:28" pos:end="431:29"><name pos:start="431:28" pos:end="431:29">dc</name></expr></argument>, <argument pos:start="431:32" pos:end="431:35"><expr pos:start="431:32" pos:end="431:35"><name pos:start="431:32" pos:end="431:35">insn</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+
+
+        <if_stmt pos:start="437:9" pos:end="443:9"><if pos:start="437:9" pos:end="443:9">if <condition pos:start="437:12" pos:end="437:39">(<expr pos:start="437:13" pos:end="437:38"><name pos:start="437:13" pos:end="437:23"><name pos:start="437:13" pos:end="437:14">dc</name><operator pos:start="437:15" pos:end="437:16">-&gt;</operator><name pos:start="437:17" pos:end="437:23">condjmp</name></name> <operator pos:start="437:25" pos:end="437:26">&amp;&amp;</operator> <operator pos:start="437:28" pos:end="437:28">!</operator><name pos:start="437:29" pos:end="437:38"><name pos:start="437:29" pos:end="437:30">dc</name><operator pos:start="437:31" pos:end="437:32">-&gt;</operator><name pos:start="437:33" pos:end="437:38">is_jmp</name></name></expr>)</condition> <block pos:start="437:41" pos:end="443:9">{<block_content pos:start="439:13" pos:end="441:28">
+
+            <expr_stmt pos:start="439:13" pos:end="439:41"><expr pos:start="439:13" pos:end="439:40"><call pos:start="439:13" pos:end="439:40"><name pos:start="439:13" pos:end="439:25">gen_set_label</name><argument_list pos:start="439:26" pos:end="439:40">(<argument pos:start="439:27" pos:end="439:39"><expr pos:start="439:27" pos:end="439:39"><name pos:start="439:27" pos:end="439:39"><name pos:start="439:27" pos:end="439:28">dc</name><operator pos:start="439:29" pos:end="439:30">-&gt;</operator><name pos:start="439:31" pos:end="439:39">condlabel</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="441:13" pos:end="441:28"><expr pos:start="441:13" pos:end="441:27"><name pos:start="441:13" pos:end="441:23"><name pos:start="441:13" pos:end="441:14">dc</name><operator pos:start="441:15" pos:end="441:16">-&gt;</operator><name pos:start="441:17" pos:end="441:23">condjmp</name></name> <operator pos:start="441:25" pos:end="441:25">=</operator> <literal type="number" pos:start="441:27" pos:end="441:27">0</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <if_stmt pos:start="447:9" pos:end="453:9"><if pos:start="447:9" pos:end="453:9">if <condition pos:start="447:12" pos:end="447:35">(<expr pos:start="447:13" pos:end="447:34"><call pos:start="447:13" pos:end="447:34"><name pos:start="447:13" pos:end="447:32">tcg_check_temp_count</name><argument_list pos:start="447:33" pos:end="447:34">()</argument_list></call></expr>)</condition> <block pos:start="447:37" pos:end="453:9">{<block_content pos:start="449:13" pos:end="451:28">
+
+            <expr_stmt pos:start="449:13" pos:end="451:28"><expr pos:start="449:13" pos:end="451:27"><call pos:start="449:13" pos:end="451:27"><name pos:start="449:13" pos:end="449:19">fprintf</name><argument_list pos:start="449:20" pos:end="451:27">(<argument pos:start="449:21" pos:end="449:26"><expr pos:start="449:21" pos:end="449:26"><name pos:start="449:21" pos:end="449:26">stderr</name></expr></argument>, <argument pos:start="449:29" pos:end="449:73"><expr pos:start="449:29" pos:end="449:73"><literal type="string" pos:start="449:29" pos:end="449:56">"TCG temporary leak before "</literal><name pos:start="449:57" pos:end="449:69">TARGET_FMT_lx</name><literal type="string" pos:start="449:70" pos:end="449:73">"\n"</literal></expr></argument>,
+
+                    <argument pos:start="451:21" pos:end="451:26"><expr pos:start="451:21" pos:end="451:26"><name pos:start="451:21" pos:end="451:26"><name pos:start="451:21" pos:end="451:22">dc</name><operator pos:start="451:23" pos:end="451:24">-&gt;</operator><name pos:start="451:25" pos:end="451:26">pc</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <comment type="block" pos:start="457:9" pos:end="463:64">/* Translation stops when a conditional branch is encountered.
+
+         * Otherwise the subsequent code could get translated several times.
+
+         * Also stop translation when a page boundary is reached.  This
+
+         * ensures prefetch aborts occur at the right place.  */</comment>
+
+
+
+        <comment type="block" pos:start="467:9" pos:end="483:11">/* We want to stop the TB if the next insn starts in a new page,
+
+         * or if it spans between this page and the next. This means that
+
+         * if we're looking at the last halfword in the page we need to
+
+         * see if it's a 16-bit Thumb insn (which will fit in this TB)
+
+         * or a 32-bit Thumb insn (which won't).
+
+         * This is to avoid generating a silly TB with a single 16-bit insn
+
+         * in it at the end of this page (which would execute correctly
+
+         * but isn't very efficient).
+
+         */</comment>
+
+        <expr_stmt pos:start="485:9" pos:end="487:76"><expr pos:start="485:9" pos:end="487:75"><name pos:start="485:9" pos:end="485:19">end_of_page</name> <operator pos:start="485:21" pos:end="485:21">=</operator> <operator pos:start="485:23" pos:end="485:23">(</operator><name pos:start="485:24" pos:end="485:29"><name pos:start="485:24" pos:end="485:25">dc</name><operator pos:start="485:26" pos:end="485:27">-&gt;</operator><name pos:start="485:28" pos:end="485:29">pc</name></name> <operator pos:start="485:31" pos:end="485:32">&gt;=</operator> <name pos:start="485:34" pos:end="485:48">next_page_start</name><operator pos:start="485:49" pos:end="485:49">)</operator> <operator pos:start="485:51" pos:end="485:52">||</operator>
+
+            <operator pos:start="487:13" pos:end="487:13">(</operator><operator pos:start="487:14" pos:end="487:14">(</operator><name pos:start="487:15" pos:end="487:20"><name pos:start="487:15" pos:end="487:16">dc</name><operator pos:start="487:17" pos:end="487:18">-&gt;</operator><name pos:start="487:19" pos:end="487:20">pc</name></name> <operator pos:start="487:22" pos:end="487:23">&gt;=</operator> <name pos:start="487:25" pos:end="487:39">next_page_start</name> <operator pos:start="487:41" pos:end="487:41">-</operator> <literal type="number" pos:start="487:43" pos:end="487:43">3</literal><operator pos:start="487:44" pos:end="487:44">)</operator> <operator pos:start="487:46" pos:end="487:47">&amp;&amp;</operator> <call pos:start="487:49" pos:end="487:74"><name pos:start="487:49" pos:end="487:65">insn_crosses_page</name><argument_list pos:start="487:66" pos:end="487:74">(<argument pos:start="487:67" pos:end="487:69"><expr pos:start="487:67" pos:end="487:69"><name pos:start="487:67" pos:end="487:69">env</name></expr></argument>, <argument pos:start="487:72" pos:end="487:73"><expr pos:start="487:72" pos:end="487:73"><name pos:start="487:72" pos:end="487:73">dc</name></expr></argument>)</argument_list></call><operator pos:start="487:75" pos:end="487:75">)</operator></expr>;</expr_stmt>
+
+
+
+    </block_content>}</block> while <condition pos:start="491:13" pos:end="499:35">(<expr pos:start="491:14" pos:end="499:34"><operator pos:start="491:14" pos:end="491:14">!</operator><name pos:start="491:15" pos:end="491:24"><name pos:start="491:15" pos:end="491:16">dc</name><operator pos:start="491:17" pos:end="491:18">-&gt;</operator><name pos:start="491:19" pos:end="491:24">is_jmp</name></name> <operator pos:start="491:26" pos:end="491:27">&amp;&amp;</operator> <operator pos:start="491:29" pos:end="491:29">!</operator><call pos:start="491:30" pos:end="491:46"><name pos:start="491:30" pos:end="491:44">tcg_op_buf_full</name><argument_list pos:start="491:45" pos:end="491:46">()</argument_list></call> <operator pos:start="491:48" pos:end="491:49">&amp;&amp;</operator>
+
+             <operator pos:start="493:14" pos:end="493:14">!</operator><call pos:start="493:15" pos:end="493:35"><name pos:start="493:15" pos:end="493:31">is_singlestepping</name><argument_list pos:start="493:32" pos:end="493:35">(<argument pos:start="493:33" pos:end="493:34"><expr pos:start="493:33" pos:end="493:34"><name pos:start="493:33" pos:end="493:34">dc</name></expr></argument>)</argument_list></call> <operator pos:start="493:37" pos:end="493:38">&amp;&amp;</operator>
+
+             <operator pos:start="495:14" pos:end="495:14">!</operator><name pos:start="495:15" pos:end="495:24">singlestep</name> <operator pos:start="495:26" pos:end="495:27">&amp;&amp;</operator>
+
+             <operator pos:start="497:14" pos:end="497:14">!</operator><name pos:start="497:15" pos:end="497:25">end_of_page</name> <operator pos:start="497:27" pos:end="497:28">&amp;&amp;</operator>
+
+             <name pos:start="499:14" pos:end="499:22">num_insns</name> <operator pos:start="499:24" pos:end="499:24">&lt;</operator> <name pos:start="499:26" pos:end="499:34">max_insns</name></expr>)</condition>;</do>
+
+
+
+    <if_stmt pos:start="503:5" pos:end="517:5"><if pos:start="503:5" pos:end="517:5">if <condition pos:start="503:8" pos:end="503:32">(<expr pos:start="503:9" pos:end="503:31"><name pos:start="503:9" pos:end="503:18"><name pos:start="503:9" pos:end="503:10">tb</name><operator pos:start="503:11" pos:end="503:12">-&gt;</operator><name pos:start="503:13" pos:end="503:18">cflags</name></name> <operator pos:start="503:20" pos:end="503:20">&amp;</operator> <name pos:start="503:22" pos:end="503:31">CF_LAST_IO</name></expr>)</condition> <block pos:start="503:34" pos:end="517:5">{<block_content pos:start="505:9" pos:end="515:21">
+
+        <if_stmt pos:start="505:9" pos:end="513:9"><if pos:start="505:9" pos:end="513:9">if <condition pos:start="505:12" pos:end="505:24">(<expr pos:start="505:13" pos:end="505:23"><name pos:start="505:13" pos:end="505:23"><name pos:start="505:13" pos:end="505:14">dc</name><operator pos:start="505:15" pos:end="505:16">-&gt;</operator><name pos:start="505:17" pos:end="505:23">condjmp</name></name></expr>)</condition> <block pos:start="505:26" pos:end="513:9">{<block_content pos:start="511:13" pos:end="511:66">
+
+            <comment type="block" pos:start="507:13" pos:end="509:24">/* FIXME:  This can theoretically happen with self-modifying
+
+               code.  */</comment>
+
+            <expr_stmt pos:start="511:13" pos:end="511:66"><expr pos:start="511:13" pos:end="511:65"><call pos:start="511:13" pos:end="511:65"><name pos:start="511:13" pos:end="511:21">cpu_abort</name><argument_list pos:start="511:22" pos:end="511:65">(<argument pos:start="511:23" pos:end="511:24"><expr pos:start="511:23" pos:end="511:24"><name pos:start="511:23" pos:end="511:24">cs</name></expr></argument>, <argument pos:start="511:27" pos:end="511:64"><expr pos:start="511:27" pos:end="511:64"><literal type="string" pos:start="511:27" pos:end="511:64">"IO on conditional branch instruction"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="515:9" pos:end="515:21"><expr pos:start="515:9" pos:end="515:20"><call pos:start="515:9" pos:end="515:20"><name pos:start="515:9" pos:end="515:18">gen_io_end</name><argument_list pos:start="515:19" pos:end="515:20">()</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="521:5" pos:end="525:32">/* At this stage dc-&gt;condjmp will only be set when the skipped
+
+       instruction was a conditional branch or trap, and the PC has
+
+       already been written.  */</comment>
+
+    <expr_stmt pos:start="527:5" pos:end="527:25"><expr pos:start="527:5" pos:end="527:24"><call pos:start="527:5" pos:end="527:24"><name pos:start="527:5" pos:end="527:20">gen_set_condexec</name><argument_list pos:start="527:21" pos:end="527:24">(<argument pos:start="527:22" pos:end="527:23"><expr pos:start="527:22" pos:end="527:23"><name pos:start="527:22" pos:end="527:23">dc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="529:5" pos:end="697:5"><if pos:start="529:5" pos:end="543:5">if <condition pos:start="529:8" pos:end="529:38">(<expr pos:start="529:9" pos:end="529:37"><name pos:start="529:9" pos:end="529:18"><name pos:start="529:9" pos:end="529:10">dc</name><operator pos:start="529:11" pos:end="529:12">-&gt;</operator><name pos:start="529:13" pos:end="529:18">is_jmp</name></name> <operator pos:start="529:20" pos:end="529:21">==</operator> <name pos:start="529:23" pos:end="529:37">DISAS_BX_EXCRET</name></expr>)</condition> <block pos:start="529:40" pos:end="543:5">{<block_content pos:start="541:9" pos:end="541:37">
+
+        <comment type="block" pos:start="531:9" pos:end="539:11">/* Exception return branches need some special case code at the
+
+         * end of the TB, which is complex enough that it has to
+
+         * handle the single-step vs not and the condition-failed
+
+         * insn codepath itself.
+
+         */</comment>
+
+        <expr_stmt pos:start="541:9" pos:end="541:37"><expr pos:start="541:9" pos:end="541:36"><call pos:start="541:9" pos:end="541:36"><name pos:start="541:9" pos:end="541:32">gen_bx_excret_final_code</name><argument_list pos:start="541:33" pos:end="541:36">(<argument pos:start="541:34" pos:end="541:35"><expr pos:start="541:34" pos:end="541:35"><name pos:start="541:34" pos:end="541:35">dc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <if type="elseif" pos:start="543:7" pos:end="597:5">else if <condition pos:start="543:15" pos:end="543:47">(<expr pos:start="543:16" pos:end="543:46"><call pos:start="543:16" pos:end="543:46"><name pos:start="543:16" pos:end="543:23">unlikely</name><argument_list pos:start="543:24" pos:end="543:46">(<argument pos:start="543:25" pos:end="543:45"><expr pos:start="543:25" pos:end="543:45"><call pos:start="543:25" pos:end="543:45"><name pos:start="543:25" pos:end="543:41">is_singlestepping</name><argument_list pos:start="543:42" pos:end="543:45">(<argument pos:start="543:43" pos:end="543:44"><expr pos:start="543:43" pos:end="543:44"><name pos:start="543:43" pos:end="543:44">dc</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="543:49" pos:end="597:5">{<block_content pos:start="547:9" pos:end="595:9">
+
+        <comment type="block" pos:start="545:9" pos:end="545:72">/* Unconditional and "condition passed" instruction codepath. */</comment>
+
+        <switch pos:start="547:9" pos:end="595:9">switch <condition pos:start="547:16" pos:end="547:27">(<expr pos:start="547:17" pos:end="547:26"><name pos:start="547:17" pos:end="547:26"><name pos:start="547:17" pos:end="547:18">dc</name><operator pos:start="547:19" pos:end="547:20">-&gt;</operator><name pos:start="547:21" pos:end="547:26">is_jmp</name></name></expr>)</condition> <block pos:start="547:29" pos:end="595:9">{<block_content pos:start="549:9" pos:end="593:18">
+
+        <case pos:start="549:9" pos:end="549:23">case <expr pos:start="549:14" pos:end="549:22"><name pos:start="549:14" pos:end="549:22">DISAS_SWI</name></expr>:</case>
+
+            <expr_stmt pos:start="551:13" pos:end="551:31"><expr pos:start="551:13" pos:end="551:30"><call pos:start="551:13" pos:end="551:30"><name pos:start="551:13" pos:end="551:26">gen_ss_advance</name><argument_list pos:start="551:27" pos:end="551:30">(<argument pos:start="551:28" pos:end="551:29"><expr pos:start="551:28" pos:end="551:29"><name pos:start="551:28" pos:end="551:29">dc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="553:13" pos:end="555:52"><expr pos:start="553:13" pos:end="555:51"><call pos:start="553:13" pos:end="555:51"><name pos:start="553:13" pos:end="553:25">gen_exception</name><argument_list pos:start="553:26" pos:end="555:51">(<argument pos:start="553:27" pos:end="553:34"><expr pos:start="553:27" pos:end="553:34"><name pos:start="553:27" pos:end="553:34">EXCP_SWI</name></expr></argument>, <argument pos:start="553:37" pos:end="553:72"><expr pos:start="553:37" pos:end="553:72"><call pos:start="553:37" pos:end="553:72"><name pos:start="553:37" pos:end="553:48">syn_aa32_svc</name><argument_list pos:start="553:49" pos:end="553:72">(<argument pos:start="553:50" pos:end="553:60"><expr pos:start="553:50" pos:end="553:60"><name pos:start="553:50" pos:end="553:60"><name pos:start="553:50" pos:end="553:51">dc</name><operator pos:start="553:52" pos:end="553:53">-&gt;</operator><name pos:start="553:54" pos:end="553:60">svc_imm</name></name></expr></argument>, <argument pos:start="553:63" pos:end="553:71"><expr pos:start="553:63" pos:end="553:71"><name pos:start="553:63" pos:end="553:71"><name pos:start="553:63" pos:end="553:64">dc</name><operator pos:start="553:65" pos:end="553:66">-&gt;</operator><name pos:start="553:67" pos:end="553:71">thumb</name></name></expr></argument>)</argument_list></call></expr></argument>,
+
+                          <argument pos:start="555:27" pos:end="555:50"><expr pos:start="555:27" pos:end="555:50"><call pos:start="555:27" pos:end="555:50"><name pos:start="555:27" pos:end="555:46">default_exception_el</name><argument_list pos:start="555:47" pos:end="555:50">(<argument pos:start="555:48" pos:end="555:49"><expr pos:start="555:48" pos:end="555:49"><name pos:start="555:48" pos:end="555:49">dc</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="557:13" pos:end="557:18">break;</break>
+
+        <case pos:start="559:9" pos:end="559:23">case <expr pos:start="559:14" pos:end="559:22"><name pos:start="559:14" pos:end="559:22">DISAS_HVC</name></expr>:</case>
+
+            <expr_stmt pos:start="561:13" pos:end="561:31"><expr pos:start="561:13" pos:end="561:30"><call pos:start="561:13" pos:end="561:30"><name pos:start="561:13" pos:end="561:26">gen_ss_advance</name><argument_list pos:start="561:27" pos:end="561:30">(<argument pos:start="561:28" pos:end="561:29"><expr pos:start="561:28" pos:end="561:29"><name pos:start="561:28" pos:end="561:29">dc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="563:13" pos:end="563:66"><expr pos:start="563:13" pos:end="563:65"><call pos:start="563:13" pos:end="563:65"><name pos:start="563:13" pos:end="563:25">gen_exception</name><argument_list pos:start="563:26" pos:end="563:65">(<argument pos:start="563:27" pos:end="563:34"><expr pos:start="563:27" pos:end="563:34"><name pos:start="563:27" pos:end="563:34">EXCP_HVC</name></expr></argument>, <argument pos:start="563:37" pos:end="563:61"><expr pos:start="563:37" pos:end="563:61"><call pos:start="563:37" pos:end="563:61"><name pos:start="563:37" pos:end="563:48">syn_aa32_hvc</name><argument_list pos:start="563:49" pos:end="563:61">(<argument pos:start="563:50" pos:end="563:60"><expr pos:start="563:50" pos:end="563:60"><name pos:start="563:50" pos:end="563:60"><name pos:start="563:50" pos:end="563:51">dc</name><operator pos:start="563:52" pos:end="563:53">-&gt;</operator><name pos:start="563:54" pos:end="563:60">svc_imm</name></name></expr></argument>)</argument_list></call></expr></argument>, <argument pos:start="563:64" pos:end="563:64"><expr pos:start="563:64" pos:end="563:64"><literal type="number" pos:start="563:64" pos:end="563:64">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="565:13" pos:end="565:18">break;</break>
+
+        <case pos:start="567:9" pos:end="567:23">case <expr pos:start="567:14" pos:end="567:22"><name pos:start="567:14" pos:end="567:22">DISAS_SMC</name></expr>:</case>
+
+            <expr_stmt pos:start="569:13" pos:end="569:31"><expr pos:start="569:13" pos:end="569:30"><call pos:start="569:13" pos:end="569:30"><name pos:start="569:13" pos:end="569:26">gen_ss_advance</name><argument_list pos:start="569:27" pos:end="569:30">(<argument pos:start="569:28" pos:end="569:29"><expr pos:start="569:28" pos:end="569:29"><name pos:start="569:28" pos:end="569:29">dc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="571:13" pos:end="571:55"><expr pos:start="571:13" pos:end="571:54"><call pos:start="571:13" pos:end="571:54"><name pos:start="571:13" pos:end="571:25">gen_exception</name><argument_list pos:start="571:26" pos:end="571:54">(<argument pos:start="571:27" pos:end="571:34"><expr pos:start="571:27" pos:end="571:34"><name pos:start="571:27" pos:end="571:34">EXCP_SMC</name></expr></argument>, <argument pos:start="571:37" pos:end="571:50"><expr pos:start="571:37" pos:end="571:50"><call pos:start="571:37" pos:end="571:50"><name pos:start="571:37" pos:end="571:48">syn_aa32_smc</name><argument_list pos:start="571:49" pos:end="571:50">()</argument_list></call></expr></argument>, <argument pos:start="571:53" pos:end="571:53"><expr pos:start="571:53" pos:end="571:53"><literal type="number" pos:start="571:53" pos:end="571:53">3</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="573:13" pos:end="573:18">break;</break>
+
+        <case pos:start="575:9" pos:end="575:24">case <expr pos:start="575:14" pos:end="575:23"><name pos:start="575:14" pos:end="575:23">DISAS_NEXT</name></expr>:</case>
+
+        <case pos:start="577:9" pos:end="577:26">case <expr pos:start="577:14" pos:end="577:25"><name pos:start="577:14" pos:end="577:25">DISAS_UPDATE</name></expr>:</case>
+
+            <expr_stmt pos:start="579:13" pos:end="579:38"><expr pos:start="579:13" pos:end="579:37"><call pos:start="579:13" pos:end="579:37"><name pos:start="579:13" pos:end="579:25">gen_set_pc_im</name><argument_list pos:start="579:26" pos:end="579:37">(<argument pos:start="579:27" pos:end="579:28"><expr pos:start="579:27" pos:end="579:28"><name pos:start="579:27" pos:end="579:28">dc</name></expr></argument>, <argument pos:start="579:31" pos:end="579:36"><expr pos:start="579:31" pos:end="579:36"><name pos:start="579:31" pos:end="579:36"><name pos:start="579:31" pos:end="579:32">dc</name><operator pos:start="579:33" pos:end="579:34">-&gt;</operator><name pos:start="579:35" pos:end="579:36">pc</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <comment type="block" pos:start="581:13" pos:end="581:30">/* fall through */</comment>
+
+        <default pos:start="583:9" pos:end="583:16">default:</default>
+
+            <comment type="block" pos:start="585:13" pos:end="585:74">/* FIXME: Single stepping a WFI insn will not halt the CPU. */</comment>
+
+            <expr_stmt pos:start="587:13" pos:end="587:41"><expr pos:start="587:13" pos:end="587:40"><call pos:start="587:13" pos:end="587:40"><name pos:start="587:13" pos:end="587:36">gen_singlestep_exception</name><argument_list pos:start="587:37" pos:end="587:40">(<argument pos:start="587:38" pos:end="587:39"><expr pos:start="587:38" pos:end="587:39"><name pos:start="587:38" pos:end="587:39">dc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="589:13" pos:end="589:18">break;</break>
+
+        <case pos:start="591:9" pos:end="591:28">case <expr pos:start="591:14" pos:end="591:27"><name pos:start="591:14" pos:end="591:27">DISAS_NORETURN</name></expr>:</case>
+
+            <break pos:start="593:13" pos:end="593:18">break;</break>
+
+        </block_content>}</block></switch>
+
+    </block_content>}</block></if> <else pos:start="597:7" pos:end="697:5">else <block pos:start="597:12" pos:end="697:5">{<block_content pos:start="615:9" pos:end="695:9">
+
+        <comment type="block" pos:start="599:9" pos:end="613:11">/* While branches must always occur at the end of an IT block,
+
+           there are a few other things that can cause us to terminate
+
+           the TB in the middle of an IT block:
+
+            - Exception generating instructions (bkpt, swi, undefined).
+
+            - Page boundaries.
+
+            - Hardware watchpoints.
+
+           Hardware breakpoints have already been handled and skip this code.
+
+         */</comment>
+
+        <switch pos:start="615:9" pos:end="695:9">switch<condition pos:start="615:15" pos:end="615:26">(<expr pos:start="615:16" pos:end="615:25"><name pos:start="615:16" pos:end="615:25"><name pos:start="615:16" pos:end="615:17">dc</name><operator pos:start="615:18" pos:end="615:19">-&gt;</operator><name pos:start="615:20" pos:end="615:25">is_jmp</name></name></expr>)</condition> <block pos:start="615:28" pos:end="695:9">{<block_content pos:start="617:9" pos:end="693:18">
+
+        <case pos:start="617:9" pos:end="617:24">case <expr pos:start="617:14" pos:end="617:23"><name pos:start="617:14" pos:end="617:23">DISAS_NEXT</name></expr>:</case>
+
+            <expr_stmt pos:start="619:13" pos:end="619:39"><expr pos:start="619:13" pos:end="619:38"><call pos:start="619:13" pos:end="619:38"><name pos:start="619:13" pos:end="619:23">gen_goto_tb</name><argument_list pos:start="619:24" pos:end="619:38">(<argument pos:start="619:25" pos:end="619:26"><expr pos:start="619:25" pos:end="619:26"><name pos:start="619:25" pos:end="619:26">dc</name></expr></argument>, <argument pos:start="619:29" pos:end="619:29"><expr pos:start="619:29" pos:end="619:29"><literal type="number" pos:start="619:29" pos:end="619:29">1</literal></expr></argument>, <argument pos:start="619:32" pos:end="619:37"><expr pos:start="619:32" pos:end="619:37"><name pos:start="619:32" pos:end="619:37"><name pos:start="619:32" pos:end="619:33">dc</name><operator pos:start="619:34" pos:end="619:35">-&gt;</operator><name pos:start="619:36" pos:end="619:37">pc</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="621:13" pos:end="621:18">break;</break>
+
+        <case pos:start="623:9" pos:end="623:24">case <expr pos:start="623:14" pos:end="623:23"><name pos:start="623:14" pos:end="623:23">DISAS_JUMP</name></expr>:</case>
+
+            <expr_stmt pos:start="625:13" pos:end="625:27"><expr pos:start="625:13" pos:end="625:26"><call pos:start="625:13" pos:end="625:26"><name pos:start="625:13" pos:end="625:24">gen_goto_ptr</name><argument_list pos:start="625:25" pos:end="625:26">()</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="627:13" pos:end="627:18">break;</break>
+
+        <case pos:start="629:9" pos:end="629:26">case <expr pos:start="629:14" pos:end="629:25"><name pos:start="629:14" pos:end="629:25">DISAS_UPDATE</name></expr>:</case>
+
+            <expr_stmt pos:start="631:13" pos:end="631:38"><expr pos:start="631:13" pos:end="631:37"><call pos:start="631:13" pos:end="631:37"><name pos:start="631:13" pos:end="631:25">gen_set_pc_im</name><argument_list pos:start="631:26" pos:end="631:37">(<argument pos:start="631:27" pos:end="631:28"><expr pos:start="631:27" pos:end="631:28"><name pos:start="631:27" pos:end="631:28">dc</name></expr></argument>, <argument pos:start="631:31" pos:end="631:36"><expr pos:start="631:31" pos:end="631:36"><name pos:start="631:31" pos:end="631:36"><name pos:start="631:31" pos:end="631:32">dc</name><operator pos:start="631:33" pos:end="631:34">-&gt;</operator><name pos:start="631:35" pos:end="631:36">pc</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <comment type="block" pos:start="633:13" pos:end="633:30">/* fall through */</comment>
+
+        <default pos:start="635:9" pos:end="635:16">default:</default>
+
+            <comment type="block" pos:start="637:13" pos:end="637:79">/* indicate that the hash table must be used to find the next TB */</comment>
+
+            <expr_stmt pos:start="639:13" pos:end="639:31"><expr pos:start="639:13" pos:end="639:30"><call pos:start="639:13" pos:end="639:30"><name pos:start="639:13" pos:end="639:27">tcg_gen_exit_tb</name><argument_list pos:start="639:28" pos:end="639:30">(<argument pos:start="639:29" pos:end="639:29"><expr pos:start="639:29" pos:end="639:29"><literal type="number" pos:start="639:29" pos:end="639:29">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="641:13" pos:end="641:18">break;</break>
+
+        <case pos:start="643:9" pos:end="643:28">case <expr pos:start="643:14" pos:end="643:27"><name pos:start="643:14" pos:end="643:27">DISAS_NORETURN</name></expr>:</case>
+
+            <comment type="block" pos:start="645:13" pos:end="645:42">/* nothing more to generate */</comment>
+
+            <break pos:start="647:13" pos:end="647:18">break;</break>
+
+        <case pos:start="649:9" pos:end="649:23">case <expr pos:start="649:14" pos:end="649:22"><name pos:start="649:14" pos:end="649:22">DISAS_WFI</name></expr>:</case>
+
+            <expr_stmt pos:start="651:13" pos:end="651:36"><expr pos:start="651:13" pos:end="651:35"><call pos:start="651:13" pos:end="651:35"><name pos:start="651:13" pos:end="651:26">gen_helper_wfi</name><argument_list pos:start="651:27" pos:end="651:35">(<argument pos:start="651:28" pos:end="651:34"><expr pos:start="651:28" pos:end="651:34"><name pos:start="651:28" pos:end="651:34">cpu_env</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <comment type="block" pos:start="653:13" pos:end="657:15">/* The helper doesn't necessarily throw an exception, but we
+
+             * must go back to the main loop to check for interrupts anyway.
+
+             */</comment>
+
+            <expr_stmt pos:start="659:13" pos:end="659:31"><expr pos:start="659:13" pos:end="659:30"><call pos:start="659:13" pos:end="659:30"><name pos:start="659:13" pos:end="659:27">tcg_gen_exit_tb</name><argument_list pos:start="659:28" pos:end="659:30">(<argument pos:start="659:29" pos:end="659:29"><expr pos:start="659:29" pos:end="659:29"><literal type="number" pos:start="659:29" pos:end="659:29">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="661:13" pos:end="661:18">break;</break>
+
+        <case pos:start="663:9" pos:end="663:23">case <expr pos:start="663:14" pos:end="663:22"><name pos:start="663:14" pos:end="663:22">DISAS_WFE</name></expr>:</case>
+
+            <expr_stmt pos:start="665:13" pos:end="665:36"><expr pos:start="665:13" pos:end="665:35"><call pos:start="665:13" pos:end="665:35"><name pos:start="665:13" pos:end="665:26">gen_helper_wfe</name><argument_list pos:start="665:27" pos:end="665:35">(<argument pos:start="665:28" pos:end="665:34"><expr pos:start="665:28" pos:end="665:34"><name pos:start="665:28" pos:end="665:34">cpu_env</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="667:13" pos:end="667:18">break;</break>
+
+        <case pos:start="669:9" pos:end="669:25">case <expr pos:start="669:14" pos:end="669:24"><name pos:start="669:14" pos:end="669:24">DISAS_YIELD</name></expr>:</case>
+
+            <expr_stmt pos:start="671:13" pos:end="671:38"><expr pos:start="671:13" pos:end="671:37"><call pos:start="671:13" pos:end="671:37"><name pos:start="671:13" pos:end="671:28">gen_helper_yield</name><argument_list pos:start="671:29" pos:end="671:37">(<argument pos:start="671:30" pos:end="671:36"><expr pos:start="671:30" pos:end="671:36"><name pos:start="671:30" pos:end="671:36">cpu_env</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="673:13" pos:end="673:18">break;</break>
+
+        <case pos:start="675:9" pos:end="675:23">case <expr pos:start="675:14" pos:end="675:22"><name pos:start="675:14" pos:end="675:22">DISAS_SWI</name></expr>:</case>
+
+            <expr_stmt pos:start="677:13" pos:end="679:52"><expr pos:start="677:13" pos:end="679:51"><call pos:start="677:13" pos:end="679:51"><name pos:start="677:13" pos:end="677:25">gen_exception</name><argument_list pos:start="677:26" pos:end="679:51">(<argument pos:start="677:27" pos:end="677:34"><expr pos:start="677:27" pos:end="677:34"><name pos:start="677:27" pos:end="677:34">EXCP_SWI</name></expr></argument>, <argument pos:start="677:37" pos:end="677:72"><expr pos:start="677:37" pos:end="677:72"><call pos:start="677:37" pos:end="677:72"><name pos:start="677:37" pos:end="677:48">syn_aa32_svc</name><argument_list pos:start="677:49" pos:end="677:72">(<argument pos:start="677:50" pos:end="677:60"><expr pos:start="677:50" pos:end="677:60"><name pos:start="677:50" pos:end="677:60"><name pos:start="677:50" pos:end="677:51">dc</name><operator pos:start="677:52" pos:end="677:53">-&gt;</operator><name pos:start="677:54" pos:end="677:60">svc_imm</name></name></expr></argument>, <argument pos:start="677:63" pos:end="677:71"><expr pos:start="677:63" pos:end="677:71"><name pos:start="677:63" pos:end="677:71"><name pos:start="677:63" pos:end="677:64">dc</name><operator pos:start="677:65" pos:end="677:66">-&gt;</operator><name pos:start="677:67" pos:end="677:71">thumb</name></name></expr></argument>)</argument_list></call></expr></argument>,
+
+                          <argument pos:start="679:27" pos:end="679:50"><expr pos:start="679:27" pos:end="679:50"><call pos:start="679:27" pos:end="679:50"><name pos:start="679:27" pos:end="679:46">default_exception_el</name><argument_list pos:start="679:47" pos:end="679:50">(<argument pos:start="679:48" pos:end="679:49"><expr pos:start="679:48" pos:end="679:49"><name pos:start="679:48" pos:end="679:49">dc</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="681:13" pos:end="681:18">break;</break>
+
+        <case pos:start="683:9" pos:end="683:23">case <expr pos:start="683:14" pos:end="683:22"><name pos:start="683:14" pos:end="683:22">DISAS_HVC</name></expr>:</case>
+
+            <expr_stmt pos:start="685:13" pos:end="685:66"><expr pos:start="685:13" pos:end="685:65"><call pos:start="685:13" pos:end="685:65"><name pos:start="685:13" pos:end="685:25">gen_exception</name><argument_list pos:start="685:26" pos:end="685:65">(<argument pos:start="685:27" pos:end="685:34"><expr pos:start="685:27" pos:end="685:34"><name pos:start="685:27" pos:end="685:34">EXCP_HVC</name></expr></argument>, <argument pos:start="685:37" pos:end="685:61"><expr pos:start="685:37" pos:end="685:61"><call pos:start="685:37" pos:end="685:61"><name pos:start="685:37" pos:end="685:48">syn_aa32_hvc</name><argument_list pos:start="685:49" pos:end="685:61">(<argument pos:start="685:50" pos:end="685:60"><expr pos:start="685:50" pos:end="685:60"><name pos:start="685:50" pos:end="685:60"><name pos:start="685:50" pos:end="685:51">dc</name><operator pos:start="685:52" pos:end="685:53">-&gt;</operator><name pos:start="685:54" pos:end="685:60">svc_imm</name></name></expr></argument>)</argument_list></call></expr></argument>, <argument pos:start="685:64" pos:end="685:64"><expr pos:start="685:64" pos:end="685:64"><literal type="number" pos:start="685:64" pos:end="685:64">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="687:13" pos:end="687:18">break;</break>
+
+        <case pos:start="689:9" pos:end="689:23">case <expr pos:start="689:14" pos:end="689:22"><name pos:start="689:14" pos:end="689:22">DISAS_SMC</name></expr>:</case>
+
+            <expr_stmt pos:start="691:13" pos:end="691:55"><expr pos:start="691:13" pos:end="691:54"><call pos:start="691:13" pos:end="691:54"><name pos:start="691:13" pos:end="691:25">gen_exception</name><argument_list pos:start="691:26" pos:end="691:54">(<argument pos:start="691:27" pos:end="691:34"><expr pos:start="691:27" pos:end="691:34"><name pos:start="691:27" pos:end="691:34">EXCP_SMC</name></expr></argument>, <argument pos:start="691:37" pos:end="691:50"><expr pos:start="691:37" pos:end="691:50"><call pos:start="691:37" pos:end="691:50"><name pos:start="691:37" pos:end="691:48">syn_aa32_smc</name><argument_list pos:start="691:49" pos:end="691:50">()</argument_list></call></expr></argument>, <argument pos:start="691:53" pos:end="691:53"><expr pos:start="691:53" pos:end="691:53"><literal type="number" pos:start="691:53" pos:end="691:53">3</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="693:13" pos:end="693:18">break;</break>
+
+        </block_content>}</block></switch>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <if_stmt pos:start="701:5" pos:end="721:5"><if pos:start="701:5" pos:end="721:5">if <condition pos:start="701:8" pos:end="701:20">(<expr pos:start="701:9" pos:end="701:19"><name pos:start="701:9" pos:end="701:19"><name pos:start="701:9" pos:end="701:10">dc</name><operator pos:start="701:11" pos:end="701:12">-&gt;</operator><name pos:start="701:13" pos:end="701:19">condjmp</name></name></expr>)</condition> <block pos:start="701:22" pos:end="721:5">{<block_content pos:start="705:9" pos:end="719:9">
+
+        <comment type="block" pos:start="703:9" pos:end="703:78">/* "Condition failed" instruction codepath for the branch/trap insn */</comment>
+
+        <expr_stmt pos:start="705:9" pos:end="705:37"><expr pos:start="705:9" pos:end="705:36"><call pos:start="705:9" pos:end="705:36"><name pos:start="705:9" pos:end="705:21">gen_set_label</name><argument_list pos:start="705:22" pos:end="705:36">(<argument pos:start="705:23" pos:end="705:35"><expr pos:start="705:23" pos:end="705:35"><name pos:start="705:23" pos:end="705:35"><name pos:start="705:23" pos:end="705:24">dc</name><operator pos:start="705:25" pos:end="705:26">-&gt;</operator><name pos:start="705:27" pos:end="705:35">condlabel</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="707:9" pos:end="707:29"><expr pos:start="707:9" pos:end="707:28"><call pos:start="707:9" pos:end="707:28"><name pos:start="707:9" pos:end="707:24">gen_set_condexec</name><argument_list pos:start="707:25" pos:end="707:28">(<argument pos:start="707:26" pos:end="707:27"><expr pos:start="707:26" pos:end="707:27"><name pos:start="707:26" pos:end="707:27">dc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="709:9" pos:end="719:9"><if pos:start="709:9" pos:end="715:9">if <condition pos:start="709:12" pos:end="709:44">(<expr pos:start="709:13" pos:end="709:43"><call pos:start="709:13" pos:end="709:43"><name pos:start="709:13" pos:end="709:20">unlikely</name><argument_list pos:start="709:21" pos:end="709:43">(<argument pos:start="709:22" pos:end="709:42"><expr pos:start="709:22" pos:end="709:42"><call pos:start="709:22" pos:end="709:42"><name pos:start="709:22" pos:end="709:38">is_singlestepping</name><argument_list pos:start="709:39" pos:end="709:42">(<argument pos:start="709:40" pos:end="709:41"><expr pos:start="709:40" pos:end="709:41"><name pos:start="709:40" pos:end="709:41">dc</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="709:46" pos:end="715:9">{<block_content pos:start="711:13" pos:end="713:41">
+
+            <expr_stmt pos:start="711:13" pos:end="711:38"><expr pos:start="711:13" pos:end="711:37"><call pos:start="711:13" pos:end="711:37"><name pos:start="711:13" pos:end="711:25">gen_set_pc_im</name><argument_list pos:start="711:26" pos:end="711:37">(<argument pos:start="711:27" pos:end="711:28"><expr pos:start="711:27" pos:end="711:28"><name pos:start="711:27" pos:end="711:28">dc</name></expr></argument>, <argument pos:start="711:31" pos:end="711:36"><expr pos:start="711:31" pos:end="711:36"><name pos:start="711:31" pos:end="711:36"><name pos:start="711:31" pos:end="711:32">dc</name><operator pos:start="711:33" pos:end="711:34">-&gt;</operator><name pos:start="711:35" pos:end="711:36">pc</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="713:13" pos:end="713:41"><expr pos:start="713:13" pos:end="713:40"><call pos:start="713:13" pos:end="713:40"><name pos:start="713:13" pos:end="713:36">gen_singlestep_exception</name><argument_list pos:start="713:37" pos:end="713:40">(<argument pos:start="713:38" pos:end="713:39"><expr pos:start="713:38" pos:end="713:39"><name pos:start="713:38" pos:end="713:39">dc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="715:11" pos:end="719:9">else <block pos:start="715:16" pos:end="719:9">{<block_content pos:start="717:13" pos:end="717:39">
+
+            <expr_stmt pos:start="717:13" pos:end="717:39"><expr pos:start="717:13" pos:end="717:38"><call pos:start="717:13" pos:end="717:38"><name pos:start="717:13" pos:end="717:23">gen_goto_tb</name><argument_list pos:start="717:24" pos:end="717:38">(<argument pos:start="717:25" pos:end="717:26"><expr pos:start="717:25" pos:end="717:26"><name pos:start="717:25" pos:end="717:26">dc</name></expr></argument>, <argument pos:start="717:29" pos:end="717:29"><expr pos:start="717:29" pos:end="717:29"><literal type="number" pos:start="717:29" pos:end="717:29">1</literal></expr></argument>, <argument pos:start="717:32" pos:end="717:37"><expr pos:start="717:32" pos:end="717:37"><name pos:start="717:32" pos:end="717:37"><name pos:start="717:32" pos:end="717:33">dc</name><operator pos:start="717:34" pos:end="717:35">-&gt;</operator><name pos:start="717:36" pos:end="717:37">pc</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+<label pos:start="725:1" pos:end="725:16"><name pos:start="725:1" pos:end="725:15">done_generating</name>:</label>
+
+    <expr_stmt pos:start="727:5" pos:end="732:0"><expr pos:start="727:5" pos:end="727:29"><call pos:start="727:5" pos:end="727:29"><name pos:start="727:5" pos:end="727:14">gen_tb_end</name><argument_list pos:start="727:15" pos:end="727:29">(<argument pos:start="727:16" pos:end="727:17"><expr pos:start="727:16" pos:end="727:17"><name pos:start="727:16" pos:end="727:17">tb</name></expr></argument>, <argument pos:start="727:20" pos:end="727:28"><expr pos:start="727:20" pos:end="727:28"><name pos:start="727:20" pos:end="727:28">num_insns</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+<cpp:ifdef pos:start="731:1" pos:end="731:18">#<cpp:directive pos:start="731:2" pos:end="731:6">ifdef</cpp:directive> <name pos:start="731:8" pos:end="731:18">DEBUG_DISAS</name></cpp:ifdef>
+
+    <if_stmt pos:start="733:5" pos:end="754:0"><if pos:start="733:5" pos:end="754:0">if <condition pos:start="733:8" pos:end="735:41">(<expr pos:start="733:9" pos:end="735:40"><call pos:start="733:9" pos:end="733:45"><name pos:start="733:9" pos:end="733:26">qemu_loglevel_mask</name><argument_list pos:start="733:27" pos:end="733:45">(<argument pos:start="733:28" pos:end="733:44"><expr pos:start="733:28" pos:end="733:44"><name pos:start="733:28" pos:end="733:44">CPU_LOG_TB_IN_ASM</name></expr></argument>)</argument_list></call> <operator pos:start="733:47" pos:end="733:48">&amp;&amp;</operator>
+
+        <call pos:start="735:9" pos:end="735:40"><name pos:start="735:9" pos:end="735:30">qemu_log_in_addr_range</name><argument_list pos:start="735:31" pos:end="735:40">(<argument pos:start="735:32" pos:end="735:39"><expr pos:start="735:32" pos:end="735:39"><name pos:start="735:32" pos:end="735:39">pc_start</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="735:43" pos:end="754:0">{<block_content pos:start="737:9" pos:end="749:26">
+
+        <expr_stmt pos:start="737:9" pos:end="737:24"><expr pos:start="737:9" pos:end="737:23"><call pos:start="737:9" pos:end="737:23"><name pos:start="737:9" pos:end="737:21">qemu_log_lock</name><argument_list pos:start="737:22" pos:end="737:23">()</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="739:9" pos:end="739:39"><expr pos:start="739:9" pos:end="739:38"><call pos:start="739:9" pos:end="739:38"><name pos:start="739:9" pos:end="739:16">qemu_log</name><argument_list pos:start="739:17" pos:end="739:38">(<argument pos:start="739:18" pos:end="739:37"><expr pos:start="739:18" pos:end="739:37"><literal type="string" pos:start="739:18" pos:end="739:37">"----------------\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="741:9" pos:end="741:54"><expr pos:start="741:9" pos:end="741:53"><call pos:start="741:9" pos:end="741:53"><name pos:start="741:9" pos:end="741:16">qemu_log</name><argument_list pos:start="741:17" pos:end="741:53">(<argument pos:start="741:18" pos:end="741:27"><expr pos:start="741:18" pos:end="741:27"><literal type="string" pos:start="741:18" pos:end="741:27">"IN: %s\n"</literal></expr></argument>, <argument pos:start="741:30" pos:end="741:52"><expr pos:start="741:30" pos:end="741:52"><call pos:start="741:30" pos:end="741:52"><name pos:start="741:30" pos:end="741:42">lookup_symbol</name><argument_list pos:start="741:43" pos:end="741:52">(<argument pos:start="741:44" pos:end="741:51"><expr pos:start="741:44" pos:end="741:51"><name pos:start="741:44" pos:end="741:51">pc_start</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="743:9" pos:end="745:57"><expr pos:start="743:9" pos:end="745:56"><call pos:start="743:9" pos:end="745:56"><name pos:start="743:9" pos:end="743:24">log_target_disas</name><argument_list pos:start="743:25" pos:end="745:56">(<argument pos:start="743:26" pos:end="743:27"><expr pos:start="743:26" pos:end="743:27"><name pos:start="743:26" pos:end="743:27">cs</name></expr></argument>, <argument pos:start="743:30" pos:end="743:37"><expr pos:start="743:30" pos:end="743:37"><name pos:start="743:30" pos:end="743:37">pc_start</name></expr></argument>, <argument pos:start="743:40" pos:end="743:56"><expr pos:start="743:40" pos:end="743:56"><name pos:start="743:40" pos:end="743:45"><name pos:start="743:40" pos:end="743:41">dc</name><operator pos:start="743:42" pos:end="743:43">-&gt;</operator><name pos:start="743:44" pos:end="743:45">pc</name></name> <operator pos:start="743:47" pos:end="743:47">-</operator> <name pos:start="743:49" pos:end="743:56">pc_start</name></expr></argument>,
+
+                         <argument pos:start="745:26" pos:end="745:55"><expr pos:start="745:26" pos:end="745:55"><name pos:start="745:26" pos:end="745:34"><name pos:start="745:26" pos:end="745:27">dc</name><operator pos:start="745:28" pos:end="745:29">-&gt;</operator><name pos:start="745:30" pos:end="745:34">thumb</name></name> <operator pos:start="745:36" pos:end="745:36">|</operator> <operator pos:start="745:38" pos:end="745:38">(</operator><name pos:start="745:39" pos:end="745:49"><name pos:start="745:39" pos:end="745:40">dc</name><operator pos:start="745:41" pos:end="745:42">-&gt;</operator><name pos:start="745:43" pos:end="745:49">sctlr_b</name></name> <operator pos:start="745:51" pos:end="745:52">&lt;&lt;</operator> <literal type="number" pos:start="745:54" pos:end="745:54">1</literal><operator pos:start="745:55" pos:end="745:55">)</operator></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="747:9" pos:end="747:23"><expr pos:start="747:9" pos:end="747:22"><call pos:start="747:9" pos:end="747:22"><name pos:start="747:9" pos:end="747:16">qemu_log</name><argument_list pos:start="747:17" pos:end="747:22">(<argument pos:start="747:18" pos:end="747:21"><expr pos:start="747:18" pos:end="747:21"><literal type="string" pos:start="747:18" pos:end="747:21">"\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="749:9" pos:end="749:26"><expr pos:start="749:9" pos:end="749:25"><call pos:start="749:9" pos:end="749:25"><name pos:start="749:9" pos:end="749:23">qemu_log_unlock</name><argument_list pos:start="749:24" pos:end="749:25">()</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+<cpp:endif pos:start="753:1" pos:end="753:6">#<cpp:directive pos:start="753:2" pos:end="753:6">endif</cpp:directive></cpp:endif>
+
+    <expr_stmt pos:start="755:5" pos:end="755:33"><expr pos:start="755:5" pos:end="755:32"><name pos:start="755:5" pos:end="755:12"><name pos:start="755:5" pos:end="755:6">tb</name><operator pos:start="755:7" pos:end="755:8">-&gt;</operator><name pos:start="755:9" pos:end="755:12">size</name></name> <operator pos:start="755:14" pos:end="755:14">=</operator> <name pos:start="755:16" pos:end="755:21"><name pos:start="755:16" pos:end="755:17">dc</name><operator pos:start="755:18" pos:end="755:19">-&gt;</operator><name pos:start="755:20" pos:end="755:21">pc</name></name> <operator pos:start="755:23" pos:end="755:23">-</operator> <name pos:start="755:25" pos:end="755:32">pc_start</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="757:5" pos:end="757:27"><expr pos:start="757:5" pos:end="757:26"><name pos:start="757:5" pos:end="757:14"><name pos:start="757:5" pos:end="757:6">tb</name><operator pos:start="757:7" pos:end="757:8">-&gt;</operator><name pos:start="757:9" pos:end="757:14">icount</name></name> <operator pos:start="757:16" pos:end="757:16">=</operator> <name pos:start="757:18" pos:end="757:26">num_insns</name></expr>;</expr_stmt>
+
+</block_content>}</block></function>
+</unit>

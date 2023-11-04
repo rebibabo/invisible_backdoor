@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/5164.c" pos:tabs="8"><function pos:start="1:1" pos:end="275:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:29">qpeg_decode_inter</name><parameter_list pos:start="1:30" pos:end="5:79">(<parameter pos:start="1:31" pos:end="1:48"><decl pos:start="1:31" pos:end="1:48"><type pos:start="1:31" pos:end="1:48"><specifier pos:start="1:31" pos:end="1:35">const</specifier> <name pos:start="1:37" pos:end="1:43">uint8_t</name> <modifier pos:start="1:45" pos:end="1:45">*</modifier></type><name pos:start="1:46" pos:end="1:48">src</name></decl></parameter>, <parameter pos:start="1:51" pos:end="1:62"><decl pos:start="1:51" pos:end="1:62"><type pos:start="1:51" pos:end="1:62"><name pos:start="1:51" pos:end="1:57">uint8_t</name> <modifier pos:start="1:59" pos:end="1:59">*</modifier></type><name pos:start="1:60" pos:end="1:62">dst</name></decl></parameter>, <parameter pos:start="1:65" pos:end="1:72"><decl pos:start="1:65" pos:end="1:72"><type pos:start="1:65" pos:end="1:72"><name pos:start="1:65" pos:end="1:67">int</name></type> <name pos:start="1:69" pos:end="1:72">size</name></decl></parameter>,
+
+                            <parameter pos:start="3:29" pos:end="3:38"><decl pos:start="3:29" pos:end="3:38"><type pos:start="3:29" pos:end="3:38"><name pos:start="3:29" pos:end="3:31">int</name></type> <name pos:start="3:33" pos:end="3:38">stride</name></decl></parameter>, <parameter pos:start="3:41" pos:end="3:49"><decl pos:start="3:41" pos:end="3:49"><type pos:start="3:41" pos:end="3:49"><name pos:start="3:41" pos:end="3:43">int</name></type> <name pos:start="3:45" pos:end="3:49">width</name></decl></parameter>, <parameter pos:start="3:52" pos:end="3:61"><decl pos:start="3:52" pos:end="3:61"><type pos:start="3:52" pos:end="3:61"><name pos:start="3:52" pos:end="3:54">int</name></type> <name pos:start="3:56" pos:end="3:61">height</name></decl></parameter>,
+
+                            <parameter pos:start="5:29" pos:end="5:37"><decl pos:start="5:29" pos:end="5:37"><type pos:start="5:29" pos:end="5:37"><name pos:start="5:29" pos:end="5:31">int</name></type> <name pos:start="5:33" pos:end="5:37">delta</name></decl></parameter>, <parameter pos:start="5:40" pos:end="5:60"><decl pos:start="5:40" pos:end="5:60"><type pos:start="5:40" pos:end="5:60"><specifier pos:start="5:40" pos:end="5:44">const</specifier> <name pos:start="5:46" pos:end="5:52">uint8_t</name> <modifier pos:start="5:54" pos:end="5:54">*</modifier></type><name pos:start="5:55" pos:end="5:60">ctable</name></decl></parameter>, <parameter pos:start="5:63" pos:end="5:78"><decl pos:start="5:63" pos:end="5:78"><type pos:start="5:63" pos:end="5:78"><name pos:start="5:63" pos:end="5:69">uint8_t</name> <modifier pos:start="5:71" pos:end="5:71">*</modifier></type><name pos:start="5:72" pos:end="5:78">refdata</name></decl></parameter>)</parameter_list>
+
+<block pos:start="7:1" pos:end="275:1">{<block_content pos:start="9:5" pos:end="273:5">
+
+    <decl_stmt pos:start="9:5" pos:end="9:13"><decl pos:start="9:5" pos:end="9:9"><type pos:start="9:5" pos:end="9:7"><name pos:start="9:5" pos:end="9:7">int</name></type> <name pos:start="9:9" pos:end="9:9">i</name></decl>, <decl pos:start="9:12" pos:end="9:12"><type ref="prev" pos:start="9:5" pos:end="9:7"/><name pos:start="9:12" pos:end="9:12">j</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:13"><decl pos:start="11:5" pos:end="11:12"><type pos:start="11:5" pos:end="11:7"><name pos:start="11:5" pos:end="11:7">int</name></type> <name pos:start="11:9" pos:end="11:12">code</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:19"><decl pos:start="13:5" pos:end="13:18"><type pos:start="13:5" pos:end="13:7"><name pos:start="13:5" pos:end="13:7">int</name></type> <name pos:start="13:9" pos:end="13:14">filled</name> <init pos:start="13:16" pos:end="13:18">= <expr pos:start="13:18" pos:end="13:18"><literal type="number" pos:start="13:18" pos:end="13:18">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:20"><decl pos:start="15:5" pos:end="15:19"><type pos:start="15:5" pos:end="15:7"><name pos:start="15:5" pos:end="15:7">int</name></type> <name pos:start="15:9" pos:end="15:19">orig_height</name></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="19:5" pos:end="21:21"><if pos:start="19:5" pos:end="21:21">if<condition pos:start="19:7" pos:end="19:16">(<expr pos:start="19:8" pos:end="19:15"><operator pos:start="19:8" pos:end="19:8">!</operator><name pos:start="19:9" pos:end="19:15">refdata</name></expr>)</condition><block type="pseudo" pos:start="21:9" pos:end="21:21"><block_content pos:start="21:9" pos:end="21:21">
+
+        <expr_stmt pos:start="21:9" pos:end="21:21"><expr pos:start="21:9" pos:end="21:20"><name pos:start="21:9" pos:end="21:15">refdata</name><operator pos:start="21:16" pos:end="21:16">=</operator> <name pos:start="21:18" pos:end="21:20">dst</name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="25:5" pos:end="25:25">/* copy prev frame */</comment>
+
+    <for pos:start="27:5" pos:end="29:66">for<control pos:start="27:8" pos:end="27:31">(<init pos:start="27:9" pos:end="27:14"><expr pos:start="27:9" pos:end="27:13"><name pos:start="27:9" pos:end="27:9">i</name> <operator pos:start="27:11" pos:end="27:11">=</operator> <literal type="number" pos:start="27:13" pos:end="27:13">0</literal></expr>;</init> <condition pos:start="27:16" pos:end="27:26"><expr pos:start="27:16" pos:end="27:25"><name pos:start="27:16" pos:end="27:16">i</name> <operator pos:start="27:18" pos:end="27:18">&lt;</operator> <name pos:start="27:20" pos:end="27:25">height</name></expr>;</condition> <incr pos:start="27:28" pos:end="27:30"><expr pos:start="27:28" pos:end="27:30"><name pos:start="27:28" pos:end="27:28">i</name><operator pos:start="27:29" pos:end="27:30">++</operator></expr></incr>)</control><block type="pseudo" pos:start="29:9" pos:end="29:66"><block_content pos:start="29:9" pos:end="29:66">
+
+        <expr_stmt pos:start="29:9" pos:end="29:66"><expr pos:start="29:9" pos:end="29:65"><call pos:start="29:9" pos:end="29:65"><name pos:start="29:9" pos:end="29:14">memcpy</name><argument_list pos:start="29:15" pos:end="29:65">(<argument pos:start="29:16" pos:end="29:33"><expr pos:start="29:16" pos:end="29:33"><name pos:start="29:16" pos:end="29:18">dst</name> <operator pos:start="29:20" pos:end="29:20">+</operator> <operator pos:start="29:22" pos:end="29:22">(</operator><name pos:start="29:23" pos:end="29:23">i</name> <operator pos:start="29:25" pos:end="29:25">*</operator> <name pos:start="29:27" pos:end="29:32">stride</name><operator pos:start="29:33" pos:end="29:33">)</operator></expr></argument>, <argument pos:start="29:36" pos:end="29:57"><expr pos:start="29:36" pos:end="29:57"><name pos:start="29:36" pos:end="29:42">refdata</name> <operator pos:start="29:44" pos:end="29:44">+</operator> <operator pos:start="29:46" pos:end="29:46">(</operator><name pos:start="29:47" pos:end="29:47">i</name> <operator pos:start="29:49" pos:end="29:49">*</operator> <name pos:start="29:51" pos:end="29:56">stride</name><operator pos:start="29:57" pos:end="29:57">)</operator></expr></argument>, <argument pos:start="29:60" pos:end="29:64"><expr pos:start="29:60" pos:end="29:64"><name pos:start="29:60" pos:end="29:64">width</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></for>
+
+
+
+    <expr_stmt pos:start="33:5" pos:end="33:25"><expr pos:start="33:5" pos:end="33:24"><name pos:start="33:5" pos:end="33:15">orig_height</name> <operator pos:start="33:17" pos:end="33:17">=</operator> <name pos:start="33:19" pos:end="33:24">height</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="35:5" pos:end="35:13"><expr pos:start="35:5" pos:end="35:12"><name pos:start="35:5" pos:end="35:10">height</name><operator pos:start="35:11" pos:end="35:12">--</operator></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="37:5" pos:end="37:32"><expr pos:start="37:5" pos:end="37:31"><name pos:start="37:5" pos:end="37:7">dst</name> <operator pos:start="37:9" pos:end="37:9">=</operator> <name pos:start="37:11" pos:end="37:13">dst</name> <operator pos:start="37:15" pos:end="37:15">+</operator> <name pos:start="37:17" pos:end="37:22">height</name> <operator pos:start="37:24" pos:end="37:24">*</operator> <name pos:start="37:26" pos:end="37:31">stride</name></expr>;</expr_stmt>
+
+
+
+    <while pos:start="41:5" pos:end="273:5">while<condition pos:start="41:10" pos:end="41:38">(<expr pos:start="41:11" pos:end="41:37"><operator pos:start="41:11" pos:end="41:11">(</operator><name pos:start="41:12" pos:end="41:15">size</name> <operator pos:start="41:17" pos:end="41:17">&gt;</operator> <literal type="number" pos:start="41:19" pos:end="41:19">0</literal><operator pos:start="41:20" pos:end="41:20">)</operator> <operator pos:start="41:22" pos:end="41:23">&amp;&amp;</operator> <operator pos:start="41:25" pos:end="41:25">(</operator><name pos:start="41:26" pos:end="41:31">height</name> <operator pos:start="41:33" pos:end="41:34">&gt;=</operator> <literal type="number" pos:start="41:36" pos:end="41:36">0</literal><operator pos:start="41:37" pos:end="41:37">)</operator></expr>)</condition> <block pos:start="41:40" pos:end="273:5">{<block_content pos:start="43:9" pos:end="271:9">
+
+        <expr_stmt pos:start="43:9" pos:end="43:22"><expr pos:start="43:9" pos:end="43:21"><name pos:start="43:9" pos:end="43:12">code</name> <operator pos:start="43:14" pos:end="43:14">=</operator> <operator pos:start="43:16" pos:end="43:16">*</operator><name pos:start="43:17" pos:end="43:19">src</name><operator pos:start="43:20" pos:end="43:21">++</operator></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="45:9" pos:end="45:15"><expr pos:start="45:9" pos:end="45:14"><name pos:start="45:9" pos:end="45:12">size</name><operator pos:start="45:13" pos:end="45:14">--</operator></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="49:9" pos:end="141:9"><if pos:start="49:9" pos:end="141:9">if<condition pos:start="49:11" pos:end="49:17">(<expr pos:start="49:12" pos:end="49:16"><name pos:start="49:12" pos:end="49:16">delta</name></expr>)</condition> <block pos:start="49:19" pos:end="141:9">{<block_content pos:start="53:13" pos:end="139:13">
+
+            <comment type="block" pos:start="51:13" pos:end="51:37">/* motion compensation */</comment>
+
+            <while pos:start="53:13" pos:end="139:13">while<condition pos:start="53:18" pos:end="53:40">(<expr pos:start="53:19" pos:end="53:39"><operator pos:start="53:19" pos:end="53:19">(</operator><name pos:start="53:20" pos:end="53:23">code</name> <operator pos:start="53:25" pos:end="53:25">&amp;</operator> <literal type="number" pos:start="53:27" pos:end="53:30">0xF0</literal><operator pos:start="53:31" pos:end="53:31">)</operator> <operator pos:start="53:33" pos:end="53:34">==</operator> <literal type="number" pos:start="53:36" pos:end="53:39">0xF0</literal></expr>)</condition> <block pos:start="53:42" pos:end="139:13">{<block_content pos:start="55:17" pos:end="137:23">
+
+                <if_stmt pos:start="55:17" pos:end="133:17"><if pos:start="55:17" pos:end="133:17">if<condition pos:start="55:19" pos:end="55:30">(<expr pos:start="55:20" pos:end="55:29"><name pos:start="55:20" pos:end="55:24">delta</name> <operator pos:start="55:26" pos:end="55:27">==</operator> <literal type="number" pos:start="55:29" pos:end="55:29">1</literal></expr>)</condition> <block pos:start="55:32" pos:end="133:17">{<block_content pos:start="57:21" pos:end="131:21">
+
+                    <decl_stmt pos:start="57:21" pos:end="57:31"><decl pos:start="57:21" pos:end="57:30"><type pos:start="57:21" pos:end="57:23"><name pos:start="57:21" pos:end="57:23">int</name></type> <name pos:start="57:25" pos:end="57:30">me_idx</name></decl>;</decl_stmt>
+
+                    <decl_stmt pos:start="59:21" pos:end="59:47"><decl pos:start="59:21" pos:end="59:28"><type pos:start="59:21" pos:end="59:23"><name pos:start="59:21" pos:end="59:23">int</name></type> <name pos:start="59:25" pos:end="59:28">me_w</name></decl>, <decl pos:start="59:31" pos:end="59:34"><type ref="prev" pos:start="59:21" pos:end="59:23"/><name pos:start="59:31" pos:end="59:34">me_h</name></decl>, <decl pos:start="59:37" pos:end="59:40"><type ref="prev" pos:start="59:21" pos:end="59:23"/><name pos:start="59:37" pos:end="59:40">me_x</name></decl>, <decl pos:start="59:43" pos:end="59:46"><type ref="prev" pos:start="59:21" pos:end="59:23"/><name pos:start="59:43" pos:end="59:46">me_y</name></decl>;</decl_stmt>
+
+                    <decl_stmt pos:start="61:21" pos:end="61:38"><decl pos:start="61:21" pos:end="61:37"><type pos:start="61:21" pos:end="61:29"><name pos:start="61:21" pos:end="61:27">uint8_t</name> <modifier pos:start="61:29" pos:end="61:29">*</modifier></type><name pos:start="61:30" pos:end="61:37">me_plane</name></decl>;</decl_stmt>
+
+                    <decl_stmt pos:start="63:21" pos:end="63:34"><decl pos:start="63:21" pos:end="63:28"><type pos:start="63:21" pos:end="63:23"><name pos:start="63:21" pos:end="63:23">int</name></type> <name pos:start="63:25" pos:end="63:28">corr</name></decl>, <decl pos:start="63:31" pos:end="63:33"><type ref="prev" pos:start="63:21" pos:end="63:23"/><name pos:start="63:31" pos:end="63:33">val</name></decl>;</decl_stmt>
+
+
+
+                    <comment type="block" pos:start="67:21" pos:end="67:49">/* get block size by index */</comment>
+
+                    <expr_stmt pos:start="69:21" pos:end="69:40"><expr pos:start="69:21" pos:end="69:39"><name pos:start="69:21" pos:end="69:26">me_idx</name> <operator pos:start="69:28" pos:end="69:28">=</operator> <name pos:start="69:30" pos:end="69:33">code</name> <operator pos:start="69:35" pos:end="69:35">&amp;</operator> <literal type="number" pos:start="69:37" pos:end="69:39">0xF</literal></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="71:21" pos:end="71:48"><expr pos:start="71:21" pos:end="71:47"><name pos:start="71:21" pos:end="71:24">me_w</name> <operator pos:start="71:26" pos:end="71:26">=</operator> <name pos:start="71:28" pos:end="71:47"><name pos:start="71:28" pos:end="71:39">qpeg_table_w</name><index pos:start="71:40" pos:end="71:47">[<expr pos:start="71:41" pos:end="71:46"><name pos:start="71:41" pos:end="71:46">me_idx</name></expr>]</index></name></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="73:21" pos:end="73:48"><expr pos:start="73:21" pos:end="73:47"><name pos:start="73:21" pos:end="73:24">me_h</name> <operator pos:start="73:26" pos:end="73:26">=</operator> <name pos:start="73:28" pos:end="73:47"><name pos:start="73:28" pos:end="73:39">qpeg_table_h</name><index pos:start="73:40" pos:end="73:47">[<expr pos:start="73:41" pos:end="73:46"><name pos:start="73:41" pos:end="73:46">me_idx</name></expr>]</index></name></expr>;</expr_stmt>
+
+
+
+                    <comment type="block" pos:start="77:21" pos:end="77:47">/* extract motion vector */</comment>
+
+                    <expr_stmt pos:start="79:21" pos:end="79:34"><expr pos:start="79:21" pos:end="79:33"><name pos:start="79:21" pos:end="79:24">corr</name> <operator pos:start="79:26" pos:end="79:26">=</operator> <operator pos:start="79:28" pos:end="79:28">*</operator><name pos:start="79:29" pos:end="79:31">src</name><operator pos:start="79:32" pos:end="79:33">++</operator></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="81:21" pos:end="81:27"><expr pos:start="81:21" pos:end="81:26"><name pos:start="81:21" pos:end="81:24">size</name><operator pos:start="81:25" pos:end="81:26">--</operator></expr>;</expr_stmt>
+
+
+
+                    <expr_stmt pos:start="85:21" pos:end="85:36"><expr pos:start="85:21" pos:end="85:35"><name pos:start="85:21" pos:end="85:23">val</name> <operator pos:start="85:25" pos:end="85:25">=</operator> <name pos:start="85:27" pos:end="85:30">corr</name> <operator pos:start="85:32" pos:end="85:33">&gt;&gt;</operator> <literal type="number" pos:start="85:35" pos:end="85:35">4</literal></expr>;</expr_stmt>
+
+                    <if_stmt pos:start="87:21" pos:end="89:34"><if pos:start="87:21" pos:end="89:34">if<condition pos:start="87:23" pos:end="87:31">(<expr pos:start="87:24" pos:end="87:30"><name pos:start="87:24" pos:end="87:26">val</name> <operator pos:start="87:28" pos:end="87:28">&gt;</operator> <literal type="number" pos:start="87:30" pos:end="87:30">7</literal></expr>)</condition><block type="pseudo" pos:start="89:25" pos:end="89:34"><block_content pos:start="89:25" pos:end="89:34">
+
+                        <expr_stmt pos:start="89:25" pos:end="89:34"><expr pos:start="89:25" pos:end="89:33"><name pos:start="89:25" pos:end="89:27">val</name> <operator pos:start="89:29" pos:end="89:30">-=</operator> <literal type="number" pos:start="89:32" pos:end="89:33">16</literal></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+                    <expr_stmt pos:start="91:21" pos:end="91:31"><expr pos:start="91:21" pos:end="91:30"><name pos:start="91:21" pos:end="91:24">me_x</name> <operator pos:start="91:26" pos:end="91:26">=</operator> <name pos:start="91:28" pos:end="91:30">val</name></expr>;</expr_stmt>
+
+
+
+                    <expr_stmt pos:start="95:21" pos:end="95:37"><expr pos:start="95:21" pos:end="95:36"><name pos:start="95:21" pos:end="95:23">val</name> <operator pos:start="95:25" pos:end="95:25">=</operator> <name pos:start="95:27" pos:end="95:30">corr</name> <operator pos:start="95:32" pos:end="95:32">&amp;</operator> <literal type="number" pos:start="95:34" pos:end="95:36">0xF</literal></expr>;</expr_stmt>
+
+                    <if_stmt pos:start="97:21" pos:end="99:34"><if pos:start="97:21" pos:end="99:34">if<condition pos:start="97:23" pos:end="97:31">(<expr pos:start="97:24" pos:end="97:30"><name pos:start="97:24" pos:end="97:26">val</name> <operator pos:start="97:28" pos:end="97:28">&gt;</operator> <literal type="number" pos:start="97:30" pos:end="97:30">7</literal></expr>)</condition><block type="pseudo" pos:start="99:25" pos:end="99:34"><block_content pos:start="99:25" pos:end="99:34">
+
+                        <expr_stmt pos:start="99:25" pos:end="99:34"><expr pos:start="99:25" pos:end="99:33"><name pos:start="99:25" pos:end="99:27">val</name> <operator pos:start="99:29" pos:end="99:30">-=</operator> <literal type="number" pos:start="99:32" pos:end="99:33">16</literal></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+                    <expr_stmt pos:start="101:21" pos:end="101:31"><expr pos:start="101:21" pos:end="101:30"><name pos:start="101:21" pos:end="101:24">me_y</name> <operator pos:start="101:26" pos:end="101:26">=</operator> <name pos:start="101:28" pos:end="101:30">val</name></expr>;</expr_stmt>
+
+
+
+                    <comment type="block" pos:start="105:21" pos:end="105:45">/* check motion vector */</comment>
+
+                    <if_stmt pos:start="107:21" pos:end="131:21"><if pos:start="107:21" pos:end="115:71">if <condition pos:start="107:24" pos:end="111:70">(<expr pos:start="107:25" pos:end="111:69"><operator pos:start="107:25" pos:end="107:25">(</operator><name pos:start="107:26" pos:end="107:29">me_x</name> <operator pos:start="107:31" pos:end="107:31">+</operator> <name pos:start="107:33" pos:end="107:38">filled</name> <operator pos:start="107:40" pos:end="107:40">&lt;</operator> <literal type="number" pos:start="107:42" pos:end="107:42">0</literal><operator pos:start="107:43" pos:end="107:43">)</operator> <operator pos:start="107:45" pos:end="107:46">||</operator> <operator pos:start="107:48" pos:end="107:48">(</operator><name pos:start="107:49" pos:end="107:52">me_x</name> <operator pos:start="107:54" pos:end="107:54">+</operator> <name pos:start="107:56" pos:end="107:59">me_w</name> <operator pos:start="107:61" pos:end="107:61">+</operator> <name pos:start="107:63" pos:end="107:68">filled</name> <operator pos:start="107:70" pos:end="107:70">&gt;</operator> <name pos:start="107:72" pos:end="107:76">width</name><operator pos:start="107:77" pos:end="107:77">)</operator> <operator pos:start="107:79" pos:end="107:80">||</operator>
+
+                       <operator pos:start="109:24" pos:end="109:24">(</operator><name pos:start="109:25" pos:end="109:30">height</name> <operator pos:start="109:32" pos:end="109:32">-</operator> <name pos:start="109:34" pos:end="109:37">me_y</name> <operator pos:start="109:39" pos:end="109:39">-</operator> <name pos:start="109:41" pos:end="109:44">me_h</name> <operator pos:start="109:46" pos:end="109:46">&lt;</operator> <literal type="number" pos:start="109:48" pos:end="109:48">0</literal><operator pos:start="109:49" pos:end="109:49">)</operator> <operator pos:start="109:51" pos:end="109:52">||</operator> <operator pos:start="109:54" pos:end="109:54">(</operator><name pos:start="109:55" pos:end="109:60">height</name> <operator pos:start="109:62" pos:end="109:62">-</operator> <name pos:start="109:64" pos:end="109:67">me_y</name> <operator pos:start="109:69" pos:end="109:69">&gt;</operator> <name pos:start="109:71" pos:end="109:81">orig_height</name><operator pos:start="109:82" pos:end="109:82">)</operator> <operator pos:start="109:84" pos:end="109:85">||</operator>
+
+                       <operator pos:start="111:24" pos:end="111:24">(</operator><name pos:start="111:25" pos:end="111:30">filled</name> <operator pos:start="111:32" pos:end="111:32">+</operator> <name pos:start="111:34" pos:end="111:37">me_w</name> <operator pos:start="111:39" pos:end="111:39">&gt;</operator> <name pos:start="111:41" pos:end="111:45">width</name><operator pos:start="111:46" pos:end="111:46">)</operator> <operator pos:start="111:48" pos:end="111:49">||</operator> <operator pos:start="111:51" pos:end="111:51">(</operator><name pos:start="111:52" pos:end="111:57">height</name> <operator pos:start="111:59" pos:end="111:59">-</operator> <name pos:start="111:61" pos:end="111:64">me_h</name> <operator pos:start="111:66" pos:end="111:66">&lt;</operator> <literal type="number" pos:start="111:68" pos:end="111:68">0</literal><operator pos:start="111:69" pos:end="111:69">)</operator></expr>)</condition><block type="pseudo" pos:start="113:25" pos:end="115:71"><block_content pos:start="113:25" pos:end="115:71">
+
+                        <expr_stmt pos:start="113:25" pos:end="115:71"><expr pos:start="113:25" pos:end="115:70"><call pos:start="113:25" pos:end="115:70"><name pos:start="113:25" pos:end="113:30">av_log</name><argument_list pos:start="113:31" pos:end="115:70">(<argument pos:start="113:32" pos:end="113:35"><expr pos:start="113:32" pos:end="113:35"><name pos:start="113:32" pos:end="113:35">NULL</name></expr></argument>, <argument pos:start="113:38" pos:end="113:49"><expr pos:start="113:38" pos:end="113:49"><name pos:start="113:38" pos:end="113:49">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="113:52" pos:end="113:109"><expr pos:start="113:52" pos:end="113:109"><literal type="string" pos:start="113:52" pos:end="113:109">"Bogus motion vector (%i,%i), block size %ix%i at %i,%i\n"</literal></expr></argument>,
+
+                               <argument pos:start="115:32" pos:end="115:35"><expr pos:start="115:32" pos:end="115:35"><name pos:start="115:32" pos:end="115:35">me_x</name></expr></argument>, <argument pos:start="115:38" pos:end="115:41"><expr pos:start="115:38" pos:end="115:41"><name pos:start="115:38" pos:end="115:41">me_y</name></expr></argument>, <argument pos:start="115:44" pos:end="115:47"><expr pos:start="115:44" pos:end="115:47"><name pos:start="115:44" pos:end="115:47">me_w</name></expr></argument>, <argument pos:start="115:50" pos:end="115:53"><expr pos:start="115:50" pos:end="115:53"><name pos:start="115:50" pos:end="115:53">me_h</name></expr></argument>, <argument pos:start="115:56" pos:end="115:61"><expr pos:start="115:56" pos:end="115:61"><name pos:start="115:56" pos:end="115:61">filled</name></expr></argument>, <argument pos:start="115:64" pos:end="115:69"><expr pos:start="115:64" pos:end="115:69"><name pos:start="115:64" pos:end="115:69">height</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if>
+
+                    <else pos:start="117:21" pos:end="131:21">else <block pos:start="117:26" pos:end="131:21">{<block_content pos:start="121:25" pos:end="129:25">
+
+                        <comment type="block" pos:start="119:25" pos:end="119:52">/* do motion compensation */</comment>
+
+                        <expr_stmt pos:start="121:25" pos:end="121:88"><expr pos:start="121:25" pos:end="121:87"><name pos:start="121:25" pos:end="121:32">me_plane</name> <operator pos:start="121:34" pos:end="121:34">=</operator> <name pos:start="121:36" pos:end="121:42">refdata</name> <operator pos:start="121:44" pos:end="121:44">+</operator> <operator pos:start="121:46" pos:end="121:46">(</operator><name pos:start="121:47" pos:end="121:52">filled</name> <operator pos:start="121:54" pos:end="121:54">+</operator> <name pos:start="121:56" pos:end="121:59">me_x</name><operator pos:start="121:60" pos:end="121:60">)</operator> <operator pos:start="121:62" pos:end="121:62">+</operator> <operator pos:start="121:64" pos:end="121:64">(</operator><name pos:start="121:65" pos:end="121:70">height</name> <operator pos:start="121:72" pos:end="121:72">-</operator> <name pos:start="121:74" pos:end="121:77">me_y</name><operator pos:start="121:78" pos:end="121:78">)</operator> <operator pos:start="121:80" pos:end="121:80">*</operator> <name pos:start="121:82" pos:end="121:87">stride</name></expr>;</expr_stmt>
+
+                        <for pos:start="123:25" pos:end="129:25">for<control pos:start="123:28" pos:end="123:49">(<init pos:start="123:29" pos:end="123:34"><expr pos:start="123:29" pos:end="123:33"><name pos:start="123:29" pos:end="123:29">j</name> <operator pos:start="123:31" pos:end="123:31">=</operator> <literal type="number" pos:start="123:33" pos:end="123:33">0</literal></expr>;</init> <condition pos:start="123:36" pos:end="123:44"><expr pos:start="123:36" pos:end="123:43"><name pos:start="123:36" pos:end="123:36">j</name> <operator pos:start="123:38" pos:end="123:38">&lt;</operator> <name pos:start="123:40" pos:end="123:43">me_h</name></expr>;</condition> <incr pos:start="123:46" pos:end="123:48"><expr pos:start="123:46" pos:end="123:48"><name pos:start="123:46" pos:end="123:46">j</name><operator pos:start="123:47" pos:end="123:48">++</operator></expr></incr>)</control> <block pos:start="123:51" pos:end="129:25">{<block_content pos:start="125:29" pos:end="127:92">
+
+                            <for pos:start="125:29" pos:end="127:92">for<control pos:start="125:32" pos:end="125:53">(<init pos:start="125:33" pos:end="125:38"><expr pos:start="125:33" pos:end="125:37"><name pos:start="125:33" pos:end="125:33">i</name> <operator pos:start="125:35" pos:end="125:35">=</operator> <literal type="number" pos:start="125:37" pos:end="125:37">0</literal></expr>;</init> <condition pos:start="125:40" pos:end="125:48"><expr pos:start="125:40" pos:end="125:47"><name pos:start="125:40" pos:end="125:40">i</name> <operator pos:start="125:42" pos:end="125:42">&lt;</operator> <name pos:start="125:44" pos:end="125:47">me_w</name></expr>;</condition> <incr pos:start="125:50" pos:end="125:52"><expr pos:start="125:50" pos:end="125:52"><name pos:start="125:50" pos:end="125:50">i</name><operator pos:start="125:51" pos:end="125:52">++</operator></expr></incr>)</control><block type="pseudo" pos:start="127:33" pos:end="127:92"><block_content pos:start="127:33" pos:end="127:92">
+
+                                <expr_stmt pos:start="127:33" pos:end="127:92"><expr pos:start="127:33" pos:end="127:91"><name pos:start="127:33" pos:end="127:62"><name pos:start="127:33" pos:end="127:35">dst</name><index pos:start="127:36" pos:end="127:62">[<expr pos:start="127:37" pos:end="127:61"><name pos:start="127:37" pos:end="127:42">filled</name> <operator pos:start="127:44" pos:end="127:44">+</operator> <name pos:start="127:46" pos:end="127:46">i</name> <operator pos:start="127:48" pos:end="127:48">-</operator> <operator pos:start="127:50" pos:end="127:50">(</operator><name pos:start="127:51" pos:end="127:51">j</name> <operator pos:start="127:53" pos:end="127:53">*</operator> <name pos:start="127:55" pos:end="127:60">stride</name><operator pos:start="127:61" pos:end="127:61">)</operator></expr>]</index></name> <operator pos:start="127:64" pos:end="127:64">=</operator> <name pos:start="127:66" pos:end="127:91"><name pos:start="127:66" pos:end="127:73">me_plane</name><index pos:start="127:74" pos:end="127:91">[<expr pos:start="127:75" pos:end="127:90"><name pos:start="127:75" pos:end="127:75">i</name> <operator pos:start="127:77" pos:end="127:77">-</operator> <operator pos:start="127:79" pos:end="127:79">(</operator><name pos:start="127:80" pos:end="127:80">j</name> <operator pos:start="127:82" pos:end="127:82">*</operator> <name pos:start="127:84" pos:end="127:89">stride</name><operator pos:start="127:90" pos:end="127:90">)</operator></expr>]</index></name></expr>;</expr_stmt></block_content></block></for>
+
+                        </block_content>}</block></for>
+
+                    </block_content>}</block></else></if_stmt>
+
+                </block_content>}</block></if></if_stmt>
+
+                <expr_stmt pos:start="135:17" pos:end="135:30"><expr pos:start="135:17" pos:end="135:29"><name pos:start="135:17" pos:end="135:20">code</name> <operator pos:start="135:22" pos:end="135:22">=</operator> <operator pos:start="135:24" pos:end="135:24">*</operator><name pos:start="135:25" pos:end="135:27">src</name><operator pos:start="135:28" pos:end="135:29">++</operator></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="137:17" pos:end="137:23"><expr pos:start="137:17" pos:end="137:22"><name pos:start="137:17" pos:end="137:20">size</name><operator pos:start="137:21" pos:end="137:22">--</operator></expr>;</expr_stmt>
+
+            </block_content>}</block></while>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <if_stmt pos:start="145:9" pos:end="147:18"><if pos:start="145:9" pos:end="147:18">if<condition pos:start="145:11" pos:end="145:24">(<expr pos:start="145:12" pos:end="145:23"><name pos:start="145:12" pos:end="145:15">code</name> <operator pos:start="145:17" pos:end="145:18">==</operator> <literal type="number" pos:start="145:20" pos:end="145:23">0xE0</literal></expr>)</condition><block type="pseudo" pos:start="147:13" pos:end="147:18"><block_content pos:start="147:13" pos:end="147:18"> <comment type="block" pos:start="145:26" pos:end="145:50">/* end-of-picture code */</comment>
+
+            <break pos:start="147:13" pos:end="147:18">break;</break></block_content></block></if></if_stmt>
+
+        <if_stmt pos:start="149:9" pos:end="271:9"><if pos:start="149:9" pos:end="181:9">if<condition pos:start="149:11" pos:end="149:23">(<expr pos:start="149:12" pos:end="149:22"><name pos:start="149:12" pos:end="149:15">code</name> <operator pos:start="149:17" pos:end="149:17">&gt;</operator> <literal type="number" pos:start="149:19" pos:end="149:22">0xE0</literal></expr>)</condition> <block pos:start="149:25" pos:end="181:9">{<block_content pos:start="151:13" pos:end="179:13"> <comment type="block" pos:start="149:27" pos:end="149:52">/* run code: 0xE1..0xFF */</comment>
+
+            <decl_stmt pos:start="151:13" pos:end="151:18"><decl pos:start="151:13" pos:end="151:17"><type pos:start="151:13" pos:end="151:15"><name pos:start="151:13" pos:end="151:15">int</name></type> <name pos:start="151:17" pos:end="151:17">p</name></decl>;</decl_stmt>
+
+
+
+            <expr_stmt pos:start="155:13" pos:end="155:25"><expr pos:start="155:13" pos:end="155:24"><name pos:start="155:13" pos:end="155:16">code</name> <operator pos:start="155:18" pos:end="155:19">&amp;=</operator> <literal type="number" pos:start="155:21" pos:end="155:24">0x1F</literal></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="157:13" pos:end="157:23"><expr pos:start="157:13" pos:end="157:22"><name pos:start="157:13" pos:end="157:13">p</name> <operator pos:start="157:15" pos:end="157:15">=</operator> <operator pos:start="157:17" pos:end="157:17">*</operator><name pos:start="157:18" pos:end="157:20">src</name><operator pos:start="157:21" pos:end="157:22">++</operator></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="159:13" pos:end="159:19"><expr pos:start="159:13" pos:end="159:18"><name pos:start="159:13" pos:end="159:16">size</name><operator pos:start="159:17" pos:end="159:18">--</operator></expr>;</expr_stmt>
+
+            <for pos:start="161:13" pos:end="179:13">for<control pos:start="161:16" pos:end="161:38">(<init pos:start="161:17" pos:end="161:22"><expr pos:start="161:17" pos:end="161:21"><name pos:start="161:17" pos:end="161:17">i</name> <operator pos:start="161:19" pos:end="161:19">=</operator> <literal type="number" pos:start="161:21" pos:end="161:21">0</literal></expr>;</init> <condition pos:start="161:24" pos:end="161:33"><expr pos:start="161:24" pos:end="161:32"><name pos:start="161:24" pos:end="161:24">i</name> <operator pos:start="161:26" pos:end="161:27">&lt;=</operator> <name pos:start="161:29" pos:end="161:32">code</name></expr>;</condition> <incr pos:start="161:35" pos:end="161:37"><expr pos:start="161:35" pos:end="161:37"><name pos:start="161:35" pos:end="161:35">i</name><operator pos:start="161:36" pos:end="161:37">++</operator></expr></incr>)</control> <block pos:start="161:40" pos:end="179:13">{<block_content pos:start="163:17" pos:end="177:17">
+
+                <expr_stmt pos:start="163:17" pos:end="163:34"><expr pos:start="163:17" pos:end="163:33"><name pos:start="163:17" pos:end="163:29"><name pos:start="163:17" pos:end="163:19">dst</name><index pos:start="163:20" pos:end="163:29">[<expr pos:start="163:21" pos:end="163:28"><name pos:start="163:21" pos:end="163:26">filled</name><operator pos:start="163:27" pos:end="163:28">++</operator></expr>]</index></name> <operator pos:start="163:31" pos:end="163:31">=</operator> <name pos:start="163:33" pos:end="163:33">p</name></expr>;</expr_stmt>
+
+                <if_stmt pos:start="165:17" pos:end="177:17"><if pos:start="165:17" pos:end="177:17">if<condition pos:start="165:19" pos:end="165:35">(<expr pos:start="165:20" pos:end="165:34"><name pos:start="165:20" pos:end="165:25">filled</name> <operator pos:start="165:27" pos:end="165:28">&gt;=</operator> <name pos:start="165:30" pos:end="165:34">width</name></expr>)</condition> <block pos:start="165:37" pos:end="177:17">{<block_content pos:start="167:21" pos:end="175:30">
+
+                    <expr_stmt pos:start="167:21" pos:end="167:31"><expr pos:start="167:21" pos:end="167:30"><name pos:start="167:21" pos:end="167:26">filled</name> <operator pos:start="167:28" pos:end="167:28">=</operator> <literal type="number" pos:start="167:30" pos:end="167:30">0</literal></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="169:21" pos:end="169:34"><expr pos:start="169:21" pos:end="169:33"><name pos:start="169:21" pos:end="169:23">dst</name> <operator pos:start="169:25" pos:end="169:26">-=</operator> <name pos:start="169:28" pos:end="169:33">stride</name></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="171:21" pos:end="171:29"><expr pos:start="171:21" pos:end="171:28"><name pos:start="171:21" pos:end="171:26">height</name><operator pos:start="171:27" pos:end="171:28">--</operator></expr>;</expr_stmt>
+
+                    <if_stmt pos:start="173:21" pos:end="175:30"><if pos:start="173:21" pos:end="175:30">if<condition pos:start="173:23" pos:end="173:34">(<expr pos:start="173:24" pos:end="173:33"><name pos:start="173:24" pos:end="173:29">height</name> <operator pos:start="173:31" pos:end="173:31">&lt;</operator> <literal type="number" pos:start="173:33" pos:end="173:33">0</literal></expr>)</condition><block type="pseudo" pos:start="175:25" pos:end="175:30"><block_content pos:start="175:25" pos:end="175:30">
+
+                        <break pos:start="175:25" pos:end="175:30">break;</break></block_content></block></if></if_stmt>
+
+                </block_content>}</block></if></if_stmt>
+
+            </block_content>}</block></for>
+
+        </block_content>}</block></if> <if type="elseif" pos:start="181:11" pos:end="209:9">else if<condition pos:start="181:18" pos:end="181:31">(<expr pos:start="181:19" pos:end="181:30"><name pos:start="181:19" pos:end="181:22">code</name> <operator pos:start="181:24" pos:end="181:25">&gt;=</operator> <literal type="number" pos:start="181:27" pos:end="181:30">0xC0</literal></expr>)</condition> <block pos:start="181:33" pos:end="209:9">{<block_content pos:start="183:13" pos:end="207:29"> <comment type="block" pos:start="181:35" pos:end="181:61">/* copy code: 0xC0..0xDF */</comment>
+
+            <expr_stmt pos:start="183:13" pos:end="183:25"><expr pos:start="183:13" pos:end="183:24"><name pos:start="183:13" pos:end="183:16">code</name> <operator pos:start="183:18" pos:end="183:19">&amp;=</operator> <literal type="number" pos:start="183:21" pos:end="183:24">0x1F</literal></expr>;</expr_stmt>
+
+
+
+            <for pos:start="187:13" pos:end="205:13">for<control pos:start="187:16" pos:end="187:38">(<init pos:start="187:17" pos:end="187:22"><expr pos:start="187:17" pos:end="187:21"><name pos:start="187:17" pos:end="187:17">i</name> <operator pos:start="187:19" pos:end="187:19">=</operator> <literal type="number" pos:start="187:21" pos:end="187:21">0</literal></expr>;</init> <condition pos:start="187:24" pos:end="187:33"><expr pos:start="187:24" pos:end="187:32"><name pos:start="187:24" pos:end="187:24">i</name> <operator pos:start="187:26" pos:end="187:27">&lt;=</operator> <name pos:start="187:29" pos:end="187:32">code</name></expr>;</condition> <incr pos:start="187:35" pos:end="187:37"><expr pos:start="187:35" pos:end="187:37"><name pos:start="187:35" pos:end="187:35">i</name><operator pos:start="187:36" pos:end="187:37">++</operator></expr></incr>)</control> <block pos:start="187:40" pos:end="205:13">{<block_content pos:start="189:17" pos:end="203:17">
+
+                <expr_stmt pos:start="189:17" pos:end="189:39"><expr pos:start="189:17" pos:end="189:38"><name pos:start="189:17" pos:end="189:29"><name pos:start="189:17" pos:end="189:19">dst</name><index pos:start="189:20" pos:end="189:29">[<expr pos:start="189:21" pos:end="189:28"><name pos:start="189:21" pos:end="189:26">filled</name><operator pos:start="189:27" pos:end="189:28">++</operator></expr>]</index></name> <operator pos:start="189:31" pos:end="189:31">=</operator> <operator pos:start="189:33" pos:end="189:33">*</operator><name pos:start="189:34" pos:end="189:36">src</name><operator pos:start="189:37" pos:end="189:38">++</operator></expr>;</expr_stmt>
+
+                <if_stmt pos:start="191:17" pos:end="203:17"><if pos:start="191:17" pos:end="203:17">if<condition pos:start="191:19" pos:end="191:35">(<expr pos:start="191:20" pos:end="191:34"><name pos:start="191:20" pos:end="191:25">filled</name> <operator pos:start="191:27" pos:end="191:28">&gt;=</operator> <name pos:start="191:30" pos:end="191:34">width</name></expr>)</condition> <block pos:start="191:37" pos:end="203:17">{<block_content pos:start="193:21" pos:end="201:30">
+
+                    <expr_stmt pos:start="193:21" pos:end="193:31"><expr pos:start="193:21" pos:end="193:30"><name pos:start="193:21" pos:end="193:26">filled</name> <operator pos:start="193:28" pos:end="193:28">=</operator> <literal type="number" pos:start="193:30" pos:end="193:30">0</literal></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="195:21" pos:end="195:34"><expr pos:start="195:21" pos:end="195:33"><name pos:start="195:21" pos:end="195:23">dst</name> <operator pos:start="195:25" pos:end="195:26">-=</operator> <name pos:start="195:28" pos:end="195:33">stride</name></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="197:21" pos:end="197:29"><expr pos:start="197:21" pos:end="197:28"><name pos:start="197:21" pos:end="197:26">height</name><operator pos:start="197:27" pos:end="197:28">--</operator></expr>;</expr_stmt>
+
+                    <if_stmt pos:start="199:21" pos:end="201:30"><if pos:start="199:21" pos:end="201:30">if<condition pos:start="199:23" pos:end="199:34">(<expr pos:start="199:24" pos:end="199:33"><name pos:start="199:24" pos:end="199:29">height</name> <operator pos:start="199:31" pos:end="199:31">&lt;</operator> <literal type="number" pos:start="199:33" pos:end="199:33">0</literal></expr>)</condition><block type="pseudo" pos:start="201:25" pos:end="201:30"><block_content pos:start="201:25" pos:end="201:30">
+
+                        <break pos:start="201:25" pos:end="201:30">break;</break></block_content></block></if></if_stmt>
+
+                </block_content>}</block></if></if_stmt>
+
+            </block_content>}</block></for>
+
+            <expr_stmt pos:start="207:13" pos:end="207:29"><expr pos:start="207:13" pos:end="207:28"><name pos:start="207:13" pos:end="207:16">size</name> <operator pos:start="207:18" pos:end="207:19">-=</operator> <name pos:start="207:21" pos:end="207:24">code</name> <operator pos:start="207:26" pos:end="207:26">+</operator> <literal type="number" pos:start="207:28" pos:end="207:28">1</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <if type="elseif" pos:start="209:11" pos:end="249:9">else if<condition pos:start="209:18" pos:end="209:31">(<expr pos:start="209:19" pos:end="209:30"><name pos:start="209:19" pos:end="209:22">code</name> <operator pos:start="209:24" pos:end="209:25">&gt;=</operator> <literal type="number" pos:start="209:27" pos:end="209:30">0x80</literal></expr>)</condition> <block pos:start="209:33" pos:end="249:9">{<block_content pos:start="211:13" pos:end="247:13"> <comment type="block" pos:start="209:35" pos:end="209:61">/* skip code: 0x80..0xBF */</comment>
+
+            <decl_stmt pos:start="211:13" pos:end="211:21"><decl pos:start="211:13" pos:end="211:20"><type pos:start="211:13" pos:end="211:15"><name pos:start="211:13" pos:end="211:15">int</name></type> <name pos:start="211:17" pos:end="211:20">skip</name></decl>;</decl_stmt>
+
+
+
+            <expr_stmt pos:start="215:13" pos:end="215:25"><expr pos:start="215:13" pos:end="215:24"><name pos:start="215:13" pos:end="215:16">code</name> <operator pos:start="215:18" pos:end="215:19">&amp;=</operator> <literal type="number" pos:start="215:21" pos:end="215:24">0x3F</literal></expr>;</expr_stmt>
+
+            <comment type="block" pos:start="217:13" pos:end="219:63">/* codes 0x80 and 0x81 are actually escape codes,
+
+               skip value minus constant is in the next byte */</comment>
+
+            <if_stmt pos:start="221:13" pos:end="231:28"><if pos:start="221:13" pos:end="223:37">if<condition pos:start="221:15" pos:end="221:21">(<expr pos:start="221:16" pos:end="221:20"><operator pos:start="221:16" pos:end="221:16">!</operator><name pos:start="221:17" pos:end="221:20">code</name></expr>)</condition><block type="pseudo" pos:start="223:17" pos:end="223:37"><block_content pos:start="223:17" pos:end="223:37">
+
+                <expr_stmt pos:start="223:17" pos:end="223:37"><expr pos:start="223:17" pos:end="223:36"><name pos:start="223:17" pos:end="223:20">skip</name> <operator pos:start="223:22" pos:end="223:22">=</operator> <operator pos:start="223:24" pos:end="223:24">(</operator><operator pos:start="223:25" pos:end="223:25">*</operator><name pos:start="223:26" pos:end="223:28">src</name><operator pos:start="223:29" pos:end="223:30">++</operator><operator pos:start="223:31" pos:end="223:31">)</operator> <operator pos:start="223:33" pos:end="223:33">+</operator> <literal type="number" pos:start="223:35" pos:end="223:36">64</literal></expr>;</expr_stmt></block_content></block></if>
+
+            <if type="elseif" pos:start="225:13" pos:end="227:38">else if<condition pos:start="225:20" pos:end="225:30">(<expr pos:start="225:21" pos:end="225:29"><name pos:start="225:21" pos:end="225:24">code</name> <operator pos:start="225:26" pos:end="225:27">==</operator> <literal type="number" pos:start="225:29" pos:end="225:29">1</literal></expr>)</condition><block type="pseudo" pos:start="227:17" pos:end="227:38"><block_content pos:start="227:17" pos:end="227:38">
+
+                <expr_stmt pos:start="227:17" pos:end="227:38"><expr pos:start="227:17" pos:end="227:37"><name pos:start="227:17" pos:end="227:20">skip</name> <operator pos:start="227:22" pos:end="227:22">=</operator> <operator pos:start="227:24" pos:end="227:24">(</operator><operator pos:start="227:25" pos:end="227:25">*</operator><name pos:start="227:26" pos:end="227:28">src</name><operator pos:start="227:29" pos:end="227:30">++</operator><operator pos:start="227:31" pos:end="227:31">)</operator> <operator pos:start="227:33" pos:end="227:33">+</operator> <literal type="number" pos:start="227:35" pos:end="227:37">320</literal></expr>;</expr_stmt></block_content></block></if>
+
+            <else pos:start="229:13" pos:end="231:28">else<block type="pseudo" pos:start="231:17" pos:end="231:28"><block_content pos:start="231:17" pos:end="231:28">
+
+                <expr_stmt pos:start="231:17" pos:end="231:28"><expr pos:start="231:17" pos:end="231:27"><name pos:start="231:17" pos:end="231:20">skip</name> <operator pos:start="231:22" pos:end="231:22">=</operator> <name pos:start="231:24" pos:end="231:27">code</name></expr>;</expr_stmt></block_content></block></else></if_stmt>
+
+            <expr_stmt pos:start="233:13" pos:end="233:27"><expr pos:start="233:13" pos:end="233:26"><name pos:start="233:13" pos:end="233:18">filled</name> <operator pos:start="233:20" pos:end="233:21">+=</operator> <name pos:start="233:23" pos:end="233:26">skip</name></expr>;</expr_stmt>
+
+            <while pos:start="235:13" pos:end="247:13">while<condition pos:start="235:18" pos:end="235:35">( <expr pos:start="235:20" pos:end="235:34"><name pos:start="235:20" pos:end="235:25">filled</name> <operator pos:start="235:27" pos:end="235:28">&gt;=</operator> <name pos:start="235:30" pos:end="235:34">width</name></expr>)</condition> <block pos:start="235:37" pos:end="247:13">{<block_content pos:start="237:17" pos:end="245:26">
+
+                <expr_stmt pos:start="237:17" pos:end="237:32"><expr pos:start="237:17" pos:end="237:31"><name pos:start="237:17" pos:end="237:22">filled</name> <operator pos:start="237:24" pos:end="237:25">-=</operator> <name pos:start="237:27" pos:end="237:31">width</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="239:17" pos:end="239:30"><expr pos:start="239:17" pos:end="239:29"><name pos:start="239:17" pos:end="239:19">dst</name> <operator pos:start="239:21" pos:end="239:22">-=</operator> <name pos:start="239:24" pos:end="239:29">stride</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="241:17" pos:end="241:25"><expr pos:start="241:17" pos:end="241:24"><name pos:start="241:17" pos:end="241:22">height</name><operator pos:start="241:23" pos:end="241:24">--</operator></expr>;</expr_stmt>
+
+                <if_stmt pos:start="243:17" pos:end="245:26"><if pos:start="243:17" pos:end="245:26">if<condition pos:start="243:19" pos:end="243:30">(<expr pos:start="243:20" pos:end="243:29"><name pos:start="243:20" pos:end="243:25">height</name> <operator pos:start="243:27" pos:end="243:27">&lt;</operator> <literal type="number" pos:start="243:29" pos:end="243:29">0</literal></expr>)</condition><block type="pseudo" pos:start="245:21" pos:end="245:26"><block_content pos:start="245:21" pos:end="245:26">
+
+                    <break pos:start="245:21" pos:end="245:26">break;</break></block_content></block></if></if_stmt>
+
+            </block_content>}</block></while>
+
+        </block_content>}</block></if> <else pos:start="249:11" pos:end="271:9">else <block pos:start="249:16" pos:end="271:9">{<block_content pos:start="253:13" pos:end="269:13">
+
+            <comment type="block" pos:start="251:13" pos:end="251:53">/* zero code treated as one-pixel skip */</comment>
+
+            <if_stmt pos:start="253:13" pos:end="259:25"><if pos:start="253:13" pos:end="255:52">if<condition pos:start="253:15" pos:end="253:20">(<expr pos:start="253:16" pos:end="253:19"><name pos:start="253:16" pos:end="253:19">code</name></expr>)</condition><block type="pseudo" pos:start="255:17" pos:end="255:52"><block_content pos:start="255:17" pos:end="255:52">
+
+                <expr_stmt pos:start="255:17" pos:end="255:52"><expr pos:start="255:17" pos:end="255:51"><name pos:start="255:17" pos:end="255:29"><name pos:start="255:17" pos:end="255:19">dst</name><index pos:start="255:20" pos:end="255:29">[<expr pos:start="255:21" pos:end="255:28"><name pos:start="255:21" pos:end="255:26">filled</name><operator pos:start="255:27" pos:end="255:28">++</operator></expr>]</index></name> <operator pos:start="255:31" pos:end="255:31">=</operator> <name pos:start="255:33" pos:end="255:51"><name pos:start="255:33" pos:end="255:38">ctable</name><index pos:start="255:39" pos:end="255:51">[<expr pos:start="255:40" pos:end="255:50"><name pos:start="255:40" pos:end="255:43">code</name> <operator pos:start="255:45" pos:end="255:45">&amp;</operator> <literal type="number" pos:start="255:47" pos:end="255:50">0x7F</literal></expr>]</index></name></expr>;</expr_stmt></block_content></block></if>
+
+            <else pos:start="257:13" pos:end="259:25">else<block type="pseudo" pos:start="259:17" pos:end="259:25"><block_content pos:start="259:17" pos:end="259:25">
+
+                <expr_stmt pos:start="259:17" pos:end="259:25"><expr pos:start="259:17" pos:end="259:24"><name pos:start="259:17" pos:end="259:22">filled</name><operator pos:start="259:23" pos:end="259:24">++</operator></expr>;</expr_stmt></block_content></block></else></if_stmt>
+
+            <if_stmt pos:start="261:13" pos:end="269:13"><if pos:start="261:13" pos:end="269:13">if<condition pos:start="261:15" pos:end="261:31">(<expr pos:start="261:16" pos:end="261:30"><name pos:start="261:16" pos:end="261:21">filled</name> <operator pos:start="261:23" pos:end="261:24">&gt;=</operator> <name pos:start="261:26" pos:end="261:30">width</name></expr>)</condition> <block pos:start="261:33" pos:end="269:13">{<block_content pos:start="263:17" pos:end="267:25">
+
+                <expr_stmt pos:start="263:17" pos:end="263:27"><expr pos:start="263:17" pos:end="263:26"><name pos:start="263:17" pos:end="263:22">filled</name> <operator pos:start="263:24" pos:end="263:24">=</operator> <literal type="number" pos:start="263:26" pos:end="263:26">0</literal></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="265:17" pos:end="265:30"><expr pos:start="265:17" pos:end="265:29"><name pos:start="265:17" pos:end="265:19">dst</name> <operator pos:start="265:21" pos:end="265:22">-=</operator> <name pos:start="265:24" pos:end="265:29">stride</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="267:17" pos:end="267:25"><expr pos:start="267:17" pos:end="267:24"><name pos:start="267:17" pos:end="267:22">height</name><operator pos:start="267:23" pos:end="267:24">--</operator></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+    </block_content>}</block></while>
+
+</block_content>}</block></function>
+</unit>

@@ -1,0 +1,477 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/22141.c" pos:tabs="8"><macro pos:start="1:1" pos:end="13:37"><name pos:start="1:1" pos:end="1:23">qcrypto_block_luks_open</name><argument_list pos:start="1:24" pos:end="13:37">(<argument pos:start="1:25" pos:end="1:43">QCryptoBlock *block</argument>,
+
+                        <argument pos:start="3:25" pos:end="3:56">QCryptoBlockOpenOptions *options</argument>,
+
+                        <argument pos:start="5:25" pos:end="5:45">const char *optprefix</argument>,
+
+                        <argument pos:start="7:25" pos:end="7:53">QCryptoBlockReadFunc readfunc</argument>,
+
+                        <argument pos:start="9:25" pos:end="9:36">void *opaque</argument>,
+
+                        <argument pos:start="11:25" pos:end="11:42">unsigned int flags</argument>,
+
+                        <argument pos:start="13:25" pos:end="13:36">Error **errp</argument>)</argument_list></macro>
+
+<block pos:start="15:1" pos:end="475:1">{<block_content pos:start="17:5" pos:end="473:15">
+
+    <decl_stmt pos:start="17:5" pos:end="17:27"><decl pos:start="17:5" pos:end="17:26"><type pos:start="17:5" pos:end="17:22"><name pos:start="17:5" pos:end="17:20">QCryptoBlockLUKS</name> <modifier pos:start="17:22" pos:end="17:22">*</modifier></type><name pos:start="17:23" pos:end="17:26">luks</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:28"><decl pos:start="19:5" pos:end="19:27"><type pos:start="19:5" pos:end="19:11"><name pos:start="19:5" pos:end="19:9">Error</name> <modifier pos:start="19:11" pos:end="19:11">*</modifier></type><name pos:start="19:12" pos:end="19:20">local_err</name> <init pos:start="19:22" pos:end="19:27">= <expr pos:start="19:24" pos:end="19:27"><name pos:start="19:24" pos:end="19:27">NULL</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="21:5" pos:end="21:16"><decl pos:start="21:5" pos:end="21:15"><type pos:start="21:5" pos:end="21:7"><name pos:start="21:5" pos:end="21:7">int</name></type> <name pos:start="21:9" pos:end="21:11">ret</name> <init pos:start="21:13" pos:end="21:15">= <expr pos:start="21:15" pos:end="21:15"><literal type="number" pos:start="21:15" pos:end="21:15">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="23:5" pos:end="23:13"><decl pos:start="23:5" pos:end="23:12"><type pos:start="23:5" pos:end="23:10"><name pos:start="23:5" pos:end="23:10">size_t</name></type> <name pos:start="23:12" pos:end="23:12">i</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="25:5" pos:end="25:15"><decl pos:start="25:5" pos:end="25:14"><type pos:start="25:5" pos:end="25:11"><name pos:start="25:5" pos:end="25:11">ssize_t</name></type> <name pos:start="25:13" pos:end="25:14">rv</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="27:5" pos:end="27:30"><decl pos:start="27:5" pos:end="27:29"><type pos:start="27:5" pos:end="27:13"><name pos:start="27:5" pos:end="27:11">uint8_t</name> <modifier pos:start="27:13" pos:end="27:13">*</modifier></type><name pos:start="27:14" pos:end="27:22">masterkey</name> <init pos:start="27:24" pos:end="27:29">= <expr pos:start="27:26" pos:end="27:29"><name pos:start="27:26" pos:end="27:29">NULL</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="29:5" pos:end="29:24"><decl pos:start="29:5" pos:end="29:23"><type pos:start="29:5" pos:end="29:10"><name pos:start="29:5" pos:end="29:10">size_t</name></type> <name pos:start="29:12" pos:end="29:23">masterkeylen</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="31:5" pos:end="31:35"><decl pos:start="31:5" pos:end="31:20"><type pos:start="31:5" pos:end="31:10"><name pos:start="31:5" pos:end="31:8">char</name> <modifier pos:start="31:10" pos:end="31:10">*</modifier></type><name pos:start="31:11" pos:end="31:20">ivgen_name</name></decl>, <decl pos:start="31:23" pos:end="31:34"><type ref="prev" pos:start="31:5" pos:end="31:10"><modifier pos:start="31:23" pos:end="31:23">*</modifier></type><name pos:start="31:24" pos:end="31:34">ivhash_name</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="33:5" pos:end="33:33"><decl pos:start="33:5" pos:end="33:32"><type pos:start="33:5" pos:end="33:21"><name pos:start="33:5" pos:end="33:21">QCryptoCipherMode</name></type> <name pos:start="33:23" pos:end="33:32">ciphermode</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="35:5" pos:end="35:37"><decl pos:start="35:5" pos:end="35:36"><type pos:start="35:5" pos:end="35:26"><name pos:start="35:5" pos:end="35:26">QCryptoCipherAlgorithm</name></type> <name pos:start="35:28" pos:end="35:36">cipheralg</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="37:5" pos:end="37:32"><decl pos:start="37:5" pos:end="37:31"><type pos:start="37:5" pos:end="37:25"><name pos:start="37:5" pos:end="37:25">QCryptoIVGenAlgorithm</name></type> <name pos:start="37:27" pos:end="37:31">ivalg</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="39:5" pos:end="39:39"><decl pos:start="39:5" pos:end="39:38"><type pos:start="39:5" pos:end="39:26"><name pos:start="39:5" pos:end="39:26">QCryptoCipherAlgorithm</name></type> <name pos:start="39:28" pos:end="39:38">ivcipheralg</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="41:5" pos:end="41:30"><decl pos:start="41:5" pos:end="41:29"><type pos:start="41:5" pos:end="41:24"><name pos:start="41:5" pos:end="41:24">QCryptoHashAlgorithm</name></type> <name pos:start="41:26" pos:end="41:29">hash</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="43:5" pos:end="43:32"><decl pos:start="43:5" pos:end="43:31"><type pos:start="43:5" pos:end="43:24"><name pos:start="43:5" pos:end="43:24">QCryptoHashAlgorithm</name></type> <name pos:start="43:26" pos:end="43:31">ivhash</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="45:5" pos:end="45:26"><decl pos:start="45:5" pos:end="45:25"><type pos:start="45:5" pos:end="45:10"><name pos:start="45:5" pos:end="45:8">char</name> <modifier pos:start="45:10" pos:end="45:10">*</modifier></type><name pos:start="45:11" pos:end="45:18">password</name> <init pos:start="45:20" pos:end="45:25">= <expr pos:start="45:22" pos:end="45:25"><name pos:start="45:22" pos:end="45:25">NULL</name></expr></init></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="49:5" pos:end="71:5"><if pos:start="49:5" pos:end="71:5">if <condition pos:start="49:8" pos:end="49:44">(<expr pos:start="49:9" pos:end="49:43"><operator pos:start="49:9" pos:end="49:9">!</operator><operator pos:start="49:10" pos:end="49:10">(</operator><name pos:start="49:11" pos:end="49:15">flags</name> <operator pos:start="49:17" pos:end="49:17">&amp;</operator> <name pos:start="49:19" pos:end="49:42">QCRYPTO_BLOCK_OPEN_NO_IO</name><operator pos:start="49:43" pos:end="49:43">)</operator></expr>)</condition> <block pos:start="49:46" pos:end="71:5">{<block_content pos:start="51:9" pos:end="69:9">
+
+        <if_stmt pos:start="51:9" pos:end="59:9"><if pos:start="51:9" pos:end="59:9">if <condition pos:start="51:12" pos:end="51:40">(<expr pos:start="51:13" pos:end="51:39"><operator pos:start="51:13" pos:end="51:13">!</operator><name pos:start="51:14" pos:end="51:39"><name pos:start="51:14" pos:end="51:20">options</name><operator pos:start="51:21" pos:end="51:22">-&gt;</operator><name pos:start="51:23" pos:end="51:23">u</name><operator pos:start="51:24" pos:end="51:24">.</operator><name pos:start="51:25" pos:end="51:28">luks</name><operator pos:start="51:29" pos:end="51:29">.</operator><name pos:start="51:30" pos:end="51:39">key_secret</name></name></expr>)</condition> <block pos:start="51:42" pos:end="59:9">{<block_content pos:start="53:13" pos:end="57:22">
+
+            <expr_stmt pos:start="53:13" pos:end="55:51"><expr pos:start="53:13" pos:end="55:50"><call pos:start="53:13" pos:end="55:50"><name pos:start="53:13" pos:end="53:22">error_setg</name><argument_list pos:start="53:23" pos:end="55:50">(<argument pos:start="53:24" pos:end="53:27"><expr pos:start="53:24" pos:end="53:27"><name pos:start="53:24" pos:end="53:27">errp</name></expr></argument>, <argument pos:start="53:30" pos:end="53:78"><expr pos:start="53:30" pos:end="53:78"><literal type="string" pos:start="53:30" pos:end="53:78">"Parameter '%skey-secret' is required for cipher"</literal></expr></argument>,
+
+                       <argument pos:start="55:24" pos:end="55:49"><expr pos:start="55:24" pos:end="55:49"><ternary pos:start="55:24" pos:end="55:49"><condition pos:start="55:24" pos:end="55:34"><expr pos:start="55:24" pos:end="55:32"><name pos:start="55:24" pos:end="55:32">optprefix</name></expr> ?</condition><then pos:start="55:36" pos:end="55:44"> <expr pos:start="55:36" pos:end="55:44"><name pos:start="55:36" pos:end="55:44">optprefix</name></expr> </then><else pos:start="55:46" pos:end="55:49">: <expr pos:start="55:48" pos:end="55:49"><literal type="string" pos:start="55:48" pos:end="55:49">""</literal></expr></else></ternary></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="57:13" pos:end="57:22">return <expr pos:start="57:20" pos:end="57:21"><operator pos:start="57:20" pos:end="57:20">-</operator><literal type="number" pos:start="57:21" pos:end="57:21">1</literal></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="61:9" pos:end="63:46"><expr pos:start="61:9" pos:end="63:45"><name pos:start="61:9" pos:end="61:16">password</name> <operator pos:start="61:18" pos:end="61:18">=</operator> <call pos:start="61:20" pos:end="63:45"><name pos:start="61:20" pos:end="61:48">qcrypto_secret_lookup_as_utf8</name><argument_list pos:start="61:49" pos:end="63:45">(
+
+            <argument pos:start="63:13" pos:end="63:38"><expr pos:start="63:13" pos:end="63:38"><name pos:start="63:13" pos:end="63:38"><name pos:start="63:13" pos:end="63:19">options</name><operator pos:start="63:20" pos:end="63:21">-&gt;</operator><name pos:start="63:22" pos:end="63:22">u</name><operator pos:start="63:23" pos:end="63:23">.</operator><name pos:start="63:24" pos:end="63:27">luks</name><operator pos:start="63:28" pos:end="63:28">.</operator><name pos:start="63:29" pos:end="63:38">key_secret</name></name></expr></argument>, <argument pos:start="63:41" pos:end="63:44"><expr pos:start="63:41" pos:end="63:44"><name pos:start="63:41" pos:end="63:44">errp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="65:9" pos:end="69:9"><if pos:start="65:9" pos:end="69:9">if <condition pos:start="65:12" pos:end="65:22">(<expr pos:start="65:13" pos:end="65:21"><operator pos:start="65:13" pos:end="65:13">!</operator><name pos:start="65:14" pos:end="65:21">password</name></expr>)</condition> <block pos:start="65:24" pos:end="69:9">{<block_content pos:start="67:13" pos:end="67:22">
+
+            <return pos:start="67:13" pos:end="67:22">return <expr pos:start="67:20" pos:end="67:21"><operator pos:start="67:20" pos:end="67:20">-</operator><literal type="number" pos:start="67:21" pos:end="67:21">1</literal></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="75:5" pos:end="75:39"><expr pos:start="75:5" pos:end="75:38"><name pos:start="75:5" pos:end="75:8">luks</name> <operator pos:start="75:10" pos:end="75:10">=</operator> <call pos:start="75:12" pos:end="75:38"><name pos:start="75:12" pos:end="75:17">g_new0</name><argument_list pos:start="75:18" pos:end="75:38">(<argument pos:start="75:19" pos:end="75:34"><expr pos:start="75:19" pos:end="75:34"><name pos:start="75:19" pos:end="75:34">QCryptoBlockLUKS</name></expr></argument>, <argument pos:start="75:37" pos:end="75:37"><expr pos:start="75:37" pos:end="75:37"><literal type="number" pos:start="75:37" pos:end="75:37">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="77:5" pos:end="77:25"><expr pos:start="77:5" pos:end="77:24"><name pos:start="77:5" pos:end="77:17"><name pos:start="77:5" pos:end="77:9">block</name><operator pos:start="77:10" pos:end="77:11">-&gt;</operator><name pos:start="77:12" pos:end="77:17">opaque</name></name> <operator pos:start="77:19" pos:end="77:19">=</operator> <name pos:start="77:21" pos:end="77:24">luks</name></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="81:5" pos:end="83:31">/* Read the entire LUKS header, minus the key material from
+
+     * the underlying device */</comment>
+
+    <expr_stmt pos:start="85:5" pos:end="93:24"><expr pos:start="85:5" pos:end="93:23"><name pos:start="85:5" pos:end="85:6">rv</name> <operator pos:start="85:8" pos:end="85:8">=</operator> <call pos:start="85:10" pos:end="93:23"><name pos:start="85:10" pos:end="85:17">readfunc</name><argument_list pos:start="85:18" pos:end="93:23">(<argument pos:start="85:19" pos:end="85:23"><expr pos:start="85:19" pos:end="85:23"><name pos:start="85:19" pos:end="85:23">block</name></expr></argument>, <argument pos:start="85:26" pos:end="85:26"><expr pos:start="85:26" pos:end="85:26"><literal type="number" pos:start="85:26" pos:end="85:26">0</literal></expr></argument>,
+
+                  <argument pos:start="87:19" pos:end="87:42"><expr pos:start="87:19" pos:end="87:42"><operator pos:start="87:19" pos:end="87:19">(</operator><name pos:start="87:20" pos:end="87:26">uint8_t</name> <operator pos:start="87:28" pos:end="87:28">*</operator><operator pos:start="87:29" pos:end="87:29">)</operator><operator pos:start="87:30" pos:end="87:30">&amp;</operator><name pos:start="87:31" pos:end="87:42"><name pos:start="87:31" pos:end="87:34">luks</name><operator pos:start="87:35" pos:end="87:36">-&gt;</operator><name pos:start="87:37" pos:end="87:42">header</name></name></expr></argument>,
+
+                  <argument pos:start="89:19" pos:end="89:38"><expr pos:start="89:19" pos:end="89:38"><sizeof pos:start="89:19" pos:end="89:38">sizeof<argument_list pos:start="89:25" pos:end="89:38">(<argument pos:start="89:26" pos:end="89:37"><expr pos:start="89:26" pos:end="89:37"><name pos:start="89:26" pos:end="89:37"><name pos:start="89:26" pos:end="89:29">luks</name><operator pos:start="89:30" pos:end="89:31">-&gt;</operator><name pos:start="89:32" pos:end="89:37">header</name></name></expr></argument>)</argument_list></sizeof></expr></argument>,
+
+                  <argument pos:start="91:19" pos:end="91:24"><expr pos:start="91:19" pos:end="91:24"><name pos:start="91:19" pos:end="91:24">opaque</name></expr></argument>,
+
+                  <argument pos:start="93:19" pos:end="93:22"><expr pos:start="93:19" pos:end="93:22"><name pos:start="93:19" pos:end="93:22">errp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="95:5" pos:end="101:5"><if pos:start="95:5" pos:end="101:5">if <condition pos:start="95:8" pos:end="95:15">(<expr pos:start="95:9" pos:end="95:14"><name pos:start="95:9" pos:end="95:10">rv</name> <operator pos:start="95:12" pos:end="95:12">&lt;</operator> <literal type="number" pos:start="95:14" pos:end="95:14">0</literal></expr>)</condition> <block pos:start="95:17" pos:end="101:5">{<block_content pos:start="97:9" pos:end="99:18">
+
+        <expr_stmt pos:start="97:9" pos:end="97:17"><expr pos:start="97:9" pos:end="97:16"><name pos:start="97:9" pos:end="97:11">ret</name> <operator pos:start="97:13" pos:end="97:13">=</operator> <name pos:start="97:15" pos:end="97:16">rv</name></expr>;</expr_stmt>
+
+        <goto pos:start="99:9" pos:end="99:18">goto <name pos:start="99:14" pos:end="99:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="105:5" pos:end="107:38">/* The header is always stored in big-endian format, so
+
+     * convert everything to native */</comment>
+
+    <expr_stmt pos:start="109:5" pos:end="109:40"><expr pos:start="109:5" pos:end="109:39"><call pos:start="109:5" pos:end="109:39"><name pos:start="109:5" pos:end="109:16">be16_to_cpus</name><argument_list pos:start="109:17" pos:end="109:39">(<argument pos:start="109:18" pos:end="109:38"><expr pos:start="109:18" pos:end="109:38"><operator pos:start="109:18" pos:end="109:18">&amp;</operator><name pos:start="109:19" pos:end="109:38"><name pos:start="109:19" pos:end="109:22">luks</name><operator pos:start="109:23" pos:end="109:24">-&gt;</operator><name pos:start="109:25" pos:end="109:30">header</name><operator pos:start="109:31" pos:end="109:31">.</operator><name pos:start="109:32" pos:end="109:38">version</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="111:5" pos:end="111:47"><expr pos:start="111:5" pos:end="111:46"><call pos:start="111:5" pos:end="111:46"><name pos:start="111:5" pos:end="111:16">be32_to_cpus</name><argument_list pos:start="111:17" pos:end="111:46">(<argument pos:start="111:18" pos:end="111:45"><expr pos:start="111:18" pos:end="111:45"><operator pos:start="111:18" pos:end="111:18">&amp;</operator><name pos:start="111:19" pos:end="111:45"><name pos:start="111:19" pos:end="111:22">luks</name><operator pos:start="111:23" pos:end="111:24">-&gt;</operator><name pos:start="111:25" pos:end="111:30">header</name><operator pos:start="111:31" pos:end="111:31">.</operator><name pos:start="111:32" pos:end="111:45">payload_offset</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="113:5" pos:end="113:42"><expr pos:start="113:5" pos:end="113:41"><call pos:start="113:5" pos:end="113:41"><name pos:start="113:5" pos:end="113:16">be32_to_cpus</name><argument_list pos:start="113:17" pos:end="113:41">(<argument pos:start="113:18" pos:end="113:40"><expr pos:start="113:18" pos:end="113:40"><operator pos:start="113:18" pos:end="113:18">&amp;</operator><name pos:start="113:19" pos:end="113:40"><name pos:start="113:19" pos:end="113:22">luks</name><operator pos:start="113:23" pos:end="113:24">-&gt;</operator><name pos:start="113:25" pos:end="113:30">header</name><operator pos:start="113:31" pos:end="113:31">.</operator><name pos:start="113:32" pos:end="113:40">key_bytes</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="115:5" pos:end="115:54"><expr pos:start="115:5" pos:end="115:53"><call pos:start="115:5" pos:end="115:53"><name pos:start="115:5" pos:end="115:16">be32_to_cpus</name><argument_list pos:start="115:17" pos:end="115:53">(<argument pos:start="115:18" pos:end="115:52"><expr pos:start="115:18" pos:end="115:52"><operator pos:start="115:18" pos:end="115:18">&amp;</operator><name pos:start="115:19" pos:end="115:52"><name pos:start="115:19" pos:end="115:22">luks</name><operator pos:start="115:23" pos:end="115:24">-&gt;</operator><name pos:start="115:25" pos:end="115:30">header</name><operator pos:start="115:31" pos:end="115:31">.</operator><name pos:start="115:32" pos:end="115:52">master_key_iterations</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <for pos:start="119:5" pos:end="129:5">for <control pos:start="119:9" pos:end="119:58">(<init pos:start="119:10" pos:end="119:15"><expr pos:start="119:10" pos:end="119:14"><name pos:start="119:10" pos:end="119:10">i</name> <operator pos:start="119:12" pos:end="119:12">=</operator> <literal type="number" pos:start="119:14" pos:end="119:14">0</literal></expr>;</init> <condition pos:start="119:17" pos:end="119:53"><expr pos:start="119:17" pos:end="119:52"><name pos:start="119:17" pos:end="119:17">i</name> <operator pos:start="119:19" pos:end="119:19">&lt;</operator> <name pos:start="119:21" pos:end="119:52">QCRYPTO_BLOCK_LUKS_NUM_KEY_SLOTS</name></expr>;</condition> <incr pos:start="119:55" pos:end="119:57"><expr pos:start="119:55" pos:end="119:57"><name pos:start="119:55" pos:end="119:55">i</name><operator pos:start="119:56" pos:end="119:57">++</operator></expr></incr>)</control> <block pos:start="119:60" pos:end="129:5">{<block_content pos:start="121:9" pos:end="127:57">
+
+        <expr_stmt pos:start="121:9" pos:end="121:56"><expr pos:start="121:9" pos:end="121:55"><call pos:start="121:9" pos:end="121:55"><name pos:start="121:9" pos:end="121:20">be32_to_cpus</name><argument_list pos:start="121:21" pos:end="121:55">(<argument pos:start="121:22" pos:end="121:54"><expr pos:start="121:22" pos:end="121:54"><operator pos:start="121:22" pos:end="121:22">&amp;</operator><name pos:start="121:23" pos:end="121:47"><name pos:start="121:23" pos:end="121:26">luks</name><operator pos:start="121:27" pos:end="121:28">-&gt;</operator><name pos:start="121:29" pos:end="121:34">header</name><operator pos:start="121:35" pos:end="121:35">.</operator><name pos:start="121:36" pos:end="121:44">key_slots</name><index pos:start="121:45" pos:end="121:47">[<expr pos:start="121:46" pos:end="121:46"><name pos:start="121:46" pos:end="121:46">i</name></expr>]</index></name><operator pos:start="121:48" pos:end="121:48">.</operator><name pos:start="121:49" pos:end="121:54">active</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="123:9" pos:end="123:60"><expr pos:start="123:9" pos:end="123:59"><call pos:start="123:9" pos:end="123:59"><name pos:start="123:9" pos:end="123:20">be32_to_cpus</name><argument_list pos:start="123:21" pos:end="123:59">(<argument pos:start="123:22" pos:end="123:58"><expr pos:start="123:22" pos:end="123:58"><operator pos:start="123:22" pos:end="123:22">&amp;</operator><name pos:start="123:23" pos:end="123:47"><name pos:start="123:23" pos:end="123:26">luks</name><operator pos:start="123:27" pos:end="123:28">-&gt;</operator><name pos:start="123:29" pos:end="123:34">header</name><operator pos:start="123:35" pos:end="123:35">.</operator><name pos:start="123:36" pos:end="123:44">key_slots</name><index pos:start="123:45" pos:end="123:47">[<expr pos:start="123:46" pos:end="123:46"><name pos:start="123:46" pos:end="123:46">i</name></expr>]</index></name><operator pos:start="123:48" pos:end="123:48">.</operator><name pos:start="123:49" pos:end="123:58">iterations</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="125:9" pos:end="125:60"><expr pos:start="125:9" pos:end="125:59"><call pos:start="125:9" pos:end="125:59"><name pos:start="125:9" pos:end="125:20">be32_to_cpus</name><argument_list pos:start="125:21" pos:end="125:59">(<argument pos:start="125:22" pos:end="125:58"><expr pos:start="125:22" pos:end="125:58"><operator pos:start="125:22" pos:end="125:22">&amp;</operator><name pos:start="125:23" pos:end="125:47"><name pos:start="125:23" pos:end="125:26">luks</name><operator pos:start="125:27" pos:end="125:28">-&gt;</operator><name pos:start="125:29" pos:end="125:34">header</name><operator pos:start="125:35" pos:end="125:35">.</operator><name pos:start="125:36" pos:end="125:44">key_slots</name><index pos:start="125:45" pos:end="125:47">[<expr pos:start="125:46" pos:end="125:46"><name pos:start="125:46" pos:end="125:46">i</name></expr>]</index></name><operator pos:start="125:48" pos:end="125:48">.</operator><name pos:start="125:49" pos:end="125:58">key_offset</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="127:9" pos:end="127:57"><expr pos:start="127:9" pos:end="127:56"><call pos:start="127:9" pos:end="127:56"><name pos:start="127:9" pos:end="127:20">be32_to_cpus</name><argument_list pos:start="127:21" pos:end="127:56">(<argument pos:start="127:22" pos:end="127:55"><expr pos:start="127:22" pos:end="127:55"><operator pos:start="127:22" pos:end="127:22">&amp;</operator><name pos:start="127:23" pos:end="127:47"><name pos:start="127:23" pos:end="127:26">luks</name><operator pos:start="127:27" pos:end="127:28">-&gt;</operator><name pos:start="127:29" pos:end="127:34">header</name><operator pos:start="127:35" pos:end="127:35">.</operator><name pos:start="127:36" pos:end="127:44">key_slots</name><index pos:start="127:45" pos:end="127:47">[<expr pos:start="127:46" pos:end="127:46"><name pos:start="127:46" pos:end="127:46">i</name></expr>]</index></name><operator pos:start="127:48" pos:end="127:48">.</operator><name pos:start="127:49" pos:end="127:55">stripes</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></for>
+
+
+
+    <if_stmt pos:start="133:5" pos:end="143:5"><if pos:start="133:5" pos:end="143:5">if <condition pos:start="133:8" pos:end="135:50">(<expr pos:start="133:9" pos:end="135:49"><call pos:start="133:9" pos:end="135:44"><name pos:start="133:9" pos:end="133:14">memcmp</name><argument_list pos:start="133:15" pos:end="135:44">(<argument pos:start="133:16" pos:end="133:33"><expr pos:start="133:16" pos:end="133:33"><name pos:start="133:16" pos:end="133:33"><name pos:start="133:16" pos:end="133:19">luks</name><operator pos:start="133:20" pos:end="133:21">-&gt;</operator><name pos:start="133:22" pos:end="133:27">header</name><operator pos:start="133:28" pos:end="133:28">.</operator><name pos:start="133:29" pos:end="133:33">magic</name></name></expr></argument>, <argument pos:start="133:36" pos:end="133:59"><expr pos:start="133:36" pos:end="133:59"><name pos:start="133:36" pos:end="133:59">qcrypto_block_luks_magic</name></expr></argument>,
+
+               <argument pos:start="135:16" pos:end="135:43"><expr pos:start="135:16" pos:end="135:43"><name pos:start="135:16" pos:end="135:43">QCRYPTO_BLOCK_LUKS_MAGIC_LEN</name></expr></argument>)</argument_list></call> <operator pos:start="135:46" pos:end="135:47">!=</operator> <literal type="number" pos:start="135:49" pos:end="135:49">0</literal></expr>)</condition> <block pos:start="135:52" pos:end="143:5">{<block_content pos:start="137:9" pos:end="141:18">
+
+        <expr_stmt pos:start="137:9" pos:end="137:57"><expr pos:start="137:9" pos:end="137:56"><call pos:start="137:9" pos:end="137:56"><name pos:start="137:9" pos:end="137:18">error_setg</name><argument_list pos:start="137:19" pos:end="137:56">(<argument pos:start="137:20" pos:end="137:23"><expr pos:start="137:20" pos:end="137:23"><name pos:start="137:20" pos:end="137:23">errp</name></expr></argument>, <argument pos:start="137:26" pos:end="137:55"><expr pos:start="137:26" pos:end="137:55"><literal type="string" pos:start="137:26" pos:end="137:55">"Volume is not in LUKS format"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="139:9" pos:end="139:22"><expr pos:start="139:9" pos:end="139:21"><name pos:start="139:9" pos:end="139:11">ret</name> <operator pos:start="139:13" pos:end="139:13">=</operator> <operator pos:start="139:15" pos:end="139:15">-</operator><name pos:start="139:16" pos:end="139:21">EINVAL</name></expr>;</expr_stmt>
+
+        <goto pos:start="141:9" pos:end="141:18">goto <name pos:start="141:14" pos:end="141:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+    <if_stmt pos:start="145:5" pos:end="155:5"><if pos:start="145:5" pos:end="155:5">if <condition pos:start="145:8" pos:end="145:59">(<expr pos:start="145:9" pos:end="145:58"><name pos:start="145:9" pos:end="145:28"><name pos:start="145:9" pos:end="145:12">luks</name><operator pos:start="145:13" pos:end="145:14">-&gt;</operator><name pos:start="145:15" pos:end="145:20">header</name><operator pos:start="145:21" pos:end="145:21">.</operator><name pos:start="145:22" pos:end="145:28">version</name></name> <operator pos:start="145:30" pos:end="145:31">!=</operator> <name pos:start="145:33" pos:end="145:58">QCRYPTO_BLOCK_LUKS_VERSION</name></expr>)</condition> <block pos:start="145:61" pos:end="155:5">{<block_content pos:start="147:9" pos:end="153:18">
+
+        <expr_stmt pos:start="147:9" pos:end="149:41"><expr pos:start="147:9" pos:end="149:40"><call pos:start="147:9" pos:end="149:40"><name pos:start="147:9" pos:end="147:18">error_setg</name><argument_list pos:start="147:19" pos:end="149:40">(<argument pos:start="147:20" pos:end="147:23"><expr pos:start="147:20" pos:end="147:23"><name pos:start="147:20" pos:end="147:23">errp</name></expr></argument>, <argument pos:start="147:26" pos:end="147:68"><expr pos:start="147:26" pos:end="147:68"><literal type="string" pos:start="147:26" pos:end="147:41">"LUKS version %"</literal> <name pos:start="147:43" pos:end="147:48">PRIu32</name> <literal type="string" pos:start="147:50" pos:end="147:68">" is not supported"</literal></expr></argument>,
+
+                   <argument pos:start="149:20" pos:end="149:39"><expr pos:start="149:20" pos:end="149:39"><name pos:start="149:20" pos:end="149:39"><name pos:start="149:20" pos:end="149:23">luks</name><operator pos:start="149:24" pos:end="149:25">-&gt;</operator><name pos:start="149:26" pos:end="149:31">header</name><operator pos:start="149:32" pos:end="149:32">.</operator><name pos:start="149:33" pos:end="149:39">version</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="151:9" pos:end="151:23"><expr pos:start="151:9" pos:end="151:22"><name pos:start="151:9" pos:end="151:11">ret</name> <operator pos:start="151:13" pos:end="151:13">=</operator> <operator pos:start="151:15" pos:end="151:15">-</operator><name pos:start="151:16" pos:end="151:22">ENOTSUP</name></expr>;</expr_stmt>
+
+        <goto pos:start="153:9" pos:end="153:18">goto <name pos:start="153:14" pos:end="153:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="159:5" pos:end="173:7">/*
+
+     * The cipher_mode header contains a string that we have
+
+     * to further parse, of the format
+
+     *
+
+     *    &lt;cipher-mode&gt;-&lt;iv-generator&gt;[:&lt;iv-hash&gt;]
+
+     *
+
+     * eg  cbc-essiv:sha256, cbc-plain64
+
+     */</comment>
+
+    <expr_stmt pos:start="175:5" pos:end="175:55"><expr pos:start="175:5" pos:end="175:54"><name pos:start="175:5" pos:end="175:14">ivgen_name</name> <operator pos:start="175:16" pos:end="175:16">=</operator> <call pos:start="175:18" pos:end="175:54"><name pos:start="175:18" pos:end="175:23">strchr</name><argument_list pos:start="175:24" pos:end="175:54">(<argument pos:start="175:25" pos:end="175:48"><expr pos:start="175:25" pos:end="175:48"><name pos:start="175:25" pos:end="175:48"><name pos:start="175:25" pos:end="175:28">luks</name><operator pos:start="175:29" pos:end="175:30">-&gt;</operator><name pos:start="175:31" pos:end="175:36">header</name><operator pos:start="175:37" pos:end="175:37">.</operator><name pos:start="175:38" pos:end="175:48">cipher_mode</name></name></expr></argument>, <argument pos:start="175:51" pos:end="175:53"><expr pos:start="175:51" pos:end="175:53"><literal type="char" pos:start="175:51" pos:end="175:53">'-'</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="177:5" pos:end="187:5"><if pos:start="177:5" pos:end="187:5">if <condition pos:start="177:8" pos:end="177:20">(<expr pos:start="177:9" pos:end="177:19"><operator pos:start="177:9" pos:end="177:9">!</operator><name pos:start="177:10" pos:end="177:19">ivgen_name</name></expr>)</condition> <block pos:start="177:22" pos:end="187:5">{<block_content pos:start="179:9" pos:end="185:18">
+
+        <expr_stmt pos:start="179:9" pos:end="179:22"><expr pos:start="179:9" pos:end="179:21"><name pos:start="179:9" pos:end="179:11">ret</name> <operator pos:start="179:13" pos:end="179:13">=</operator> <operator pos:start="179:15" pos:end="179:15">-</operator><name pos:start="179:16" pos:end="179:21">EINVAL</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="181:9" pos:end="183:45"><expr pos:start="181:9" pos:end="183:44"><call pos:start="181:9" pos:end="183:44"><name pos:start="181:9" pos:end="181:18">error_setg</name><argument_list pos:start="181:19" pos:end="183:44">(<argument pos:start="181:20" pos:end="181:23"><expr pos:start="181:20" pos:end="181:23"><name pos:start="181:20" pos:end="181:23">errp</name></expr></argument>, <argument pos:start="181:26" pos:end="181:66"><expr pos:start="181:26" pos:end="181:66"><literal type="string" pos:start="181:26" pos:end="181:66">"Unexpected cipher mode string format %s"</literal></expr></argument>,
+
+                   <argument pos:start="183:20" pos:end="183:43"><expr pos:start="183:20" pos:end="183:43"><name pos:start="183:20" pos:end="183:43"><name pos:start="183:20" pos:end="183:23">luks</name><operator pos:start="183:24" pos:end="183:25">-&gt;</operator><name pos:start="183:26" pos:end="183:31">header</name><operator pos:start="183:32" pos:end="183:32">.</operator><name pos:start="183:33" pos:end="183:43">cipher_mode</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <goto pos:start="185:9" pos:end="185:18">goto <name pos:start="185:14" pos:end="185:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+    <expr_stmt pos:start="189:5" pos:end="189:23"><expr pos:start="189:5" pos:end="189:22"><operator pos:start="189:5" pos:end="189:5">*</operator><name pos:start="189:6" pos:end="189:15">ivgen_name</name> <operator pos:start="189:17" pos:end="189:17">=</operator> <literal type="char" pos:start="189:19" pos:end="189:22">'\0'</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="191:5" pos:end="191:17"><expr pos:start="191:5" pos:end="191:16"><name pos:start="191:5" pos:end="191:14">ivgen_name</name><operator pos:start="191:15" pos:end="191:16">++</operator></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="195:5" pos:end="195:42"><expr pos:start="195:5" pos:end="195:41"><name pos:start="195:5" pos:end="195:15">ivhash_name</name> <operator pos:start="195:17" pos:end="195:17">=</operator> <call pos:start="195:19" pos:end="195:41"><name pos:start="195:19" pos:end="195:24">strchr</name><argument_list pos:start="195:25" pos:end="195:41">(<argument pos:start="195:26" pos:end="195:35"><expr pos:start="195:26" pos:end="195:35"><name pos:start="195:26" pos:end="195:35">ivgen_name</name></expr></argument>, <argument pos:start="195:38" pos:end="195:40"><expr pos:start="195:38" pos:end="195:40"><literal type="char" pos:start="195:38" pos:end="195:40">':'</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="197:5" pos:end="223:5"><if pos:start="197:5" pos:end="201:5">if <condition pos:start="197:8" pos:end="197:21">(<expr pos:start="197:9" pos:end="197:20"><operator pos:start="197:9" pos:end="197:9">!</operator><name pos:start="197:10" pos:end="197:20">ivhash_name</name></expr>)</condition> <block pos:start="197:23" pos:end="201:5">{<block_content pos:start="199:9" pos:end="199:19">
+
+        <expr_stmt pos:start="199:9" pos:end="199:19"><expr pos:start="199:9" pos:end="199:18"><name pos:start="199:9" pos:end="199:14">ivhash</name> <operator pos:start="199:16" pos:end="199:16">=</operator> <literal type="number" pos:start="199:18" pos:end="199:18">0</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="201:7" pos:end="223:5">else <block pos:start="201:12" pos:end="223:5">{<block_content pos:start="203:9" pos:end="221:9">
+
+        <expr_stmt pos:start="203:9" pos:end="203:28"><expr pos:start="203:9" pos:end="203:27"><operator pos:start="203:9" pos:end="203:9">*</operator><name pos:start="203:10" pos:end="203:20">ivhash_name</name> <operator pos:start="203:22" pos:end="203:22">=</operator> <literal type="char" pos:start="203:24" pos:end="203:27">'\0'</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="205:9" pos:end="205:22"><expr pos:start="205:9" pos:end="205:21"><name pos:start="205:9" pos:end="205:19">ivhash_name</name><operator pos:start="205:20" pos:end="205:21">++</operator></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="209:9" pos:end="211:65"><expr pos:start="209:9" pos:end="211:64"><name pos:start="209:9" pos:end="209:14">ivhash</name> <operator pos:start="209:16" pos:end="209:16">=</operator> <call pos:start="209:18" pos:end="211:64"><name pos:start="209:18" pos:end="209:52">qcrypto_block_luks_hash_name_lookup</name><argument_list pos:start="209:53" pos:end="211:64">(<argument pos:start="209:54" pos:end="209:64"><expr pos:start="209:54" pos:end="209:64"><name pos:start="209:54" pos:end="209:64">ivhash_name</name></expr></argument>,
+
+                                                     <argument pos:start="211:54" pos:end="211:63"><expr pos:start="211:54" pos:end="211:63"><operator pos:start="211:54" pos:end="211:54">&amp;</operator><name pos:start="211:55" pos:end="211:63">local_err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="213:9" pos:end="221:9"><if pos:start="213:9" pos:end="221:9">if <condition pos:start="213:12" pos:end="213:22">(<expr pos:start="213:13" pos:end="213:21"><name pos:start="213:13" pos:end="213:21">local_err</name></expr>)</condition> <block pos:start="213:24" pos:end="221:9">{<block_content pos:start="215:13" pos:end="219:22">
+
+            <expr_stmt pos:start="215:13" pos:end="215:27"><expr pos:start="215:13" pos:end="215:26"><name pos:start="215:13" pos:end="215:15">ret</name> <operator pos:start="215:17" pos:end="215:17">=</operator> <operator pos:start="215:19" pos:end="215:19">-</operator><name pos:start="215:20" pos:end="215:26">ENOTSUP</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="217:13" pos:end="217:45"><expr pos:start="217:13" pos:end="217:44"><call pos:start="217:13" pos:end="217:44"><name pos:start="217:13" pos:end="217:27">error_propagate</name><argument_list pos:start="217:28" pos:end="217:44">(<argument pos:start="217:29" pos:end="217:32"><expr pos:start="217:29" pos:end="217:32"><name pos:start="217:29" pos:end="217:32">errp</name></expr></argument>, <argument pos:start="217:35" pos:end="217:43"><expr pos:start="217:35" pos:end="217:43"><name pos:start="217:35" pos:end="217:43">local_err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <goto pos:start="219:13" pos:end="219:22">goto <name pos:start="219:18" pos:end="219:21">fail</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <expr_stmt pos:start="227:5" pos:end="229:67"><expr pos:start="227:5" pos:end="229:66"><name pos:start="227:5" pos:end="227:14">ciphermode</name> <operator pos:start="227:16" pos:end="227:16">=</operator> <call pos:start="227:18" pos:end="229:66"><name pos:start="227:18" pos:end="227:54">qcrypto_block_luks_cipher_mode_lookup</name><argument_list pos:start="227:55" pos:end="229:66">(<argument pos:start="227:56" pos:end="227:79"><expr pos:start="227:56" pos:end="227:79"><name pos:start="227:56" pos:end="227:79"><name pos:start="227:56" pos:end="227:59">luks</name><operator pos:start="227:60" pos:end="227:61">-&gt;</operator><name pos:start="227:62" pos:end="227:67">header</name><operator pos:start="227:68" pos:end="227:68">.</operator><name pos:start="227:69" pos:end="227:79">cipher_mode</name></name></expr></argument>,
+
+                                                       <argument pos:start="229:56" pos:end="229:65"><expr pos:start="229:56" pos:end="229:65"><operator pos:start="229:56" pos:end="229:56">&amp;</operator><name pos:start="229:57" pos:end="229:65">local_err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="231:5" pos:end="239:5"><if pos:start="231:5" pos:end="239:5">if <condition pos:start="231:8" pos:end="231:18">(<expr pos:start="231:9" pos:end="231:17"><name pos:start="231:9" pos:end="231:17">local_err</name></expr>)</condition> <block pos:start="231:20" pos:end="239:5">{<block_content pos:start="233:9" pos:end="237:18">
+
+        <expr_stmt pos:start="233:9" pos:end="233:23"><expr pos:start="233:9" pos:end="233:22"><name pos:start="233:9" pos:end="233:11">ret</name> <operator pos:start="233:13" pos:end="233:13">=</operator> <operator pos:start="233:15" pos:end="233:15">-</operator><name pos:start="233:16" pos:end="233:22">ENOTSUP</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="235:9" pos:end="235:41"><expr pos:start="235:9" pos:end="235:40"><call pos:start="235:9" pos:end="235:40"><name pos:start="235:9" pos:end="235:23">error_propagate</name><argument_list pos:start="235:24" pos:end="235:40">(<argument pos:start="235:25" pos:end="235:28"><expr pos:start="235:25" pos:end="235:28"><name pos:start="235:25" pos:end="235:28">errp</name></expr></argument>, <argument pos:start="235:31" pos:end="235:39"><expr pos:start="235:31" pos:end="235:39"><name pos:start="235:31" pos:end="235:39">local_err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <goto pos:start="237:9" pos:end="237:18">goto <name pos:start="237:14" pos:end="237:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="243:5" pos:end="249:66"><expr pos:start="243:5" pos:end="249:65"><name pos:start="243:5" pos:end="243:13">cipheralg</name> <operator pos:start="243:15" pos:end="243:15">=</operator> <call pos:start="243:17" pos:end="249:65"><name pos:start="243:17" pos:end="243:53">qcrypto_block_luks_cipher_name_lookup</name><argument_list pos:start="243:54" pos:end="249:65">(<argument pos:start="243:55" pos:end="243:78"><expr pos:start="243:55" pos:end="243:78"><name pos:start="243:55" pos:end="243:78"><name pos:start="243:55" pos:end="243:58">luks</name><operator pos:start="243:59" pos:end="243:60">-&gt;</operator><name pos:start="243:61" pos:end="243:66">header</name><operator pos:start="243:67" pos:end="243:67">.</operator><name pos:start="243:68" pos:end="243:78">cipher_name</name></name></expr></argument>,
+
+                                                      <argument pos:start="245:55" pos:end="245:64"><expr pos:start="245:55" pos:end="245:64"><name pos:start="245:55" pos:end="245:64">ciphermode</name></expr></argument>,
+
+                                                      <argument pos:start="247:55" pos:end="247:76"><expr pos:start="247:55" pos:end="247:76"><name pos:start="247:55" pos:end="247:76"><name pos:start="247:55" pos:end="247:58">luks</name><operator pos:start="247:59" pos:end="247:60">-&gt;</operator><name pos:start="247:61" pos:end="247:66">header</name><operator pos:start="247:67" pos:end="247:67">.</operator><name pos:start="247:68" pos:end="247:76">key_bytes</name></name></expr></argument>,
+
+                                                      <argument pos:start="249:55" pos:end="249:64"><expr pos:start="249:55" pos:end="249:64"><operator pos:start="249:55" pos:end="249:55">&amp;</operator><name pos:start="249:56" pos:end="249:64">local_err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="251:5" pos:end="259:5"><if pos:start="251:5" pos:end="259:5">if <condition pos:start="251:8" pos:end="251:18">(<expr pos:start="251:9" pos:end="251:17"><name pos:start="251:9" pos:end="251:17">local_err</name></expr>)</condition> <block pos:start="251:20" pos:end="259:5">{<block_content pos:start="253:9" pos:end="257:18">
+
+        <expr_stmt pos:start="253:9" pos:end="253:23"><expr pos:start="253:9" pos:end="253:22"><name pos:start="253:9" pos:end="253:11">ret</name> <operator pos:start="253:13" pos:end="253:13">=</operator> <operator pos:start="253:15" pos:end="253:15">-</operator><name pos:start="253:16" pos:end="253:22">ENOTSUP</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="255:9" pos:end="255:41"><expr pos:start="255:9" pos:end="255:40"><call pos:start="255:9" pos:end="255:40"><name pos:start="255:9" pos:end="255:23">error_propagate</name><argument_list pos:start="255:24" pos:end="255:40">(<argument pos:start="255:25" pos:end="255:28"><expr pos:start="255:25" pos:end="255:28"><name pos:start="255:25" pos:end="255:28">errp</name></expr></argument>, <argument pos:start="255:31" pos:end="255:39"><expr pos:start="255:31" pos:end="255:39"><name pos:start="255:31" pos:end="255:39">local_err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <goto pos:start="257:9" pos:end="257:18">goto <name pos:start="257:14" pos:end="257:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="263:5" pos:end="265:59"><expr pos:start="263:5" pos:end="265:58"><name pos:start="263:5" pos:end="263:8">hash</name> <operator pos:start="263:10" pos:end="263:10">=</operator> <call pos:start="263:12" pos:end="265:58"><name pos:start="263:12" pos:end="263:46">qcrypto_block_luks_hash_name_lookup</name><argument_list pos:start="263:47" pos:end="265:58">(<argument pos:start="263:48" pos:end="263:69"><expr pos:start="263:48" pos:end="263:69"><name pos:start="263:48" pos:end="263:69"><name pos:start="263:48" pos:end="263:51">luks</name><operator pos:start="263:52" pos:end="263:53">-&gt;</operator><name pos:start="263:54" pos:end="263:59">header</name><operator pos:start="263:60" pos:end="263:60">.</operator><name pos:start="263:61" pos:end="263:69">hash_spec</name></name></expr></argument>,
+
+                                               <argument pos:start="265:48" pos:end="265:57"><expr pos:start="265:48" pos:end="265:57"><operator pos:start="265:48" pos:end="265:48">&amp;</operator><name pos:start="265:49" pos:end="265:57">local_err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="267:5" pos:end="275:5"><if pos:start="267:5" pos:end="275:5">if <condition pos:start="267:8" pos:end="267:18">(<expr pos:start="267:9" pos:end="267:17"><name pos:start="267:9" pos:end="267:17">local_err</name></expr>)</condition> <block pos:start="267:20" pos:end="275:5">{<block_content pos:start="269:9" pos:end="273:18">
+
+        <expr_stmt pos:start="269:9" pos:end="269:23"><expr pos:start="269:9" pos:end="269:22"><name pos:start="269:9" pos:end="269:11">ret</name> <operator pos:start="269:13" pos:end="269:13">=</operator> <operator pos:start="269:15" pos:end="269:15">-</operator><name pos:start="269:16" pos:end="269:22">ENOTSUP</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="271:9" pos:end="271:41"><expr pos:start="271:9" pos:end="271:40"><call pos:start="271:9" pos:end="271:40"><name pos:start="271:9" pos:end="271:23">error_propagate</name><argument_list pos:start="271:24" pos:end="271:40">(<argument pos:start="271:25" pos:end="271:28"><expr pos:start="271:25" pos:end="271:28"><name pos:start="271:25" pos:end="271:28">errp</name></expr></argument>, <argument pos:start="271:31" pos:end="271:39"><expr pos:start="271:31" pos:end="271:39"><name pos:start="271:31" pos:end="271:39">local_err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <goto pos:start="273:9" pos:end="273:18">goto <name pos:start="273:14" pos:end="273:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="279:5" pos:end="281:61"><expr pos:start="279:5" pos:end="281:60"><name pos:start="279:5" pos:end="279:9">ivalg</name> <operator pos:start="279:11" pos:end="279:11">=</operator> <call pos:start="279:13" pos:end="281:60"><name pos:start="279:13" pos:end="279:48">qcrypto_block_luks_ivgen_name_lookup</name><argument_list pos:start="279:49" pos:end="281:60">(<argument pos:start="279:50" pos:end="279:59"><expr pos:start="279:50" pos:end="279:59"><name pos:start="279:50" pos:end="279:59">ivgen_name</name></expr></argument>,
+
+                                                 <argument pos:start="281:50" pos:end="281:59"><expr pos:start="281:50" pos:end="281:59"><operator pos:start="281:50" pos:end="281:50">&amp;</operator><name pos:start="281:51" pos:end="281:59">local_err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="283:5" pos:end="291:5"><if pos:start="283:5" pos:end="291:5">if <condition pos:start="283:8" pos:end="283:18">(<expr pos:start="283:9" pos:end="283:17"><name pos:start="283:9" pos:end="283:17">local_err</name></expr>)</condition> <block pos:start="283:20" pos:end="291:5">{<block_content pos:start="285:9" pos:end="289:18">
+
+        <expr_stmt pos:start="285:9" pos:end="285:23"><expr pos:start="285:9" pos:end="285:22"><name pos:start="285:9" pos:end="285:11">ret</name> <operator pos:start="285:13" pos:end="285:13">=</operator> <operator pos:start="285:15" pos:end="285:15">-</operator><name pos:start="285:16" pos:end="285:22">ENOTSUP</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="287:9" pos:end="287:41"><expr pos:start="287:9" pos:end="287:40"><call pos:start="287:9" pos:end="287:40"><name pos:start="287:9" pos:end="287:23">error_propagate</name><argument_list pos:start="287:24" pos:end="287:40">(<argument pos:start="287:25" pos:end="287:28"><expr pos:start="287:25" pos:end="287:28"><name pos:start="287:25" pos:end="287:28">errp</name></expr></argument>, <argument pos:start="287:31" pos:end="287:39"><expr pos:start="287:31" pos:end="287:39"><name pos:start="287:31" pos:end="287:39">local_err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <goto pos:start="289:9" pos:end="289:18">goto <name pos:start="289:14" pos:end="289:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="295:5" pos:end="341:5"><if pos:start="295:5" pos:end="323:5">if <condition pos:start="295:8" pos:end="295:41">(<expr pos:start="295:9" pos:end="295:40"><name pos:start="295:9" pos:end="295:13">ivalg</name> <operator pos:start="295:15" pos:end="295:16">==</operator> <name pos:start="295:18" pos:end="295:40">QCRYPTO_IVGEN_ALG_ESSIV</name></expr>)</condition> <block pos:start="295:43" pos:end="323:5">{<block_content pos:start="297:9" pos:end="321:9">
+
+        <if_stmt pos:start="297:9" pos:end="305:9"><if pos:start="297:9" pos:end="305:9">if <condition pos:start="297:12" pos:end="297:25">(<expr pos:start="297:13" pos:end="297:24"><operator pos:start="297:13" pos:end="297:13">!</operator><name pos:start="297:14" pos:end="297:24">ivhash_name</name></expr>)</condition> <block pos:start="297:27" pos:end="305:9">{<block_content pos:start="299:13" pos:end="303:22">
+
+            <expr_stmt pos:start="299:13" pos:end="299:26"><expr pos:start="299:13" pos:end="299:25"><name pos:start="299:13" pos:end="299:15">ret</name> <operator pos:start="299:17" pos:end="299:17">=</operator> <operator pos:start="299:19" pos:end="299:19">-</operator><name pos:start="299:20" pos:end="299:25">EINVAL</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="301:13" pos:end="301:72"><expr pos:start="301:13" pos:end="301:71"><call pos:start="301:13" pos:end="301:71"><name pos:start="301:13" pos:end="301:22">error_setg</name><argument_list pos:start="301:23" pos:end="301:71">(<argument pos:start="301:24" pos:end="301:27"><expr pos:start="301:24" pos:end="301:27"><name pos:start="301:24" pos:end="301:27">errp</name></expr></argument>, <argument pos:start="301:30" pos:end="301:70"><expr pos:start="301:30" pos:end="301:70"><literal type="string" pos:start="301:30" pos:end="301:70">"Missing IV generator hash specification"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <goto pos:start="303:13" pos:end="303:22">goto <name pos:start="303:18" pos:end="303:21">fail</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="307:9" pos:end="311:66"><expr pos:start="307:9" pos:end="311:65"><name pos:start="307:9" pos:end="307:19">ivcipheralg</name> <operator pos:start="307:21" pos:end="307:21">=</operator> <call pos:start="307:23" pos:end="311:65"><name pos:start="307:23" pos:end="307:53">qcrypto_block_luks_essiv_cipher</name><argument_list pos:start="307:54" pos:end="311:65">(<argument pos:start="307:55" pos:end="307:63"><expr pos:start="307:55" pos:end="307:63"><name pos:start="307:55" pos:end="307:63">cipheralg</name></expr></argument>,
+
+                                                      <argument pos:start="309:55" pos:end="309:60"><expr pos:start="309:55" pos:end="309:60"><name pos:start="309:55" pos:end="309:60">ivhash</name></expr></argument>,
+
+                                                      <argument pos:start="311:55" pos:end="311:64"><expr pos:start="311:55" pos:end="311:64"><operator pos:start="311:55" pos:end="311:55">&amp;</operator><name pos:start="311:56" pos:end="311:64">local_err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="313:9" pos:end="321:9"><if pos:start="313:9" pos:end="321:9">if <condition pos:start="313:12" pos:end="313:22">(<expr pos:start="313:13" pos:end="313:21"><name pos:start="313:13" pos:end="313:21">local_err</name></expr>)</condition> <block pos:start="313:24" pos:end="321:9">{<block_content pos:start="315:13" pos:end="319:22">
+
+            <expr_stmt pos:start="315:13" pos:end="315:27"><expr pos:start="315:13" pos:end="315:26"><name pos:start="315:13" pos:end="315:15">ret</name> <operator pos:start="315:17" pos:end="315:17">=</operator> <operator pos:start="315:19" pos:end="315:19">-</operator><name pos:start="315:20" pos:end="315:26">ENOTSUP</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="317:13" pos:end="317:45"><expr pos:start="317:13" pos:end="317:44"><call pos:start="317:13" pos:end="317:44"><name pos:start="317:13" pos:end="317:27">error_propagate</name><argument_list pos:start="317:28" pos:end="317:44">(<argument pos:start="317:29" pos:end="317:32"><expr pos:start="317:29" pos:end="317:32"><name pos:start="317:29" pos:end="317:32">errp</name></expr></argument>, <argument pos:start="317:35" pos:end="317:43"><expr pos:start="317:35" pos:end="317:43"><name pos:start="317:35" pos:end="317:43">local_err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <goto pos:start="319:13" pos:end="319:22">goto <name pos:start="319:18" pos:end="319:21">fail</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if> <else pos:start="323:7" pos:end="341:5">else <block pos:start="323:12" pos:end="341:5">{<block_content pos:start="339:9" pos:end="339:32">
+
+        <comment type="block" pos:start="325:9" pos:end="337:11">/* Note we parsed the ivhash_name earlier in the cipher_mode
+
+         * spec string even with plain/plain64 ivgens, but we
+
+         * will ignore it, since it is irrelevant for these ivgens.
+
+         * This is for compat with dm-crypt which will silently
+
+         * ignore hash names with these ivgens rather than report
+
+         * an error about the invalid usage
+
+         */</comment>
+
+        <expr_stmt pos:start="339:9" pos:end="339:32"><expr pos:start="339:9" pos:end="339:31"><name pos:start="339:9" pos:end="339:19">ivcipheralg</name> <operator pos:start="339:21" pos:end="339:21">=</operator> <name pos:start="339:23" pos:end="339:31">cipheralg</name></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <if_stmt pos:start="345:5" pos:end="429:5"><if pos:start="345:5" pos:end="429:5">if <condition pos:start="345:8" pos:end="345:44">(<expr pos:start="345:9" pos:end="345:43"><operator pos:start="345:9" pos:end="345:9">!</operator><operator pos:start="345:10" pos:end="345:10">(</operator><name pos:start="345:11" pos:end="345:15">flags</name> <operator pos:start="345:17" pos:end="345:17">&amp;</operator> <name pos:start="345:19" pos:end="345:42">QCRYPTO_BLOCK_OPEN_NO_IO</name><operator pos:start="345:43" pos:end="345:43">)</operator></expr>)</condition> <block pos:start="345:46" pos:end="429:5">{<block_content pos:start="353:9" pos:end="427:9">
+
+        <comment type="block" pos:start="347:9" pos:end="351:11">/* Try to find which key slot our password is valid for
+
+         * and unlock the master key from that slot.
+
+         */</comment>
+
+        <if_stmt pos:start="353:9" pos:end="377:9"><if pos:start="353:9" pos:end="377:9">if <condition pos:start="353:12" pos:end="371:50">(<expr pos:start="353:13" pos:end="371:49"><call pos:start="353:13" pos:end="371:45"><name pos:start="353:13" pos:end="353:39">qcrypto_block_luks_find_key</name><argument_list pos:start="353:40" pos:end="371:45">(<argument pos:start="353:41" pos:end="353:45"><expr pos:start="353:41" pos:end="353:45"><name pos:start="353:41" pos:end="353:45">block</name></expr></argument>,
+
+                                        <argument pos:start="355:41" pos:end="355:48"><expr pos:start="355:41" pos:end="355:48"><name pos:start="355:41" pos:end="355:48">password</name></expr></argument>,
+
+                                        <argument pos:start="357:41" pos:end="357:49"><expr pos:start="357:41" pos:end="357:49"><name pos:start="357:41" pos:end="357:49">cipheralg</name></expr></argument>, <argument pos:start="357:52" pos:end="357:61"><expr pos:start="357:52" pos:end="357:61"><name pos:start="357:52" pos:end="357:61">ciphermode</name></expr></argument>,
+
+                                        <argument pos:start="359:41" pos:end="359:44"><expr pos:start="359:41" pos:end="359:44"><name pos:start="359:41" pos:end="359:44">hash</name></expr></argument>,
+
+                                        <argument pos:start="361:41" pos:end="361:45"><expr pos:start="361:41" pos:end="361:45"><name pos:start="361:41" pos:end="361:45">ivalg</name></expr></argument>,
+
+                                        <argument pos:start="363:41" pos:end="363:51"><expr pos:start="363:41" pos:end="363:51"><name pos:start="363:41" pos:end="363:51">ivcipheralg</name></expr></argument>,
+
+                                        <argument pos:start="365:41" pos:end="365:46"><expr pos:start="365:41" pos:end="365:46"><name pos:start="365:41" pos:end="365:46">ivhash</name></expr></argument>,
+
+                                        <argument pos:start="367:41" pos:end="367:50"><expr pos:start="367:41" pos:end="367:50"><operator pos:start="367:41" pos:end="367:41">&amp;</operator><name pos:start="367:42" pos:end="367:50">masterkey</name></expr></argument>, <argument pos:start="367:53" pos:end="367:65"><expr pos:start="367:53" pos:end="367:65"><operator pos:start="367:53" pos:end="367:53">&amp;</operator><name pos:start="367:54" pos:end="367:65">masterkeylen</name></expr></argument>,
+
+                                        <argument pos:start="369:41" pos:end="369:48"><expr pos:start="369:41" pos:end="369:48"><name pos:start="369:41" pos:end="369:48">readfunc</name></expr></argument>, <argument pos:start="369:51" pos:end="369:56"><expr pos:start="369:51" pos:end="369:56"><name pos:start="369:51" pos:end="369:56">opaque</name></expr></argument>,
+
+                                        <argument pos:start="371:41" pos:end="371:44"><expr pos:start="371:41" pos:end="371:44"><name pos:start="371:41" pos:end="371:44">errp</name></expr></argument>)</argument_list></call> <operator pos:start="371:47" pos:end="371:47">&lt;</operator> <literal type="number" pos:start="371:49" pos:end="371:49">0</literal></expr>)</condition> <block pos:start="371:52" pos:end="377:9">{<block_content pos:start="373:13" pos:end="375:22">
+
+            <expr_stmt pos:start="373:13" pos:end="373:26"><expr pos:start="373:13" pos:end="373:25"><name pos:start="373:13" pos:end="373:15">ret</name> <operator pos:start="373:17" pos:end="373:17">=</operator> <operator pos:start="373:19" pos:end="373:19">-</operator><name pos:start="373:20" pos:end="373:25">EACCES</name></expr>;</expr_stmt>
+
+            <goto pos:start="375:13" pos:end="375:22">goto <name pos:start="375:18" pos:end="375:21">fail</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <comment type="block" pos:start="381:9" pos:end="385:11">/* We have a valid master key now, so can setup the
+
+         * block device payload decryption objects
+
+         */</comment>
+
+        <expr_stmt pos:start="387:9" pos:end="387:30"><expr pos:start="387:9" pos:end="387:29"><name pos:start="387:9" pos:end="387:22"><name pos:start="387:9" pos:end="387:13">block</name><operator pos:start="387:14" pos:end="387:15">-&gt;</operator><name pos:start="387:16" pos:end="387:22">kdfhash</name></name> <operator pos:start="387:24" pos:end="387:24">=</operator> <name pos:start="387:26" pos:end="387:29">hash</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="389:9" pos:end="391:59"><expr pos:start="389:9" pos:end="391:58"><name pos:start="389:9" pos:end="389:18"><name pos:start="389:9" pos:end="389:13">block</name><operator pos:start="389:14" pos:end="389:15">-&gt;</operator><name pos:start="389:16" pos:end="389:18">niv</name></name> <operator pos:start="389:20" pos:end="389:20">=</operator> <call pos:start="389:22" pos:end="391:58"><name pos:start="389:22" pos:end="389:46">qcrypto_cipher_get_iv_len</name><argument_list pos:start="389:47" pos:end="391:58">(<argument pos:start="389:48" pos:end="389:56"><expr pos:start="389:48" pos:end="389:56"><name pos:start="389:48" pos:end="389:56">cipheralg</name></expr></argument>,
+
+                                               <argument pos:start="391:48" pos:end="391:57"><expr pos:start="391:48" pos:end="391:57"><name pos:start="391:48" pos:end="391:57">ciphermode</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="393:9" pos:end="401:47"><expr pos:start="393:9" pos:end="401:46"><name pos:start="393:9" pos:end="393:20"><name pos:start="393:9" pos:end="393:13">block</name><operator pos:start="393:14" pos:end="393:15">-&gt;</operator><name pos:start="393:16" pos:end="393:20">ivgen</name></name> <operator pos:start="393:22" pos:end="393:22">=</operator> <call pos:start="393:24" pos:end="401:46"><name pos:start="393:24" pos:end="393:40">qcrypto_ivgen_new</name><argument_list pos:start="393:41" pos:end="401:46">(<argument pos:start="393:42" pos:end="393:46"><expr pos:start="393:42" pos:end="393:46"><name pos:start="393:42" pos:end="393:46">ivalg</name></expr></argument>,
+
+                                         <argument pos:start="395:42" pos:end="395:52"><expr pos:start="395:42" pos:end="395:52"><name pos:start="395:42" pos:end="395:52">ivcipheralg</name></expr></argument>,
+
+                                         <argument pos:start="397:42" pos:end="397:47"><expr pos:start="397:42" pos:end="397:47"><name pos:start="397:42" pos:end="397:47">ivhash</name></expr></argument>,
+
+                                         <argument pos:start="399:42" pos:end="399:50"><expr pos:start="399:42" pos:end="399:50"><name pos:start="399:42" pos:end="399:50">masterkey</name></expr></argument>, <argument pos:start="399:53" pos:end="399:64"><expr pos:start="399:53" pos:end="399:64"><name pos:start="399:53" pos:end="399:64">masterkeylen</name></expr></argument>,
+
+                                         <argument pos:start="401:42" pos:end="401:45"><expr pos:start="401:42" pos:end="401:45"><name pos:start="401:42" pos:end="401:45">errp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="403:9" pos:end="409:9"><if pos:start="403:9" pos:end="409:9">if <condition pos:start="403:12" pos:end="403:26">(<expr pos:start="403:13" pos:end="403:25"><operator pos:start="403:13" pos:end="403:13">!</operator><name pos:start="403:14" pos:end="403:25"><name pos:start="403:14" pos:end="403:18">block</name><operator pos:start="403:19" pos:end="403:20">-&gt;</operator><name pos:start="403:21" pos:end="403:25">ivgen</name></name></expr>)</condition> <block pos:start="403:28" pos:end="409:9">{<block_content pos:start="405:13" pos:end="407:22">
+
+            <expr_stmt pos:start="405:13" pos:end="405:27"><expr pos:start="405:13" pos:end="405:26"><name pos:start="405:13" pos:end="405:15">ret</name> <operator pos:start="405:17" pos:end="405:17">=</operator> <operator pos:start="405:19" pos:end="405:19">-</operator><name pos:start="405:20" pos:end="405:26">ENOTSUP</name></expr>;</expr_stmt>
+
+            <goto pos:start="407:13" pos:end="407:22">goto <name pos:start="407:18" pos:end="407:21">fail</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="413:9" pos:end="419:49"><expr pos:start="413:9" pos:end="419:48"><name pos:start="413:9" pos:end="413:21"><name pos:start="413:9" pos:end="413:13">block</name><operator pos:start="413:14" pos:end="413:15">-&gt;</operator><name pos:start="413:16" pos:end="413:21">cipher</name></name> <operator pos:start="413:23" pos:end="413:23">=</operator> <call pos:start="413:25" pos:end="419:48"><name pos:start="413:25" pos:end="413:42">qcrypto_cipher_new</name><argument_list pos:start="413:43" pos:end="419:48">(<argument pos:start="413:44" pos:end="413:52"><expr pos:start="413:44" pos:end="413:52"><name pos:start="413:44" pos:end="413:52">cipheralg</name></expr></argument>,
+
+                                           <argument pos:start="415:44" pos:end="415:53"><expr pos:start="415:44" pos:end="415:53"><name pos:start="415:44" pos:end="415:53">ciphermode</name></expr></argument>,
+
+                                           <argument pos:start="417:44" pos:end="417:52"><expr pos:start="417:44" pos:end="417:52"><name pos:start="417:44" pos:end="417:52">masterkey</name></expr></argument>, <argument pos:start="417:55" pos:end="417:66"><expr pos:start="417:55" pos:end="417:66"><name pos:start="417:55" pos:end="417:66">masterkeylen</name></expr></argument>,
+
+                                           <argument pos:start="419:44" pos:end="419:47"><expr pos:start="419:44" pos:end="419:47"><name pos:start="419:44" pos:end="419:47">errp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="421:9" pos:end="427:9"><if pos:start="421:9" pos:end="427:9">if <condition pos:start="421:12" pos:end="421:27">(<expr pos:start="421:13" pos:end="421:26"><operator pos:start="421:13" pos:end="421:13">!</operator><name pos:start="421:14" pos:end="421:26"><name pos:start="421:14" pos:end="421:18">block</name><operator pos:start="421:19" pos:end="421:20">-&gt;</operator><name pos:start="421:21" pos:end="421:26">cipher</name></name></expr>)</condition> <block pos:start="421:29" pos:end="427:9">{<block_content pos:start="423:13" pos:end="425:22">
+
+            <expr_stmt pos:start="423:13" pos:end="423:27"><expr pos:start="423:13" pos:end="423:26"><name pos:start="423:13" pos:end="423:15">ret</name> <operator pos:start="423:17" pos:end="423:17">=</operator> <operator pos:start="423:19" pos:end="423:19">-</operator><name pos:start="423:20" pos:end="423:26">ENOTSUP</name></expr>;</expr_stmt>
+
+            <goto pos:start="425:13" pos:end="425:22">goto <name pos:start="425:18" pos:end="425:21">fail</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="433:5" pos:end="435:39"><expr pos:start="433:5" pos:end="435:38"><name pos:start="433:5" pos:end="433:25"><name pos:start="433:5" pos:end="433:9">block</name><operator pos:start="433:10" pos:end="433:11">-&gt;</operator><name pos:start="433:12" pos:end="433:25">payload_offset</name></name> <operator pos:start="433:27" pos:end="433:27">=</operator> <name pos:start="433:29" pos:end="433:55"><name pos:start="433:29" pos:end="433:32">luks</name><operator pos:start="433:33" pos:end="433:34">-&gt;</operator><name pos:start="433:35" pos:end="433:40">header</name><operator pos:start="433:41" pos:end="433:41">.</operator><name pos:start="433:42" pos:end="433:55">payload_offset</name></name> <operator pos:start="433:57" pos:end="433:57">*</operator>
+
+        <name pos:start="435:9" pos:end="435:38">QCRYPTO_BLOCK_LUKS_SECTOR_SIZE</name></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="439:5" pos:end="439:33"><expr pos:start="439:5" pos:end="439:32"><name pos:start="439:5" pos:end="439:20"><name pos:start="439:5" pos:end="439:8">luks</name><operator pos:start="439:9" pos:end="439:10">-&gt;</operator><name pos:start="439:11" pos:end="439:20">cipher_alg</name></name> <operator pos:start="439:22" pos:end="439:22">=</operator> <name pos:start="439:24" pos:end="439:32">cipheralg</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="441:5" pos:end="441:35"><expr pos:start="441:5" pos:end="441:34"><name pos:start="441:5" pos:end="441:21"><name pos:start="441:5" pos:end="441:8">luks</name><operator pos:start="441:9" pos:end="441:10">-&gt;</operator><name pos:start="441:11" pos:end="441:21">cipher_mode</name></name> <operator pos:start="441:23" pos:end="441:23">=</operator> <name pos:start="441:25" pos:end="441:34">ciphermode</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="443:5" pos:end="443:28"><expr pos:start="443:5" pos:end="443:27"><name pos:start="443:5" pos:end="443:19"><name pos:start="443:5" pos:end="443:8">luks</name><operator pos:start="443:9" pos:end="443:10">-&gt;</operator><name pos:start="443:11" pos:end="443:19">ivgen_alg</name></name> <operator pos:start="443:21" pos:end="443:21">=</operator> <name pos:start="443:23" pos:end="443:27">ivalg</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="445:5" pos:end="445:34"><expr pos:start="445:5" pos:end="445:33"><name pos:start="445:5" pos:end="445:24"><name pos:start="445:5" pos:end="445:8">luks</name><operator pos:start="445:9" pos:end="445:10">-&gt;</operator><name pos:start="445:11" pos:end="445:24">ivgen_hash_alg</name></name> <operator pos:start="445:26" pos:end="445:26">=</operator> <name pos:start="445:28" pos:end="445:33">ivhash</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="447:5" pos:end="447:26"><expr pos:start="447:5" pos:end="447:25"><name pos:start="447:5" pos:end="447:18"><name pos:start="447:5" pos:end="447:8">luks</name><operator pos:start="447:9" pos:end="447:10">-&gt;</operator><name pos:start="447:11" pos:end="447:18">hash_alg</name></name> <operator pos:start="447:20" pos:end="447:20">=</operator> <name pos:start="447:22" pos:end="447:25">hash</name></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="451:5" pos:end="451:22"><expr pos:start="451:5" pos:end="451:21"><call pos:start="451:5" pos:end="451:21"><name pos:start="451:5" pos:end="451:10">g_free</name><argument_list pos:start="451:11" pos:end="451:21">(<argument pos:start="451:12" pos:end="451:20"><expr pos:start="451:12" pos:end="451:20"><name pos:start="451:12" pos:end="451:20">masterkey</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="453:5" pos:end="453:21"><expr pos:start="453:5" pos:end="453:20"><call pos:start="453:5" pos:end="453:20"><name pos:start="453:5" pos:end="453:10">g_free</name><argument_list pos:start="453:11" pos:end="453:20">(<argument pos:start="453:12" pos:end="453:19"><expr pos:start="453:12" pos:end="453:19"><name pos:start="453:12" pos:end="453:19">password</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <return pos:start="457:5" pos:end="457:13">return <expr pos:start="457:12" pos:end="457:12"><literal type="number" pos:start="457:12" pos:end="457:12">0</literal></expr>;</return>
+
+
+
+ <label pos:start="461:2" pos:end="461:6"><name pos:start="461:2" pos:end="461:5">fail</name>:</label>
+
+    <expr_stmt pos:start="463:5" pos:end="463:22"><expr pos:start="463:5" pos:end="463:21"><call pos:start="463:5" pos:end="463:21"><name pos:start="463:5" pos:end="463:10">g_free</name><argument_list pos:start="463:11" pos:end="463:21">(<argument pos:start="463:12" pos:end="463:20"><expr pos:start="463:12" pos:end="463:20"><name pos:start="463:12" pos:end="463:20">masterkey</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="465:5" pos:end="465:39"><expr pos:start="465:5" pos:end="465:38"><call pos:start="465:5" pos:end="465:38"><name pos:start="465:5" pos:end="465:23">qcrypto_cipher_free</name><argument_list pos:start="465:24" pos:end="465:38">(<argument pos:start="465:25" pos:end="465:37"><expr pos:start="465:25" pos:end="465:37"><name pos:start="465:25" pos:end="465:37"><name pos:start="465:25" pos:end="465:29">block</name><operator pos:start="465:30" pos:end="465:31">-&gt;</operator><name pos:start="465:32" pos:end="465:37">cipher</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="467:5" pos:end="467:37"><expr pos:start="467:5" pos:end="467:36"><call pos:start="467:5" pos:end="467:36"><name pos:start="467:5" pos:end="467:22">qcrypto_ivgen_free</name><argument_list pos:start="467:23" pos:end="467:36">(<argument pos:start="467:24" pos:end="467:35"><expr pos:start="467:24" pos:end="467:35"><name pos:start="467:24" pos:end="467:35"><name pos:start="467:24" pos:end="467:28">block</name><operator pos:start="467:29" pos:end="467:30">-&gt;</operator><name pos:start="467:31" pos:end="467:35">ivgen</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="469:5" pos:end="469:17"><expr pos:start="469:5" pos:end="469:16"><call pos:start="469:5" pos:end="469:16"><name pos:start="469:5" pos:end="469:10">g_free</name><argument_list pos:start="469:11" pos:end="469:16">(<argument pos:start="469:12" pos:end="469:15"><expr pos:start="469:12" pos:end="469:15"><name pos:start="469:12" pos:end="469:15">luks</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="471:5" pos:end="471:21"><expr pos:start="471:5" pos:end="471:20"><call pos:start="471:5" pos:end="471:20"><name pos:start="471:5" pos:end="471:10">g_free</name><argument_list pos:start="471:11" pos:end="471:20">(<argument pos:start="471:12" pos:end="471:19"><expr pos:start="471:12" pos:end="471:19"><name pos:start="471:12" pos:end="471:19">password</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <return pos:start="473:5" pos:end="473:15">return <expr pos:start="473:12" pos:end="473:14"><name pos:start="473:12" pos:end="473:14">ret</name></expr>;</return>
+
+</block_content>}</block>
+</unit>

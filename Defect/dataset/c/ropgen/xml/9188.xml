@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/9188.c" pos:tabs="8"><function pos:start="1:1" pos:end="51:1"><type pos:start="1:1" pos:end="1:3"><name pos:start="1:1" pos:end="1:3">int</name></type> <name pos:start="1:5" pos:end="1:24">kvmppc_get_hypercall</name><parameter_list pos:start="1:25" pos:end="1:69">(<parameter pos:start="1:26" pos:end="1:41"><decl pos:start="1:26" pos:end="1:41"><type pos:start="1:26" pos:end="1:41"><name pos:start="1:26" pos:end="1:36">CPUPPCState</name> <modifier pos:start="1:38" pos:end="1:38">*</modifier></type><name pos:start="1:39" pos:end="1:41">env</name></decl></parameter>, <parameter pos:start="1:44" pos:end="1:55"><decl pos:start="1:44" pos:end="1:55"><type pos:start="1:44" pos:end="1:55"><name pos:start="1:44" pos:end="1:50">uint8_t</name> <modifier pos:start="1:52" pos:end="1:52">*</modifier></type><name pos:start="1:53" pos:end="1:55">buf</name></decl></parameter>, <parameter pos:start="1:58" pos:end="1:68"><decl pos:start="1:58" pos:end="1:68"><type pos:start="1:58" pos:end="1:68"><name pos:start="1:58" pos:end="1:60">int</name></type> <name pos:start="1:62" pos:end="1:68">buf_len</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="51:1">{<block_content pos:start="5:5" pos:end="49:13">
+
+    <decl_stmt pos:start="5:5" pos:end="5:34"><decl pos:start="5:5" pos:end="5:33"><type pos:start="5:5" pos:end="5:14"><name pos:start="5:5" pos:end="5:12">uint32_t</name> <modifier pos:start="5:14" pos:end="5:14">*</modifier></type><name pos:start="5:15" pos:end="5:16">hc</name> <init pos:start="5:18" pos:end="5:33">= <expr pos:start="5:20" pos:end="5:33"><operator pos:start="5:20" pos:end="5:20">(</operator><name pos:start="5:21" pos:end="5:28">uint32_t</name><operator pos:start="5:29" pos:end="5:29">*</operator><operator pos:start="5:30" pos:end="5:30">)</operator><name pos:start="5:31" pos:end="5:33">buf</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:33"><decl pos:start="7:5" pos:end="7:32"><type pos:start="7:5" pos:end="7:25"><name pos:start="7:5" pos:end="7:25"><name pos:start="7:5" pos:end="7:10">struct</name> <name pos:start="7:12" pos:end="7:25">kvm_ppc_pvinfo</name></name></type> <name pos:start="7:27" pos:end="7:32">pvinfo</name></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="11:5" pos:end="17:5"><if pos:start="11:5" pos:end="17:5">if <condition pos:start="11:8" pos:end="11:41">(<expr pos:start="11:9" pos:end="11:40"><operator pos:start="11:9" pos:end="11:9">!</operator><call pos:start="11:10" pos:end="11:40"><name pos:start="11:10" pos:end="11:26">kvmppc_get_pvinfo</name><argument_list pos:start="11:27" pos:end="11:40">(<argument pos:start="11:28" pos:end="11:30"><expr pos:start="11:28" pos:end="11:30"><name pos:start="11:28" pos:end="11:30">env</name></expr></argument>, <argument pos:start="11:33" pos:end="11:39"><expr pos:start="11:33" pos:end="11:39"><operator pos:start="11:33" pos:end="11:33">&amp;</operator><name pos:start="11:34" pos:end="11:39">pvinfo</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="11:43" pos:end="17:5">{<block_content pos:start="13:9" pos:end="15:17">
+
+        <expr_stmt pos:start="13:9" pos:end="13:43"><expr pos:start="13:9" pos:end="13:42"><call pos:start="13:9" pos:end="13:42"><name pos:start="13:9" pos:end="13:14">memcpy</name><argument_list pos:start="13:15" pos:end="13:42">(<argument pos:start="13:16" pos:end="13:18"><expr pos:start="13:16" pos:end="13:18"><name pos:start="13:16" pos:end="13:18">buf</name></expr></argument>, <argument pos:start="13:21" pos:end="13:32"><expr pos:start="13:21" pos:end="13:32"><name pos:start="13:21" pos:end="13:32"><name pos:start="13:21" pos:end="13:26">pvinfo</name><operator pos:start="13:27" pos:end="13:27">.</operator><name pos:start="13:28" pos:end="13:32">hcall</name></name></expr></argument>, <argument pos:start="13:35" pos:end="13:41"><expr pos:start="13:35" pos:end="13:41"><name pos:start="13:35" pos:end="13:41">buf_len</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="15:9" pos:end="15:17">return <expr pos:start="15:16" pos:end="15:16"><literal type="number" pos:start="15:16" pos:end="15:16">0</literal></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="21:5" pos:end="35:7">/*
+
+     * Fallback to always fail hypercalls regardless of endianness:
+
+     *
+
+     *     tdi 0,r0,72 (becomes b .+8 in wrong endian, nop in good endian)
+
+     *     li r3, -1
+
+     *     b .+8       (becomes nop in wrong endian)
+
+     *     bswap32(li r3, -1)
+
+     */</comment>
+
+
+
+    <expr_stmt pos:start="39:5" pos:end="39:36"><expr pos:start="39:5" pos:end="39:35"><name pos:start="39:5" pos:end="39:9"><name pos:start="39:5" pos:end="39:6">hc</name><index pos:start="39:7" pos:end="39:9">[<expr pos:start="39:8" pos:end="39:8"><literal type="number" pos:start="39:8" pos:end="39:8">0</literal></expr>]</index></name> <operator pos:start="39:11" pos:end="39:11">=</operator> <call pos:start="39:13" pos:end="39:35"><name pos:start="39:13" pos:end="39:23">cpu_to_be32</name><argument_list pos:start="39:24" pos:end="39:35">(<argument pos:start="39:25" pos:end="39:34"><expr pos:start="39:25" pos:end="39:34"><literal type="number" pos:start="39:25" pos:end="39:34">0x08000048</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="41:5" pos:end="41:36"><expr pos:start="41:5" pos:end="41:35"><name pos:start="41:5" pos:end="41:9"><name pos:start="41:5" pos:end="41:6">hc</name><index pos:start="41:7" pos:end="41:9">[<expr pos:start="41:8" pos:end="41:8"><literal type="number" pos:start="41:8" pos:end="41:8">1</literal></expr>]</index></name> <operator pos:start="41:11" pos:end="41:11">=</operator> <call pos:start="41:13" pos:end="41:35"><name pos:start="41:13" pos:end="41:23">cpu_to_be32</name><argument_list pos:start="41:24" pos:end="41:35">(<argument pos:start="41:25" pos:end="41:34"><expr pos:start="41:25" pos:end="41:34"><literal type="number" pos:start="41:25" pos:end="41:34">0x3860ffff</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="43:5" pos:end="43:36"><expr pos:start="43:5" pos:end="43:35"><name pos:start="43:5" pos:end="43:9"><name pos:start="43:5" pos:end="43:6">hc</name><index pos:start="43:7" pos:end="43:9">[<expr pos:start="43:8" pos:end="43:8"><literal type="number" pos:start="43:8" pos:end="43:8">2</literal></expr>]</index></name> <operator pos:start="43:11" pos:end="43:11">=</operator> <call pos:start="43:13" pos:end="43:35"><name pos:start="43:13" pos:end="43:23">cpu_to_be32</name><argument_list pos:start="43:24" pos:end="43:35">(<argument pos:start="43:25" pos:end="43:34"><expr pos:start="43:25" pos:end="43:34"><literal type="number" pos:start="43:25" pos:end="43:34">0x48000008</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="45:5" pos:end="45:45"><expr pos:start="45:5" pos:end="45:44"><name pos:start="45:5" pos:end="45:9"><name pos:start="45:5" pos:end="45:6">hc</name><index pos:start="45:7" pos:end="45:9">[<expr pos:start="45:8" pos:end="45:8"><literal type="number" pos:start="45:8" pos:end="45:8">3</literal></expr>]</index></name> <operator pos:start="45:11" pos:end="45:11">=</operator> <call pos:start="45:13" pos:end="45:44"><name pos:start="45:13" pos:end="45:23">cpu_to_be32</name><argument_list pos:start="45:24" pos:end="45:44">(<argument pos:start="45:25" pos:end="45:43"><expr pos:start="45:25" pos:end="45:43"><call pos:start="45:25" pos:end="45:43"><name pos:start="45:25" pos:end="45:31">bswap32</name><argument_list pos:start="45:32" pos:end="45:43">(<argument pos:start="45:33" pos:end="45:42"><expr pos:start="45:33" pos:end="45:42"><literal type="number" pos:start="45:33" pos:end="45:42">0x3860ffff</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <return pos:start="49:5" pos:end="49:13">return <expr pos:start="49:12" pos:end="49:12"><literal type="number" pos:start="49:12" pos:end="49:12">0</literal></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

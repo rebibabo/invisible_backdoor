@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/26905.c" pos:tabs="8"><function pos:start="1:1" pos:end="59:1"><type pos:start="1:1" pos:end="1:4"><name pos:start="1:1" pos:end="1:4">bool</name></type> <name pos:start="1:6" pos:end="1:20">net_tx_pkt_send</name><parameter_list pos:start="1:21" pos:end="1:62">(<parameter pos:start="1:22" pos:end="1:41"><decl pos:start="1:22" pos:end="1:41"><type pos:start="1:22" pos:end="1:41"><name pos:start="1:22" pos:end="1:36"><name pos:start="1:22" pos:end="1:27">struct</name> <name pos:start="1:29" pos:end="1:36">NetTxPkt</name></name> <modifier pos:start="1:38" pos:end="1:38">*</modifier></type><name pos:start="1:39" pos:end="1:41">pkt</name></decl></parameter>, <parameter pos:start="1:44" pos:end="1:61"><decl pos:start="1:44" pos:end="1:61"><type pos:start="1:44" pos:end="1:61"><name pos:start="1:44" pos:end="1:57">NetClientState</name> <modifier pos:start="1:59" pos:end="1:59">*</modifier></type><name pos:start="1:60" pos:end="1:61">nc</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="59:1">{<block_content pos:start="5:5" pos:end="57:51">
+
+    <expr_stmt pos:start="5:5" pos:end="5:16"><expr pos:start="5:5" pos:end="5:15"><call pos:start="5:5" pos:end="5:15"><name pos:start="5:5" pos:end="5:10">assert</name><argument_list pos:start="5:11" pos:end="5:15">(<argument pos:start="5:12" pos:end="5:14"><expr pos:start="5:12" pos:end="5:14"><name pos:start="5:12" pos:end="5:14">pkt</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="9:5" pos:end="15:5"><if pos:start="9:5" pos:end="15:5">if <condition pos:start="9:8" pos:end="11:58">(<expr pos:start="9:9" pos:end="11:57"><operator pos:start="9:9" pos:end="9:9">!</operator><name pos:start="9:10" pos:end="9:26"><name pos:start="9:10" pos:end="9:12">pkt</name><operator pos:start="9:13" pos:end="9:14">-&gt;</operator><name pos:start="9:15" pos:end="9:26">has_virt_hdr</name></name> <operator pos:start="9:28" pos:end="9:29">&amp;&amp;</operator>
+
+        <name pos:start="11:9" pos:end="11:27"><name pos:start="11:9" pos:end="11:11">pkt</name><operator pos:start="11:12" pos:end="11:13">-&gt;</operator><name pos:start="11:14" pos:end="11:21">virt_hdr</name><operator pos:start="11:22" pos:end="11:22">.</operator><name pos:start="11:23" pos:end="11:27">flags</name></name> <operator pos:start="11:29" pos:end="11:29">&amp;</operator> <name pos:start="11:31" pos:end="11:57">VIRTIO_NET_HDR_F_NEEDS_CSUM</name></expr>)</condition> <block pos:start="11:60" pos:end="15:5">{<block_content pos:start="13:9" pos:end="13:35">
+
+        <expr_stmt pos:start="13:9" pos:end="13:35"><expr pos:start="13:9" pos:end="13:34"><call pos:start="13:9" pos:end="13:34"><name pos:start="13:9" pos:end="13:29">net_tx_pkt_do_sw_csum</name><argument_list pos:start="13:30" pos:end="13:34">(<argument pos:start="13:31" pos:end="13:33"><expr pos:start="13:31" pos:end="13:33"><name pos:start="13:31" pos:end="13:33">pkt</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="19:5" pos:end="25:7">/*
+
+     * Since underlying infrastructure does not support IP datagrams longer
+
+     * than 64K we should drop such packets and don't even try to send
+
+     */</comment>
+
+    <if_stmt pos:start="27:5" pos:end="39:5"><if pos:start="27:5" pos:end="39:5">if <condition pos:start="27:8" pos:end="27:58">(<expr pos:start="27:9" pos:end="27:57"><name pos:start="27:9" pos:end="27:31">VIRTIO_NET_HDR_GSO_NONE</name> <operator pos:start="27:33" pos:end="27:34">!=</operator> <name pos:start="27:36" pos:end="27:57"><name pos:start="27:36" pos:end="27:38">pkt</name><operator pos:start="27:39" pos:end="27:40">-&gt;</operator><name pos:start="27:41" pos:end="27:48">virt_hdr</name><operator pos:start="27:49" pos:end="27:49">.</operator><name pos:start="27:50" pos:end="27:57">gso_type</name></name></expr>)</condition> <block pos:start="27:60" pos:end="39:5">{<block_content pos:start="29:9" pos:end="37:9">
+
+        <if_stmt pos:start="29:9" pos:end="37:9"><if pos:start="29:9" pos:end="37:9">if <condition pos:start="29:12" pos:end="33:52">(<expr pos:start="29:13" pos:end="33:51"><name pos:start="29:13" pos:end="29:28"><name pos:start="29:13" pos:end="29:15">pkt</name><operator pos:start="29:16" pos:end="29:17">-&gt;</operator><name pos:start="29:18" pos:end="29:28">payload_len</name></name> <operator pos:start="29:30" pos:end="29:30">&gt;</operator>
+
+            <name pos:start="31:13" pos:end="31:32">ETH_MAX_IP_DGRAM_LEN</name> <operator pos:start="31:34" pos:end="31:34">-</operator>
+
+            <name pos:start="33:13" pos:end="33:43"><name pos:start="33:13" pos:end="33:15">pkt</name><operator pos:start="33:16" pos:end="33:17">-&gt;</operator><name pos:start="33:18" pos:end="33:20">vec</name><index pos:start="33:21" pos:end="33:43">[<expr pos:start="33:22" pos:end="33:42"><name pos:start="33:22" pos:end="33:42">NET_TX_PKT_L3HDR_FRAG</name></expr>]</index></name><operator pos:start="33:44" pos:end="33:44">.</operator><name pos:start="33:45" pos:end="33:51">iov_len</name></expr>)</condition> <block pos:start="33:54" pos:end="37:9">{<block_content pos:start="35:13" pos:end="35:25">
+
+            <return pos:start="35:13" pos:end="35:25">return <expr pos:start="35:20" pos:end="35:24"><name pos:start="35:20" pos:end="35:24">false</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="43:5" pos:end="53:5"><if pos:start="43:5" pos:end="53:5">if <condition pos:start="43:8" pos:end="45:58">(<expr pos:start="43:9" pos:end="45:57"><name pos:start="43:9" pos:end="43:25"><name pos:start="43:9" pos:end="43:11">pkt</name><operator pos:start="43:12" pos:end="43:13">-&gt;</operator><name pos:start="43:14" pos:end="43:25">has_virt_hdr</name></name> <operator pos:start="43:27" pos:end="43:28">||</operator>
+
+        <name pos:start="45:9" pos:end="45:30"><name pos:start="45:9" pos:end="45:11">pkt</name><operator pos:start="45:12" pos:end="45:13">-&gt;</operator><name pos:start="45:14" pos:end="45:21">virt_hdr</name><operator pos:start="45:22" pos:end="45:22">.</operator><name pos:start="45:23" pos:end="45:30">gso_type</name></name> <operator pos:start="45:32" pos:end="45:33">==</operator> <name pos:start="45:35" pos:end="45:57">VIRTIO_NET_HDR_GSO_NONE</name></expr>)</condition> <block pos:start="45:60" pos:end="53:5">{<block_content pos:start="47:9" pos:end="51:20">
+
+        <expr_stmt pos:start="47:9" pos:end="49:59"><expr pos:start="47:9" pos:end="49:58"><call pos:start="47:9" pos:end="49:58"><name pos:start="47:9" pos:end="47:25">qemu_sendv_packet</name><argument_list pos:start="47:26" pos:end="49:58">(<argument pos:start="47:27" pos:end="47:28"><expr pos:start="47:27" pos:end="47:28"><name pos:start="47:27" pos:end="47:28">nc</name></expr></argument>, <argument pos:start="47:31" pos:end="47:38"><expr pos:start="47:31" pos:end="47:38"><name pos:start="47:31" pos:end="47:38"><name pos:start="47:31" pos:end="47:33">pkt</name><operator pos:start="47:34" pos:end="47:35">-&gt;</operator><name pos:start="47:36" pos:end="47:38">vec</name></name></expr></argument>,
+
+            <argument pos:start="49:13" pos:end="49:57"><expr pos:start="49:13" pos:end="49:57"><name pos:start="49:13" pos:end="49:30"><name pos:start="49:13" pos:end="49:15">pkt</name><operator pos:start="49:16" pos:end="49:17">-&gt;</operator><name pos:start="49:18" pos:end="49:30">payload_frags</name></name> <operator pos:start="49:32" pos:end="49:32">+</operator> <name pos:start="49:34" pos:end="49:57">NET_TX_PKT_PL_START_FRAG</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="51:9" pos:end="51:20">return <expr pos:start="51:16" pos:end="51:19"><name pos:start="51:16" pos:end="51:19">true</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <return pos:start="57:5" pos:end="57:51">return <expr pos:start="57:12" pos:end="57:50"><call pos:start="57:12" pos:end="57:50"><name pos:start="57:12" pos:end="57:41">net_tx_pkt_do_sw_fragmentation</name><argument_list pos:start="57:42" pos:end="57:50">(<argument pos:start="57:43" pos:end="57:45"><expr pos:start="57:43" pos:end="57:45"><name pos:start="57:43" pos:end="57:45">pkt</name></expr></argument>, <argument pos:start="57:48" pos:end="57:49"><expr pos:start="57:48" pos:end="57:49"><name pos:start="57:48" pos:end="57:49">nc</name></expr></argument>)</argument_list></call></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

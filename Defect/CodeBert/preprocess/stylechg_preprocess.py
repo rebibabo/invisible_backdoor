@@ -137,7 +137,7 @@ def precess_java(input_file_path, output_directory):
             except:
                 continue
 
-from get_transform import transform_10
+
 if __name__ == '__main__':
     domain_root = './dataset/ropgen/origin'
     aug_program_save_path = './dataset/ropgen/aug'
@@ -152,7 +152,7 @@ if __name__ == '__main__':
     #precess_java("../invisible_backdoor/datasets/codesearch/java/raw_train_java.txt", \
      #           "../invisible_backdoor/datasets/codesearch/java/files")
     
-    # get_total_style(domain_root, aug_program_save_path, xml_save_path, style_save_path)
+    get_total_style(domain_root, aug_program_save_path, xml_save_path, style_save_path)
     
     # tot, num = count_tot_program_style_max(style_save_path)
     # for i in [1, 5, 6, 7, 8, 10, 19, 20, 21, 22]:

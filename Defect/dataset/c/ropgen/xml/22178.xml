@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/22178.c" pos:tabs="8"><function pos:start="1:1" pos:end="35:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:30">virtqueue_num_heads</name><parameter_list pos:start="1:31" pos:end="1:63">(<parameter pos:start="1:32" pos:end="1:44"><decl pos:start="1:32" pos:end="1:44"><type pos:start="1:32" pos:end="1:44"><name pos:start="1:32" pos:end="1:40">VirtQueue</name> <modifier pos:start="1:42" pos:end="1:42">*</modifier></type><name pos:start="1:43" pos:end="1:44">vq</name></decl></parameter>, <parameter pos:start="1:47" pos:end="1:62"><decl pos:start="1:47" pos:end="1:62"><type pos:start="1:47" pos:end="1:62"><name pos:start="1:47" pos:end="1:54">unsigned</name> <name pos:start="1:56" pos:end="1:58">int</name></type> <name pos:start="1:60" pos:end="1:62">idx</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="35:1">{<block_content pos:start="5:5" pos:end="33:21">
+
+    <decl_stmt pos:start="5:5" pos:end="5:51"><decl pos:start="5:5" pos:end="5:50"><type pos:start="5:5" pos:end="5:12"><name pos:start="5:5" pos:end="5:12">uint16_t</name></type> <name pos:start="5:14" pos:end="5:22">num_heads</name> <init pos:start="5:24" pos:end="5:50">= <expr pos:start="5:26" pos:end="5:50"><call pos:start="5:26" pos:end="5:44"><name pos:start="5:26" pos:end="5:40">vring_avail_idx</name><argument_list pos:start="5:41" pos:end="5:44">(<argument pos:start="5:42" pos:end="5:43"><expr pos:start="5:42" pos:end="5:43"><name pos:start="5:42" pos:end="5:43">vq</name></expr></argument>)</argument_list></call> <operator pos:start="5:46" pos:end="5:46">-</operator> <name pos:start="5:48" pos:end="5:50">idx</name></expr></init></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="9:5" pos:end="9:75">/* Check it isn't doing very strange things with descriptor numbers. */</comment>
+
+    <if_stmt pos:start="11:5" pos:end="19:5"><if pos:start="11:5" pos:end="19:5">if <condition pos:start="11:8" pos:end="11:34">(<expr pos:start="11:9" pos:end="11:33"><name pos:start="11:9" pos:end="11:17">num_heads</name> <operator pos:start="11:19" pos:end="11:19">&gt;</operator> <name pos:start="11:21" pos:end="11:33"><name pos:start="11:21" pos:end="11:22">vq</name><operator pos:start="11:23" pos:end="11:24">-&gt;</operator><name pos:start="11:25" pos:end="11:29">vring</name><operator pos:start="11:30" pos:end="11:30">.</operator><name pos:start="11:31" pos:end="11:33">num</name></name></expr>)</condition> <block pos:start="11:36" pos:end="19:5">{<block_content pos:start="13:9" pos:end="17:16">
+
+        <expr_stmt pos:start="13:9" pos:end="15:47"><expr pos:start="13:9" pos:end="15:46"><call pos:start="13:9" pos:end="15:46"><name pos:start="13:9" pos:end="13:20">error_report</name><argument_list pos:start="13:21" pos:end="15:46">(<argument pos:start="13:22" pos:end="13:59"><expr pos:start="13:22" pos:end="13:59"><literal type="string" pos:start="13:22" pos:end="13:59">"Guest moved used index from %u to %u"</literal></expr></argument>,
+
+                     <argument pos:start="15:22" pos:end="15:24"><expr pos:start="15:22" pos:end="15:24"><name pos:start="15:22" pos:end="15:24">idx</name></expr></argument>, <argument pos:start="15:27" pos:end="15:45"><expr pos:start="15:27" pos:end="15:45"><call pos:start="15:27" pos:end="15:45"><name pos:start="15:27" pos:end="15:41">vring_avail_idx</name><argument_list pos:start="15:42" pos:end="15:45">(<argument pos:start="15:43" pos:end="15:44"><expr pos:start="15:43" pos:end="15:44"><name pos:start="15:43" pos:end="15:44">vq</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="17:9" pos:end="17:16"><expr pos:start="17:9" pos:end="17:15"><call pos:start="17:9" pos:end="17:15"><name pos:start="17:9" pos:end="17:12">exit</name><argument_list pos:start="17:13" pos:end="17:15">(<argument pos:start="17:14" pos:end="17:14"><expr pos:start="17:14" pos:end="17:14"><literal type="number" pos:start="17:14" pos:end="17:14">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <comment type="block" pos:start="21:5" pos:end="23:69">/* On success, callers read a descriptor at vq-&gt;last_avail_idx.
+
+     * Make sure descriptor read does not bypass avail index read. */</comment>
+
+    <if_stmt pos:start="25:5" pos:end="29:5"><if pos:start="25:5" pos:end="29:5">if <condition pos:start="25:8" pos:end="25:18">(<expr pos:start="25:9" pos:end="25:17"><name pos:start="25:9" pos:end="25:17">num_heads</name></expr>)</condition> <block pos:start="25:20" pos:end="29:5">{<block_content pos:start="27:9" pos:end="27:18">
+
+        <expr_stmt pos:start="27:9" pos:end="27:18"><expr pos:start="27:9" pos:end="27:17"><call pos:start="27:9" pos:end="27:17"><name pos:start="27:9" pos:end="27:15">smp_rmb</name><argument_list pos:start="27:16" pos:end="27:17">()</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <return pos:start="33:5" pos:end="33:21">return <expr pos:start="33:12" pos:end="33:20"><name pos:start="33:12" pos:end="33:20">num_heads</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

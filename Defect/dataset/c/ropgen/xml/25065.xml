@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/25065.c" pos:tabs="8"><function pos:start="1:1" pos:end="175:1"><type pos:start="1:1" pos:end="1:3"><name pos:start="1:1" pos:end="1:3">int</name></type> <name pos:start="1:5" pos:end="1:26">ff_thread_decode_frame</name><parameter_list pos:start="1:27" pos:end="5:43">(<parameter pos:start="1:28" pos:end="1:48"><decl pos:start="1:28" pos:end="1:48"><type pos:start="1:28" pos:end="1:48"><name pos:start="1:28" pos:end="1:41">AVCodecContext</name> <modifier pos:start="1:43" pos:end="1:43">*</modifier></type><name pos:start="1:44" pos:end="1:48">avctx</name></decl></parameter>,
+
+                           <parameter pos:start="3:28" pos:end="3:43"><decl pos:start="3:28" pos:end="3:43"><type pos:start="3:28" pos:end="3:43"><name pos:start="3:28" pos:end="3:34">AVFrame</name> <modifier pos:start="3:36" pos:end="3:36">*</modifier></type><name pos:start="3:37" pos:end="3:43">picture</name></decl></parameter>, <parameter pos:start="3:46" pos:end="3:65"><decl pos:start="3:46" pos:end="3:65"><type pos:start="3:46" pos:end="3:65"><name pos:start="3:46" pos:end="3:48">int</name> <modifier pos:start="3:50" pos:end="3:50">*</modifier></type><name pos:start="3:51" pos:end="3:65">got_picture_ptr</name></decl></parameter>,
+
+                           <parameter pos:start="5:28" pos:end="5:42"><decl pos:start="5:28" pos:end="5:42"><type pos:start="5:28" pos:end="5:42"><name pos:start="5:28" pos:end="5:35">AVPacket</name> <modifier pos:start="5:37" pos:end="5:37">*</modifier></type><name pos:start="5:38" pos:end="5:42">avpkt</name></decl></parameter>)</parameter_list>
+
+<block pos:start="7:1" pos:end="175:1">{<block_content pos:start="9:5" pos:end="173:15">
+
+    <decl_stmt pos:start="9:5" pos:end="9:59"><decl pos:start="9:5" pos:end="9:58"><type pos:start="9:5" pos:end="9:24"><name pos:start="9:5" pos:end="9:22">FrameThreadContext</name> <modifier pos:start="9:24" pos:end="9:24">*</modifier></type><name pos:start="9:25" pos:end="9:28">fctx</name> <init pos:start="9:30" pos:end="9:58">= <expr pos:start="9:32" pos:end="9:58"><name pos:start="9:32" pos:end="9:58"><name pos:start="9:32" pos:end="9:36">avctx</name><operator pos:start="9:37" pos:end="9:38">-&gt;</operator><name pos:start="9:39" pos:end="9:46">internal</name><operator pos:start="9:47" pos:end="9:48">-&gt;</operator><name pos:start="9:49" pos:end="9:58">thread_ctx</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:39"><decl pos:start="11:5" pos:end="11:38"><type pos:start="11:5" pos:end="11:7"><name pos:start="11:5" pos:end="11:7">int</name></type> <name pos:start="11:9" pos:end="11:16">finished</name> <init pos:start="11:18" pos:end="11:38">= <expr pos:start="11:20" pos:end="11:38"><name pos:start="11:20" pos:end="11:38"><name pos:start="11:20" pos:end="11:23">fctx</name><operator pos:start="11:24" pos:end="11:25">-&gt;</operator><name pos:start="11:26" pos:end="11:38">next_finished</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:24"><decl pos:start="13:5" pos:end="13:23"><type pos:start="13:5" pos:end="13:22"><name pos:start="13:5" pos:end="13:20">PerThreadContext</name> <modifier pos:start="13:22" pos:end="13:22">*</modifier></type><name pos:start="13:23" pos:end="13:23">p</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:12"><decl pos:start="15:5" pos:end="15:11"><type pos:start="15:5" pos:end="15:7"><name pos:start="15:5" pos:end="15:7">int</name></type> <name pos:start="15:9" pos:end="15:11">err</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="19:5" pos:end="21:50">/* release the async lock, permitting blocked hwaccel threads to
+
+     * go forward while we are in this function */</comment>
+
+    <expr_stmt pos:start="23:5" pos:end="23:23"><expr pos:start="23:5" pos:end="23:22"><call pos:start="23:5" pos:end="23:22"><name pos:start="23:5" pos:end="23:16">async_unlock</name><argument_list pos:start="23:17" pos:end="23:22">(<argument pos:start="23:18" pos:end="23:21"><expr pos:start="23:18" pos:end="23:21"><name pos:start="23:18" pos:end="23:21">fctx</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="27:5" pos:end="31:7">/*
+
+     * Submit a packet to the next decoding thread.
+
+     */</comment>
+
+
+
+    <expr_stmt pos:start="35:5" pos:end="35:44"><expr pos:start="35:5" pos:end="35:43"><name pos:start="35:5" pos:end="35:5">p</name> <operator pos:start="35:7" pos:end="35:7">=</operator> <operator pos:start="35:9" pos:end="35:9">&amp;</operator><name pos:start="35:10" pos:end="35:43"><name pos:start="35:10" pos:end="35:13">fctx</name><operator pos:start="35:14" pos:end="35:15">-&gt;</operator><name pos:start="35:16" pos:end="35:22">threads</name><index pos:start="35:23" pos:end="35:43">[<expr pos:start="35:24" pos:end="35:42"><name pos:start="35:24" pos:end="35:42"><name pos:start="35:24" pos:end="35:27">fctx</name><operator pos:start="35:28" pos:end="35:29">-&gt;</operator><name pos:start="35:30" pos:end="35:42">next_decoding</name></name></expr>]</index></name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="37:5" pos:end="37:52"><expr pos:start="37:5" pos:end="37:51"><name pos:start="37:5" pos:end="37:7">err</name> <operator pos:start="37:9" pos:end="37:9">=</operator> <call pos:start="37:11" pos:end="37:51"><name pos:start="37:11" pos:end="37:34">update_context_from_user</name><argument_list pos:start="37:35" pos:end="37:51">(<argument pos:start="37:36" pos:end="37:43"><expr pos:start="37:36" pos:end="37:43"><name pos:start="37:36" pos:end="37:43"><name pos:start="37:36" pos:end="37:36">p</name><operator pos:start="37:37" pos:end="37:38">-&gt;</operator><name pos:start="37:39" pos:end="37:43">avctx</name></name></expr></argument>, <argument pos:start="37:46" pos:end="37:50"><expr pos:start="37:46" pos:end="37:50"><name pos:start="37:46" pos:end="37:50">avctx</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="39:5" pos:end="41:20"><if pos:start="39:5" pos:end="41:20">if <condition pos:start="39:8" pos:end="39:12">(<expr pos:start="39:9" pos:end="39:11"><name pos:start="39:9" pos:end="39:11">err</name></expr>)</condition><block type="pseudo" pos:start="41:9" pos:end="41:20"><block_content pos:start="41:9" pos:end="41:20">
+
+        <goto pos:start="41:9" pos:end="41:20">goto <name pos:start="41:14" pos:end="41:19">finish</name>;</goto></block_content></block></if></if_stmt>
+
+    <expr_stmt pos:start="43:5" pos:end="43:34"><expr pos:start="43:5" pos:end="43:33"><name pos:start="43:5" pos:end="43:7">err</name> <operator pos:start="43:9" pos:end="43:9">=</operator> <call pos:start="43:11" pos:end="43:33"><name pos:start="43:11" pos:end="43:23">submit_packet</name><argument_list pos:start="43:24" pos:end="43:33">(<argument pos:start="43:25" pos:end="43:25"><expr pos:start="43:25" pos:end="43:25"><name pos:start="43:25" pos:end="43:25">p</name></expr></argument>, <argument pos:start="43:28" pos:end="43:32"><expr pos:start="43:28" pos:end="43:32"><name pos:start="43:28" pos:end="43:32">avpkt</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="45:5" pos:end="47:20"><if pos:start="45:5" pos:end="47:20">if <condition pos:start="45:8" pos:end="45:12">(<expr pos:start="45:9" pos:end="45:11"><name pos:start="45:9" pos:end="45:11">err</name></expr>)</condition><block type="pseudo" pos:start="47:9" pos:end="47:20"><block_content pos:start="47:9" pos:end="47:20">
+
+        <goto pos:start="47:9" pos:end="47:20">goto <name pos:start="47:14" pos:end="47:19">finish</name>;</goto></block_content></block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="51:5" pos:end="55:7">/*
+
+     * If we're still receiving the initial packets, don't return a frame.
+
+     */</comment>
+
+
+
+    <if_stmt pos:start="59:5" pos:end="61:27"><if pos:start="59:5" pos:end="61:27">if <condition pos:start="59:8" pos:end="59:92">(<expr pos:start="59:9" pos:end="59:91"><name pos:start="59:9" pos:end="59:27"><name pos:start="59:9" pos:end="59:12">fctx</name><operator pos:start="59:13" pos:end="59:14">-&gt;</operator><name pos:start="59:15" pos:end="59:27">next_decoding</name></name> <operator pos:start="59:29" pos:end="59:29">&gt;</operator> <operator pos:start="59:31" pos:end="59:31">(</operator><name pos:start="59:32" pos:end="59:50"><name pos:start="59:32" pos:end="59:36">avctx</name><operator pos:start="59:37" pos:end="59:38">-&gt;</operator><name pos:start="59:39" pos:end="59:50">thread_count</name></name><operator pos:start="59:51" pos:end="59:51">-</operator><literal type="number" pos:start="59:52" pos:end="59:53">1</literal><operator pos:start="59:53" pos:end="59:53">-</operator><operator pos:start="59:54" pos:end="59:54">(</operator><name pos:start="59:55" pos:end="59:69"><name pos:start="59:55" pos:end="59:59">avctx</name><operator pos:start="59:60" pos:end="59:61">-&gt;</operator><name pos:start="59:62" pos:end="59:69">codec_id</name></name> <operator pos:start="59:71" pos:end="59:72">==</operator> <name pos:start="59:74" pos:end="59:89">AV_CODEC_ID_FFV1</name><operator pos:start="59:90" pos:end="59:90">)</operator><operator pos:start="59:91" pos:end="59:91">)</operator></expr>)</condition><block type="pseudo" pos:start="61:9" pos:end="61:27"><block_content pos:start="61:9" pos:end="61:27">
+
+        <expr_stmt pos:start="61:9" pos:end="61:27"><expr pos:start="61:9" pos:end="61:26"><name pos:start="61:9" pos:end="61:22"><name pos:start="61:9" pos:end="61:12">fctx</name><operator pos:start="61:13" pos:end="61:14">-&gt;</operator><name pos:start="61:15" pos:end="61:22">delaying</name></name> <operator pos:start="61:24" pos:end="61:24">=</operator> <literal type="number" pos:start="61:26" pos:end="61:26">0</literal></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="65:5" pos:end="77:5"><if pos:start="65:5" pos:end="77:5">if <condition pos:start="65:8" pos:end="65:23">(<expr pos:start="65:9" pos:end="65:22"><name pos:start="65:9" pos:end="65:22"><name pos:start="65:9" pos:end="65:12">fctx</name><operator pos:start="65:13" pos:end="65:14">-&gt;</operator><name pos:start="65:15" pos:end="65:22">delaying</name></name></expr>)</condition> <block pos:start="65:25" pos:end="77:5">{<block_content pos:start="67:9" pos:end="75:9">
+
+        <expr_stmt pos:start="67:9" pos:end="67:27"><expr pos:start="67:9" pos:end="67:26"><operator pos:start="67:9" pos:end="67:9">*</operator><name pos:start="67:10" pos:end="67:24">got_picture_ptr</name><operator pos:start="67:25" pos:end="67:25">=</operator><literal type="number" pos:start="67:26" pos:end="67:26">0</literal></expr>;</expr_stmt>
+
+        <if_stmt pos:start="69:9" pos:end="75:9"><if pos:start="69:9" pos:end="75:9">if <condition pos:start="69:12" pos:end="69:24">(<expr pos:start="69:13" pos:end="69:23"><name pos:start="69:13" pos:end="69:23"><name pos:start="69:13" pos:end="69:17">avpkt</name><operator pos:start="69:18" pos:end="69:19">-&gt;</operator><name pos:start="69:20" pos:end="69:23">size</name></name></expr>)</condition> <block pos:start="69:26" pos:end="75:9">{<block_content pos:start="71:13" pos:end="73:24">
+
+            <expr_stmt pos:start="71:13" pos:end="71:30"><expr pos:start="71:13" pos:end="71:29"><name pos:start="71:13" pos:end="71:15">err</name> <operator pos:start="71:17" pos:end="71:17">=</operator> <name pos:start="71:19" pos:end="71:29"><name pos:start="71:19" pos:end="71:23">avpkt</name><operator pos:start="71:24" pos:end="71:25">-&gt;</operator><name pos:start="71:26" pos:end="71:29">size</name></name></expr>;</expr_stmt>
+
+            <goto pos:start="73:13" pos:end="73:24">goto <name pos:start="73:18" pos:end="73:23">finish</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="81:5" pos:end="91:7">/*
+
+     * Return the next available frame from the oldest thread.
+
+     * If we're at the end of the stream, then we have to skip threads that
+
+     * didn't output a frame, because we don't want to accidentally signal
+
+     * EOF (avpkt-&gt;size == 0 &amp;&amp; *got_picture_ptr == 0).
+
+     */</comment>
+
+
+
+    <do pos:start="95:5" pos:end="147:83">do <block pos:start="95:8" pos:end="147:5">{<block_content pos:start="97:9" pos:end="145:58">
+
+        <expr_stmt pos:start="97:9" pos:end="97:39"><expr pos:start="97:9" pos:end="97:38"><name pos:start="97:9" pos:end="97:9">p</name> <operator pos:start="97:11" pos:end="97:11">=</operator> <operator pos:start="97:13" pos:end="97:13">&amp;</operator><name pos:start="97:14" pos:end="97:38"><name pos:start="97:14" pos:end="97:17">fctx</name><operator pos:start="97:18" pos:end="97:19">-&gt;</operator><name pos:start="97:20" pos:end="97:26">threads</name><index pos:start="97:27" pos:end="97:38">[<expr pos:start="97:28" pos:end="97:37"><name pos:start="97:28" pos:end="97:35">finished</name><operator pos:start="97:36" pos:end="97:37">++</operator></expr>]</index></name></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="101:9" pos:end="111:9"><if pos:start="101:9" pos:end="111:9">if <condition pos:start="101:12" pos:end="101:56">(<expr pos:start="101:13" pos:end="101:55"><call pos:start="101:13" pos:end="101:34"><name pos:start="101:13" pos:end="101:23">atomic_load</name><argument_list pos:start="101:24" pos:end="101:34">(<argument pos:start="101:25" pos:end="101:33"><expr pos:start="101:25" pos:end="101:33"><operator pos:start="101:25" pos:end="101:25">&amp;</operator><name pos:start="101:26" pos:end="101:33"><name pos:start="101:26" pos:end="101:26">p</name><operator pos:start="101:27" pos:end="101:28">-&gt;</operator><name pos:start="101:29" pos:end="101:33">state</name></name></expr></argument>)</argument_list></call> <operator pos:start="101:36" pos:end="101:37">!=</operator> <name pos:start="101:39" pos:end="101:55">STATE_INPUT_READY</name></expr>)</condition> <block pos:start="101:58" pos:end="111:9">{<block_content pos:start="103:13" pos:end="109:53">
+
+            <expr_stmt pos:start="103:13" pos:end="103:51"><expr pos:start="103:13" pos:end="103:50"><call pos:start="103:13" pos:end="103:50"><name pos:start="103:13" pos:end="103:30">pthread_mutex_lock</name><argument_list pos:start="103:31" pos:end="103:50">(<argument pos:start="103:32" pos:end="103:49"><expr pos:start="103:32" pos:end="103:49"><operator pos:start="103:32" pos:end="103:32">&amp;</operator><name pos:start="103:33" pos:end="103:49"><name pos:start="103:33" pos:end="103:33">p</name><operator pos:start="103:34" pos:end="103:35">-&gt;</operator><name pos:start="103:36" pos:end="103:49">progress_mutex</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <while pos:start="105:13" pos:end="107:71">while <condition pos:start="105:19" pos:end="105:94">(<expr pos:start="105:20" pos:end="105:93"><call pos:start="105:20" pos:end="105:72"><name pos:start="105:20" pos:end="105:39">atomic_load_explicit</name><argument_list pos:start="105:40" pos:end="105:72">(<argument pos:start="105:41" pos:end="105:49"><expr pos:start="105:41" pos:end="105:49"><operator pos:start="105:41" pos:end="105:41">&amp;</operator><name pos:start="105:42" pos:end="105:49"><name pos:start="105:42" pos:end="105:42">p</name><operator pos:start="105:43" pos:end="105:44">-&gt;</operator><name pos:start="105:45" pos:end="105:49">state</name></name></expr></argument>, <argument pos:start="105:52" pos:end="105:71"><expr pos:start="105:52" pos:end="105:71"><name pos:start="105:52" pos:end="105:71">memory_order_relaxed</name></expr></argument>)</argument_list></call> <operator pos:start="105:74" pos:end="105:75">!=</operator> <name pos:start="105:77" pos:end="105:93">STATE_INPUT_READY</name></expr>)</condition><block type="pseudo" pos:start="107:17" pos:end="107:71"><block_content pos:start="107:17" pos:end="107:71">
+
+                <expr_stmt pos:start="107:17" pos:end="107:71"><expr pos:start="107:17" pos:end="107:70"><call pos:start="107:17" pos:end="107:70"><name pos:start="107:17" pos:end="107:33">pthread_cond_wait</name><argument_list pos:start="107:34" pos:end="107:70">(<argument pos:start="107:35" pos:end="107:49"><expr pos:start="107:35" pos:end="107:49"><operator pos:start="107:35" pos:end="107:35">&amp;</operator><name pos:start="107:36" pos:end="107:49"><name pos:start="107:36" pos:end="107:36">p</name><operator pos:start="107:37" pos:end="107:38">-&gt;</operator><name pos:start="107:39" pos:end="107:49">output_cond</name></name></expr></argument>, <argument pos:start="107:52" pos:end="107:69"><expr pos:start="107:52" pos:end="107:69"><operator pos:start="107:52" pos:end="107:52">&amp;</operator><name pos:start="107:53" pos:end="107:69"><name pos:start="107:53" pos:end="107:53">p</name><operator pos:start="107:54" pos:end="107:55">-&gt;</operator><name pos:start="107:56" pos:end="107:69">progress_mutex</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></while>
+
+            <expr_stmt pos:start="109:13" pos:end="109:53"><expr pos:start="109:13" pos:end="109:52"><call pos:start="109:13" pos:end="109:52"><name pos:start="109:13" pos:end="109:32">pthread_mutex_unlock</name><argument_list pos:start="109:33" pos:end="109:52">(<argument pos:start="109:34" pos:end="109:51"><expr pos:start="109:34" pos:end="109:51"><operator pos:start="109:34" pos:end="109:34">&amp;</operator><name pos:start="109:35" pos:end="109:51"><name pos:start="109:35" pos:end="109:35">p</name><operator pos:start="109:36" pos:end="109:37">-&gt;</operator><name pos:start="109:38" pos:end="109:51">progress_mutex</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="115:9" pos:end="115:45"><expr pos:start="115:9" pos:end="115:44"><call pos:start="115:9" pos:end="115:44"><name pos:start="115:9" pos:end="115:25">av_frame_move_ref</name><argument_list pos:start="115:26" pos:end="115:44">(<argument pos:start="115:27" pos:end="115:33"><expr pos:start="115:27" pos:end="115:33"><name pos:start="115:27" pos:end="115:33">picture</name></expr></argument>, <argument pos:start="115:36" pos:end="115:43"><expr pos:start="115:36" pos:end="115:43"><name pos:start="115:36" pos:end="115:43"><name pos:start="115:36" pos:end="115:36">p</name><operator pos:start="115:37" pos:end="115:38">-&gt;</operator><name pos:start="115:39" pos:end="115:43">frame</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="117:9" pos:end="117:40"><expr pos:start="117:9" pos:end="117:39"><operator pos:start="117:9" pos:end="117:9">*</operator><name pos:start="117:10" pos:end="117:24">got_picture_ptr</name> <operator pos:start="117:26" pos:end="117:26">=</operator> <name pos:start="117:28" pos:end="117:39"><name pos:start="117:28" pos:end="117:28">p</name><operator pos:start="117:29" pos:end="117:30">-&gt;</operator><name pos:start="117:31" pos:end="117:39">got_frame</name></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="119:9" pos:end="119:40"><expr pos:start="119:9" pos:end="119:39"><name pos:start="119:9" pos:end="119:24"><name pos:start="119:9" pos:end="119:15">picture</name><operator pos:start="119:16" pos:end="119:17">-&gt;</operator><name pos:start="119:18" pos:end="119:24">pkt_dts</name></name> <operator pos:start="119:26" pos:end="119:26">=</operator> <name pos:start="119:28" pos:end="119:39"><name pos:start="119:28" pos:end="119:28">p</name><operator pos:start="119:29" pos:end="119:30">-&gt;</operator><name pos:start="119:31" pos:end="119:35">avpkt</name><operator pos:start="119:36" pos:end="119:36">.</operator><name pos:start="119:37" pos:end="119:39">dts</name></name></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="123:9" pos:end="125:28"><if pos:start="123:9" pos:end="125:28">if <condition pos:start="123:12" pos:end="123:26">(<expr pos:start="123:13" pos:end="123:25"><name pos:start="123:13" pos:end="123:21"><name pos:start="123:13" pos:end="123:13">p</name><operator pos:start="123:14" pos:end="123:15">-&gt;</operator><name pos:start="123:16" pos:end="123:21">result</name></name> <operator pos:start="123:23" pos:end="123:23">&lt;</operator> <literal type="number" pos:start="123:25" pos:end="123:25">0</literal></expr>)</condition><block type="pseudo" pos:start="125:13" pos:end="125:28"><block_content pos:start="125:13" pos:end="125:28">
+
+            <expr_stmt pos:start="125:13" pos:end="125:28"><expr pos:start="125:13" pos:end="125:27"><name pos:start="125:13" pos:end="125:15">err</name> <operator pos:start="125:17" pos:end="125:17">=</operator> <name pos:start="125:19" pos:end="125:27"><name pos:start="125:19" pos:end="125:19">p</name><operator pos:start="125:20" pos:end="125:21">-&gt;</operator><name pos:start="125:22" pos:end="125:27">result</name></name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+
+
+        <comment type="block" pos:start="129:9" pos:end="139:11">/*
+
+         * A later call with avkpt-&gt;size == 0 may loop over all threads,
+
+         * including this one, searching for a frame to return before being
+
+         * stopped by the "finished != fctx-&gt;next_finished" condition.
+
+         * Make sure we don't mistakenly return the same frame again.
+
+         */</comment>
+
+        <expr_stmt pos:start="141:9" pos:end="141:25"><expr pos:start="141:9" pos:end="141:24"><name pos:start="141:9" pos:end="141:20"><name pos:start="141:9" pos:end="141:9">p</name><operator pos:start="141:10" pos:end="141:11">-&gt;</operator><name pos:start="141:12" pos:end="141:20">got_frame</name></name> <operator pos:start="141:22" pos:end="141:22">=</operator> <literal type="number" pos:start="141:24" pos:end="141:24">0</literal></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="145:9" pos:end="145:58"><if pos:start="145:9" pos:end="145:58">if <condition pos:start="145:12" pos:end="145:44">(<expr pos:start="145:13" pos:end="145:43"><name pos:start="145:13" pos:end="145:20">finished</name> <operator pos:start="145:22" pos:end="145:23">&gt;=</operator> <name pos:start="145:25" pos:end="145:43"><name pos:start="145:25" pos:end="145:29">avctx</name><operator pos:start="145:30" pos:end="145:31">-&gt;</operator><name pos:start="145:32" pos:end="145:43">thread_count</name></name></expr>)</condition><block type="pseudo" pos:start="145:46" pos:end="145:58"><block_content pos:start="145:46" pos:end="145:58"> <expr_stmt pos:start="145:46" pos:end="145:58"><expr pos:start="145:46" pos:end="145:57"><name pos:start="145:46" pos:end="145:53">finished</name> <operator pos:start="145:55" pos:end="145:55">=</operator> <literal type="number" pos:start="145:57" pos:end="145:57">0</literal></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+    </block_content>}</block> while <condition pos:start="147:13" pos:end="147:82">(<expr pos:start="147:14" pos:end="147:81"><operator pos:start="147:14" pos:end="147:14">!</operator><name pos:start="147:15" pos:end="147:25"><name pos:start="147:15" pos:end="147:19">avpkt</name><operator pos:start="147:20" pos:end="147:21">-&gt;</operator><name pos:start="147:22" pos:end="147:25">size</name></name> <operator pos:start="147:27" pos:end="147:28">&amp;&amp;</operator> <operator pos:start="147:30" pos:end="147:30">!</operator><operator pos:start="147:31" pos:end="147:31">*</operator><name pos:start="147:32" pos:end="147:46">got_picture_ptr</name> <operator pos:start="147:48" pos:end="147:49">&amp;&amp;</operator> <name pos:start="147:51" pos:end="147:58">finished</name> <operator pos:start="147:60" pos:end="147:61">!=</operator> <name pos:start="147:63" pos:end="147:81"><name pos:start="147:63" pos:end="147:66">fctx</name><operator pos:start="147:67" pos:end="147:68">-&gt;</operator><name pos:start="147:69" pos:end="147:81">next_finished</name></name></expr>)</condition>;</do>
+
+
+
+    <expr_stmt pos:start="151:5" pos:end="151:51"><expr pos:start="151:5" pos:end="151:50"><call pos:start="151:5" pos:end="151:50"><name pos:start="151:5" pos:end="151:30">update_context_from_thread</name><argument_list pos:start="151:31" pos:end="151:50">(<argument pos:start="151:32" pos:end="151:36"><expr pos:start="151:32" pos:end="151:36"><name pos:start="151:32" pos:end="151:36">avctx</name></expr></argument>, <argument pos:start="151:39" pos:end="151:46"><expr pos:start="151:39" pos:end="151:46"><name pos:start="151:39" pos:end="151:46"><name pos:start="151:39" pos:end="151:39">p</name><operator pos:start="151:40" pos:end="151:41">-&gt;</operator><name pos:start="151:42" pos:end="151:46">avctx</name></name></expr></argument>, <argument pos:start="151:49" pos:end="151:49"><expr pos:start="151:49" pos:end="151:49"><literal type="number" pos:start="151:49" pos:end="151:49">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="155:5" pos:end="155:76"><if pos:start="155:5" pos:end="155:76">if <condition pos:start="155:8" pos:end="155:51">(<expr pos:start="155:9" pos:end="155:50"><name pos:start="155:9" pos:end="155:27"><name pos:start="155:9" pos:end="155:12">fctx</name><operator pos:start="155:13" pos:end="155:14">-&gt;</operator><name pos:start="155:15" pos:end="155:27">next_decoding</name></name> <operator pos:start="155:29" pos:end="155:30">&gt;=</operator> <name pos:start="155:32" pos:end="155:50"><name pos:start="155:32" pos:end="155:36">avctx</name><operator pos:start="155:37" pos:end="155:38">-&gt;</operator><name pos:start="155:39" pos:end="155:50">thread_count</name></name></expr>)</condition><block type="pseudo" pos:start="155:53" pos:end="155:76"><block_content pos:start="155:53" pos:end="155:76"> <expr_stmt pos:start="155:53" pos:end="155:76"><expr pos:start="155:53" pos:end="155:75"><name pos:start="155:53" pos:end="155:71"><name pos:start="155:53" pos:end="155:56">fctx</name><operator pos:start="155:57" pos:end="155:58">-&gt;</operator><name pos:start="155:59" pos:end="155:71">next_decoding</name></name> <operator pos:start="155:73" pos:end="155:73">=</operator> <literal type="number" pos:start="155:75" pos:end="155:75">0</literal></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="159:5" pos:end="159:35"><expr pos:start="159:5" pos:end="159:34"><name pos:start="159:5" pos:end="159:23"><name pos:start="159:5" pos:end="159:8">fctx</name><operator pos:start="159:9" pos:end="159:10">-&gt;</operator><name pos:start="159:11" pos:end="159:23">next_finished</name></name> <operator pos:start="159:25" pos:end="159:25">=</operator> <name pos:start="159:27" pos:end="159:34">finished</name></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="163:5" pos:end="163:69">/* return the size of the consumed packet if no error occurred */</comment>
+
+    <if_stmt pos:start="165:5" pos:end="167:26"><if pos:start="165:5" pos:end="167:26">if <condition pos:start="165:8" pos:end="165:17">(<expr pos:start="165:9" pos:end="165:16"><name pos:start="165:9" pos:end="165:11">err</name> <operator pos:start="165:13" pos:end="165:14">&gt;=</operator> <literal type="number" pos:start="165:16" pos:end="165:16">0</literal></expr>)</condition><block type="pseudo" pos:start="167:9" pos:end="167:26"><block_content pos:start="167:9" pos:end="167:26">
+
+        <expr_stmt pos:start="167:9" pos:end="167:26"><expr pos:start="167:9" pos:end="167:25"><name pos:start="167:9" pos:end="167:11">err</name> <operator pos:start="167:13" pos:end="167:13">=</operator> <name pos:start="167:15" pos:end="167:25"><name pos:start="167:15" pos:end="167:19">avpkt</name><operator pos:start="167:20" pos:end="167:21">-&gt;</operator><name pos:start="167:22" pos:end="167:25">size</name></name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+<label pos:start="169:1" pos:end="169:7"><name pos:start="169:1" pos:end="169:6">finish</name>:</label>
+
+    <expr_stmt pos:start="171:5" pos:end="171:21"><expr pos:start="171:5" pos:end="171:20"><call pos:start="171:5" pos:end="171:20"><name pos:start="171:5" pos:end="171:14">async_lock</name><argument_list pos:start="171:15" pos:end="171:20">(<argument pos:start="171:16" pos:end="171:19"><expr pos:start="171:16" pos:end="171:19"><name pos:start="171:16" pos:end="171:19">fctx</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <return pos:start="173:5" pos:end="173:15">return <expr pos:start="173:12" pos:end="173:14"><name pos:start="173:12" pos:end="173:14">err</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

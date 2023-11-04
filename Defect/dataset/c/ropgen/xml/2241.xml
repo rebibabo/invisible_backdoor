@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/2241.c" pos:tabs="8"><function pos:start="1:1" pos:end="225:1"><type pos:start="1:1" pos:end="1:23"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name> <name pos:start="1:12" pos:end="1:23">coroutine_fn</name></type> <name pos:start="1:25" pos:end="1:42">bdrv_co_do_pwritev</name><parameter_list pos:start="1:43" pos:end="5:27">(<parameter pos:start="1:44" pos:end="1:63"><decl pos:start="1:44" pos:end="1:63"><type pos:start="1:44" pos:end="1:63"><name pos:start="1:44" pos:end="1:59">BlockDriverState</name> <modifier pos:start="1:61" pos:end="1:61">*</modifier></type><name pos:start="1:62" pos:end="1:63">bs</name></decl></parameter>,
+
+    <parameter pos:start="3:5" pos:end="3:18"><decl pos:start="3:5" pos:end="3:18"><type pos:start="3:5" pos:end="3:18"><name pos:start="3:5" pos:end="3:11">int64_t</name></type> <name pos:start="3:13" pos:end="3:18">offset</name></decl></parameter>, <parameter pos:start="3:21" pos:end="3:38"><decl pos:start="3:21" pos:end="3:38"><type pos:start="3:21" pos:end="3:38"><name pos:start="3:21" pos:end="3:28">unsigned</name> <name pos:start="3:30" pos:end="3:32">int</name></type> <name pos:start="3:34" pos:end="3:38">bytes</name></decl></parameter>, <parameter pos:start="3:41" pos:end="3:58"><decl pos:start="3:41" pos:end="3:58"><type pos:start="3:41" pos:end="3:58"><name pos:start="3:41" pos:end="3:52">QEMUIOVector</name> <modifier pos:start="3:54" pos:end="3:54">*</modifier></type><name pos:start="3:55" pos:end="3:58">qiov</name></decl></parameter>,
+
+    <parameter pos:start="5:5" pos:end="5:26"><decl pos:start="5:5" pos:end="5:26"><type pos:start="5:5" pos:end="5:26"><name pos:start="5:5" pos:end="5:20">BdrvRequestFlags</name></type> <name pos:start="5:22" pos:end="5:26">flags</name></decl></parameter>)</parameter_list>
+
+<block pos:start="7:1" pos:end="225:1">{<block_content pos:start="9:5" pos:end="223:15">
+
+    <decl_stmt pos:start="9:5" pos:end="9:27"><decl pos:start="9:5" pos:end="9:26"><type pos:start="9:5" pos:end="9:22"><name pos:start="9:5" pos:end="9:22">BdrvTrackedRequest</name></type> <name pos:start="9:24" pos:end="9:26">req</name></decl>;</decl_stmt>
+
+    <comment type="block" pos:start="11:5" pos:end="11:73">/* TODO Lift BDRV_SECTOR_SIZE restriction in BlockDriver interface */</comment>
+
+    <decl_stmt pos:start="13:5" pos:end="13:66"><decl pos:start="13:5" pos:end="13:65"><type pos:start="13:5" pos:end="13:12"><name pos:start="13:5" pos:end="13:12">uint64_t</name></type> <name pos:start="13:14" pos:end="13:18">align</name> <init pos:start="13:20" pos:end="13:65">= <expr pos:start="13:22" pos:end="13:65"><call pos:start="13:22" pos:end="13:65"><name pos:start="13:22" pos:end="13:24">MAX</name><argument_list pos:start="13:25" pos:end="13:65">(<argument pos:start="13:26" pos:end="13:41"><expr pos:start="13:26" pos:end="13:41"><name pos:start="13:26" pos:end="13:41">BDRV_SECTOR_SIZE</name></expr></argument>, <argument pos:start="13:44" pos:end="13:64"><expr pos:start="13:44" pos:end="13:64"><name pos:start="13:44" pos:end="13:64"><name pos:start="13:44" pos:end="13:45">bs</name><operator pos:start="13:46" pos:end="13:47">-&gt;</operator><name pos:start="13:48" pos:end="13:64">request_alignment</name></name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:29"><decl pos:start="15:5" pos:end="15:28"><type pos:start="15:5" pos:end="15:13"><name pos:start="15:5" pos:end="15:11">uint8_t</name> <modifier pos:start="15:13" pos:end="15:13">*</modifier></type><name pos:start="15:14" pos:end="15:21">head_buf</name> <init pos:start="15:23" pos:end="15:28">= <expr pos:start="15:25" pos:end="15:28"><name pos:start="15:25" pos:end="15:28">NULL</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="17:5" pos:end="17:29"><decl pos:start="17:5" pos:end="17:28"><type pos:start="17:5" pos:end="17:13"><name pos:start="17:5" pos:end="17:11">uint8_t</name> <modifier pos:start="17:13" pos:end="17:13">*</modifier></type><name pos:start="17:14" pos:end="17:21">tail_buf</name> <init pos:start="17:23" pos:end="17:28">= <expr pos:start="17:25" pos:end="17:28"><name pos:start="17:25" pos:end="17:28">NULL</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:28"><decl pos:start="19:5" pos:end="19:27"><type pos:start="19:5" pos:end="19:16"><name pos:start="19:5" pos:end="19:16">QEMUIOVector</name></type> <name pos:start="19:18" pos:end="19:27">local_qiov</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="21:5" pos:end="21:32"><decl pos:start="21:5" pos:end="21:31"><type pos:start="21:5" pos:end="21:8"><name pos:start="21:5" pos:end="21:8">bool</name></type> <name pos:start="21:10" pos:end="21:23">use_local_qiov</name> <init pos:start="21:25" pos:end="21:31">= <expr pos:start="21:27" pos:end="21:31"><name pos:start="21:27" pos:end="21:31">false</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="23:5" pos:end="23:12"><decl pos:start="23:5" pos:end="23:11"><type pos:start="23:5" pos:end="23:7"><name pos:start="23:5" pos:end="23:7">int</name></type> <name pos:start="23:9" pos:end="23:11">ret</name></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="27:5" pos:end="31:5"><if pos:start="27:5" pos:end="31:5">if <condition pos:start="27:8" pos:end="27:17">(<expr pos:start="27:9" pos:end="27:16"><operator pos:start="27:9" pos:end="27:9">!</operator><name pos:start="27:10" pos:end="27:16"><name pos:start="27:10" pos:end="27:11">bs</name><operator pos:start="27:12" pos:end="27:13">-&gt;</operator><name pos:start="27:14" pos:end="27:16">drv</name></name></expr>)</condition> <block pos:start="27:19" pos:end="31:5">{<block_content pos:start="29:9" pos:end="29:26">
+
+        <return pos:start="29:9" pos:end="29:26">return <expr pos:start="29:16" pos:end="29:25"><operator pos:start="29:16" pos:end="29:16">-</operator><name pos:start="29:17" pos:end="29:25">ENOMEDIUM</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+    <if_stmt pos:start="33:5" pos:end="37:5"><if pos:start="33:5" pos:end="37:5">if <condition pos:start="33:8" pos:end="33:22">(<expr pos:start="33:9" pos:end="33:21"><name pos:start="33:9" pos:end="33:21"><name pos:start="33:9" pos:end="33:10">bs</name><operator pos:start="33:11" pos:end="33:12">-&gt;</operator><name pos:start="33:13" pos:end="33:21">read_only</name></name></expr>)</condition> <block pos:start="33:24" pos:end="37:5">{<block_content pos:start="35:9" pos:end="35:23">
+
+        <return pos:start="35:9" pos:end="35:23">return <expr pos:start="35:16" pos:end="35:22"><operator pos:start="35:16" pos:end="35:16">-</operator><name pos:start="35:17" pos:end="35:22">EACCES</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+    <if_stmt pos:start="39:5" pos:end="43:5"><if pos:start="39:5" pos:end="43:5">if <condition pos:start="39:8" pos:end="39:51">(<expr pos:start="39:9" pos:end="39:50"><call pos:start="39:9" pos:end="39:50"><name pos:start="39:9" pos:end="39:31">bdrv_check_byte_request</name><argument_list pos:start="39:32" pos:end="39:50">(<argument pos:start="39:33" pos:end="39:34"><expr pos:start="39:33" pos:end="39:34"><name pos:start="39:33" pos:end="39:34">bs</name></expr></argument>, <argument pos:start="39:37" pos:end="39:42"><expr pos:start="39:37" pos:end="39:42"><name pos:start="39:37" pos:end="39:42">offset</name></expr></argument>, <argument pos:start="39:45" pos:end="39:49"><expr pos:start="39:45" pos:end="39:49"><name pos:start="39:45" pos:end="39:49">bytes</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="39:53" pos:end="43:5">{<block_content pos:start="41:9" pos:end="41:20">
+
+        <return pos:start="41:9" pos:end="41:20">return <expr pos:start="41:16" pos:end="41:19"><operator pos:start="41:16" pos:end="41:16">-</operator><name pos:start="41:17" pos:end="41:19">EIO</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="47:5" pos:end="47:29">/* throttling disk I/O */</comment>
+
+    <if_stmt pos:start="49:5" pos:end="55:5"><if pos:start="49:5" pos:end="55:5">if <condition pos:start="49:8" pos:end="49:30">(<expr pos:start="49:9" pos:end="49:29"><name pos:start="49:9" pos:end="49:29"><name pos:start="49:9" pos:end="49:10">bs</name><operator pos:start="49:11" pos:end="49:12">-&gt;</operator><name pos:start="49:13" pos:end="49:29">io_limits_enabled</name></name></expr>)</condition> <block pos:start="49:32" pos:end="55:5">{<block_content pos:start="53:9" pos:end="53:70">
+
+        <comment type="block" pos:start="51:9" pos:end="51:45">/* TODO Switch to byte granularity */</comment>
+
+        <expr_stmt pos:start="53:9" pos:end="53:70"><expr pos:start="53:9" pos:end="53:69"><call pos:start="53:9" pos:end="53:69"><name pos:start="53:9" pos:end="53:32">bdrv_io_limits_intercept</name><argument_list pos:start="53:33" pos:end="53:69">(<argument pos:start="53:34" pos:end="53:35"><expr pos:start="53:34" pos:end="53:35"><name pos:start="53:34" pos:end="53:35">bs</name></expr></argument>, <argument pos:start="53:38" pos:end="53:62"><expr pos:start="53:38" pos:end="53:62"><name pos:start="53:38" pos:end="53:42">bytes</name> <operator pos:start="53:44" pos:end="53:45">&gt;&gt;</operator> <name pos:start="53:47" pos:end="53:62">BDRV_SECTOR_BITS</name></expr></argument>, <argument pos:start="53:65" pos:end="53:68"><expr pos:start="53:65" pos:end="53:68"><name pos:start="53:65" pos:end="53:68">true</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="59:5" pos:end="67:7">/*
+
+     * Align write if necessary by performing a read-modify-write cycle.
+
+     * Pad qiov with the read parts and be sure to have a tracked request not
+
+     * only for bdrv_aligned_pwritev, but also for the reads of the RMW cycle.
+
+     */</comment>
+
+    <expr_stmt pos:start="69:5" pos:end="69:57"><expr pos:start="69:5" pos:end="69:56"><call pos:start="69:5" pos:end="69:56"><name pos:start="69:5" pos:end="69:25">tracked_request_begin</name><argument_list pos:start="69:26" pos:end="69:56">(<argument pos:start="69:27" pos:end="69:30"><expr pos:start="69:27" pos:end="69:30"><operator pos:start="69:27" pos:end="69:27">&amp;</operator><name pos:start="69:28" pos:end="69:30">req</name></expr></argument>, <argument pos:start="69:33" pos:end="69:34"><expr pos:start="69:33" pos:end="69:34"><name pos:start="69:33" pos:end="69:34">bs</name></expr></argument>, <argument pos:start="69:37" pos:end="69:42"><expr pos:start="69:37" pos:end="69:42"><name pos:start="69:37" pos:end="69:42">offset</name></expr></argument>, <argument pos:start="69:45" pos:end="69:49"><expr pos:start="69:45" pos:end="69:49"><name pos:start="69:45" pos:end="69:49">bytes</name></expr></argument>, <argument pos:start="69:52" pos:end="69:55"><expr pos:start="69:52" pos:end="69:55"><name pos:start="69:52" pos:end="69:55">true</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="73:5" pos:end="127:5"><if pos:start="73:5" pos:end="127:5">if <condition pos:start="73:8" pos:end="73:29">(<expr pos:start="73:9" pos:end="73:28"><name pos:start="73:9" pos:end="73:14">offset</name> <operator pos:start="73:16" pos:end="73:16">&amp;</operator> <operator pos:start="73:18" pos:end="73:18">(</operator><name pos:start="73:19" pos:end="73:23">align</name> <operator pos:start="73:25" pos:end="73:25">-</operator> <literal type="number" pos:start="73:27" pos:end="73:27">1</literal><operator pos:start="73:28" pos:end="73:28">)</operator></expr>)</condition> <block pos:start="73:31" pos:end="127:5">{<block_content pos:start="75:9" pos:end="125:39">
+
+        <decl_stmt pos:start="75:9" pos:end="75:31"><decl pos:start="75:9" pos:end="75:30"><type pos:start="75:9" pos:end="75:20"><name pos:start="75:9" pos:end="75:20">QEMUIOVector</name></type> <name pos:start="75:22" pos:end="75:30">head_qiov</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="77:9" pos:end="77:30"><decl pos:start="77:9" pos:end="77:29"><type pos:start="77:9" pos:end="77:20"><name pos:start="77:9" pos:end="77:20"><name pos:start="77:9" pos:end="77:14">struct</name> <name pos:start="77:16" pos:end="77:20">iovec</name></name></type> <name pos:start="77:22" pos:end="77:29">head_iov</name></decl>;</decl_stmt>
+
+
+
+        <expr_stmt pos:start="81:9" pos:end="81:46"><expr pos:start="81:9" pos:end="81:45"><call pos:start="81:9" pos:end="81:45"><name pos:start="81:9" pos:end="81:32">mark_request_serialising</name><argument_list pos:start="81:33" pos:end="81:45">(<argument pos:start="81:34" pos:end="81:37"><expr pos:start="81:34" pos:end="81:37"><operator pos:start="81:34" pos:end="81:34">&amp;</operator><name pos:start="81:35" pos:end="81:37">req</name></expr></argument>, <argument pos:start="81:40" pos:end="81:44"><expr pos:start="81:40" pos:end="81:44"><name pos:start="81:40" pos:end="81:44">align</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="83:9" pos:end="83:40"><expr pos:start="83:9" pos:end="83:39"><call pos:start="83:9" pos:end="83:39"><name pos:start="83:9" pos:end="83:33">wait_serialising_requests</name><argument_list pos:start="83:34" pos:end="83:39">(<argument pos:start="83:35" pos:end="83:38"><expr pos:start="83:35" pos:end="83:38"><operator pos:start="83:35" pos:end="83:35">&amp;</operator><name pos:start="83:36" pos:end="83:38">req</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="87:9" pos:end="87:46"><expr pos:start="87:9" pos:end="87:45"><name pos:start="87:9" pos:end="87:16">head_buf</name> <operator pos:start="87:18" pos:end="87:18">=</operator> <call pos:start="87:20" pos:end="87:45"><name pos:start="87:20" pos:end="87:34">qemu_blockalign</name><argument_list pos:start="87:35" pos:end="87:45">(<argument pos:start="87:36" pos:end="87:37"><expr pos:start="87:36" pos:end="87:37"><name pos:start="87:36" pos:end="87:37">bs</name></expr></argument>, <argument pos:start="87:40" pos:end="87:44"><expr pos:start="87:40" pos:end="87:44"><name pos:start="87:40" pos:end="87:44">align</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="89:9" pos:end="95:10"><expr pos:start="89:9" pos:end="95:9"><name pos:start="89:9" pos:end="89:16">head_iov</name> <operator pos:start="89:18" pos:end="89:18">=</operator> <operator pos:start="89:20" pos:end="89:20">(</operator>struct <name pos:start="89:28" pos:end="89:32">iovec</name><operator pos:start="89:33" pos:end="89:33">)</operator> <block pos:start="89:35" pos:end="95:9">{
+
+            <expr pos:start="91:13" pos:end="91:34"><operator pos:start="91:13" pos:end="91:13">.</operator><name pos:start="91:14" pos:end="91:21">iov_base</name>   <operator pos:start="91:25" pos:end="91:25">=</operator> <name pos:start="91:27" pos:end="91:34">head_buf</name></expr>,
+
+            <expr pos:start="93:13" pos:end="93:31"><operator pos:start="93:13" pos:end="93:13">.</operator><name pos:start="93:14" pos:end="93:20">iov_len</name>    <operator pos:start="93:25" pos:end="93:25">=</operator> <name pos:start="93:27" pos:end="93:31">align</name></expr>,
+
+        }</block></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="97:9" pos:end="97:59"><expr pos:start="97:9" pos:end="97:58"><call pos:start="97:9" pos:end="97:58"><name pos:start="97:9" pos:end="97:32">qemu_iovec_init_external</name><argument_list pos:start="97:33" pos:end="97:58">(<argument pos:start="97:34" pos:end="97:43"><expr pos:start="97:34" pos:end="97:43"><operator pos:start="97:34" pos:end="97:34">&amp;</operator><name pos:start="97:35" pos:end="97:43">head_qiov</name></expr></argument>, <argument pos:start="97:46" pos:end="97:54"><expr pos:start="97:46" pos:end="97:54"><operator pos:start="97:46" pos:end="97:46">&amp;</operator><name pos:start="97:47" pos:end="97:54">head_iov</name></expr></argument>, <argument pos:start="97:57" pos:end="97:57"><expr pos:start="97:57" pos:end="97:57"><literal type="number" pos:start="97:57" pos:end="97:57">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="101:9" pos:end="103:56"><expr pos:start="101:9" pos:end="103:55"><name pos:start="101:9" pos:end="101:11">ret</name> <operator pos:start="101:13" pos:end="101:13">=</operator> <call pos:start="101:15" pos:end="103:55"><name pos:start="101:15" pos:end="101:33">bdrv_aligned_preadv</name><argument_list pos:start="101:34" pos:end="103:55">(<argument pos:start="101:35" pos:end="101:36"><expr pos:start="101:35" pos:end="101:36"><name pos:start="101:35" pos:end="101:36">bs</name></expr></argument>, <argument pos:start="101:39" pos:end="101:42"><expr pos:start="101:39" pos:end="101:42"><operator pos:start="101:39" pos:end="101:39">&amp;</operator><name pos:start="101:40" pos:end="101:42">req</name></expr></argument>, <argument pos:start="101:45" pos:end="101:65"><expr pos:start="101:45" pos:end="101:65"><name pos:start="101:45" pos:end="101:50">offset</name> <operator pos:start="101:52" pos:end="101:52">&amp;</operator> <operator pos:start="101:54" pos:end="101:54">~</operator><operator pos:start="101:55" pos:end="101:55">(</operator><name pos:start="101:56" pos:end="101:60">align</name> <operator pos:start="101:62" pos:end="101:62">-</operator> <literal type="number" pos:start="101:64" pos:end="101:64">1</literal><operator pos:start="101:65" pos:end="101:65">)</operator></expr></argument>, <argument pos:start="101:68" pos:end="101:72"><expr pos:start="101:68" pos:end="101:72"><name pos:start="101:68" pos:end="101:72">align</name></expr></argument>,
+
+                                  <argument pos:start="103:35" pos:end="103:39"><expr pos:start="103:35" pos:end="103:39"><name pos:start="103:35" pos:end="103:39">align</name></expr></argument>, <argument pos:start="103:42" pos:end="103:51"><expr pos:start="103:42" pos:end="103:51"><operator pos:start="103:42" pos:end="103:42">&amp;</operator><name pos:start="103:43" pos:end="103:51">head_qiov</name></expr></argument>, <argument pos:start="103:54" pos:end="103:54"><expr pos:start="103:54" pos:end="103:54"><literal type="number" pos:start="103:54" pos:end="103:54">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="105:9" pos:end="109:9"><if pos:start="105:9" pos:end="109:9">if <condition pos:start="105:12" pos:end="105:20">(<expr pos:start="105:13" pos:end="105:19"><name pos:start="105:13" pos:end="105:15">ret</name> <operator pos:start="105:17" pos:end="105:17">&lt;</operator> <literal type="number" pos:start="105:19" pos:end="105:19">0</literal></expr>)</condition> <block pos:start="105:22" pos:end="109:9">{<block_content pos:start="107:13" pos:end="107:22">
+
+            <goto pos:start="107:13" pos:end="107:22">goto <name pos:start="107:18" pos:end="107:21">fail</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="113:9" pos:end="113:53"><expr pos:start="113:9" pos:end="113:52"><call pos:start="113:9" pos:end="113:52"><name pos:start="113:9" pos:end="113:23">qemu_iovec_init</name><argument_list pos:start="113:24" pos:end="113:52">(<argument pos:start="113:25" pos:end="113:35"><expr pos:start="113:25" pos:end="113:35"><operator pos:start="113:25" pos:end="113:25">&amp;</operator><name pos:start="113:26" pos:end="113:35">local_qiov</name></expr></argument>, <argument pos:start="113:38" pos:end="113:51"><expr pos:start="113:38" pos:end="113:51"><name pos:start="113:38" pos:end="113:47"><name pos:start="113:38" pos:end="113:41">qiov</name><operator pos:start="113:42" pos:end="113:43">-&gt;</operator><name pos:start="113:44" pos:end="113:47">niov</name></name> <operator pos:start="113:49" pos:end="113:49">+</operator> <literal type="number" pos:start="113:51" pos:end="113:51">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="115:9" pos:end="115:68"><expr pos:start="115:9" pos:end="115:67"><call pos:start="115:9" pos:end="115:67"><name pos:start="115:9" pos:end="115:22">qemu_iovec_add</name><argument_list pos:start="115:23" pos:end="115:67">(<argument pos:start="115:24" pos:end="115:34"><expr pos:start="115:24" pos:end="115:34"><operator pos:start="115:24" pos:end="115:24">&amp;</operator><name pos:start="115:25" pos:end="115:34">local_qiov</name></expr></argument>, <argument pos:start="115:37" pos:end="115:44"><expr pos:start="115:37" pos:end="115:44"><name pos:start="115:37" pos:end="115:44">head_buf</name></expr></argument>, <argument pos:start="115:47" pos:end="115:66"><expr pos:start="115:47" pos:end="115:66"><name pos:start="115:47" pos:end="115:52">offset</name> <operator pos:start="115:54" pos:end="115:54">&amp;</operator> <operator pos:start="115:56" pos:end="115:56">(</operator><name pos:start="115:57" pos:end="115:61">align</name> <operator pos:start="115:63" pos:end="115:63">-</operator> <literal type="number" pos:start="115:65" pos:end="115:65">1</literal><operator pos:start="115:66" pos:end="115:66">)</operator></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="117:9" pos:end="117:60"><expr pos:start="117:9" pos:end="117:59"><call pos:start="117:9" pos:end="117:59"><name pos:start="117:9" pos:end="117:25">qemu_iovec_concat</name><argument_list pos:start="117:26" pos:end="117:59">(<argument pos:start="117:27" pos:end="117:37"><expr pos:start="117:27" pos:end="117:37"><operator pos:start="117:27" pos:end="117:27">&amp;</operator><name pos:start="117:28" pos:end="117:37">local_qiov</name></expr></argument>, <argument pos:start="117:40" pos:end="117:43"><expr pos:start="117:40" pos:end="117:43"><name pos:start="117:40" pos:end="117:43">qiov</name></expr></argument>, <argument pos:start="117:46" pos:end="117:46"><expr pos:start="117:46" pos:end="117:46"><literal type="number" pos:start="117:46" pos:end="117:46">0</literal></expr></argument>, <argument pos:start="117:49" pos:end="117:58"><expr pos:start="117:49" pos:end="117:58"><name pos:start="117:49" pos:end="117:58"><name pos:start="117:49" pos:end="117:52">qiov</name><operator pos:start="117:53" pos:end="117:54">-&gt;</operator><name pos:start="117:55" pos:end="117:58">size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="119:9" pos:end="119:30"><expr pos:start="119:9" pos:end="119:29"><name pos:start="119:9" pos:end="119:22">use_local_qiov</name> <operator pos:start="119:24" pos:end="119:24">=</operator> <name pos:start="119:26" pos:end="119:29">true</name></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="123:9" pos:end="123:38"><expr pos:start="123:9" pos:end="123:37"><name pos:start="123:9" pos:end="123:13">bytes</name> <operator pos:start="123:15" pos:end="123:16">+=</operator> <name pos:start="123:18" pos:end="123:23">offset</name> <operator pos:start="123:25" pos:end="123:25">&amp;</operator> <operator pos:start="123:27" pos:end="123:27">(</operator><name pos:start="123:28" pos:end="123:32">align</name> <operator pos:start="123:34" pos:end="123:34">-</operator> <literal type="number" pos:start="123:36" pos:end="123:36">1</literal><operator pos:start="123:37" pos:end="123:37">)</operator></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="125:9" pos:end="125:39"><expr pos:start="125:9" pos:end="125:38"><name pos:start="125:9" pos:end="125:14">offset</name> <operator pos:start="125:16" pos:end="125:16">=</operator> <name pos:start="125:18" pos:end="125:23">offset</name> <operator pos:start="125:25" pos:end="125:25">&amp;</operator> <operator pos:start="125:27" pos:end="125:27">~</operator><operator pos:start="125:28" pos:end="125:28">(</operator><name pos:start="125:29" pos:end="125:33">align</name> <operator pos:start="125:35" pos:end="125:35">-</operator> <literal type="number" pos:start="125:37" pos:end="125:37">1</literal><operator pos:start="125:38" pos:end="125:38">)</operator></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="131:5" pos:end="193:5"><if pos:start="131:5" pos:end="193:5">if <condition pos:start="131:8" pos:end="131:39">(<expr pos:start="131:9" pos:end="131:38"><operator pos:start="131:9" pos:end="131:9">(</operator><name pos:start="131:10" pos:end="131:15">offset</name> <operator pos:start="131:17" pos:end="131:17">+</operator> <name pos:start="131:19" pos:end="131:23">bytes</name><operator pos:start="131:24" pos:end="131:24">)</operator> <operator pos:start="131:26" pos:end="131:26">&amp;</operator> <operator pos:start="131:28" pos:end="131:28">(</operator><name pos:start="131:29" pos:end="131:33">align</name> <operator pos:start="131:35" pos:end="131:35">-</operator> <literal type="number" pos:start="131:37" pos:end="131:37">1</literal><operator pos:start="131:38" pos:end="131:38">)</operator></expr>)</condition> <block pos:start="131:41" pos:end="193:5">{<block_content pos:start="133:9" pos:end="191:39">
+
+        <decl_stmt pos:start="133:9" pos:end="133:31"><decl pos:start="133:9" pos:end="133:30"><type pos:start="133:9" pos:end="133:20"><name pos:start="133:9" pos:end="133:20">QEMUIOVector</name></type> <name pos:start="133:22" pos:end="133:30">tail_qiov</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="135:9" pos:end="135:30"><decl pos:start="135:9" pos:end="135:29"><type pos:start="135:9" pos:end="135:20"><name pos:start="135:9" pos:end="135:20"><name pos:start="135:9" pos:end="135:14">struct</name> <name pos:start="135:16" pos:end="135:20">iovec</name></name></type> <name pos:start="135:22" pos:end="135:29">tail_iov</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="137:9" pos:end="137:26"><decl pos:start="137:9" pos:end="137:25"><type pos:start="137:9" pos:end="137:14"><name pos:start="137:9" pos:end="137:14">size_t</name></type> <name pos:start="137:16" pos:end="137:25">tail_bytes</name></decl>;</decl_stmt>
+
+
+
+        <expr_stmt pos:start="141:9" pos:end="141:46"><expr pos:start="141:9" pos:end="141:45"><call pos:start="141:9" pos:end="141:45"><name pos:start="141:9" pos:end="141:32">mark_request_serialising</name><argument_list pos:start="141:33" pos:end="141:45">(<argument pos:start="141:34" pos:end="141:37"><expr pos:start="141:34" pos:end="141:37"><operator pos:start="141:34" pos:end="141:34">&amp;</operator><name pos:start="141:35" pos:end="141:37">req</name></expr></argument>, <argument pos:start="141:40" pos:end="141:44"><expr pos:start="141:40" pos:end="141:44"><name pos:start="141:40" pos:end="141:44">align</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="143:9" pos:end="143:40"><expr pos:start="143:9" pos:end="143:39"><call pos:start="143:9" pos:end="143:39"><name pos:start="143:9" pos:end="143:33">wait_serialising_requests</name><argument_list pos:start="143:34" pos:end="143:39">(<argument pos:start="143:35" pos:end="143:38"><expr pos:start="143:35" pos:end="143:38"><operator pos:start="143:35" pos:end="143:35">&amp;</operator><name pos:start="143:36" pos:end="143:38">req</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="147:9" pos:end="147:46"><expr pos:start="147:9" pos:end="147:45"><name pos:start="147:9" pos:end="147:16">tail_buf</name> <operator pos:start="147:18" pos:end="147:18">=</operator> <call pos:start="147:20" pos:end="147:45"><name pos:start="147:20" pos:end="147:34">qemu_blockalign</name><argument_list pos:start="147:35" pos:end="147:45">(<argument pos:start="147:36" pos:end="147:37"><expr pos:start="147:36" pos:end="147:37"><name pos:start="147:36" pos:end="147:37">bs</name></expr></argument>, <argument pos:start="147:40" pos:end="147:44"><expr pos:start="147:40" pos:end="147:44"><name pos:start="147:40" pos:end="147:44">align</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="149:9" pos:end="155:10"><expr pos:start="149:9" pos:end="155:9"><name pos:start="149:9" pos:end="149:16">tail_iov</name> <operator pos:start="149:18" pos:end="149:18">=</operator> <operator pos:start="149:20" pos:end="149:20">(</operator>struct <name pos:start="149:28" pos:end="149:32">iovec</name><operator pos:start="149:33" pos:end="149:33">)</operator> <block pos:start="149:35" pos:end="155:9">{
+
+            <expr pos:start="151:13" pos:end="151:34"><operator pos:start="151:13" pos:end="151:13">.</operator><name pos:start="151:14" pos:end="151:21">iov_base</name>   <operator pos:start="151:25" pos:end="151:25">=</operator> <name pos:start="151:27" pos:end="151:34">tail_buf</name></expr>,
+
+            <expr pos:start="153:13" pos:end="153:31"><operator pos:start="153:13" pos:end="153:13">.</operator><name pos:start="153:14" pos:end="153:20">iov_len</name>    <operator pos:start="153:25" pos:end="153:25">=</operator> <name pos:start="153:27" pos:end="153:31">align</name></expr>,
+
+        }</block></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="157:9" pos:end="157:59"><expr pos:start="157:9" pos:end="157:58"><call pos:start="157:9" pos:end="157:58"><name pos:start="157:9" pos:end="157:32">qemu_iovec_init_external</name><argument_list pos:start="157:33" pos:end="157:58">(<argument pos:start="157:34" pos:end="157:43"><expr pos:start="157:34" pos:end="157:43"><operator pos:start="157:34" pos:end="157:34">&amp;</operator><name pos:start="157:35" pos:end="157:43">tail_qiov</name></expr></argument>, <argument pos:start="157:46" pos:end="157:54"><expr pos:start="157:46" pos:end="157:54"><operator pos:start="157:46" pos:end="157:46">&amp;</operator><name pos:start="157:47" pos:end="157:54">tail_iov</name></expr></argument>, <argument pos:start="157:57" pos:end="157:57"><expr pos:start="157:57" pos:end="157:57"><literal type="number" pos:start="157:57" pos:end="157:57">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="161:9" pos:end="163:56"><expr pos:start="161:9" pos:end="163:55"><name pos:start="161:9" pos:end="161:11">ret</name> <operator pos:start="161:13" pos:end="161:13">=</operator> <call pos:start="161:15" pos:end="163:55"><name pos:start="161:15" pos:end="161:33">bdrv_aligned_preadv</name><argument_list pos:start="161:34" pos:end="163:55">(<argument pos:start="161:35" pos:end="161:36"><expr pos:start="161:35" pos:end="161:36"><name pos:start="161:35" pos:end="161:36">bs</name></expr></argument>, <argument pos:start="161:39" pos:end="161:42"><expr pos:start="161:39" pos:end="161:42"><operator pos:start="161:39" pos:end="161:39">&amp;</operator><name pos:start="161:40" pos:end="161:42">req</name></expr></argument>, <argument pos:start="161:45" pos:end="161:75"><expr pos:start="161:45" pos:end="161:75"><operator pos:start="161:45" pos:end="161:45">(</operator><name pos:start="161:46" pos:end="161:51">offset</name> <operator pos:start="161:53" pos:end="161:53">+</operator> <name pos:start="161:55" pos:end="161:59">bytes</name><operator pos:start="161:60" pos:end="161:60">)</operator> <operator pos:start="161:62" pos:end="161:62">&amp;</operator> <operator pos:start="161:64" pos:end="161:64">~</operator><operator pos:start="161:65" pos:end="161:65">(</operator><name pos:start="161:66" pos:end="161:70">align</name> <operator pos:start="161:72" pos:end="161:72">-</operator> <literal type="number" pos:start="161:74" pos:end="161:74">1</literal><operator pos:start="161:75" pos:end="161:75">)</operator></expr></argument>, <argument pos:start="161:78" pos:end="161:82"><expr pos:start="161:78" pos:end="161:82"><name pos:start="161:78" pos:end="161:82">align</name></expr></argument>,
+
+                                  <argument pos:start="163:35" pos:end="163:39"><expr pos:start="163:35" pos:end="163:39"><name pos:start="163:35" pos:end="163:39">align</name></expr></argument>, <argument pos:start="163:42" pos:end="163:51"><expr pos:start="163:42" pos:end="163:51"><operator pos:start="163:42" pos:end="163:42">&amp;</operator><name pos:start="163:43" pos:end="163:51">tail_qiov</name></expr></argument>, <argument pos:start="163:54" pos:end="163:54"><expr pos:start="163:54" pos:end="163:54"><literal type="number" pos:start="163:54" pos:end="163:54">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="165:9" pos:end="169:9"><if pos:start="165:9" pos:end="169:9">if <condition pos:start="165:12" pos:end="165:20">(<expr pos:start="165:13" pos:end="165:19"><name pos:start="165:13" pos:end="165:15">ret</name> <operator pos:start="165:17" pos:end="165:17">&lt;</operator> <literal type="number" pos:start="165:19" pos:end="165:19">0</literal></expr>)</condition> <block pos:start="165:22" pos:end="169:9">{<block_content pos:start="167:13" pos:end="167:22">
+
+            <goto pos:start="167:13" pos:end="167:22">goto <name pos:start="167:18" pos:end="167:21">fail</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <if_stmt pos:start="173:9" pos:end="181:9"><if pos:start="173:9" pos:end="181:9">if <condition pos:start="173:12" pos:end="173:28">(<expr pos:start="173:13" pos:end="173:27"><operator pos:start="173:13" pos:end="173:13">!</operator><name pos:start="173:14" pos:end="173:27">use_local_qiov</name></expr>)</condition> <block pos:start="173:30" pos:end="181:9">{<block_content pos:start="175:13" pos:end="179:34">
+
+            <expr_stmt pos:start="175:13" pos:end="175:57"><expr pos:start="175:13" pos:end="175:56"><call pos:start="175:13" pos:end="175:56"><name pos:start="175:13" pos:end="175:27">qemu_iovec_init</name><argument_list pos:start="175:28" pos:end="175:56">(<argument pos:start="175:29" pos:end="175:39"><expr pos:start="175:29" pos:end="175:39"><operator pos:start="175:29" pos:end="175:29">&amp;</operator><name pos:start="175:30" pos:end="175:39">local_qiov</name></expr></argument>, <argument pos:start="175:42" pos:end="175:55"><expr pos:start="175:42" pos:end="175:55"><name pos:start="175:42" pos:end="175:51"><name pos:start="175:42" pos:end="175:45">qiov</name><operator pos:start="175:46" pos:end="175:47">-&gt;</operator><name pos:start="175:48" pos:end="175:51">niov</name></name> <operator pos:start="175:53" pos:end="175:53">+</operator> <literal type="number" pos:start="175:55" pos:end="175:55">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="177:13" pos:end="177:64"><expr pos:start="177:13" pos:end="177:63"><call pos:start="177:13" pos:end="177:63"><name pos:start="177:13" pos:end="177:29">qemu_iovec_concat</name><argument_list pos:start="177:30" pos:end="177:63">(<argument pos:start="177:31" pos:end="177:41"><expr pos:start="177:31" pos:end="177:41"><operator pos:start="177:31" pos:end="177:31">&amp;</operator><name pos:start="177:32" pos:end="177:41">local_qiov</name></expr></argument>, <argument pos:start="177:44" pos:end="177:47"><expr pos:start="177:44" pos:end="177:47"><name pos:start="177:44" pos:end="177:47">qiov</name></expr></argument>, <argument pos:start="177:50" pos:end="177:50"><expr pos:start="177:50" pos:end="177:50"><literal type="number" pos:start="177:50" pos:end="177:50">0</literal></expr></argument>, <argument pos:start="177:53" pos:end="177:62"><expr pos:start="177:53" pos:end="177:62"><name pos:start="177:53" pos:end="177:62"><name pos:start="177:53" pos:end="177:56">qiov</name><operator pos:start="177:57" pos:end="177:58">-&gt;</operator><name pos:start="177:59" pos:end="177:62">size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="179:13" pos:end="179:34"><expr pos:start="179:13" pos:end="179:33"><name pos:start="179:13" pos:end="179:26">use_local_qiov</name> <operator pos:start="179:28" pos:end="179:28">=</operator> <name pos:start="179:30" pos:end="179:33">true</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="185:9" pos:end="185:52"><expr pos:start="185:9" pos:end="185:51"><name pos:start="185:9" pos:end="185:18">tail_bytes</name> <operator pos:start="185:20" pos:end="185:20">=</operator> <operator pos:start="185:22" pos:end="185:22">(</operator><name pos:start="185:23" pos:end="185:28">offset</name> <operator pos:start="185:30" pos:end="185:30">+</operator> <name pos:start="185:32" pos:end="185:36">bytes</name><operator pos:start="185:37" pos:end="185:37">)</operator> <operator pos:start="185:39" pos:end="185:39">&amp;</operator> <operator pos:start="185:41" pos:end="185:41">(</operator><name pos:start="185:42" pos:end="185:46">align</name> <operator pos:start="185:48" pos:end="185:48">-</operator> <literal type="number" pos:start="185:50" pos:end="185:50">1</literal><operator pos:start="185:51" pos:end="185:51">)</operator></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="187:9" pos:end="187:79"><expr pos:start="187:9" pos:end="187:78"><call pos:start="187:9" pos:end="187:78"><name pos:start="187:9" pos:end="187:22">qemu_iovec_add</name><argument_list pos:start="187:23" pos:end="187:78">(<argument pos:start="187:24" pos:end="187:34"><expr pos:start="187:24" pos:end="187:34"><operator pos:start="187:24" pos:end="187:24">&amp;</operator><name pos:start="187:25" pos:end="187:34">local_qiov</name></expr></argument>, <argument pos:start="187:37" pos:end="187:57"><expr pos:start="187:37" pos:end="187:57"><name pos:start="187:37" pos:end="187:44">tail_buf</name> <operator pos:start="187:46" pos:end="187:46">+</operator> <name pos:start="187:48" pos:end="187:57">tail_bytes</name></expr></argument>, <argument pos:start="187:60" pos:end="187:77"><expr pos:start="187:60" pos:end="187:77"><name pos:start="187:60" pos:end="187:64">align</name> <operator pos:start="187:66" pos:end="187:66">-</operator> <name pos:start="187:68" pos:end="187:77">tail_bytes</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="191:9" pos:end="191:39"><expr pos:start="191:9" pos:end="191:38"><name pos:start="191:9" pos:end="191:13">bytes</name> <operator pos:start="191:15" pos:end="191:15">=</operator> <call pos:start="191:17" pos:end="191:38"><name pos:start="191:17" pos:end="191:24">ROUND_UP</name><argument_list pos:start="191:25" pos:end="191:38">(<argument pos:start="191:26" pos:end="191:30"><expr pos:start="191:26" pos:end="191:30"><name pos:start="191:26" pos:end="191:30">bytes</name></expr></argument>, <argument pos:start="191:33" pos:end="191:37"><expr pos:start="191:33" pos:end="191:37"><name pos:start="191:33" pos:end="191:37">align</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="197:5" pos:end="201:38"><expr pos:start="197:5" pos:end="201:37"><name pos:start="197:5" pos:end="197:7">ret</name> <operator pos:start="197:9" pos:end="197:9">=</operator> <call pos:start="197:11" pos:end="201:37"><name pos:start="197:11" pos:end="197:30">bdrv_aligned_pwritev</name><argument_list pos:start="197:31" pos:end="201:37">(<argument pos:start="197:32" pos:end="197:33"><expr pos:start="197:32" pos:end="197:33"><name pos:start="197:32" pos:end="197:33">bs</name></expr></argument>, <argument pos:start="197:36" pos:end="197:39"><expr pos:start="197:36" pos:end="197:39"><operator pos:start="197:36" pos:end="197:36">&amp;</operator><name pos:start="197:37" pos:end="197:39">req</name></expr></argument>, <argument pos:start="197:42" pos:end="197:47"><expr pos:start="197:42" pos:end="197:47"><name pos:start="197:42" pos:end="197:47">offset</name></expr></argument>, <argument pos:start="197:50" pos:end="197:54"><expr pos:start="197:50" pos:end="197:54"><name pos:start="197:50" pos:end="197:54">bytes</name></expr></argument>,
+
+                               <argument pos:start="199:32" pos:end="199:66"><expr pos:start="199:32" pos:end="199:66"><ternary pos:start="199:32" pos:end="199:66"><condition pos:start="199:32" pos:end="199:47"><expr pos:start="199:32" pos:end="199:45"><name pos:start="199:32" pos:end="199:45">use_local_qiov</name></expr> ?</condition><then pos:start="199:49" pos:end="199:59"> <expr pos:start="199:49" pos:end="199:59"><operator pos:start="199:49" pos:end="199:49">&amp;</operator><name pos:start="199:50" pos:end="199:59">local_qiov</name></expr> </then><else pos:start="199:61" pos:end="199:66">: <expr pos:start="199:63" pos:end="199:66"><name pos:start="199:63" pos:end="199:66">qiov</name></expr></else></ternary></expr></argument>,
+
+                               <argument pos:start="201:32" pos:end="201:36"><expr pos:start="201:32" pos:end="201:36"><name pos:start="201:32" pos:end="201:36">flags</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+<label pos:start="205:1" pos:end="205:5"><name pos:start="205:1" pos:end="205:4">fail</name>:</label>
+
+    <expr_stmt pos:start="207:5" pos:end="207:30"><expr pos:start="207:5" pos:end="207:29"><call pos:start="207:5" pos:end="207:29"><name pos:start="207:5" pos:end="207:23">tracked_request_end</name><argument_list pos:start="207:24" pos:end="207:29">(<argument pos:start="207:25" pos:end="207:28"><expr pos:start="207:25" pos:end="207:28"><operator pos:start="207:25" pos:end="207:25">&amp;</operator><name pos:start="207:26" pos:end="207:28">req</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="211:5" pos:end="219:5"><if pos:start="211:5" pos:end="219:5">if <condition pos:start="211:8" pos:end="211:23">(<expr pos:start="211:9" pos:end="211:22"><name pos:start="211:9" pos:end="211:22">use_local_qiov</name></expr>)</condition> <block pos:start="211:25" pos:end="219:5">{<block_content pos:start="213:9" pos:end="217:29">
+
+        <expr_stmt pos:start="213:9" pos:end="213:40"><expr pos:start="213:9" pos:end="213:39"><call pos:start="213:9" pos:end="213:39"><name pos:start="213:9" pos:end="213:26">qemu_iovec_destroy</name><argument_list pos:start="213:27" pos:end="213:39">(<argument pos:start="213:28" pos:end="213:38"><expr pos:start="213:28" pos:end="213:38"><operator pos:start="213:28" pos:end="213:28">&amp;</operator><name pos:start="213:29" pos:end="213:38">local_qiov</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="215:9" pos:end="215:29"><expr pos:start="215:9" pos:end="215:28"><call pos:start="215:9" pos:end="215:28"><name pos:start="215:9" pos:end="215:18">qemu_vfree</name><argument_list pos:start="215:19" pos:end="215:28">(<argument pos:start="215:20" pos:end="215:27"><expr pos:start="215:20" pos:end="215:27"><name pos:start="215:20" pos:end="215:27">head_buf</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="217:9" pos:end="217:29"><expr pos:start="217:9" pos:end="217:28"><call pos:start="217:9" pos:end="217:28"><name pos:start="217:9" pos:end="217:18">qemu_vfree</name><argument_list pos:start="217:19" pos:end="217:28">(<argument pos:start="217:20" pos:end="217:27"><expr pos:start="217:20" pos:end="217:27"><name pos:start="217:20" pos:end="217:27">tail_buf</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <return pos:start="223:5" pos:end="223:15">return <expr pos:start="223:12" pos:end="223:14"><name pos:start="223:12" pos:end="223:14">ret</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

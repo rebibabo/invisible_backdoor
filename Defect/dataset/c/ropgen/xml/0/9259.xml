@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/9259.c" pos:tabs="8"><function pos:start="1:1" pos:end="97:1"><type pos:start="1:1" pos:end="1:17"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:15">PageDesc</name> <modifier pos:start="1:17" pos:end="1:17">*</modifier></type><name pos:start="1:18" pos:end="1:32">page_find_alloc</name><parameter_list pos:start="1:33" pos:end="1:65">(<parameter pos:start="1:34" pos:end="1:53"><decl pos:start="1:34" pos:end="1:53"><type pos:start="1:34" pos:end="1:53"><name pos:start="1:34" pos:end="1:47">tb_page_addr_t</name></type> <name pos:start="1:49" pos:end="1:53">index</name></decl></parameter>, <parameter pos:start="1:56" pos:end="1:64"><decl pos:start="1:56" pos:end="1:64"><type pos:start="1:56" pos:end="1:64"><name pos:start="1:56" pos:end="1:58">int</name></type> <name pos:start="1:60" pos:end="1:64">alloc</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="97:1">{<block_content pos:start="5:5" pos:end="95:42">
+
+    <decl_stmt pos:start="5:5" pos:end="5:17"><decl pos:start="5:5" pos:end="5:16"><type pos:start="5:5" pos:end="5:14"><name pos:start="5:5" pos:end="5:12">PageDesc</name> <modifier pos:start="5:14" pos:end="5:14">*</modifier></type><name pos:start="5:15" pos:end="5:16">pd</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:14"><decl pos:start="7:5" pos:end="7:13"><type pos:start="7:5" pos:end="7:11"><name pos:start="7:5" pos:end="7:8">void</name> <modifier pos:start="7:10" pos:end="7:10">*</modifier><modifier pos:start="7:11" pos:end="7:11">*</modifier></type><name pos:start="7:12" pos:end="7:13">lp</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="34:0"><decl pos:start="9:5" pos:end="9:9"><type pos:start="9:5" pos:end="9:7"><name pos:start="9:5" pos:end="9:7">int</name></type> <name pos:start="9:9" pos:end="9:9">i</name></decl>;</decl_stmt>
+
+
+
+<cpp:if pos:start="13:1" pos:end="13:29">#<cpp:directive pos:start="13:2" pos:end="13:3">if</cpp:directive> <expr pos:start="13:5" pos:end="13:29"><call pos:start="13:5" pos:end="13:29"><name pos:start="13:5" pos:end="13:11">defined</name><argument_list pos:start="13:12" pos:end="13:29">(<argument pos:start="13:13" pos:end="13:28"><expr pos:start="13:13" pos:end="13:28"><name pos:start="13:13" pos:end="13:28">CONFIG_USER_ONLY</name></expr></argument>)</argument_list></call></expr></cpp:if>
+
+    <comment type="block" pos:start="15:5" pos:end="15:75">/* We can't use g_malloc because it may recurse into a locked mutex. */</comment>
+
+<cpp:define pos:start="17:1" pos:end="25:15"># <cpp:directive pos:start="17:3" pos:end="17:8">define</cpp:directive> <cpp:macro pos:start="17:10" pos:end="17:23"><name pos:start="17:10" pos:end="17:14">ALLOC</name><parameter_list pos:start="17:15" pos:end="17:23">(<parameter pos:start="17:16" pos:end="17:16"><type pos:start="17:16" pos:end="17:16"><name pos:start="17:16" pos:end="17:16">P</name></type></parameter>, <parameter pos:start="17:19" pos:end="17:22"><type pos:start="17:19" pos:end="17:22"><name pos:start="17:19" pos:end="17:22">SIZE</name></type></parameter>)</parameter_list></cpp:macro>                                 \
+
+    <cpp:value pos:start="19:5" pos:end="25:15">do {                                                \
+
+        P = mmap(NULL, SIZE, PROT_READ | PROT_WRITE,    \
+
+                 MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);   \
+
+    } while (0)</cpp:value></cpp:define>
+
+<cpp:else pos:start="27:1" pos:end="27:5">#<cpp:directive pos:start="27:2" pos:end="27:5">else</cpp:directive></cpp:else>
+
+<cpp:define pos:start="29:1" pos:end="31:41"># <cpp:directive pos:start="29:3" pos:end="29:8">define</cpp:directive> <cpp:macro pos:start="29:10" pos:end="29:23"><name pos:start="29:10" pos:end="29:14">ALLOC</name><parameter_list pos:start="29:15" pos:end="29:23">(<parameter pos:start="29:16" pos:end="29:16"><type pos:start="29:16" pos:end="29:16"><name pos:start="29:16" pos:end="29:16">P</name></type></parameter>, <parameter pos:start="29:19" pos:end="29:22"><type pos:start="29:19" pos:end="29:22"><name pos:start="29:19" pos:end="29:22">SIZE</name></type></parameter>)</parameter_list></cpp:macro> \
+
+    <cpp:value pos:start="31:5" pos:end="31:41">do { P = g_malloc0(SIZE); } while (0)</cpp:value></cpp:define>
+
+<cpp:endif pos:start="33:1" pos:end="33:6">#<cpp:directive pos:start="33:2" pos:end="33:6">endif</cpp:directive></cpp:endif>
+
+
+
+    <comment type="block" pos:start="37:5" pos:end="37:38">/* Level 1.  Always allocated.  */</comment>
+
+    <expr_stmt pos:start="39:5" pos:end="39:60"><expr pos:start="39:5" pos:end="39:59"><name pos:start="39:5" pos:end="39:6">lp</name> <operator pos:start="39:8" pos:end="39:8">=</operator> <name pos:start="39:10" pos:end="39:15">l1_map</name> <operator pos:start="39:17" pos:end="39:17">+</operator> <operator pos:start="39:19" pos:end="39:19">(</operator><operator pos:start="39:20" pos:end="39:20">(</operator><name pos:start="39:21" pos:end="39:25">index</name> <operator pos:start="39:27" pos:end="39:28">&gt;&gt;</operator> <name pos:start="39:30" pos:end="39:39">V_L1_SHIFT</name><operator pos:start="39:40" pos:end="39:40">)</operator> <operator pos:start="39:42" pos:end="39:42">&amp;</operator> <operator pos:start="39:44" pos:end="39:44">(</operator><name pos:start="39:45" pos:end="39:53">V_L1_SIZE</name> <operator pos:start="39:55" pos:end="39:55">-</operator> <literal type="number" pos:start="39:57" pos:end="39:57">1</literal><operator pos:start="39:58" pos:end="39:58">)</operator><operator pos:start="39:59" pos:end="39:59">)</operator></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="43:5" pos:end="43:24">/* Level 2..N-1.  */</comment>
+
+    <for pos:start="45:5" pos:end="69:5">for <control pos:start="45:9" pos:end="45:52">(<init pos:start="45:10" pos:end="45:40"><expr pos:start="45:10" pos:end="45:39"><name pos:start="45:10" pos:end="45:10">i</name> <operator pos:start="45:12" pos:end="45:12">=</operator> <name pos:start="45:14" pos:end="45:23">V_L1_SHIFT</name> <operator pos:start="45:25" pos:end="45:25">/</operator> <name pos:start="45:27" pos:end="45:35">V_L2_BITS</name> <operator pos:start="45:37" pos:end="45:37">-</operator> <literal type="number" pos:start="45:39" pos:end="45:39">1</literal></expr>;</init> <condition pos:start="45:42" pos:end="45:47"><expr pos:start="45:42" pos:end="45:46"><name pos:start="45:42" pos:end="45:42">i</name> <operator pos:start="45:44" pos:end="45:44">&gt;</operator> <literal type="number" pos:start="45:46" pos:end="45:46">0</literal></expr>;</condition> <incr pos:start="45:49" pos:end="45:51"><expr pos:start="45:49" pos:end="45:51"><name pos:start="45:49" pos:end="45:49">i</name><operator pos:start="45:50" pos:end="45:51">--</operator></expr></incr>)</control> <block pos:start="45:54" pos:end="69:5">{<block_content pos:start="47:9" pos:end="67:64">
+
+        <decl_stmt pos:start="47:9" pos:end="47:23"><decl pos:start="47:9" pos:end="47:22"><type pos:start="47:9" pos:end="47:15"><name pos:start="47:9" pos:end="47:12">void</name> <modifier pos:start="47:14" pos:end="47:14">*</modifier><modifier pos:start="47:15" pos:end="47:15">*</modifier></type><name pos:start="47:16" pos:end="47:16">p</name> <init pos:start="47:18" pos:end="47:22">= <expr pos:start="47:20" pos:end="47:22"><operator pos:start="47:20" pos:end="47:20">*</operator><name pos:start="47:21" pos:end="47:22">lp</name></expr></init></decl>;</decl_stmt>
+
+
+
+        <if_stmt pos:start="51:9" pos:end="63:9"><if pos:start="51:9" pos:end="63:9">if <condition pos:start="51:12" pos:end="51:22">(<expr pos:start="51:13" pos:end="51:21"><name pos:start="51:13" pos:end="51:13">p</name> <operator pos:start="51:15" pos:end="51:16">==</operator> <name pos:start="51:18" pos:end="51:21">NULL</name></expr>)</condition> <block pos:start="51:24" pos:end="63:9">{<block_content pos:start="53:13" pos:end="61:20">
+
+            <if_stmt pos:start="53:13" pos:end="57:13"><if pos:start="53:13" pos:end="57:13">if <condition pos:start="53:16" pos:end="53:23">(<expr pos:start="53:17" pos:end="53:22"><operator pos:start="53:17" pos:end="53:17">!</operator><name pos:start="53:18" pos:end="53:22">alloc</name></expr>)</condition> <block pos:start="53:25" pos:end="57:13">{<block_content pos:start="55:17" pos:end="55:28">
+
+                <return pos:start="55:17" pos:end="55:28">return <expr pos:start="55:24" pos:end="55:27"><name pos:start="55:24" pos:end="55:27">NULL</name></expr>;</return>
+
+            </block_content>}</block></if></if_stmt>
+
+            <expr_stmt pos:start="59:13" pos:end="59:49"><expr pos:start="59:13" pos:end="59:48"><call pos:start="59:13" pos:end="59:48"><name pos:start="59:13" pos:end="59:17">ALLOC</name><argument_list pos:start="59:18" pos:end="59:48">(<argument pos:start="59:19" pos:end="59:19"><expr pos:start="59:19" pos:end="59:19"><name pos:start="59:19" pos:end="59:19">p</name></expr></argument>, <argument pos:start="59:22" pos:end="59:47"><expr pos:start="59:22" pos:end="59:47"><sizeof pos:start="59:22" pos:end="59:35">sizeof<argument_list pos:start="59:28" pos:end="59:35">(<argument pos:start="59:29" pos:end="59:34"><expr pos:start="59:29" pos:end="59:34"><name pos:start="59:29" pos:end="59:32">void</name> <operator pos:start="59:34" pos:end="59:34">*</operator></expr></argument>)</argument_list></sizeof> <operator pos:start="59:37" pos:end="59:37">*</operator> <name pos:start="59:39" pos:end="59:47">V_L2_SIZE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="61:13" pos:end="61:20"><expr pos:start="61:13" pos:end="61:19"><operator pos:start="61:13" pos:end="61:13">*</operator><name pos:start="61:14" pos:end="61:15">lp</name> <operator pos:start="61:17" pos:end="61:17">=</operator> <name pos:start="61:19" pos:end="61:19">p</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="67:9" pos:end="67:64"><expr pos:start="67:9" pos:end="67:63"><name pos:start="67:9" pos:end="67:10">lp</name> <operator pos:start="67:12" pos:end="67:12">=</operator> <name pos:start="67:14" pos:end="67:14">p</name> <operator pos:start="67:16" pos:end="67:16">+</operator> <operator pos:start="67:18" pos:end="67:18">(</operator><operator pos:start="67:19" pos:end="67:19">(</operator><name pos:start="67:20" pos:end="67:24">index</name> <operator pos:start="67:26" pos:end="67:27">&gt;&gt;</operator> <operator pos:start="67:29" pos:end="67:29">(</operator><name pos:start="67:30" pos:end="67:30">i</name> <operator pos:start="67:32" pos:end="67:32">*</operator> <name pos:start="67:34" pos:end="67:42">V_L2_BITS</name><operator pos:start="67:43" pos:end="67:43">)</operator><operator pos:start="67:44" pos:end="67:44">)</operator> <operator pos:start="67:46" pos:end="67:46">&amp;</operator> <operator pos:start="67:48" pos:end="67:48">(</operator><name pos:start="67:49" pos:end="67:57">V_L2_SIZE</name> <operator pos:start="67:59" pos:end="67:59">-</operator> <literal type="number" pos:start="67:61" pos:end="67:61">1</literal><operator pos:start="67:62" pos:end="67:62">)</operator><operator pos:start="67:63" pos:end="67:63">)</operator></expr>;</expr_stmt>
+
+    </block_content>}</block></for>
+
+
+
+    <expr_stmt pos:start="73:5" pos:end="73:13"><expr pos:start="73:5" pos:end="73:12"><name pos:start="73:5" pos:end="73:6">pd</name> <operator pos:start="73:8" pos:end="73:8">=</operator> <operator pos:start="73:10" pos:end="73:10">*</operator><name pos:start="73:11" pos:end="73:12">lp</name></expr>;</expr_stmt>
+
+    <if_stmt pos:start="75:5" pos:end="92:0"><if pos:start="75:5" pos:end="92:0">if <condition pos:start="75:8" pos:end="75:19">(<expr pos:start="75:9" pos:end="75:18"><name pos:start="75:9" pos:end="75:10">pd</name> <operator pos:start="75:12" pos:end="75:13">==</operator> <name pos:start="75:15" pos:end="75:18">NULL</name></expr>)</condition> <block pos:start="75:21" pos:end="92:0">{<block_content pos:start="77:9" pos:end="85:17">
+
+        <if_stmt pos:start="77:9" pos:end="81:9"><if pos:start="77:9" pos:end="81:9">if <condition pos:start="77:12" pos:end="77:19">(<expr pos:start="77:13" pos:end="77:18"><operator pos:start="77:13" pos:end="77:13">!</operator><name pos:start="77:14" pos:end="77:18">alloc</name></expr>)</condition> <block pos:start="77:21" pos:end="81:9">{<block_content pos:start="79:13" pos:end="79:24">
+
+            <return pos:start="79:13" pos:end="79:24">return <expr pos:start="79:20" pos:end="79:23"><name pos:start="79:20" pos:end="79:23">NULL</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="83:9" pos:end="83:48"><expr pos:start="83:9" pos:end="83:47"><call pos:start="83:9" pos:end="83:47"><name pos:start="83:9" pos:end="83:13">ALLOC</name><argument_list pos:start="83:14" pos:end="83:47">(<argument pos:start="83:15" pos:end="83:16"><expr pos:start="83:15" pos:end="83:16"><name pos:start="83:15" pos:end="83:16">pd</name></expr></argument>, <argument pos:start="83:19" pos:end="83:46"><expr pos:start="83:19" pos:end="83:46"><sizeof pos:start="83:19" pos:end="83:34">sizeof<argument_list pos:start="83:25" pos:end="83:34">(<argument pos:start="83:26" pos:end="83:33"><expr pos:start="83:26" pos:end="83:33"><name pos:start="83:26" pos:end="83:33">PageDesc</name></expr></argument>)</argument_list></sizeof> <operator pos:start="83:36" pos:end="83:36">*</operator> <name pos:start="83:38" pos:end="83:46">V_L2_SIZE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="85:9" pos:end="85:17"><expr pos:start="85:9" pos:end="85:16"><operator pos:start="85:9" pos:end="85:9">*</operator><name pos:start="85:10" pos:end="85:11">lp</name> <operator pos:start="85:13" pos:end="85:13">=</operator> <name pos:start="85:15" pos:end="85:16">pd</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+<cpp:undef pos:start="91:1" pos:end="91:12">#<cpp:directive pos:start="91:2" pos:end="91:6">undef</cpp:directive> <name pos:start="91:8" pos:end="91:12">ALLOC</name></cpp:undef>
+
+
+
+    <return pos:start="95:5" pos:end="95:42">return <expr pos:start="95:12" pos:end="95:41"><name pos:start="95:12" pos:end="95:13">pd</name> <operator pos:start="95:15" pos:end="95:15">+</operator> <operator pos:start="95:17" pos:end="95:17">(</operator><name pos:start="95:18" pos:end="95:22">index</name> <operator pos:start="95:24" pos:end="95:24">&amp;</operator> <operator pos:start="95:26" pos:end="95:26">(</operator><name pos:start="95:27" pos:end="95:35">V_L2_SIZE</name> <operator pos:start="95:37" pos:end="95:37">-</operator> <literal type="number" pos:start="95:39" pos:end="95:39">1</literal><operator pos:start="95:40" pos:end="95:40">)</operator><operator pos:start="95:41" pos:end="95:41">)</operator></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

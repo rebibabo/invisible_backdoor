@@ -1,0 +1,1437 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/5902.c" pos:tabs="8"><function pos:start="1:1" pos:end="1435:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:23">utf8_string</name><parameter_list pos:start="1:24" pos:end="1:29">(<parameter pos:start="1:25" pos:end="1:28"><decl pos:start="1:25" pos:end="1:28"><type pos:start="1:25" pos:end="1:28"><name pos:start="1:25" pos:end="1:28">void</name></type></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="1435:1">{<block_content pos:start="53:5" pos:end="1433:5">
+
+    <comment type="block" pos:start="5:5" pos:end="51:7">/*
+
+     * FIXME Current behavior for invalid UTF-8 sequences is
+
+     * incorrect.  This test expects current, incorrect results.
+
+     * They're all marked "bug:" below, and are to be replaced by
+
+     * correct ones as the bugs get fixed.
+
+     *
+
+     * The JSON parser rejects some invalid sequences, but accepts
+
+     * others without correcting the problem.
+
+     *
+
+     * We should either reject all invalid sequences, or minimize
+
+     * overlong sequences and replace all other invalid sequences by a
+
+     * suitable replacement character.  A common choice for
+
+     * replacement is U+FFFD.
+
+     *
+
+     * Problem: we can't easily deal with embedded U+0000.  Parsing
+
+     * the JSON string "this \\u0000" is fun" yields "this \0 is fun",
+
+     * which gets misinterpreted as NUL-terminated "this ".  We should
+
+     * consider using overlong encoding \xC0\x80 for U+0000 ("modified
+
+     * UTF-8").
+
+     *
+
+     * Most test cases are scraped from Markus Kuhn's UTF-8 decoder
+
+     * capability and stress test at
+
+     * http://www.cl.cam.ac.uk/~mgk25/ucs/examples/UTF-8-test.txt
+
+     */</comment>
+
+    <struct pos:start="53:5" pos:end="1345:6"><specifier pos:start="53:5" pos:end="53:10">static</specifier> <specifier pos:start="53:12" pos:end="53:16">const</specifier> struct <block pos:start="53:25" pos:end="63:5">{
+
+        <decl_stmt pos:start="55:9" pos:end="55:28"><decl pos:start="55:9" pos:end="55:27"><type pos:start="55:9" pos:end="55:20"><specifier pos:start="55:9" pos:end="55:13">const</specifier> <name pos:start="55:15" pos:end="55:18">char</name> <modifier pos:start="55:20" pos:end="55:20">*</modifier></type><name pos:start="55:21" pos:end="55:27">json_in</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="57:9" pos:end="57:29"><decl pos:start="57:9" pos:end="57:28"><type pos:start="57:9" pos:end="57:20"><specifier pos:start="57:9" pos:end="57:13">const</specifier> <name pos:start="57:15" pos:end="57:18">char</name> <modifier pos:start="57:20" pos:end="57:20">*</modifier></type><name pos:start="57:21" pos:end="57:28">utf8_out</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="59:9" pos:end="59:29"><decl pos:start="59:9" pos:end="59:28"><type pos:start="59:9" pos:end="59:20"><specifier pos:start="59:9" pos:end="59:13">const</specifier> <name pos:start="59:15" pos:end="59:18">char</name> <modifier pos:start="59:20" pos:end="59:20">*</modifier></type><name pos:start="59:21" pos:end="59:28">json_out</name></decl>;</decl_stmt>   <comment type="block" pos:start="59:33" pos:end="59:58">/* defaults to @json_in */</comment>
+
+        <decl_stmt pos:start="61:9" pos:end="61:28"><decl pos:start="61:9" pos:end="61:27"><type pos:start="61:9" pos:end="61:20"><specifier pos:start="61:9" pos:end="61:13">const</specifier> <name pos:start="61:15" pos:end="61:18">char</name> <modifier pos:start="61:20" pos:end="61:20">*</modifier></type><name pos:start="61:21" pos:end="61:27">utf8_in</name></decl>;</decl_stmt>    <comment type="block" pos:start="61:33" pos:end="61:59">/* defaults to @utf8_out */</comment>
+
+    }</block> <decl pos:start="63:7" pos:end="1345:5"><name pos:start="63:7" pos:end="63:18"><name pos:start="63:7" pos:end="63:16">test_cases</name><index pos:start="63:17" pos:end="63:18">[]</index></name> <init pos:start="63:20" pos:end="1345:5">= <expr pos:start="63:22" pos:end="1345:5"><block pos:start="63:22" pos:end="1345:5">{
+
+        <comment type="block" pos:start="65:9" pos:end="87:11">/*
+
+         * Bug markers used here:
+
+         * - bug: not corrected
+
+         *   JSON parser fails to correct invalid sequence(s)
+
+         * - bug: rejected
+
+         *   JSON parser rejects invalid sequence(s)
+
+         *   We may choose to define this as feature
+
+         * - bug: want "..."
+
+         *   JSON parser produces incorrect result, this is the
+
+         *   correct one, assuming replacement character U+FFFF
+
+         *   We may choose to reject instead of replace
+
+         */</comment>
+
+
+
+        <comment type="block" pos:start="91:9" pos:end="91:40">/* 1  Some correct UTF-8 text */</comment>
+
+        <expr pos:start="93:9" pos:end="109:9"><block pos:start="93:9" pos:end="109:9">{
+
+            <comment type="block" pos:start="95:13" pos:end="95:33">/* a bit of German */</comment>
+
+            <expr pos:start="97:13" pos:end="99:55"><literal type="string" pos:start="97:13" pos:end="97:33">"\"Falsches \xC3\x9C"</literal> <literal type="string" pos:start="97:35" pos:end="97:70">"ben von Xylophonmusik qu\xC3\xA4lt"</literal>
+
+            <literal type="string" pos:start="99:13" pos:end="99:39">" jeden gr\xC3\xB6\xC3\x9F"</literal> <literal type="string" pos:start="99:41" pos:end="99:55">"eren Zwerg.\""</literal></expr>,
+
+            <expr pos:start="101:13" pos:end="103:53"><literal type="string" pos:start="101:13" pos:end="101:31">"Falsches \xC3\x9C"</literal> <literal type="string" pos:start="101:33" pos:end="101:68">"ben von Xylophonmusik qu\xC3\xA4lt"</literal>
+
+            <literal type="string" pos:start="103:13" pos:end="103:39">" jeden gr\xC3\xB6\xC3\x9F"</literal> <literal type="string" pos:start="103:41" pos:end="103:53">"eren Zwerg."</literal></expr>,
+
+            <expr pos:start="105:13" pos:end="107:50"><literal type="string" pos:start="105:13" pos:end="105:65">"\"Falsches \\u00DCben von Xylophonmusik qu\\u00E4lt"</literal>
+
+            <literal type="string" pos:start="107:13" pos:end="107:50">" jeden gr\\u00F6\\u00DFeren Zwerg.\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="111:9" pos:end="121:9"><block pos:start="111:9" pos:end="121:9">{
+
+            <comment type="block" pos:start="113:13" pos:end="113:32">/* a bit of Greek */</comment>
+
+            <expr pos:start="115:13" pos:end="115:62"><literal type="string" pos:start="115:13" pos:end="115:62">"\"\xCE\xBA\xE1\xBD\xB9\xCF\x83\xCE\xBC\xCE\xB5\""</literal></expr>,
+
+            <expr pos:start="117:13" pos:end="117:58"><literal type="string" pos:start="117:13" pos:end="117:58">"\xCE\xBA\xE1\xBD\xB9\xCF\x83\xCE\xBC\xCE\xB5"</literal></expr>,
+
+            <expr pos:start="119:13" pos:end="119:53"><literal type="string" pos:start="119:13" pos:end="119:53">"\"\\u03BA\\u1F79\\u03C3\\u03BC\\u03B5\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="123:9" pos:end="123:46">/* 2  Boundary condition test cases */</comment>
+
+        <comment type="block" pos:start="125:9" pos:end="125:62">/* 2.1  First possible sequence of a certain length */</comment>
+
+        <comment type="block" pos:start="127:9" pos:end="127:34">/* 2.1.1  1 byte U+0000 */</comment>
+
+        <expr pos:start="129:9" pos:end="139:9"><block pos:start="129:9" pos:end="139:9">{
+
+            <expr pos:start="131:13" pos:end="131:25"><literal type="string" pos:start="131:13" pos:end="131:25">"\"\\u0000\""</literal></expr>,
+
+            <expr pos:start="133:13" pos:end="133:14"><literal type="string" pos:start="133:13" pos:end="133:14">""</literal></expr>,                 <comment type="block" pos:start="133:33" pos:end="133:67">/* bug: want overlong "\xC0\x80" */</comment>
+
+            <expr pos:start="135:13" pos:end="135:25"><literal type="string" pos:start="135:13" pos:end="135:25">"\"\\u0000\""</literal></expr>,
+
+            <expr pos:start="137:13" pos:end="137:22"><literal type="string" pos:start="137:13" pos:end="137:22">"\xC0\x80"</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="141:9" pos:end="141:35">/* 2.1.2  2 bytes U+0080 */</comment>
+
+        <expr pos:start="143:9" pos:end="151:9"><block pos:start="143:9" pos:end="151:9">{
+
+            <expr pos:start="145:13" pos:end="145:26"><literal type="string" pos:start="145:13" pos:end="145:26">"\"\xC2\x80\""</literal></expr>,
+
+            <expr pos:start="147:13" pos:end="147:22"><literal type="string" pos:start="147:13" pos:end="147:22">"\xC2\x80"</literal></expr>,
+
+            <expr pos:start="149:13" pos:end="149:25"><literal type="string" pos:start="149:13" pos:end="149:25">"\"\\u0080\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="153:9" pos:end="153:35">/* 2.1.3  3 bytes U+0800 */</comment>
+
+        <expr pos:start="155:9" pos:end="163:9"><block pos:start="155:9" pos:end="163:9">{
+
+            <expr pos:start="157:13" pos:end="157:30"><literal type="string" pos:start="157:13" pos:end="157:30">"\"\xE0\xA0\x80\""</literal></expr>,
+
+            <expr pos:start="159:13" pos:end="159:26"><literal type="string" pos:start="159:13" pos:end="159:26">"\xE0\xA0\x80"</literal></expr>,
+
+            <expr pos:start="161:13" pos:end="161:25"><literal type="string" pos:start="161:13" pos:end="161:25">"\"\\u0800\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="165:9" pos:end="165:36">/* 2.1.4  4 bytes U+10000 */</comment>
+
+        <expr pos:start="167:9" pos:end="175:9"><block pos:start="167:9" pos:end="175:9">{
+
+            <expr pos:start="169:13" pos:end="169:34"><literal type="string" pos:start="169:13" pos:end="169:34">"\"\xF0\x90\x80\x80\""</literal></expr>,
+
+            <expr pos:start="171:13" pos:end="171:30"><literal type="string" pos:start="171:13" pos:end="171:30">"\xF0\x90\x80\x80"</literal></expr>,
+
+            <expr pos:start="173:13" pos:end="173:32"><literal type="string" pos:start="173:13" pos:end="173:32">"\"\\uD800\\uDC00\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="177:9" pos:end="177:37">/* 2.1.5  5 bytes U+200000 */</comment>
+
+        <expr pos:start="179:9" pos:end="189:9"><block pos:start="179:9" pos:end="189:9">{
+
+            <expr pos:start="181:13" pos:end="181:38"><literal type="string" pos:start="181:13" pos:end="181:38">"\"\xF8\x88\x80\x80\x80\""</literal></expr>,
+
+            <expr pos:start="183:13" pos:end="183:16"><name pos:start="183:13" pos:end="183:16">NULL</name></expr>,               <comment type="block" pos:start="183:33" pos:end="183:51">/* bug: rejected */</comment>
+
+            <expr pos:start="185:13" pos:end="185:25"><literal type="string" pos:start="185:13" pos:end="185:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="187:13" pos:end="187:34"><literal type="string" pos:start="187:13" pos:end="187:34">"\xF8\x88\x80\x80\x80"</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="191:9" pos:end="191:38">/* 2.1.6  6 bytes U+4000000 */</comment>
+
+        <expr pos:start="193:9" pos:end="203:9"><block pos:start="193:9" pos:end="203:9">{
+
+            <expr pos:start="195:13" pos:end="195:42"><literal type="string" pos:start="195:13" pos:end="195:42">"\"\xFC\x84\x80\x80\x80\x80\""</literal></expr>,
+
+            <expr pos:start="197:13" pos:end="197:16"><name pos:start="197:13" pos:end="197:16">NULL</name></expr>,               <comment type="block" pos:start="197:33" pos:end="197:51">/* bug: rejected */</comment>
+
+            <expr pos:start="199:13" pos:end="199:25"><literal type="string" pos:start="199:13" pos:end="199:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="201:13" pos:end="201:38"><literal type="string" pos:start="201:13" pos:end="201:38">"\xFC\x84\x80\x80\x80\x80"</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="205:9" pos:end="205:61">/* 2.2  Last possible sequence of a certain length */</comment>
+
+        <comment type="block" pos:start="207:9" pos:end="207:34">/* 2.2.1  1 byte U+007F */</comment>
+
+        <expr pos:start="209:9" pos:end="217:9"><block pos:start="209:9" pos:end="217:9">{
+
+            <expr pos:start="211:13" pos:end="211:22"><literal type="string" pos:start="211:13" pos:end="211:22">"\"\x7F\""</literal></expr>,
+
+            <expr pos:start="213:13" pos:end="213:18"><literal type="string" pos:start="213:13" pos:end="213:18">"\x7F"</literal></expr>,
+
+            <expr pos:start="215:13" pos:end="215:25"><literal type="string" pos:start="215:13" pos:end="215:25">"\"\\u007F\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="219:9" pos:end="219:35">/* 2.2.2  2 bytes U+07FF */</comment>
+
+        <expr pos:start="221:9" pos:end="229:9"><block pos:start="221:9" pos:end="229:9">{
+
+            <expr pos:start="223:13" pos:end="223:26"><literal type="string" pos:start="223:13" pos:end="223:26">"\"\xDF\xBF\""</literal></expr>,
+
+            <expr pos:start="225:13" pos:end="225:22"><literal type="string" pos:start="225:13" pos:end="225:22">"\xDF\xBF"</literal></expr>,
+
+            <expr pos:start="227:13" pos:end="227:25"><literal type="string" pos:start="227:13" pos:end="227:25">"\"\\u07FF\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="231:9" pos:end="247:11">/*
+
+         * 2.2.3  3 bytes U+FFFC
+
+         * The last possible sequence is actually U+FFFF.  But that's
+
+         * a noncharacter, and already covered by its own test case
+
+         * under 5.3.  Same for U+FFFE.  U+FFFD is the last character
+
+         * in the BMP, and covered under 2.3.  Because of U+FFFD's
+
+         * special role as replacement character, it's worth testing
+
+         * U+FFFC here.
+
+         */</comment>
+
+        <expr pos:start="249:9" pos:end="257:9"><block pos:start="249:9" pos:end="257:9">{
+
+            <expr pos:start="251:13" pos:end="251:30"><literal type="string" pos:start="251:13" pos:end="251:30">"\"\xEF\xBF\xBC\""</literal></expr>,
+
+            <expr pos:start="253:13" pos:end="253:26"><literal type="string" pos:start="253:13" pos:end="253:26">"\xEF\xBF\xBC"</literal></expr>,
+
+            <expr pos:start="255:13" pos:end="255:25"><literal type="string" pos:start="255:13" pos:end="255:25">"\"\\uFFFC\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="259:9" pos:end="259:37">/* 2.2.4  4 bytes U+1FFFFF */</comment>
+
+        <expr pos:start="261:9" pos:end="271:9"><block pos:start="261:9" pos:end="271:9">{
+
+            <expr pos:start="263:13" pos:end="263:34"><literal type="string" pos:start="263:13" pos:end="263:34">"\"\xF7\xBF\xBF\xBF\""</literal></expr>,
+
+            <expr pos:start="265:13" pos:end="265:16"><name pos:start="265:13" pos:end="265:16">NULL</name></expr>,               <comment type="block" pos:start="265:33" pos:end="265:51">/* bug: rejected */</comment>
+
+            <expr pos:start="267:13" pos:end="267:25"><literal type="string" pos:start="267:13" pos:end="267:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="269:13" pos:end="269:30"><literal type="string" pos:start="269:13" pos:end="269:30">"\xF7\xBF\xBF\xBF"</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="273:9" pos:end="273:38">/* 2.2.5  5 bytes U+3FFFFFF */</comment>
+
+        <expr pos:start="275:9" pos:end="285:9"><block pos:start="275:9" pos:end="285:9">{
+
+            <expr pos:start="277:13" pos:end="277:38"><literal type="string" pos:start="277:13" pos:end="277:38">"\"\xFB\xBF\xBF\xBF\xBF\""</literal></expr>,
+
+            <expr pos:start="279:13" pos:end="279:16"><name pos:start="279:13" pos:end="279:16">NULL</name></expr>,               <comment type="block" pos:start="279:33" pos:end="279:51">/* bug: rejected */</comment>
+
+            <expr pos:start="281:13" pos:end="281:25"><literal type="string" pos:start="281:13" pos:end="281:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="283:13" pos:end="283:34"><literal type="string" pos:start="283:13" pos:end="283:34">"\xFB\xBF\xBF\xBF\xBF"</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="287:9" pos:end="287:39">/* 2.2.6  6 bytes U+7FFFFFFF */</comment>
+
+        <expr pos:start="289:9" pos:end="299:9"><block pos:start="289:9" pos:end="299:9">{
+
+            <expr pos:start="291:13" pos:end="291:42"><literal type="string" pos:start="291:13" pos:end="291:42">"\"\xFD\xBF\xBF\xBF\xBF\xBF\""</literal></expr>,
+
+            <expr pos:start="293:13" pos:end="293:16"><name pos:start="293:13" pos:end="293:16">NULL</name></expr>,               <comment type="block" pos:start="293:33" pos:end="293:51">/* bug: rejected */</comment>
+
+            <expr pos:start="295:13" pos:end="295:25"><literal type="string" pos:start="295:13" pos:end="295:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="297:13" pos:end="297:38"><literal type="string" pos:start="297:13" pos:end="297:38">"\xFD\xBF\xBF\xBF\xBF\xBF"</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="301:9" pos:end="301:44">/* 2.3  Other boundary conditions */</comment>
+
+        <expr pos:start="303:9" pos:end="313:9"><block pos:start="303:9" pos:end="313:9">{
+
+            <comment type="block" pos:start="305:13" pos:end="305:57">/* last one before surrogate range: U+D7FF */</comment>
+
+            <expr pos:start="307:13" pos:end="307:30"><literal type="string" pos:start="307:13" pos:end="307:30">"\"\xED\x9F\xBF\""</literal></expr>,
+
+            <expr pos:start="309:13" pos:end="309:26"><literal type="string" pos:start="309:13" pos:end="309:26">"\xED\x9F\xBF"</literal></expr>,
+
+            <expr pos:start="311:13" pos:end="311:25"><literal type="string" pos:start="311:13" pos:end="311:25">"\"\\uD7FF\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="315:9" pos:end="325:9"><block pos:start="315:9" pos:end="325:9">{
+
+            <comment type="block" pos:start="317:13" pos:end="317:57">/* first one after surrogate range: U+E000 */</comment>
+
+            <expr pos:start="319:13" pos:end="319:30"><literal type="string" pos:start="319:13" pos:end="319:30">"\"\xEE\x80\x80\""</literal></expr>,
+
+            <expr pos:start="321:13" pos:end="321:26"><literal type="string" pos:start="321:13" pos:end="321:26">"\xEE\x80\x80"</literal></expr>,
+
+            <expr pos:start="323:13" pos:end="323:25"><literal type="string" pos:start="323:13" pos:end="323:25">"\"\\uE000\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="327:9" pos:end="337:9"><block pos:start="327:9" pos:end="337:9">{
+
+            <comment type="block" pos:start="329:13" pos:end="329:41">/* last one in BMP: U+FFFD */</comment>
+
+            <expr pos:start="331:13" pos:end="331:30"><literal type="string" pos:start="331:13" pos:end="331:30">"\"\xEF\xBF\xBD\""</literal></expr>,
+
+            <expr pos:start="333:13" pos:end="333:26"><literal type="string" pos:start="333:13" pos:end="333:26">"\xEF\xBF\xBD"</literal></expr>,
+
+            <expr pos:start="335:13" pos:end="335:25"><literal type="string" pos:start="335:13" pos:end="335:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="339:9" pos:end="349:9"><block pos:start="339:9" pos:end="349:9">{
+
+            <comment type="block" pos:start="341:13" pos:end="341:50">/* last one in last plane: U+10FFFD */</comment>
+
+            <expr pos:start="343:13" pos:end="343:34"><literal type="string" pos:start="343:13" pos:end="343:34">"\"\xF4\x8F\xBF\xBD\""</literal></expr>,
+
+            <expr pos:start="345:13" pos:end="345:30"><literal type="string" pos:start="345:13" pos:end="345:30">"\xF4\x8F\xBF\xBD"</literal></expr>,
+
+            <expr pos:start="347:13" pos:end="347:32"><literal type="string" pos:start="347:13" pos:end="347:32">"\"\\uDBFF\\uDFFD\""</literal></expr>
+
+        }</block></expr>,
+
+        <expr pos:start="351:9" pos:end="361:9"><block pos:start="351:9" pos:end="361:9">{
+
+            <comment type="block" pos:start="353:13" pos:end="353:58">/* first one beyond Unicode range: U+110000 */</comment>
+
+            <expr pos:start="355:13" pos:end="355:34"><literal type="string" pos:start="355:13" pos:end="355:34">"\"\xF4\x90\x80\x80\""</literal></expr>,
+
+            <expr pos:start="357:13" pos:end="357:30"><literal type="string" pos:start="357:13" pos:end="357:30">"\xF4\x90\x80\x80"</literal></expr>,
+
+            <expr pos:start="359:13" pos:end="359:25"><literal type="string" pos:start="359:13" pos:end="359:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="363:9" pos:end="363:36">/* 3  Malformed sequences */</comment>
+
+        <comment type="block" pos:start="365:9" pos:end="365:48">/* 3.1  Unexpected continuation bytes */</comment>
+
+        <comment type="block" pos:start="367:9" pos:end="367:44">/* 3.1.1  First continuation byte */</comment>
+
+        <expr pos:start="369:9" pos:end="377:9"><block pos:start="369:9" pos:end="377:9">{
+
+            <expr pos:start="371:13" pos:end="371:22"><literal type="string" pos:start="371:13" pos:end="371:22">"\"\x80\""</literal></expr>,
+
+            <expr pos:start="373:13" pos:end="373:18"><literal type="string" pos:start="373:13" pos:end="373:18">"\x80"</literal></expr>,             <comment type="block" pos:start="373:33" pos:end="373:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="375:13" pos:end="375:25"><literal type="string" pos:start="375:13" pos:end="375:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="379:9" pos:end="379:43">/* 3.1.2  Last continuation byte */</comment>
+
+        <expr pos:start="381:9" pos:end="389:9"><block pos:start="381:9" pos:end="389:9">{
+
+            <expr pos:start="383:13" pos:end="383:22"><literal type="string" pos:start="383:13" pos:end="383:22">"\"\xBF\""</literal></expr>,
+
+            <expr pos:start="385:13" pos:end="385:18"><literal type="string" pos:start="385:13" pos:end="385:18">"\xBF"</literal></expr>,             <comment type="block" pos:start="385:33" pos:end="385:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="387:13" pos:end="387:25"><literal type="string" pos:start="387:13" pos:end="387:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="391:9" pos:end="391:41">/* 3.1.3  2 continuation bytes */</comment>
+
+        <expr pos:start="393:9" pos:end="401:9"><block pos:start="393:9" pos:end="401:9">{
+
+            <expr pos:start="395:13" pos:end="395:26"><literal type="string" pos:start="395:13" pos:end="395:26">"\"\x80\xBF\""</literal></expr>,
+
+            <expr pos:start="397:13" pos:end="397:22"><literal type="string" pos:start="397:13" pos:end="397:22">"\x80\xBF"</literal></expr>,         <comment type="block" pos:start="397:33" pos:end="397:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="399:13" pos:end="399:32"><literal type="string" pos:start="399:13" pos:end="399:32">"\"\\uFFFD\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="403:9" pos:end="403:41">/* 3.1.4  3 continuation bytes */</comment>
+
+        <expr pos:start="405:9" pos:end="413:9"><block pos:start="405:9" pos:end="413:9">{
+
+            <expr pos:start="407:13" pos:end="407:30"><literal type="string" pos:start="407:13" pos:end="407:30">"\"\x80\xBF\x80\""</literal></expr>,
+
+            <expr pos:start="409:13" pos:end="409:26"><literal type="string" pos:start="409:13" pos:end="409:26">"\x80\xBF\x80"</literal></expr>,     <comment type="block" pos:start="409:33" pos:end="409:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="411:13" pos:end="411:39"><literal type="string" pos:start="411:13" pos:end="411:39">"\"\\uFFFD\\uFFFD\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="415:9" pos:end="415:41">/* 3.1.5  4 continuation bytes */</comment>
+
+        <expr pos:start="417:9" pos:end="425:9"><block pos:start="417:9" pos:end="425:9">{
+
+            <expr pos:start="419:13" pos:end="419:34"><literal type="string" pos:start="419:13" pos:end="419:34">"\"\x80\xBF\x80\xBF\""</literal></expr>,
+
+            <expr pos:start="421:13" pos:end="421:30"><literal type="string" pos:start="421:13" pos:end="421:30">"\x80\xBF\x80\xBF"</literal></expr>, <comment type="block" pos:start="421:33" pos:end="421:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="423:13" pos:end="423:46"><literal type="string" pos:start="423:13" pos:end="423:46">"\"\\uFFFD\\uFFFD\\uFFFD\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="427:9" pos:end="427:41">/* 3.1.6  5 continuation bytes */</comment>
+
+        <expr pos:start="429:9" pos:end="437:9"><block pos:start="429:9" pos:end="437:9">{
+
+            <expr pos:start="431:13" pos:end="431:38"><literal type="string" pos:start="431:13" pos:end="431:38">"\"\x80\xBF\x80\xBF\x80\""</literal></expr>,
+
+            <expr pos:start="433:13" pos:end="433:34"><literal type="string" pos:start="433:13" pos:end="433:34">"\x80\xBF\x80\xBF\x80"</literal></expr>, <comment type="block" pos:start="433:37" pos:end="433:60">/* bug: not corrected */</comment>
+
+            <expr pos:start="435:13" pos:end="435:53"><literal type="string" pos:start="435:13" pos:end="435:53">"\"\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="439:9" pos:end="439:41">/* 3.1.7  6 continuation bytes */</comment>
+
+        <expr pos:start="441:9" pos:end="449:9"><block pos:start="441:9" pos:end="449:9">{
+
+            <expr pos:start="443:13" pos:end="443:42"><literal type="string" pos:start="443:13" pos:end="443:42">"\"\x80\xBF\x80\xBF\x80\xBF\""</literal></expr>,
+
+            <expr pos:start="445:13" pos:end="445:38"><literal type="string" pos:start="445:13" pos:end="445:38">"\x80\xBF\x80\xBF\x80\xBF"</literal></expr>, <comment type="block" pos:start="445:41" pos:end="445:64">/* bug: not corrected */</comment>
+
+            <expr pos:start="447:13" pos:end="447:60"><literal type="string" pos:start="447:13" pos:end="447:60">"\"\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="451:9" pos:end="451:41">/* 3.1.8  7 continuation bytes */</comment>
+
+        <expr pos:start="453:9" pos:end="461:9"><block pos:start="453:9" pos:end="461:9">{
+
+            <expr pos:start="455:13" pos:end="455:46"><literal type="string" pos:start="455:13" pos:end="455:46">"\"\x80\xBF\x80\xBF\x80\xBF\x80\""</literal></expr>,
+
+            <expr pos:start="457:13" pos:end="457:42"><literal type="string" pos:start="457:13" pos:end="457:42">"\x80\xBF\x80\xBF\x80\xBF\x80"</literal></expr>, <comment type="block" pos:start="457:45" pos:end="457:68">/* bug: not corrected */</comment>
+
+            <expr pos:start="459:13" pos:end="459:67"><literal type="string" pos:start="459:13" pos:end="459:67">"\"\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="463:9" pos:end="463:67">/* 3.1.9  Sequence of all 64 possible continuation bytes */</comment>
+
+        <expr pos:start="465:9" pos:end="517:9"><block pos:start="465:9" pos:end="517:9">{
+
+            <expr pos:start="467:13" pos:end="481:48"><literal type="string" pos:start="467:13" pos:end="467:48">"\"\x80\x81\x82\x83\x84\x85\x86\x87"</literal>
+
+            <literal type="string" pos:start="469:13" pos:end="469:46">"\x88\x89\x8A\x8B\x8C\x8D\x8E\x8F"</literal>
+
+            <literal type="string" pos:start="471:13" pos:end="471:46">"\x90\x91\x92\x93\x94\x95\x96\x97"</literal>
+
+            <literal type="string" pos:start="473:13" pos:end="473:46">"\x98\x99\x9A\x9B\x9C\x9D\x9E\x9F"</literal>
+
+            <literal type="string" pos:start="475:13" pos:end="475:46">"\xA0\xA1\xA2\xA3\xA4\xA5\xA6\xA7"</literal>
+
+            <literal type="string" pos:start="477:13" pos:end="477:46">"\xA8\xA9\xAA\xAB\xAC\xAD\xAE\xAF"</literal>
+
+            <literal type="string" pos:start="479:13" pos:end="479:46">"\xB0\xB1\xB2\xB3\xB4\xB5\xB6\xB7"</literal>
+
+            <literal type="string" pos:start="481:13" pos:end="481:48">"\xB8\xB9\xBA\xBB\xBC\xBD\xBE\xBF\""</literal></expr>,
+
+             <comment type="block" pos:start="483:14" pos:end="483:37">/* bug: not corrected */</comment>
+
+            <expr pos:start="485:13" pos:end="499:46"><literal type="string" pos:start="485:13" pos:end="485:46">"\x80\x81\x82\x83\x84\x85\x86\x87"</literal>
+
+            <literal type="string" pos:start="487:13" pos:end="487:46">"\x88\x89\x8A\x8B\x8C\x8D\x8E\x8F"</literal>
+
+            <literal type="string" pos:start="489:13" pos:end="489:46">"\x90\x91\x92\x93\x94\x95\x96\x97"</literal>
+
+            <literal type="string" pos:start="491:13" pos:end="491:46">"\x98\x99\x9A\x9B\x9C\x9D\x9E\x9F"</literal>
+
+            <literal type="string" pos:start="493:13" pos:end="493:46">"\xA0\xA1\xA2\xA3\xA4\xA5\xA6\xA7"</literal>
+
+            <literal type="string" pos:start="495:13" pos:end="495:46">"\xA8\xA9\xAA\xAB\xAC\xAD\xAE\xAF"</literal>
+
+            <literal type="string" pos:start="497:13" pos:end="497:46">"\xB0\xB1\xB2\xB3\xB4\xB5\xB6\xB7"</literal>
+
+            <literal type="string" pos:start="499:13" pos:end="499:46">"\xB8\xB9\xBA\xBB\xBC\xBD\xBE\xBF"</literal></expr>,
+
+            <expr pos:start="501:13" pos:end="515:72"><literal type="string" pos:start="501:13" pos:end="501:72">"\"\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD"</literal>
+
+            <literal type="string" pos:start="503:13" pos:end="503:70">"\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD"</literal>
+
+            <literal type="string" pos:start="505:13" pos:end="505:70">"\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD"</literal>
+
+            <literal type="string" pos:start="507:13" pos:end="507:70">"\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD"</literal>
+
+            <literal type="string" pos:start="509:13" pos:end="509:70">"\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD"</literal>
+
+            <literal type="string" pos:start="511:13" pos:end="511:70">"\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD"</literal>
+
+            <literal type="string" pos:start="513:13" pos:end="513:70">"\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD"</literal>
+
+            <literal type="string" pos:start="515:13" pos:end="515:72">"\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\""</literal></expr>
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="519:9" pos:end="519:42">/* 3.2  Lonely start characters */</comment>
+
+        <comment type="block" pos:start="521:9" pos:end="521:78">/* 3.2.1  All 32 first bytes of 2-byte sequences, followed by space */</comment>
+
+        <expr pos:start="523:9" pos:end="551:9"><block pos:start="523:9" pos:end="551:9">{
+
+            <expr pos:start="525:13" pos:end="531:56"><literal type="string" pos:start="525:13" pos:end="525:56">"\"\xC0 \xC1 \xC2 \xC3 \xC4 \xC5 \xC6 \xC7 "</literal>
+
+            <literal type="string" pos:start="527:13" pos:end="527:54">"\xC8 \xC9 \xCA \xCB \xCC \xCD \xCE \xCF "</literal>
+
+            <literal type="string" pos:start="529:13" pos:end="529:54">"\xD0 \xD1 \xD2 \xD3 \xD4 \xD5 \xD6 \xD7 "</literal>
+
+            <literal type="string" pos:start="531:13" pos:end="531:56">"\xD8 \xD9 \xDA \xDB \xDC \xDD \xDE \xDF \""</literal></expr>,
+
+            <expr pos:start="533:13" pos:end="533:16"><name pos:start="533:13" pos:end="533:16">NULL</name></expr>,               <comment type="block" pos:start="533:33" pos:end="533:51">/* bug: rejected */</comment>
+
+            <expr pos:start="535:13" pos:end="541:80"><literal type="string" pos:start="535:13" pos:end="535:80">"\"\\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD "</literal>
+
+            <literal type="string" pos:start="537:13" pos:end="537:78">"\\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD "</literal>
+
+            <literal type="string" pos:start="539:13" pos:end="539:78">"\\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD "</literal>
+
+            <literal type="string" pos:start="541:13" pos:end="541:80">"\\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \""</literal></expr>,
+
+            <expr pos:start="543:13" pos:end="549:54"><literal type="string" pos:start="543:13" pos:end="543:54">"\xC0 \xC1 \xC2 \xC3 \xC4 \xC5 \xC6 \xC7 "</literal>
+
+            <literal type="string" pos:start="545:13" pos:end="545:54">"\xC8 \xC9 \xCA \xCB \xCC \xCD \xCE \xCF "</literal>
+
+            <literal type="string" pos:start="547:13" pos:end="547:54">"\xD0 \xD1 \xD2 \xD3 \xD4 \xD5 \xD6 \xD7 "</literal>
+
+            <literal type="string" pos:start="549:13" pos:end="549:54">"\xD8 \xD9 \xDA \xDB \xDC \xDD \xDE \xDF "</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="553:9" pos:end="553:78">/* 3.2.2  All 16 first bytes of 3-byte sequences, followed by space */</comment>
+
+        <expr pos:start="555:9" pos:end="571:9"><block pos:start="555:9" pos:end="571:9">{
+
+            <expr pos:start="557:13" pos:end="559:56"><literal type="string" pos:start="557:13" pos:end="557:56">"\"\xE0 \xE1 \xE2 \xE3 \xE4 \xE5 \xE6 \xE7 "</literal>
+
+            <literal type="string" pos:start="559:13" pos:end="559:56">"\xE8 \xE9 \xEA \xEB \xEC \xED \xEE \xEF \""</literal></expr>,
+
+            <comment type="block" pos:start="561:13" pos:end="561:36">/* bug: not corrected */</comment>
+
+            <expr pos:start="563:13" pos:end="565:54"><literal type="string" pos:start="563:13" pos:end="563:54">"\xE0 \xE1 \xE2 \xE3 \xE4 \xE5 \xE6 \xE7 "</literal>
+
+            <literal type="string" pos:start="565:13" pos:end="565:54">"\xE8 \xE9 \xEA \xEB \xEC \xED \xEE \xEF "</literal></expr>,
+
+            <expr pos:start="567:13" pos:end="569:80"><literal type="string" pos:start="567:13" pos:end="567:80">"\"\\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD "</literal>
+
+            <literal type="string" pos:start="569:13" pos:end="569:80">"\\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="573:9" pos:end="573:77">/* 3.2.3  All 8 first bytes of 4-byte sequences, followed by space */</comment>
+
+        <expr pos:start="575:9" pos:end="585:9"><block pos:start="575:9" pos:end="585:9">{
+
+            <expr pos:start="577:13" pos:end="577:58"><literal type="string" pos:start="577:13" pos:end="577:58">"\"\xF0 \xF1 \xF2 \xF3 \xF4 \xF5 \xF6 \xF7 \""</literal></expr>,
+
+            <expr pos:start="579:13" pos:end="579:16"><name pos:start="579:13" pos:end="579:16">NULL</name></expr>,               <comment type="block" pos:start="579:33" pos:end="579:51">/* bug: rejected */</comment>
+
+            <expr pos:start="581:13" pos:end="581:82"><literal type="string" pos:start="581:13" pos:end="581:82">"\"\\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \\uFFFD \""</literal></expr>,
+
+            <expr pos:start="583:13" pos:end="583:54"><literal type="string" pos:start="583:13" pos:end="583:54">"\xF0 \xF1 \xF2 \xF3 \xF4 \xF5 \xF6 \xF7 "</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="587:9" pos:end="587:77">/* 3.2.4  All 4 first bytes of 5-byte sequences, followed by space */</comment>
+
+        <expr pos:start="589:9" pos:end="599:9"><block pos:start="589:9" pos:end="599:9">{
+
+            <expr pos:start="591:13" pos:end="591:38"><literal type="string" pos:start="591:13" pos:end="591:38">"\"\xF8 \xF9 \xFA \xFB \""</literal></expr>,
+
+            <expr pos:start="593:13" pos:end="593:16"><name pos:start="593:13" pos:end="593:16">NULL</name></expr>,               <comment type="block" pos:start="593:33" pos:end="593:51">/* bug: rejected */</comment>
+
+            <expr pos:start="595:13" pos:end="595:50"><literal type="string" pos:start="595:13" pos:end="595:50">"\"\\uFFFD \\uFFFD \\uFFFD \\uFFFD \""</literal></expr>,
+
+            <expr pos:start="597:13" pos:end="597:34"><literal type="string" pos:start="597:13" pos:end="597:34">"\xF8 \xF9 \xFA \xFB "</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="601:9" pos:end="601:77">/* 3.2.5  All 2 first bytes of 6-byte sequences, followed by space */</comment>
+
+        <expr pos:start="603:9" pos:end="613:9"><block pos:start="603:9" pos:end="613:9">{
+
+            <expr pos:start="605:13" pos:end="605:28"><literal type="string" pos:start="605:13" pos:end="605:28">"\"\xFC \xFD \""</literal></expr>,
+
+            <expr pos:start="607:13" pos:end="607:16"><name pos:start="607:13" pos:end="607:16">NULL</name></expr>,               <comment type="block" pos:start="607:33" pos:end="607:51">/* bug: rejected */</comment>
+
+            <expr pos:start="609:13" pos:end="609:34"><literal type="string" pos:start="609:13" pos:end="609:34">"\"\\uFFFD \\uFFFD \""</literal></expr>,
+
+            <expr pos:start="611:13" pos:end="611:24"><literal type="string" pos:start="611:13" pos:end="611:24">"\xFC \xFD "</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="615:9" pos:end="615:64">/* 3.3  Sequences with last continuation byte missing */</comment>
+
+        <comment type="block" pos:start="617:9" pos:end="617:68">/* 3.3.1  2-byte sequence with last byte missing (U+0000) */</comment>
+
+        <expr pos:start="619:9" pos:end="629:9"><block pos:start="619:9" pos:end="629:9">{
+
+            <expr pos:start="621:13" pos:end="621:22"><literal type="string" pos:start="621:13" pos:end="621:22">"\"\xC0\""</literal></expr>,
+
+            <expr pos:start="623:13" pos:end="623:16"><name pos:start="623:13" pos:end="623:16">NULL</name></expr>,               <comment type="block" pos:start="623:33" pos:end="623:51">/* bug: rejected */</comment>
+
+            <expr pos:start="625:13" pos:end="625:25"><literal type="string" pos:start="625:13" pos:end="625:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="627:13" pos:end="627:18"><literal type="string" pos:start="627:13" pos:end="627:18">"\xC0"</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="631:9" pos:end="631:68">/* 3.3.2  3-byte sequence with last byte missing (U+0000) */</comment>
+
+        <expr pos:start="633:9" pos:end="641:9"><block pos:start="633:9" pos:end="641:9">{
+
+            <expr pos:start="635:13" pos:end="635:26"><literal type="string" pos:start="635:13" pos:end="635:26">"\"\xE0\x80\""</literal></expr>,
+
+            <expr pos:start="637:13" pos:end="637:22"><literal type="string" pos:start="637:13" pos:end="637:22">"\xE0\x80"</literal></expr>,           <comment type="block" pos:start="637:35" pos:end="637:58">/* bug: not corrected */</comment>
+
+            <expr pos:start="639:13" pos:end="639:25"><literal type="string" pos:start="639:13" pos:end="639:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="643:9" pos:end="643:68">/* 3.3.3  4-byte sequence with last byte missing (U+0000) */</comment>
+
+        <expr pos:start="645:9" pos:end="653:9"><block pos:start="645:9" pos:end="653:9">{
+
+            <expr pos:start="647:13" pos:end="647:30"><literal type="string" pos:start="647:13" pos:end="647:30">"\"\xF0\x80\x80\""</literal></expr>,
+
+            <expr pos:start="649:13" pos:end="649:26"><literal type="string" pos:start="649:13" pos:end="649:26">"\xF0\x80\x80"</literal></expr>,     <comment type="block" pos:start="649:33" pos:end="649:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="651:13" pos:end="651:25"><literal type="string" pos:start="651:13" pos:end="651:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="655:9" pos:end="655:68">/* 3.3.4  5-byte sequence with last byte missing (U+0000) */</comment>
+
+        <expr pos:start="657:9" pos:end="667:9"><block pos:start="657:9" pos:end="667:9">{
+
+            <expr pos:start="659:13" pos:end="659:34"><literal type="string" pos:start="659:13" pos:end="659:34">"\"\xF8\x80\x80\x80\""</literal></expr>,
+
+            <expr pos:start="661:13" pos:end="661:16"><name pos:start="661:13" pos:end="661:16">NULL</name></expr>,                   <comment type="block" pos:start="661:37" pos:end="661:55">/* bug: rejected */</comment>
+
+            <expr pos:start="663:13" pos:end="663:25"><literal type="string" pos:start="663:13" pos:end="663:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="665:13" pos:end="665:30"><literal type="string" pos:start="665:13" pos:end="665:30">"\xF8\x80\x80\x80"</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="669:9" pos:end="669:68">/* 3.3.5  6-byte sequence with last byte missing (U+0000) */</comment>
+
+        <expr pos:start="671:9" pos:end="681:9"><block pos:start="671:9" pos:end="681:9">{
+
+            <expr pos:start="673:13" pos:end="673:38"><literal type="string" pos:start="673:13" pos:end="673:38">"\"\xFC\x80\x80\x80\x80\""</literal></expr>,
+
+            <expr pos:start="675:13" pos:end="675:16"><name pos:start="675:13" pos:end="675:16">NULL</name></expr>,                        <comment type="block" pos:start="675:42" pos:end="675:60">/* bug: rejected */</comment>
+
+            <expr pos:start="677:13" pos:end="677:25"><literal type="string" pos:start="677:13" pos:end="677:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="679:13" pos:end="679:34"><literal type="string" pos:start="679:13" pos:end="679:34">"\xFC\x80\x80\x80\x80"</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="683:9" pos:end="683:68">/* 3.3.6  2-byte sequence with last byte missing (U+07FF) */</comment>
+
+        <expr pos:start="685:9" pos:end="693:9"><block pos:start="685:9" pos:end="693:9">{
+
+            <expr pos:start="687:13" pos:end="687:22"><literal type="string" pos:start="687:13" pos:end="687:22">"\"\xDF\""</literal></expr>,
+
+            <expr pos:start="689:13" pos:end="689:18"><literal type="string" pos:start="689:13" pos:end="689:18">"\xDF"</literal></expr>,             <comment type="block" pos:start="689:33" pos:end="689:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="691:13" pos:end="691:25"><literal type="string" pos:start="691:13" pos:end="691:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="695:9" pos:end="695:68">/* 3.3.7  3-byte sequence with last byte missing (U+FFFF) */</comment>
+
+        <expr pos:start="697:9" pos:end="705:9"><block pos:start="697:9" pos:end="705:9">{
+
+            <expr pos:start="699:13" pos:end="699:26"><literal type="string" pos:start="699:13" pos:end="699:26">"\"\xEF\xBF\""</literal></expr>,
+
+            <expr pos:start="701:13" pos:end="701:22"><literal type="string" pos:start="701:13" pos:end="701:22">"\xEF\xBF"</literal></expr>,           <comment type="block" pos:start="701:35" pos:end="701:58">/* bug: not corrected */</comment>
+
+            <expr pos:start="703:13" pos:end="703:25"><literal type="string" pos:start="703:13" pos:end="703:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="707:9" pos:end="707:70">/* 3.3.8  4-byte sequence with last byte missing (U+1FFFFF) */</comment>
+
+        <expr pos:start="709:9" pos:end="719:9"><block pos:start="709:9" pos:end="719:9">{
+
+            <expr pos:start="711:13" pos:end="711:30"><literal type="string" pos:start="711:13" pos:end="711:30">"\"\xF7\xBF\xBF\""</literal></expr>,
+
+            <expr pos:start="713:13" pos:end="713:16"><name pos:start="713:13" pos:end="713:16">NULL</name></expr>,               <comment type="block" pos:start="713:33" pos:end="713:51">/* bug: rejected */</comment>
+
+            <expr pos:start="715:13" pos:end="715:25"><literal type="string" pos:start="715:13" pos:end="715:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="717:13" pos:end="717:26"><literal type="string" pos:start="717:13" pos:end="717:26">"\xF7\xBF\xBF"</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="721:9" pos:end="721:71">/* 3.3.9  5-byte sequence with last byte missing (U+3FFFFFF) */</comment>
+
+        <expr pos:start="723:9" pos:end="733:9"><block pos:start="723:9" pos:end="733:9">{
+
+            <expr pos:start="725:13" pos:end="725:34"><literal type="string" pos:start="725:13" pos:end="725:34">"\"\xFB\xBF\xBF\xBF\""</literal></expr>,
+
+            <expr pos:start="727:13" pos:end="727:16"><name pos:start="727:13" pos:end="727:16">NULL</name></expr>,                 <comment type="block" pos:start="727:35" pos:end="727:53">/* bug: rejected */</comment>
+
+            <expr pos:start="729:13" pos:end="729:25"><literal type="string" pos:start="729:13" pos:end="729:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="731:13" pos:end="731:30"><literal type="string" pos:start="731:13" pos:end="731:30">"\xFB\xBF\xBF\xBF"</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="735:9" pos:end="735:73">/* 3.3.10  6-byte sequence with last byte missing (U+7FFFFFFF) */</comment>
+
+        <expr pos:start="737:9" pos:end="747:9"><block pos:start="737:9" pos:end="747:9">{
+
+            <expr pos:start="739:13" pos:end="739:38"><literal type="string" pos:start="739:13" pos:end="739:38">"\"\xFD\xBF\xBF\xBF\xBF\""</literal></expr>,
+
+            <expr pos:start="741:13" pos:end="741:16"><name pos:start="741:13" pos:end="741:16">NULL</name></expr>,                        <comment type="block" pos:start="741:42" pos:end="741:60">/* bug: rejected */</comment>
+
+            <expr pos:start="743:13" pos:end="743:25"><literal type="string" pos:start="743:13" pos:end="743:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="745:13" pos:end="745:34"><literal type="string" pos:start="745:13" pos:end="745:34">"\xFD\xBF\xBF\xBF\xBF"</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="749:9" pos:end="749:56">/* 3.4  Concatenation of incomplete sequences */</comment>
+
+        <expr pos:start="751:9" pos:end="767:9"><block pos:start="751:9" pos:end="767:9">{
+
+            <expr pos:start="753:13" pos:end="755:76"><literal type="string" pos:start="753:13" pos:end="753:76">"\"\xC0\xE0\x80\xF0\x80\x80\xF8\x80\x80\x80\xFC\x80\x80\x80\x80"</literal>
+
+            <literal type="string" pos:start="755:13" pos:end="755:76">"\xDF\xEF\xBF\xF7\xBF\xBF\xFB\xBF\xBF\xBF\xFD\xBF\xBF\xBF\xBF\""</literal></expr>,
+
+            <expr pos:start="757:13" pos:end="757:16"><name pos:start="757:13" pos:end="757:16">NULL</name></expr>,               <comment type="block" pos:start="757:33" pos:end="757:51">/* bug: rejected */</comment>
+
+            <expr pos:start="759:13" pos:end="761:51"><literal type="string" pos:start="759:13" pos:end="759:51">"\"\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD"</literal>
+
+            <literal type="string" pos:start="761:13" pos:end="761:51">"\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="763:13" pos:end="765:74"><literal type="string" pos:start="763:13" pos:end="763:74">"\xC0\xE0\x80\xF0\x80\x80\xF8\x80\x80\x80\xFC\x80\x80\x80\x80"</literal>
+
+            <literal type="string" pos:start="765:13" pos:end="765:74">"\xDF\xEF\xBF\xF7\xBF\xBF\xFB\xBF\xBF\xBF\xFD\xBF\xBF\xBF\xBF"</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="769:9" pos:end="769:35">/* 3.5  Impossible bytes */</comment>
+
+        <expr pos:start="771:9" pos:end="781:9"><block pos:start="771:9" pos:end="781:9">{
+
+            <expr pos:start="773:13" pos:end="773:22"><literal type="string" pos:start="773:13" pos:end="773:22">"\"\xFE\""</literal></expr>,
+
+            <expr pos:start="775:13" pos:end="775:16"><name pos:start="775:13" pos:end="775:16">NULL</name></expr>,               <comment type="block" pos:start="775:33" pos:end="775:51">/* bug: rejected */</comment>
+
+            <expr pos:start="777:13" pos:end="777:25"><literal type="string" pos:start="777:13" pos:end="777:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="779:13" pos:end="779:18"><literal type="string" pos:start="779:13" pos:end="779:18">"\xFE"</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="783:9" pos:end="793:9"><block pos:start="783:9" pos:end="793:9">{
+
+            <expr pos:start="785:13" pos:end="785:22"><literal type="string" pos:start="785:13" pos:end="785:22">"\"\xFF\""</literal></expr>,
+
+            <expr pos:start="787:13" pos:end="787:16"><name pos:start="787:13" pos:end="787:16">NULL</name></expr>,               <comment type="block" pos:start="787:33" pos:end="787:51">/* bug: rejected */</comment>
+
+            <expr pos:start="789:13" pos:end="789:25"><literal type="string" pos:start="789:13" pos:end="789:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="791:13" pos:end="791:18"><literal type="string" pos:start="791:13" pos:end="791:18">"\xFF"</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="795:9" pos:end="805:9"><block pos:start="795:9" pos:end="805:9">{
+
+            <expr pos:start="797:13" pos:end="797:34"><literal type="string" pos:start="797:13" pos:end="797:34">"\"\xFE\xFE\xFF\xFF\""</literal></expr>,
+
+            <expr pos:start="799:13" pos:end="799:16"><name pos:start="799:13" pos:end="799:16">NULL</name></expr>,                 <comment type="block" pos:start="799:35" pos:end="799:53">/* bug: rejected */</comment>
+
+            <expr pos:start="801:13" pos:end="801:46"><literal type="string" pos:start="801:13" pos:end="801:46">"\"\\uFFFD\\uFFFD\\uFFFD\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="803:13" pos:end="803:30"><literal type="string" pos:start="803:13" pos:end="803:30">"\xFE\xFE\xFF\xFF"</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="807:9" pos:end="807:35">/* 4  Overlong sequences */</comment>
+
+        <comment type="block" pos:start="809:9" pos:end="809:31">/* 4.1  Overlong '/' */</comment>
+
+        <expr pos:start="811:9" pos:end="821:9"><block pos:start="811:9" pos:end="821:9">{
+
+            <expr pos:start="813:13" pos:end="813:26"><literal type="string" pos:start="813:13" pos:end="813:26">"\"\xC0\xAF\""</literal></expr>,
+
+            <expr pos:start="815:13" pos:end="815:16"><name pos:start="815:13" pos:end="815:16">NULL</name></expr>,               <comment type="block" pos:start="815:33" pos:end="815:51">/* bug: rejected */</comment>
+
+            <expr pos:start="817:13" pos:end="817:25"><literal type="string" pos:start="817:13" pos:end="817:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="819:13" pos:end="819:22"><literal type="string" pos:start="819:13" pos:end="819:22">"\xC0\xAF"</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="823:9" pos:end="831:9"><block pos:start="823:9" pos:end="831:9">{
+
+            <expr pos:start="825:13" pos:end="825:30"><literal type="string" pos:start="825:13" pos:end="825:30">"\"\xE0\x80\xAF\""</literal></expr>,
+
+            <expr pos:start="827:13" pos:end="827:26"><literal type="string" pos:start="827:13" pos:end="827:26">"\xE0\x80\xAF"</literal></expr>,     <comment type="block" pos:start="827:33" pos:end="827:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="829:13" pos:end="829:25"><literal type="string" pos:start="829:13" pos:end="829:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="833:9" pos:end="841:9"><block pos:start="833:9" pos:end="841:9">{
+
+            <expr pos:start="835:13" pos:end="835:34"><literal type="string" pos:start="835:13" pos:end="835:34">"\"\xF0\x80\x80\xAF\""</literal></expr>,
+
+            <expr pos:start="837:13" pos:end="837:30"><literal type="string" pos:start="837:13" pos:end="837:30">"\xF0\x80\x80\xAF"</literal></expr>,  <comment type="block" pos:start="837:34" pos:end="837:57">/* bug: not corrected */</comment>
+
+            <expr pos:start="839:13" pos:end="839:25"><literal type="string" pos:start="839:13" pos:end="839:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="843:9" pos:end="853:9"><block pos:start="843:9" pos:end="853:9">{
+
+            <expr pos:start="845:13" pos:end="845:38"><literal type="string" pos:start="845:13" pos:end="845:38">"\"\xF8\x80\x80\x80\xAF\""</literal></expr>,
+
+            <expr pos:start="847:13" pos:end="847:16"><name pos:start="847:13" pos:end="847:16">NULL</name></expr>,                        <comment type="block" pos:start="847:42" pos:end="847:60">/* bug: rejected */</comment>
+
+            <expr pos:start="849:13" pos:end="849:25"><literal type="string" pos:start="849:13" pos:end="849:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="851:13" pos:end="851:34"><literal type="string" pos:start="851:13" pos:end="851:34">"\xF8\x80\x80\x80\xAF"</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="855:9" pos:end="865:9"><block pos:start="855:9" pos:end="865:9">{
+
+            <expr pos:start="857:13" pos:end="857:42"><literal type="string" pos:start="857:13" pos:end="857:42">"\"\xFC\x80\x80\x80\x80\xAF\""</literal></expr>,
+
+            <expr pos:start="859:13" pos:end="859:16"><name pos:start="859:13" pos:end="859:16">NULL</name></expr>,                               <comment type="block" pos:start="859:49" pos:end="859:67">/* bug: rejected */</comment>
+
+            <expr pos:start="861:13" pos:end="861:25"><literal type="string" pos:start="861:13" pos:end="861:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="863:13" pos:end="863:38"><literal type="string" pos:start="863:13" pos:end="863:38">"\xFC\x80\x80\x80\x80\xAF"</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="867:9" pos:end="877:11">/*
+
+         * 4.2  Maximum overlong sequences
+
+         * Highest Unicode value that is still resulting in an
+
+         * overlong sequence if represented with the given number of
+
+         * bytes.  This is a boundary test for safe UTF-8 decoders.
+
+         */</comment>
+
+        <expr pos:start="879:9" pos:end="891:9"><block pos:start="879:9" pos:end="891:9">{
+
+            <comment type="block" pos:start="881:13" pos:end="881:25">/* \U+007F */</comment>
+
+            <expr pos:start="883:13" pos:end="883:26"><literal type="string" pos:start="883:13" pos:end="883:26">"\"\xC1\xBF\""</literal></expr>,
+
+            <expr pos:start="885:13" pos:end="885:16"><name pos:start="885:13" pos:end="885:16">NULL</name></expr>,               <comment type="block" pos:start="885:33" pos:end="885:51">/* bug: rejected */</comment>
+
+            <expr pos:start="887:13" pos:end="887:25"><literal type="string" pos:start="887:13" pos:end="887:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="889:13" pos:end="889:22"><literal type="string" pos:start="889:13" pos:end="889:22">"\xC1\xBF"</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="893:9" pos:end="903:9"><block pos:start="893:9" pos:end="903:9">{
+
+            <comment type="block" pos:start="895:13" pos:end="895:25">/* \U+07FF */</comment>
+
+            <expr pos:start="897:13" pos:end="897:30"><literal type="string" pos:start="897:13" pos:end="897:30">"\"\xE0\x9F\xBF\""</literal></expr>,
+
+            <expr pos:start="899:13" pos:end="899:26"><literal type="string" pos:start="899:13" pos:end="899:26">"\xE0\x9F\xBF"</literal></expr>,     <comment type="block" pos:start="899:33" pos:end="899:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="901:13" pos:end="901:25"><literal type="string" pos:start="901:13" pos:end="901:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="905:9" pos:end="925:9"><block pos:start="905:9" pos:end="925:9">{
+
+            <comment type="block" pos:start="907:13" pos:end="917:15">/*
+
+             * \U+FFFC
+
+             * The actual maximum would be U+FFFF, but that's a
+
+             * noncharacter.  Testing U+FFFC seems more useful.  See
+
+             * also 2.2.3
+
+             */</comment>
+
+            <expr pos:start="919:13" pos:end="919:34"><literal type="string" pos:start="919:13" pos:end="919:34">"\"\xF0\x8F\xBF\xBC\""</literal></expr>,
+
+            <expr pos:start="921:13" pos:end="921:30"><literal type="string" pos:start="921:13" pos:end="921:30">"\xF0\x8F\xBF\xBC"</literal></expr>,   <comment type="block" pos:start="921:35" pos:end="921:58">/* bug: not corrected */</comment>
+
+            <expr pos:start="923:13" pos:end="923:25"><literal type="string" pos:start="923:13" pos:end="923:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="927:9" pos:end="939:9"><block pos:start="927:9" pos:end="939:9">{
+
+            <comment type="block" pos:start="929:13" pos:end="929:27">/* \U+1FFFFF */</comment>
+
+            <expr pos:start="931:13" pos:end="931:38"><literal type="string" pos:start="931:13" pos:end="931:38">"\"\xF8\x87\xBF\xBF\xBF\""</literal></expr>,
+
+            <expr pos:start="933:13" pos:end="933:16"><name pos:start="933:13" pos:end="933:16">NULL</name></expr>,                        <comment type="block" pos:start="933:42" pos:end="933:60">/* bug: rejected */</comment>
+
+            <expr pos:start="935:13" pos:end="935:25"><literal type="string" pos:start="935:13" pos:end="935:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="937:13" pos:end="937:34"><literal type="string" pos:start="937:13" pos:end="937:34">"\xF8\x87\xBF\xBF\xBF"</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="941:9" pos:end="953:9"><block pos:start="941:9" pos:end="953:9">{
+
+            <comment type="block" pos:start="943:13" pos:end="943:28">/* \U+3FFFFFF */</comment>
+
+            <expr pos:start="945:13" pos:end="945:42"><literal type="string" pos:start="945:13" pos:end="945:42">"\"\xFC\x83\xBF\xBF\xBF\xBF\""</literal></expr>,
+
+            <expr pos:start="947:13" pos:end="947:16"><name pos:start="947:13" pos:end="947:16">NULL</name></expr>,                               <comment type="block" pos:start="947:49" pos:end="947:67">/* bug: rejected */</comment>
+
+            <expr pos:start="949:13" pos:end="949:25"><literal type="string" pos:start="949:13" pos:end="949:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="951:13" pos:end="951:38"><literal type="string" pos:start="951:13" pos:end="951:38">"\xFC\x83\xBF\xBF\xBF\xBF"</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="955:9" pos:end="955:63">/* 4.3  Overlong representation of the NUL character */</comment>
+
+        <expr pos:start="957:9" pos:end="969:9"><block pos:start="957:9" pos:end="969:9">{
+
+            <comment type="block" pos:start="959:13" pos:end="959:25">/* \U+0000 */</comment>
+
+            <expr pos:start="961:13" pos:end="961:26"><literal type="string" pos:start="961:13" pos:end="961:26">"\"\xC0\x80\""</literal></expr>,
+
+            <expr pos:start="963:13" pos:end="963:16"><name pos:start="963:13" pos:end="963:16">NULL</name></expr>,               <comment type="block" pos:start="963:33" pos:end="963:51">/* bug: rejected */</comment>
+
+            <expr pos:start="965:13" pos:end="965:25"><literal type="string" pos:start="965:13" pos:end="965:25">"\"\\u0000\""</literal></expr>,
+
+            <expr pos:start="967:13" pos:end="967:22"><literal type="string" pos:start="967:13" pos:end="967:22">"\xC0\x80"</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="971:9" pos:end="981:9"><block pos:start="971:9" pos:end="981:9">{
+
+            <comment type="block" pos:start="973:13" pos:end="973:25">/* \U+0000 */</comment>
+
+            <expr pos:start="975:13" pos:end="975:30"><literal type="string" pos:start="975:13" pos:end="975:30">"\"\xE0\x80\x80\""</literal></expr>,
+
+            <expr pos:start="977:13" pos:end="977:26"><literal type="string" pos:start="977:13" pos:end="977:26">"\xE0\x80\x80"</literal></expr>,     <comment type="block" pos:start="977:33" pos:end="977:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="979:13" pos:end="979:25"><literal type="string" pos:start="979:13" pos:end="979:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="983:9" pos:end="993:9"><block pos:start="983:9" pos:end="993:9">{
+
+            <comment type="block" pos:start="985:13" pos:end="985:25">/* \U+0000 */</comment>
+
+            <expr pos:start="987:13" pos:end="987:34"><literal type="string" pos:start="987:13" pos:end="987:34">"\"\xF0\x80\x80\x80\""</literal></expr>,
+
+            <expr pos:start="989:13" pos:end="989:30"><literal type="string" pos:start="989:13" pos:end="989:30">"\xF0\x80\x80\x80"</literal></expr>,   <comment type="block" pos:start="989:35" pos:end="989:58">/* bug: not corrected */</comment>
+
+            <expr pos:start="991:13" pos:end="991:25"><literal type="string" pos:start="991:13" pos:end="991:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="995:9" pos:end="1007:9"><block pos:start="995:9" pos:end="1007:9">{
+
+            <comment type="block" pos:start="997:13" pos:end="997:25">/* \U+0000 */</comment>
+
+            <expr pos:start="999:13" pos:end="999:38"><literal type="string" pos:start="999:13" pos:end="999:38">"\"\xF8\x80\x80\x80\x80\""</literal></expr>,
+
+            <expr pos:start="1001:13" pos:end="1001:16"><name pos:start="1001:13" pos:end="1001:16">NULL</name></expr>,                        <comment type="block" pos:start="1001:42" pos:end="1001:60">/* bug: rejected */</comment>
+
+            <expr pos:start="1003:13" pos:end="1003:25"><literal type="string" pos:start="1003:13" pos:end="1003:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="1005:13" pos:end="1005:34"><literal type="string" pos:start="1005:13" pos:end="1005:34">"\xF8\x80\x80\x80\x80"</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="1009:9" pos:end="1021:9"><block pos:start="1009:9" pos:end="1021:9">{
+
+            <comment type="block" pos:start="1011:13" pos:end="1011:25">/* \U+0000 */</comment>
+
+            <expr pos:start="1013:13" pos:end="1013:42"><literal type="string" pos:start="1013:13" pos:end="1013:42">"\"\xFC\x80\x80\x80\x80\x80\""</literal></expr>,
+
+            <expr pos:start="1015:13" pos:end="1015:16"><name pos:start="1015:13" pos:end="1015:16">NULL</name></expr>,                               <comment type="block" pos:start="1015:49" pos:end="1015:67">/* bug: rejected */</comment>
+
+            <expr pos:start="1017:13" pos:end="1017:25"><literal type="string" pos:start="1017:13" pos:end="1017:25">"\"\\uFFFD\""</literal></expr>,
+
+            <expr pos:start="1019:13" pos:end="1019:38"><literal type="string" pos:start="1019:13" pos:end="1019:38">"\xFC\x80\x80\x80\x80\x80"</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="1023:9" pos:end="1023:39">/* 5  Illegal code positions */</comment>
+
+        <comment type="block" pos:start="1025:9" pos:end="1025:43">/* 5.1  Single UTF-16 surrogates */</comment>
+
+        <expr pos:start="1027:9" pos:end="1037:9"><block pos:start="1027:9" pos:end="1037:9">{
+
+            <comment type="block" pos:start="1029:13" pos:end="1029:25">/* \U+D800 */</comment>
+
+            <expr pos:start="1031:13" pos:end="1031:30"><literal type="string" pos:start="1031:13" pos:end="1031:30">"\"\xED\xA0\x80\""</literal></expr>,
+
+            <expr pos:start="1033:13" pos:end="1033:26"><literal type="string" pos:start="1033:13" pos:end="1033:26">"\xED\xA0\x80"</literal></expr>,     <comment type="block" pos:start="1033:33" pos:end="1033:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="1035:13" pos:end="1035:25"><literal type="string" pos:start="1035:13" pos:end="1035:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="1039:9" pos:end="1049:9"><block pos:start="1039:9" pos:end="1049:9">{
+
+            <comment type="block" pos:start="1041:13" pos:end="1041:25">/* \U+DB7F */</comment>
+
+            <expr pos:start="1043:13" pos:end="1043:30"><literal type="string" pos:start="1043:13" pos:end="1043:30">"\"\xED\xAD\xBF\""</literal></expr>,
+
+            <expr pos:start="1045:13" pos:end="1045:26"><literal type="string" pos:start="1045:13" pos:end="1045:26">"\xED\xAD\xBF"</literal></expr>,     <comment type="block" pos:start="1045:33" pos:end="1045:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="1047:13" pos:end="1047:25"><literal type="string" pos:start="1047:13" pos:end="1047:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="1051:9" pos:end="1061:9"><block pos:start="1051:9" pos:end="1061:9">{
+
+            <comment type="block" pos:start="1053:13" pos:end="1053:25">/* \U+DB80 */</comment>
+
+            <expr pos:start="1055:13" pos:end="1055:30"><literal type="string" pos:start="1055:13" pos:end="1055:30">"\"\xED\xAE\x80\""</literal></expr>,
+
+            <expr pos:start="1057:13" pos:end="1057:26"><literal type="string" pos:start="1057:13" pos:end="1057:26">"\xED\xAE\x80"</literal></expr>,     <comment type="block" pos:start="1057:33" pos:end="1057:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="1059:13" pos:end="1059:25"><literal type="string" pos:start="1059:13" pos:end="1059:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="1063:9" pos:end="1073:9"><block pos:start="1063:9" pos:end="1073:9">{
+
+            <comment type="block" pos:start="1065:13" pos:end="1065:25">/* \U+DBFF */</comment>
+
+            <expr pos:start="1067:13" pos:end="1067:30"><literal type="string" pos:start="1067:13" pos:end="1067:30">"\"\xED\xAF\xBF\""</literal></expr>,
+
+            <expr pos:start="1069:13" pos:end="1069:26"><literal type="string" pos:start="1069:13" pos:end="1069:26">"\xED\xAF\xBF"</literal></expr>,     <comment type="block" pos:start="1069:33" pos:end="1069:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="1071:13" pos:end="1071:25"><literal type="string" pos:start="1071:13" pos:end="1071:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="1075:9" pos:end="1085:9"><block pos:start="1075:9" pos:end="1085:9">{
+
+            <comment type="block" pos:start="1077:13" pos:end="1077:25">/* \U+DC00 */</comment>
+
+            <expr pos:start="1079:13" pos:end="1079:30"><literal type="string" pos:start="1079:13" pos:end="1079:30">"\"\xED\xB0\x80\""</literal></expr>,
+
+            <expr pos:start="1081:13" pos:end="1081:26"><literal type="string" pos:start="1081:13" pos:end="1081:26">"\xED\xB0\x80"</literal></expr>,     <comment type="block" pos:start="1081:33" pos:end="1081:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="1083:13" pos:end="1083:25"><literal type="string" pos:start="1083:13" pos:end="1083:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="1087:9" pos:end="1097:9"><block pos:start="1087:9" pos:end="1097:9">{
+
+            <comment type="block" pos:start="1089:13" pos:end="1089:25">/* \U+DF80 */</comment>
+
+            <expr pos:start="1091:13" pos:end="1091:30"><literal type="string" pos:start="1091:13" pos:end="1091:30">"\"\xED\xBE\x80\""</literal></expr>,
+
+            <expr pos:start="1093:13" pos:end="1093:26"><literal type="string" pos:start="1093:13" pos:end="1093:26">"\xED\xBE\x80"</literal></expr>,     <comment type="block" pos:start="1093:33" pos:end="1093:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="1095:13" pos:end="1095:25"><literal type="string" pos:start="1095:13" pos:end="1095:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="1099:9" pos:end="1109:9"><block pos:start="1099:9" pos:end="1109:9">{
+
+            <comment type="block" pos:start="1101:13" pos:end="1101:25">/* \U+DFFF */</comment>
+
+            <expr pos:start="1103:13" pos:end="1103:30"><literal type="string" pos:start="1103:13" pos:end="1103:30">"\"\xED\xBF\xBF\""</literal></expr>,
+
+            <expr pos:start="1105:13" pos:end="1105:26"><literal type="string" pos:start="1105:13" pos:end="1105:26">"\xED\xBF\xBF"</literal></expr>,     <comment type="block" pos:start="1105:33" pos:end="1105:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="1107:13" pos:end="1107:25"><literal type="string" pos:start="1107:13" pos:end="1107:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="1111:9" pos:end="1111:43">/* 5.2  Paired UTF-16 surrogates */</comment>
+
+        <expr pos:start="1113:9" pos:end="1123:9"><block pos:start="1113:9" pos:end="1123:9">{
+
+            <comment type="block" pos:start="1115:13" pos:end="1115:32">/* \U+D800\U+DC00 */</comment>
+
+            <expr pos:start="1117:13" pos:end="1117:42"><literal type="string" pos:start="1117:13" pos:end="1117:42">"\"\xED\xA0\x80\xED\xB0\x80\""</literal></expr>,
+
+            <expr pos:start="1119:13" pos:end="1119:38"><literal type="string" pos:start="1119:13" pos:end="1119:38">"\xED\xA0\x80\xED\xB0\x80"</literal></expr>, <comment type="block" pos:start="1119:41" pos:end="1119:64">/* bug: not corrected */</comment>
+
+            <expr pos:start="1121:13" pos:end="1121:32"><literal type="string" pos:start="1121:13" pos:end="1121:32">"\"\\uFFFD\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="1125:9" pos:end="1135:9"><block pos:start="1125:9" pos:end="1135:9">{
+
+            <comment type="block" pos:start="1127:13" pos:end="1127:32">/* \U+D800\U+DFFF */</comment>
+
+            <expr pos:start="1129:13" pos:end="1129:42"><literal type="string" pos:start="1129:13" pos:end="1129:42">"\"\xED\xA0\x80\xED\xBF\xBF\""</literal></expr>,
+
+            <expr pos:start="1131:13" pos:end="1131:38"><literal type="string" pos:start="1131:13" pos:end="1131:38">"\xED\xA0\x80\xED\xBF\xBF"</literal></expr>, <comment type="block" pos:start="1131:41" pos:end="1131:64">/* bug: not corrected */</comment>
+
+            <expr pos:start="1133:13" pos:end="1133:32"><literal type="string" pos:start="1133:13" pos:end="1133:32">"\"\\uFFFD\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="1137:9" pos:end="1147:9"><block pos:start="1137:9" pos:end="1147:9">{
+
+            <comment type="block" pos:start="1139:13" pos:end="1139:32">/* \U+DB7F\U+DC00 */</comment>
+
+            <expr pos:start="1141:13" pos:end="1141:42"><literal type="string" pos:start="1141:13" pos:end="1141:42">"\"\xED\xAD\xBF\xED\xB0\x80\""</literal></expr>,
+
+            <expr pos:start="1143:13" pos:end="1143:38"><literal type="string" pos:start="1143:13" pos:end="1143:38">"\xED\xAD\xBF\xED\xB0\x80"</literal></expr>, <comment type="block" pos:start="1143:41" pos:end="1143:64">/* bug: not corrected */</comment>
+
+            <expr pos:start="1145:13" pos:end="1145:32"><literal type="string" pos:start="1145:13" pos:end="1145:32">"\"\\uFFFD\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="1149:9" pos:end="1159:9"><block pos:start="1149:9" pos:end="1159:9">{
+
+            <comment type="block" pos:start="1151:13" pos:end="1151:32">/* \U+DB7F\U+DFFF */</comment>
+
+            <expr pos:start="1153:13" pos:end="1153:42"><literal type="string" pos:start="1153:13" pos:end="1153:42">"\"\xED\xAD\xBF\xED\xBF\xBF\""</literal></expr>,
+
+            <expr pos:start="1155:13" pos:end="1155:38"><literal type="string" pos:start="1155:13" pos:end="1155:38">"\xED\xAD\xBF\xED\xBF\xBF"</literal></expr>, <comment type="block" pos:start="1155:41" pos:end="1155:64">/* bug: not corrected */</comment>
+
+            <expr pos:start="1157:13" pos:end="1157:32"><literal type="string" pos:start="1157:13" pos:end="1157:32">"\"\\uFFFD\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="1161:9" pos:end="1171:9"><block pos:start="1161:9" pos:end="1171:9">{
+
+            <comment type="block" pos:start="1163:13" pos:end="1163:32">/* \U+DB80\U+DC00 */</comment>
+
+            <expr pos:start="1165:13" pos:end="1165:42"><literal type="string" pos:start="1165:13" pos:end="1165:42">"\"\xED\xAE\x80\xED\xB0\x80\""</literal></expr>,
+
+            <expr pos:start="1167:13" pos:end="1167:38"><literal type="string" pos:start="1167:13" pos:end="1167:38">"\xED\xAE\x80\xED\xB0\x80"</literal></expr>, <comment type="block" pos:start="1167:41" pos:end="1167:64">/* bug: not corrected */</comment>
+
+            <expr pos:start="1169:13" pos:end="1169:32"><literal type="string" pos:start="1169:13" pos:end="1169:32">"\"\\uFFFD\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="1173:9" pos:end="1183:9"><block pos:start="1173:9" pos:end="1183:9">{
+
+            <comment type="block" pos:start="1175:13" pos:end="1175:32">/* \U+DB80\U+DFFF */</comment>
+
+            <expr pos:start="1177:13" pos:end="1177:42"><literal type="string" pos:start="1177:13" pos:end="1177:42">"\"\xED\xAE\x80\xED\xBF\xBF\""</literal></expr>,
+
+            <expr pos:start="1179:13" pos:end="1179:38"><literal type="string" pos:start="1179:13" pos:end="1179:38">"\xED\xAE\x80\xED\xBF\xBF"</literal></expr>, <comment type="block" pos:start="1179:41" pos:end="1179:64">/* bug: not corrected */</comment>
+
+            <expr pos:start="1181:13" pos:end="1181:32"><literal type="string" pos:start="1181:13" pos:end="1181:32">"\"\\uFFFD\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="1185:9" pos:end="1195:9"><block pos:start="1185:9" pos:end="1195:9">{
+
+            <comment type="block" pos:start="1187:13" pos:end="1187:32">/* \U+DBFF\U+DC00 */</comment>
+
+            <expr pos:start="1189:13" pos:end="1189:42"><literal type="string" pos:start="1189:13" pos:end="1189:42">"\"\xED\xAF\xBF\xED\xB0\x80\""</literal></expr>,
+
+            <expr pos:start="1191:13" pos:end="1191:38"><literal type="string" pos:start="1191:13" pos:end="1191:38">"\xED\xAF\xBF\xED\xB0\x80"</literal></expr>, <comment type="block" pos:start="1191:41" pos:end="1191:64">/* bug: not corrected */</comment>
+
+            <expr pos:start="1193:13" pos:end="1193:32"><literal type="string" pos:start="1193:13" pos:end="1193:32">"\"\\uFFFD\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="1197:9" pos:end="1207:9"><block pos:start="1197:9" pos:end="1207:9">{
+
+            <comment type="block" pos:start="1199:13" pos:end="1199:32">/* \U+DBFF\U+DFFF */</comment>
+
+            <expr pos:start="1201:13" pos:end="1201:42"><literal type="string" pos:start="1201:13" pos:end="1201:42">"\"\xED\xAF\xBF\xED\xBF\xBF\""</literal></expr>,
+
+            <expr pos:start="1203:13" pos:end="1203:38"><literal type="string" pos:start="1203:13" pos:end="1203:38">"\xED\xAF\xBF\xED\xBF\xBF"</literal></expr>, <comment type="block" pos:start="1203:41" pos:end="1203:64">/* bug: not corrected */</comment>
+
+            <expr pos:start="1205:13" pos:end="1205:32"><literal type="string" pos:start="1205:13" pos:end="1205:32">"\"\\uFFFD\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="1209:9" pos:end="1209:47">/* 5.3  Other illegal code positions */</comment>
+
+        <comment type="block" pos:start="1211:9" pos:end="1211:31">/* BMP noncharacters */</comment>
+
+        <expr pos:start="1213:9" pos:end="1223:9"><block pos:start="1213:9" pos:end="1223:9">{
+
+            <comment type="block" pos:start="1215:13" pos:end="1215:25">/* \U+FFFE */</comment>
+
+            <expr pos:start="1217:13" pos:end="1217:30"><literal type="string" pos:start="1217:13" pos:end="1217:30">"\"\xEF\xBF\xBE\""</literal></expr>,
+
+            <expr pos:start="1219:13" pos:end="1219:26"><literal type="string" pos:start="1219:13" pos:end="1219:26">"\xEF\xBF\xBE"</literal></expr>,     <comment type="block" pos:start="1219:33" pos:end="1219:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="1221:13" pos:end="1221:25"><literal type="string" pos:start="1221:13" pos:end="1221:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="1225:9" pos:end="1235:9"><block pos:start="1225:9" pos:end="1235:9">{
+
+            <comment type="block" pos:start="1227:13" pos:end="1227:25">/* \U+FFFF */</comment>
+
+            <expr pos:start="1229:13" pos:end="1229:30"><literal type="string" pos:start="1229:13" pos:end="1229:30">"\"\xEF\xBF\xBF\""</literal></expr>,
+
+            <expr pos:start="1231:13" pos:end="1231:26"><literal type="string" pos:start="1231:13" pos:end="1231:26">"\xEF\xBF\xBF"</literal></expr>,     <comment type="block" pos:start="1231:33" pos:end="1231:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="1233:13" pos:end="1233:25"><literal type="string" pos:start="1233:13" pos:end="1233:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="1237:9" pos:end="1247:9"><block pos:start="1237:9" pos:end="1247:9">{
+
+            <comment type="block" pos:start="1239:13" pos:end="1239:24">/* U+FDD0 */</comment>
+
+            <expr pos:start="1241:13" pos:end="1241:30"><literal type="string" pos:start="1241:13" pos:end="1241:30">"\"\xEF\xB7\x90\""</literal></expr>,
+
+            <expr pos:start="1243:13" pos:end="1243:26"><literal type="string" pos:start="1243:13" pos:end="1243:26">"\xEF\xB7\x90"</literal></expr>,     <comment type="block" pos:start="1243:33" pos:end="1243:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="1245:13" pos:end="1245:25"><literal type="string" pos:start="1245:13" pos:end="1245:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="1249:9" pos:end="1259:9"><block pos:start="1249:9" pos:end="1259:9">{
+
+            <comment type="block" pos:start="1251:13" pos:end="1251:24">/* U+FDEF */</comment>
+
+            <expr pos:start="1253:13" pos:end="1253:30"><literal type="string" pos:start="1253:13" pos:end="1253:30">"\"\xEF\xB7\xAF\""</literal></expr>,
+
+            <expr pos:start="1255:13" pos:end="1255:26"><literal type="string" pos:start="1255:13" pos:end="1255:26">"\xEF\xB7\xAF"</literal></expr>,     <comment type="block" pos:start="1255:33" pos:end="1255:56">/* bug: not corrected */</comment>
+
+            <expr pos:start="1257:13" pos:end="1257:25"><literal type="string" pos:start="1257:13" pos:end="1257:25">"\"\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <comment type="block" pos:start="1261:9" pos:end="1261:41">/* Plane 1 .. 16 noncharacters */</comment>
+
+        <expr pos:start="1263:9" pos:end="1341:9"><block pos:start="1263:9" pos:end="1341:9">{
+
+            <comment type="block" pos:start="1265:13" pos:end="1265:71">/* U+1FFFE U+1FFFF U+2FFFE U+2FFFF ... U+10FFFE U+10FFFF */</comment>
+
+            <expr pos:start="1267:13" pos:end="1297:48"><literal type="string" pos:start="1267:13" pos:end="1267:48">"\"\xF0\x9F\xBF\xBE\xF0\x9F\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1269:13" pos:end="1269:46">"\xF0\xAF\xBF\xBE\xF0\xAF\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1271:13" pos:end="1271:46">"\xF0\xBF\xBF\xBE\xF0\xBF\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1273:13" pos:end="1273:46">"\xF1\x8F\xBF\xBE\xF1\x8F\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1275:13" pos:end="1275:46">"\xF1\x9F\xBF\xBE\xF1\x9F\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1277:13" pos:end="1277:46">"\xF1\xAF\xBF\xBE\xF1\xAF\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1279:13" pos:end="1279:46">"\xF1\xBF\xBF\xBE\xF1\xBF\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1281:13" pos:end="1281:46">"\xF2\x8F\xBF\xBE\xF2\x8F\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1283:13" pos:end="1283:46">"\xF2\x9F\xBF\xBE\xF2\x9F\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1285:13" pos:end="1285:46">"\xF2\xAF\xBF\xBE\xF2\xAF\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1287:13" pos:end="1287:46">"\xF2\xBF\xBF\xBE\xF2\xBF\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1289:13" pos:end="1289:46">"\xF3\x8F\xBF\xBE\xF3\x8F\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1291:13" pos:end="1291:46">"\xF3\x9F\xBF\xBE\xF3\x9F\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1293:13" pos:end="1293:46">"\xF3\xAF\xBF\xBE\xF3\xAF\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1295:13" pos:end="1295:46">"\xF3\xBF\xBF\xBE\xF3\xBF\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1297:13" pos:end="1297:48">"\xF4\x8F\xBF\xBE\xF4\x8F\xBF\xBF\""</literal></expr>,
+
+            <comment type="block" pos:start="1299:13" pos:end="1299:36">/* bug: not corrected */</comment>
+
+            <expr pos:start="1301:13" pos:end="1331:46"><literal type="string" pos:start="1301:13" pos:end="1301:46">"\xF0\x9F\xBF\xBE\xF0\x9F\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1303:13" pos:end="1303:46">"\xF0\xAF\xBF\xBE\xF0\xAF\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1305:13" pos:end="1305:46">"\xF0\xBF\xBF\xBE\xF0\xBF\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1307:13" pos:end="1307:46">"\xF1\x8F\xBF\xBE\xF1\x8F\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1309:13" pos:end="1309:46">"\xF1\x9F\xBF\xBE\xF1\x9F\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1311:13" pos:end="1311:46">"\xF1\xAF\xBF\xBE\xF1\xAF\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1313:13" pos:end="1313:46">"\xF1\xBF\xBF\xBE\xF1\xBF\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1315:13" pos:end="1315:46">"\xF2\x8F\xBF\xBE\xF2\x8F\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1317:13" pos:end="1317:46">"\xF2\x9F\xBF\xBE\xF2\x9F\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1319:13" pos:end="1319:46">"\xF2\xAF\xBF\xBE\xF2\xAF\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1321:13" pos:end="1321:46">"\xF2\xBF\xBF\xBE\xF2\xBF\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1323:13" pos:end="1323:46">"\xF3\x8F\xBF\xBE\xF3\x8F\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1325:13" pos:end="1325:46">"\xF3\x9F\xBF\xBE\xF3\x9F\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1327:13" pos:end="1327:46">"\xF3\xAF\xBF\xBE\xF3\xAF\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1329:13" pos:end="1329:46">"\xF3\xBF\xBF\xBE\xF3\xBF\xBF\xBF"</literal>
+
+            <literal type="string" pos:start="1331:13" pos:end="1331:46">"\xF4\x8F\xBF\xBE\xF4\x8F\xBF\xBF"</literal></expr>,
+
+            <expr pos:start="1333:13" pos:end="1339:72"><literal type="string" pos:start="1333:13" pos:end="1333:72">"\"\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD"</literal>
+
+            <literal type="string" pos:start="1335:13" pos:end="1335:70">"\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD"</literal>
+
+            <literal type="string" pos:start="1337:13" pos:end="1337:70">"\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD"</literal>
+
+            <literal type="string" pos:start="1339:13" pos:end="1339:72">"\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\\uFFFD\""</literal></expr>,
+
+        }</block></expr>,
+
+        <expr pos:start="1343:9" pos:end="1343:10"><block pos:start="1343:9" pos:end="1343:10">{}</block></expr>
+
+    }</block></expr></init></decl>;</struct>
+
+    <decl_stmt pos:start="1347:5" pos:end="1347:10"><decl pos:start="1347:5" pos:end="1347:9"><type pos:start="1347:5" pos:end="1347:7"><name pos:start="1347:5" pos:end="1347:7">int</name></type> <name pos:start="1347:9" pos:end="1347:9">i</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1349:5" pos:end="1349:17"><decl pos:start="1349:5" pos:end="1349:16"><type pos:start="1349:5" pos:end="1349:13"><name pos:start="1349:5" pos:end="1349:11">QObject</name> <modifier pos:start="1349:13" pos:end="1349:13">*</modifier></type><name pos:start="1349:14" pos:end="1349:16">obj</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1351:5" pos:end="1351:17"><decl pos:start="1351:5" pos:end="1351:16"><type pos:start="1351:5" pos:end="1351:13"><name pos:start="1351:5" pos:end="1351:11">QString</name> <modifier pos:start="1351:13" pos:end="1351:13">*</modifier></type><name pos:start="1351:14" pos:end="1351:16">str</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1353:5" pos:end="1353:56"><decl pos:start="1353:5" pos:end="1353:23"><type pos:start="1353:5" pos:end="1353:16"><specifier pos:start="1353:5" pos:end="1353:9">const</specifier> <name pos:start="1353:11" pos:end="1353:14">char</name> <modifier pos:start="1353:16" pos:end="1353:16">*</modifier></type><name pos:start="1353:17" pos:end="1353:23">json_in</name></decl>, <decl pos:start="1353:26" pos:end="1353:34"><type ref="prev" pos:start="1353:5" pos:end="1353:16"><modifier pos:start="1353:26" pos:end="1353:26">*</modifier></type><name pos:start="1353:27" pos:end="1353:34">utf8_out</name></decl>, <decl pos:start="1353:37" pos:end="1353:44"><type ref="prev" pos:start="1353:5" pos:end="1353:16"><modifier pos:start="1353:37" pos:end="1353:37">*</modifier></type><name pos:start="1353:38" pos:end="1353:44">utf8_in</name></decl>, <decl pos:start="1353:47" pos:end="1353:55"><type ref="prev" pos:start="1353:5" pos:end="1353:16"><modifier pos:start="1353:47" pos:end="1353:47">*</modifier></type><name pos:start="1353:48" pos:end="1353:55">json_out</name></decl>;</decl_stmt>
+
+
+
+    <for pos:start="1357:5" pos:end="1433:5">for <control pos:start="1357:9" pos:end="1357:43">(<init pos:start="1357:10" pos:end="1357:15"><expr pos:start="1357:10" pos:end="1357:14"><name pos:start="1357:10" pos:end="1357:10">i</name> <operator pos:start="1357:12" pos:end="1357:12">=</operator> <literal type="number" pos:start="1357:14" pos:end="1357:14">0</literal></expr>;</init> <condition pos:start="1357:17" pos:end="1357:38"><expr pos:start="1357:17" pos:end="1357:37"><name pos:start="1357:17" pos:end="1357:29"><name pos:start="1357:17" pos:end="1357:26">test_cases</name><index pos:start="1357:27" pos:end="1357:29">[<expr pos:start="1357:28" pos:end="1357:28"><name pos:start="1357:28" pos:end="1357:28">i</name></expr>]</index></name><operator pos:start="1357:30" pos:end="1357:30">.</operator><name pos:start="1357:31" pos:end="1357:37">json_in</name></expr>;</condition> <incr pos:start="1357:40" pos:end="1357:42"><expr pos:start="1357:40" pos:end="1357:42"><name pos:start="1357:40" pos:end="1357:40">i</name><operator pos:start="1357:41" pos:end="1357:42">++</operator></expr></incr>)</control> <block pos:start="1357:45" pos:end="1433:5">{<block_content pos:start="1359:9" pos:end="1431:9">
+
+        <expr_stmt pos:start="1359:9" pos:end="1359:40"><expr pos:start="1359:9" pos:end="1359:39"><name pos:start="1359:9" pos:end="1359:15">json_in</name> <operator pos:start="1359:17" pos:end="1359:17">=</operator> <name pos:start="1359:19" pos:end="1359:31"><name pos:start="1359:19" pos:end="1359:28">test_cases</name><index pos:start="1359:29" pos:end="1359:31">[<expr pos:start="1359:30" pos:end="1359:30"><name pos:start="1359:30" pos:end="1359:30">i</name></expr>]</index></name><operator pos:start="1359:32" pos:end="1359:32">.</operator><name pos:start="1359:33" pos:end="1359:39">json_in</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="1361:9" pos:end="1361:42"><expr pos:start="1361:9" pos:end="1361:41"><name pos:start="1361:9" pos:end="1361:16">utf8_out</name> <operator pos:start="1361:18" pos:end="1361:18">=</operator> <name pos:start="1361:20" pos:end="1361:32"><name pos:start="1361:20" pos:end="1361:29">test_cases</name><index pos:start="1361:30" pos:end="1361:32">[<expr pos:start="1361:31" pos:end="1361:31"><name pos:start="1361:31" pos:end="1361:31">i</name></expr>]</index></name><operator pos:start="1361:33" pos:end="1361:33">.</operator><name pos:start="1361:34" pos:end="1361:41">utf8_out</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="1363:9" pos:end="1363:66"><expr pos:start="1363:9" pos:end="1363:65"><name pos:start="1363:9" pos:end="1363:15">utf8_in</name> <operator pos:start="1363:17" pos:end="1363:17">=</operator> <ternary pos:start="1363:19" pos:end="1363:65"><condition pos:start="1363:19" pos:end="1363:41"><expr pos:start="1363:19" pos:end="1363:39"><name pos:start="1363:19" pos:end="1363:31"><name pos:start="1363:19" pos:end="1363:28">test_cases</name><index pos:start="1363:29" pos:end="1363:31">[<expr pos:start="1363:30" pos:end="1363:30"><name pos:start="1363:30" pos:end="1363:30">i</name></expr>]</index></name><operator pos:start="1363:32" pos:end="1363:32">.</operator><name pos:start="1363:33" pos:end="1363:39">utf8_in</name></expr> ?</condition><then/><else pos:start="1363:42" pos:end="1363:65">: <expr pos:start="1363:44" pos:end="1363:65"><name pos:start="1363:44" pos:end="1363:56"><name pos:start="1363:44" pos:end="1363:53">test_cases</name><index pos:start="1363:54" pos:end="1363:56">[<expr pos:start="1363:55" pos:end="1363:55"><name pos:start="1363:55" pos:end="1363:55">i</name></expr>]</index></name><operator pos:start="1363:57" pos:end="1363:57">.</operator><name pos:start="1363:58" pos:end="1363:65">utf8_out</name></expr></else></ternary></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="1365:9" pos:end="1365:67"><expr pos:start="1365:9" pos:end="1365:66"><name pos:start="1365:9" pos:end="1365:16">json_out</name> <operator pos:start="1365:18" pos:end="1365:18">=</operator> <ternary pos:start="1365:20" pos:end="1365:66"><condition pos:start="1365:20" pos:end="1365:43"><expr pos:start="1365:20" pos:end="1365:41"><name pos:start="1365:20" pos:end="1365:32"><name pos:start="1365:20" pos:end="1365:29">test_cases</name><index pos:start="1365:30" pos:end="1365:32">[<expr pos:start="1365:31" pos:end="1365:31"><name pos:start="1365:31" pos:end="1365:31">i</name></expr>]</index></name><operator pos:start="1365:33" pos:end="1365:33">.</operator><name pos:start="1365:34" pos:end="1365:41">json_out</name></expr> ?</condition><then/><else pos:start="1365:44" pos:end="1365:66">: <expr pos:start="1365:46" pos:end="1365:66"><name pos:start="1365:46" pos:end="1365:58"><name pos:start="1365:46" pos:end="1365:55">test_cases</name><index pos:start="1365:56" pos:end="1365:58">[<expr pos:start="1365:57" pos:end="1365:57"><name pos:start="1365:57" pos:end="1365:57">i</name></expr>]</index></name><operator pos:start="1365:59" pos:end="1365:59">.</operator><name pos:start="1365:60" pos:end="1365:66">json_in</name></expr></else></ternary></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="1369:9" pos:end="1369:47"><expr pos:start="1369:9" pos:end="1369:46"><name pos:start="1369:9" pos:end="1369:11">obj</name> <operator pos:start="1369:13" pos:end="1369:13">=</operator> <call pos:start="1369:15" pos:end="1369:46"><name pos:start="1369:15" pos:end="1369:31">qobject_from_json</name><argument_list pos:start="1369:32" pos:end="1369:46">(<argument pos:start="1369:33" pos:end="1369:39"><expr pos:start="1369:33" pos:end="1369:39"><name pos:start="1369:33" pos:end="1369:39">json_in</name></expr></argument>, <argument pos:start="1369:42" pos:end="1369:45"><expr pos:start="1369:42" pos:end="1369:45"><name pos:start="1369:42" pos:end="1369:45">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="1371:9" pos:end="1383:9"><if pos:start="1371:9" pos:end="1379:9">if <condition pos:start="1371:12" pos:end="1371:21">(<expr pos:start="1371:13" pos:end="1371:20"><name pos:start="1371:13" pos:end="1371:20">utf8_out</name></expr>)</condition> <block pos:start="1371:23" pos:end="1379:9">{<block_content pos:start="1373:13" pos:end="1377:64">
+
+            <expr_stmt pos:start="1373:13" pos:end="1373:42"><expr pos:start="1373:13" pos:end="1373:41"><name pos:start="1373:13" pos:end="1373:15">str</name> <operator pos:start="1373:17" pos:end="1373:17">=</operator> <call pos:start="1373:19" pos:end="1373:41"><name pos:start="1373:19" pos:end="1373:36">qobject_to_qstring</name><argument_list pos:start="1373:37" pos:end="1373:41">(<argument pos:start="1373:38" pos:end="1373:40"><expr pos:start="1373:38" pos:end="1373:40"><name pos:start="1373:38" pos:end="1373:40">obj</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="1375:13" pos:end="1375:26"><expr pos:start="1375:13" pos:end="1375:25"><call pos:start="1375:13" pos:end="1375:25"><name pos:start="1375:13" pos:end="1375:20">g_assert</name><argument_list pos:start="1375:21" pos:end="1375:25">(<argument pos:start="1375:22" pos:end="1375:24"><expr pos:start="1375:22" pos:end="1375:24"><name pos:start="1375:22" pos:end="1375:24">str</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="1377:13" pos:end="1377:64"><expr pos:start="1377:13" pos:end="1377:63"><call pos:start="1377:13" pos:end="1377:63"><name pos:start="1377:13" pos:end="1377:27">g_assert_cmpstr</name><argument_list pos:start="1377:28" pos:end="1377:63">(<argument pos:start="1377:29" pos:end="1377:48"><expr pos:start="1377:29" pos:end="1377:48"><call pos:start="1377:29" pos:end="1377:48"><name pos:start="1377:29" pos:end="1377:43">qstring_get_str</name><argument_list pos:start="1377:44" pos:end="1377:48">(<argument pos:start="1377:45" pos:end="1377:47"><expr pos:start="1377:45" pos:end="1377:47"><name pos:start="1377:45" pos:end="1377:47">str</name></expr></argument>)</argument_list></call></expr></argument>, <argument pos:start="1377:51" pos:end="1377:52"><expr pos:start="1377:51" pos:end="1377:52"><operator pos:start="1377:51" pos:end="1377:52">==</operator></expr></argument>, <argument pos:start="1377:55" pos:end="1377:62"><expr pos:start="1377:55" pos:end="1377:62"><name pos:start="1377:55" pos:end="1377:62">utf8_out</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="1379:11" pos:end="1383:9">else <block pos:start="1379:16" pos:end="1383:9">{<block_content pos:start="1381:13" pos:end="1381:27">
+
+            <expr_stmt pos:start="1381:13" pos:end="1381:27"><expr pos:start="1381:13" pos:end="1381:26"><call pos:start="1381:13" pos:end="1381:26"><name pos:start="1381:13" pos:end="1381:20">g_assert</name><argument_list pos:start="1381:21" pos:end="1381:26">(<argument pos:start="1381:22" pos:end="1381:25"><expr pos:start="1381:22" pos:end="1381:25"><operator pos:start="1381:22" pos:end="1381:22">!</operator><name pos:start="1381:23" pos:end="1381:25">obj</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+        <expr_stmt pos:start="1385:9" pos:end="1385:28"><expr pos:start="1385:9" pos:end="1385:27"><call pos:start="1385:9" pos:end="1385:27"><name pos:start="1385:9" pos:end="1385:22">qobject_decref</name><argument_list pos:start="1385:23" pos:end="1385:27">(<argument pos:start="1385:24" pos:end="1385:26"><expr pos:start="1385:24" pos:end="1385:26"><name pos:start="1385:24" pos:end="1385:26">obj</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="1389:9" pos:end="1389:49"><expr pos:start="1389:9" pos:end="1389:48"><name pos:start="1389:9" pos:end="1389:11">obj</name> <operator pos:start="1389:13" pos:end="1389:13">=</operator> <call pos:start="1389:15" pos:end="1389:48"><name pos:start="1389:15" pos:end="1389:21">QOBJECT</name><argument_list pos:start="1389:22" pos:end="1389:48">(<argument pos:start="1389:23" pos:end="1389:47"><expr pos:start="1389:23" pos:end="1389:47"><call pos:start="1389:23" pos:end="1389:47"><name pos:start="1389:23" pos:end="1389:38">qstring_from_str</name><argument_list pos:start="1389:39" pos:end="1389:47">(<argument pos:start="1389:40" pos:end="1389:46"><expr pos:start="1389:40" pos:end="1389:46"><name pos:start="1389:40" pos:end="1389:46">utf8_in</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="1391:9" pos:end="1391:35"><expr pos:start="1391:9" pos:end="1391:34"><name pos:start="1391:9" pos:end="1391:11">str</name> <operator pos:start="1391:13" pos:end="1391:13">=</operator> <call pos:start="1391:15" pos:end="1391:34"><name pos:start="1391:15" pos:end="1391:29">qobject_to_json</name><argument_list pos:start="1391:30" pos:end="1391:34">(<argument pos:start="1391:31" pos:end="1391:33"><expr pos:start="1391:31" pos:end="1391:33"><name pos:start="1391:31" pos:end="1391:33">obj</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="1393:9" pos:end="1403:9"><if pos:start="1393:9" pos:end="1399:9">if <condition pos:start="1393:12" pos:end="1393:21">(<expr pos:start="1393:13" pos:end="1393:20"><name pos:start="1393:13" pos:end="1393:20">json_out</name></expr>)</condition> <block pos:start="1393:23" pos:end="1399:9">{<block_content pos:start="1395:13" pos:end="1397:64">
+
+            <expr_stmt pos:start="1395:13" pos:end="1395:26"><expr pos:start="1395:13" pos:end="1395:25"><call pos:start="1395:13" pos:end="1395:25"><name pos:start="1395:13" pos:end="1395:20">g_assert</name><argument_list pos:start="1395:21" pos:end="1395:25">(<argument pos:start="1395:22" pos:end="1395:24"><expr pos:start="1395:22" pos:end="1395:24"><name pos:start="1395:22" pos:end="1395:24">str</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="1397:13" pos:end="1397:64"><expr pos:start="1397:13" pos:end="1397:63"><call pos:start="1397:13" pos:end="1397:63"><name pos:start="1397:13" pos:end="1397:27">g_assert_cmpstr</name><argument_list pos:start="1397:28" pos:end="1397:63">(<argument pos:start="1397:29" pos:end="1397:48"><expr pos:start="1397:29" pos:end="1397:48"><call pos:start="1397:29" pos:end="1397:48"><name pos:start="1397:29" pos:end="1397:43">qstring_get_str</name><argument_list pos:start="1397:44" pos:end="1397:48">(<argument pos:start="1397:45" pos:end="1397:47"><expr pos:start="1397:45" pos:end="1397:47"><name pos:start="1397:45" pos:end="1397:47">str</name></expr></argument>)</argument_list></call></expr></argument>, <argument pos:start="1397:51" pos:end="1397:52"><expr pos:start="1397:51" pos:end="1397:52"><operator pos:start="1397:51" pos:end="1397:52">==</operator></expr></argument>, <argument pos:start="1397:55" pos:end="1397:62"><expr pos:start="1397:55" pos:end="1397:62"><name pos:start="1397:55" pos:end="1397:62">json_out</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="1399:11" pos:end="1403:9">else <block pos:start="1399:16" pos:end="1403:9">{<block_content pos:start="1401:13" pos:end="1401:27">
+
+            <expr_stmt pos:start="1401:13" pos:end="1401:27"><expr pos:start="1401:13" pos:end="1401:26"><call pos:start="1401:13" pos:end="1401:26"><name pos:start="1401:13" pos:end="1401:20">g_assert</name><argument_list pos:start="1401:21" pos:end="1401:26">(<argument pos:start="1401:22" pos:end="1401:25"><expr pos:start="1401:22" pos:end="1401:25"><operator pos:start="1401:22" pos:end="1401:22">!</operator><name pos:start="1401:23" pos:end="1401:25">str</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+        <expr_stmt pos:start="1405:9" pos:end="1405:21"><expr pos:start="1405:9" pos:end="1405:20"><call pos:start="1405:9" pos:end="1405:20"><name pos:start="1405:9" pos:end="1405:15">QDECREF</name><argument_list pos:start="1405:16" pos:end="1405:20">(<argument pos:start="1405:17" pos:end="1405:19"><expr pos:start="1405:17" pos:end="1405:19"><name pos:start="1405:17" pos:end="1405:19">str</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="1407:9" pos:end="1407:28"><expr pos:start="1407:9" pos:end="1407:27"><call pos:start="1407:9" pos:end="1407:27"><name pos:start="1407:9" pos:end="1407:22">qobject_decref</name><argument_list pos:start="1407:23" pos:end="1407:27">(<argument pos:start="1407:24" pos:end="1407:26"><expr pos:start="1407:24" pos:end="1407:26"><name pos:start="1407:24" pos:end="1407:26">obj</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <comment type="block" pos:start="1411:9" pos:end="1419:11">/*
+
+         * Disabled, because qobject_from_json() is buggy, and I can't
+
+         * be bothered to add the expected incorrect results.
+
+         * FIXME Enable once these bugs have been fixed.
+
+         */</comment>
+
+        <if_stmt pos:start="1421:9" pos:end="1431:9"><if pos:start="1421:9" pos:end="1431:9">if <condition pos:start="1421:12" pos:end="1421:37">(<expr pos:start="1421:13" pos:end="1421:36"><literal type="number" pos:start="1421:13" pos:end="1421:13">0</literal> <operator pos:start="1421:15" pos:end="1421:16">&amp;&amp;</operator> <name pos:start="1421:18" pos:end="1421:25">json_out</name> <operator pos:start="1421:27" pos:end="1421:28">!=</operator> <name pos:start="1421:30" pos:end="1421:36">json_in</name></expr>)</condition> <block pos:start="1421:39" pos:end="1431:9">{<block_content pos:start="1423:13" pos:end="1429:64">
+
+            <expr_stmt pos:start="1423:13" pos:end="1423:52"><expr pos:start="1423:13" pos:end="1423:51"><name pos:start="1423:13" pos:end="1423:15">obj</name> <operator pos:start="1423:17" pos:end="1423:17">=</operator> <call pos:start="1423:19" pos:end="1423:51"><name pos:start="1423:19" pos:end="1423:35">qobject_from_json</name><argument_list pos:start="1423:36" pos:end="1423:51">(<argument pos:start="1423:37" pos:end="1423:44"><expr pos:start="1423:37" pos:end="1423:44"><name pos:start="1423:37" pos:end="1423:44">json_out</name></expr></argument>, <argument pos:start="1423:47" pos:end="1423:50"><expr pos:start="1423:47" pos:end="1423:50"><name pos:start="1423:47" pos:end="1423:50">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="1425:13" pos:end="1425:42"><expr pos:start="1425:13" pos:end="1425:41"><name pos:start="1425:13" pos:end="1425:15">str</name> <operator pos:start="1425:17" pos:end="1425:17">=</operator> <call pos:start="1425:19" pos:end="1425:41"><name pos:start="1425:19" pos:end="1425:36">qobject_to_qstring</name><argument_list pos:start="1425:37" pos:end="1425:41">(<argument pos:start="1425:38" pos:end="1425:40"><expr pos:start="1425:38" pos:end="1425:40"><name pos:start="1425:38" pos:end="1425:40">obj</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="1427:13" pos:end="1427:26"><expr pos:start="1427:13" pos:end="1427:25"><call pos:start="1427:13" pos:end="1427:25"><name pos:start="1427:13" pos:end="1427:20">g_assert</name><argument_list pos:start="1427:21" pos:end="1427:25">(<argument pos:start="1427:22" pos:end="1427:24"><expr pos:start="1427:22" pos:end="1427:24"><name pos:start="1427:22" pos:end="1427:24">str</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="1429:13" pos:end="1429:64"><expr pos:start="1429:13" pos:end="1429:63"><call pos:start="1429:13" pos:end="1429:63"><name pos:start="1429:13" pos:end="1429:27">g_assert_cmpstr</name><argument_list pos:start="1429:28" pos:end="1429:63">(<argument pos:start="1429:29" pos:end="1429:48"><expr pos:start="1429:29" pos:end="1429:48"><call pos:start="1429:29" pos:end="1429:48"><name pos:start="1429:29" pos:end="1429:43">qstring_get_str</name><argument_list pos:start="1429:44" pos:end="1429:48">(<argument pos:start="1429:45" pos:end="1429:47"><expr pos:start="1429:45" pos:end="1429:47"><name pos:start="1429:45" pos:end="1429:47">str</name></expr></argument>)</argument_list></call></expr></argument>, <argument pos:start="1429:51" pos:end="1429:52"><expr pos:start="1429:51" pos:end="1429:52"><operator pos:start="1429:51" pos:end="1429:52">==</operator></expr></argument>, <argument pos:start="1429:55" pos:end="1429:62"><expr pos:start="1429:55" pos:end="1429:62"><name pos:start="1429:55" pos:end="1429:62">utf8_out</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></for>
+
+</block_content>}</block></function>
+</unit>

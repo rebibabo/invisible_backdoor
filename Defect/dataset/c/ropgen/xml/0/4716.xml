@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/4716.c" pos:tabs="8"><macro pos:start="1:1" pos:end="3:50"><name pos:start="1:1" pos:end="1:12">setup_return</name><argument_list pos:start="1:13" pos:end="3:50">(<argument pos:start="1:14" pos:end="1:26">CPUState *env</argument>, <argument pos:start="1:29" pos:end="1:57">struct emulated_sigaction *ka</argument>,
+
+	     <argument pos:start="3:14" pos:end="3:26">abi_ulong *rc</argument>, <argument pos:start="3:29" pos:end="3:39">void *frame</argument>, <argument pos:start="3:42" pos:end="3:49">int usig</argument>)</argument_list></macro>
+
+<block pos:start="5:1" pos:end="125:1">{<block_content pos:start="7:9" pos:end="123:17">
+
+	<decl_stmt pos:start="7:9" pos:end="7:58"><decl pos:start="7:9" pos:end="7:57"><type pos:start="7:9" pos:end="7:17"><name pos:start="7:9" pos:end="7:17">abi_ulong</name></type> <name pos:start="7:19" pos:end="7:25">handler</name> <init pos:start="7:27" pos:end="7:57">= <expr pos:start="7:29" pos:end="7:57"><operator pos:start="7:29" pos:end="7:29">(</operator><name pos:start="7:30" pos:end="7:38">abi_ulong</name><operator pos:start="7:39" pos:end="7:39">)</operator><name pos:start="7:40" pos:end="7:57"><name pos:start="7:40" pos:end="7:41">ka</name><operator pos:start="7:42" pos:end="7:43">-&gt;</operator><name pos:start="7:44" pos:end="7:45">sa</name><operator pos:start="7:46" pos:end="7:46">.</operator><name pos:start="7:47" pos:end="7:57">_sa_handler</name></name></expr></init></decl>;</decl_stmt>
+
+	<decl_stmt pos:start="9:9" pos:end="9:26"><decl pos:start="9:9" pos:end="9:25"><type pos:start="9:9" pos:end="9:17"><name pos:start="9:9" pos:end="9:17">abi_ulong</name></type> <name pos:start="9:19" pos:end="9:25">retcode</name></decl>;</decl_stmt>
+
+	<decl_stmt pos:start="11:9" pos:end="64:0"><decl pos:start="11:9" pos:end="11:21"><type pos:start="11:9" pos:end="11:11"><name pos:start="11:9" pos:end="11:11">int</name></type> <name pos:start="11:13" pos:end="11:17">thumb</name> <init pos:start="11:19" pos:end="11:21">= <expr pos:start="11:21" pos:end="11:21"><literal type="number" pos:start="11:21" pos:end="11:21">0</literal></expr></init></decl>;</decl_stmt>
+
+<cpp:if pos:start="13:1" pos:end="13:33">#<cpp:directive pos:start="13:2" pos:end="13:3">if</cpp:directive> <expr pos:start="13:5" pos:end="13:33"><call pos:start="13:5" pos:end="13:33"><name pos:start="13:5" pos:end="13:11">defined</name><argument_list pos:start="13:12" pos:end="13:33">(<argument pos:start="13:13" pos:end="13:32"><expr pos:start="13:13" pos:end="13:32"><name pos:start="13:13" pos:end="13:32">TARGET_CONFIG_CPU_32</name></expr></argument>)</argument_list></call></expr></cpp:if>
+
+<cpp:if pos:start="15:1" pos:end="15:5">#<cpp:directive pos:start="15:2" pos:end="15:3">if</cpp:directive> <expr pos:start="15:5" pos:end="15:5"><literal type="number" pos:start="15:5" pos:end="15:5">0</literal></expr></cpp:if>
+
+	abi_ulong cpsr = env-&gt;cpsr;
+
+
+
+	<comment type="block" pos:start="21:9" pos:end="25:11">/*
+
+	 * Maybe we need to deliver a 32-bit signal to a 26-bit task.
+
+	 */</comment>
+
+	if (ka-&gt;sa.sa_flags &amp; SA_THIRTYTWO)
+
+		cpsr = (cpsr &amp; ~MODE_MASK) | USR_MODE;
+
+
+
+<cpp:ifdef pos:start="33:1" pos:end="33:23">#<cpp:directive pos:start="33:2" pos:end="33:6">ifdef</cpp:directive> <name pos:start="33:8" pos:end="33:23">CONFIG_ARM_THUMB</name></cpp:ifdef>
+
+	if (elf_hwcap &amp; HWCAP_THUMB) {
+
+		<comment type="block" pos:start="37:17" pos:end="43:19">/*
+
+		 * The LSB of the handler determines if we're going to
+
+		 * be using THUMB or ARM mode for this signal handler.
+
+		 */</comment>
+
+		thumb = handler &amp; 1;
+
+
+
+		if (thumb)
+
+			cpsr |= T_BIT;
+
+		else
+
+			cpsr &amp;= ~T_BIT;
+
+	}
+
+<cpp:endif pos:start="59:1" pos:end="59:6">#<cpp:directive pos:start="59:2" pos:end="59:6">endif</cpp:directive></cpp:endif> <comment type="block" pos:start="59:8" pos:end="59:29">/* CONFIG_ARM_THUMB */</comment>
+
+<cpp:endif pos:start="61:1" pos:end="61:6">#<cpp:directive pos:start="61:2" pos:end="61:6">endif</cpp:directive></cpp:endif> <comment type="block" pos:start="61:8" pos:end="61:14">/* 0 */</comment>
+
+<cpp:endif pos:start="63:1" pos:end="63:6">#<cpp:directive pos:start="63:2" pos:end="63:6">endif</cpp:directive></cpp:endif> <comment type="block" pos:start="63:8" pos:end="63:33">/* TARGET_CONFIG_CPU_32 */</comment>
+
+
+
+	<if_stmt pos:start="67:9" pos:end="97:9"><if pos:start="67:9" pos:end="71:9">if <condition pos:start="67:12" pos:end="67:49">(<expr pos:start="67:13" pos:end="67:48"><name pos:start="67:13" pos:end="67:27"><name pos:start="67:13" pos:end="67:14">ka</name><operator pos:start="67:15" pos:end="67:16">-&gt;</operator><name pos:start="67:17" pos:end="67:18">sa</name><operator pos:start="67:19" pos:end="67:19">.</operator><name pos:start="67:20" pos:end="67:27">sa_flags</name></name> <operator pos:start="67:29" pos:end="67:29">&amp;</operator> <name pos:start="67:31" pos:end="67:48">TARGET_SA_RESTORER</name></expr>)</condition> <block pos:start="67:51" pos:end="71:9">{<block_content pos:start="69:17" pos:end="69:56">
+
+		<expr_stmt pos:start="69:17" pos:end="69:56"><expr pos:start="69:17" pos:end="69:55"><name pos:start="69:17" pos:end="69:23">retcode</name> <operator pos:start="69:25" pos:end="69:25">=</operator> <operator pos:start="69:27" pos:end="69:27">(</operator><name pos:start="69:28" pos:end="69:36">abi_ulong</name><operator pos:start="69:37" pos:end="69:37">)</operator><name pos:start="69:38" pos:end="69:55"><name pos:start="69:38" pos:end="69:39">ka</name><operator pos:start="69:40" pos:end="69:41">-&gt;</operator><name pos:start="69:42" pos:end="69:43">sa</name><operator pos:start="69:44" pos:end="69:44">.</operator><name pos:start="69:45" pos:end="69:55">sa_restorer</name></name></expr>;</expr_stmt>
+
+	</block_content>}</block></if> <else pos:start="71:11" pos:end="97:9">else <block pos:start="71:16" pos:end="97:9">{<block_content pos:start="73:17" pos:end="95:50">
+
+		<decl_stmt pos:start="73:17" pos:end="73:41"><decl pos:start="73:17" pos:end="73:40"><type pos:start="73:17" pos:end="73:28"><name pos:start="73:17" pos:end="73:24">unsigned</name> <name pos:start="73:26" pos:end="73:28">int</name></type> <name pos:start="73:30" pos:end="73:32">idx</name> <init pos:start="73:34" pos:end="73:40">= <expr pos:start="73:36" pos:end="73:40"><name pos:start="73:36" pos:end="73:40">thumb</name></expr></init></decl>;</decl_stmt>
+
+
+
+		<if_stmt pos:start="77:17" pos:end="79:33"><if pos:start="77:17" pos:end="79:33">if <condition pos:start="77:20" pos:end="77:56">(<expr pos:start="77:21" pos:end="77:55"><name pos:start="77:21" pos:end="77:35"><name pos:start="77:21" pos:end="77:22">ka</name><operator pos:start="77:23" pos:end="77:24">-&gt;</operator><name pos:start="77:25" pos:end="77:26">sa</name><operator pos:start="77:27" pos:end="77:27">.</operator><name pos:start="77:28" pos:end="77:35">sa_flags</name></name> <operator pos:start="77:37" pos:end="77:37">&amp;</operator> <name pos:start="77:39" pos:end="77:55">TARGET_SA_SIGINFO</name></expr>)</condition><block type="pseudo" pos:start="79:25" pos:end="79:33"><block_content pos:start="79:25" pos:end="79:33">
+
+			<expr_stmt pos:start="79:25" pos:end="79:33"><expr pos:start="79:25" pos:end="79:32"><name pos:start="79:25" pos:end="79:27">idx</name> <operator pos:start="79:29" pos:end="79:30">+=</operator> <literal type="number" pos:start="79:32" pos:end="79:32">2</literal></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+
+
+		<if_stmt pos:start="83:17" pos:end="94:0"><if pos:start="83:17" pos:end="94:0">if <condition pos:start="83:20" pos:end="83:50">(<expr pos:start="83:21" pos:end="83:49"><call pos:start="83:21" pos:end="83:49"><name pos:start="83:21" pos:end="83:30">__put_user</name><argument_list pos:start="83:31" pos:end="83:49">(<argument pos:start="83:32" pos:end="83:44"><expr pos:start="83:32" pos:end="83:44"><name pos:start="83:32" pos:end="83:44"><name pos:start="83:32" pos:end="83:39">retcodes</name><index pos:start="83:40" pos:end="83:44">[<expr pos:start="83:41" pos:end="83:43"><name pos:start="83:41" pos:end="83:43">idx</name></expr>]</index></name></expr></argument>, <argument pos:start="83:47" pos:end="83:48"><expr pos:start="83:47" pos:end="83:48"><name pos:start="83:47" pos:end="83:48">rc</name></expr></argument>)</argument_list></call></expr>)</condition><block type="pseudo" pos:start="85:25" pos:end="94:0"><block_content pos:start="85:25" pos:end="94:0">
+
+			<return pos:start="85:25" pos:end="94:0">return <expr pos:start="85:32" pos:end="85:32"><literal type="number" pos:start="85:32" pos:end="85:32">1</literal></expr>;</return></block_content></block></if></if_stmt>
+
+<cpp:if pos:start="87:1" pos:end="87:5">#<cpp:directive pos:start="87:2" pos:end="87:3">if</cpp:directive> <expr pos:start="87:5" pos:end="87:5"><literal type="number" pos:start="87:5" pos:end="87:5">0</literal></expr></cpp:if>
+
+		flush_icache_range((abi_ulong)rc,
+
+				   (abi_ulong)(rc + 1));
+
+<cpp:endif pos:start="93:1" pos:end="93:6">#<cpp:directive pos:start="93:2" pos:end="93:6">endif</cpp:directive></cpp:endif>
+
+		<expr_stmt pos:start="95:17" pos:end="95:50"><expr pos:start="95:17" pos:end="95:49"><name pos:start="95:17" pos:end="95:23">retcode</name> <operator pos:start="95:25" pos:end="95:25">=</operator> <operator pos:start="95:27" pos:end="95:27">(</operator><operator pos:start="95:28" pos:end="95:28">(</operator><name pos:start="95:29" pos:end="95:37">abi_ulong</name><operator pos:start="95:38" pos:end="95:38">)</operator><name pos:start="95:39" pos:end="95:40">rc</name><operator pos:start="95:41" pos:end="95:41">)</operator> <operator pos:start="95:43" pos:end="95:43">+</operator> <name pos:start="95:45" pos:end="95:49">thumb</name></expr>;</expr_stmt>
+
+	</block_content>}</block></else></if_stmt>
+
+
+
+	<expr_stmt pos:start="101:9" pos:end="101:28"><expr pos:start="101:9" pos:end="101:27"><name pos:start="101:9" pos:end="101:20"><name pos:start="101:9" pos:end="101:11">env</name><operator pos:start="101:12" pos:end="101:13">-&gt;</operator><name pos:start="101:14" pos:end="101:17">regs</name><index pos:start="101:18" pos:end="101:20">[<expr pos:start="101:19" pos:end="101:19"><literal type="number" pos:start="101:19" pos:end="101:19">0</literal></expr>]</index></name> <operator pos:start="101:22" pos:end="101:22">=</operator> <name pos:start="101:24" pos:end="101:27">usig</name></expr>;</expr_stmt>
+
+	<expr_stmt pos:start="103:9" pos:end="103:35"><expr pos:start="103:9" pos:end="103:34"><name pos:start="103:9" pos:end="103:21"><name pos:start="103:9" pos:end="103:11">env</name><operator pos:start="103:12" pos:end="103:13">-&gt;</operator><name pos:start="103:14" pos:end="103:17">regs</name><index pos:start="103:18" pos:end="103:21">[<expr pos:start="103:19" pos:end="103:20"><literal type="number" pos:start="103:19" pos:end="103:20">13</literal></expr>]</index></name> <operator pos:start="103:23" pos:end="103:23">=</operator> <call pos:start="103:25" pos:end="103:34"><name pos:start="103:25" pos:end="103:27">h2g</name><argument_list pos:start="103:28" pos:end="103:34">(<argument pos:start="103:29" pos:end="103:33"><expr pos:start="103:29" pos:end="103:33"><name pos:start="103:29" pos:end="103:33">frame</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+	<expr_stmt pos:start="105:9" pos:end="105:32"><expr pos:start="105:9" pos:end="105:31"><name pos:start="105:9" pos:end="105:21"><name pos:start="105:9" pos:end="105:11">env</name><operator pos:start="105:12" pos:end="105:13">-&gt;</operator><name pos:start="105:14" pos:end="105:17">regs</name><index pos:start="105:18" pos:end="105:21">[<expr pos:start="105:19" pos:end="105:20"><literal type="number" pos:start="105:19" pos:end="105:20">14</literal></expr>]</index></name> <operator pos:start="105:23" pos:end="105:23">=</operator> <name pos:start="105:25" pos:end="105:31">retcode</name></expr>;</expr_stmt>
+
+	<expr_stmt pos:start="107:9" pos:end="120:0"><expr pos:start="107:9" pos:end="107:51"><name pos:start="107:9" pos:end="107:21"><name pos:start="107:9" pos:end="107:11">env</name><operator pos:start="107:12" pos:end="107:13">-&gt;</operator><name pos:start="107:14" pos:end="107:17">regs</name><index pos:start="107:18" pos:end="107:21">[<expr pos:start="107:19" pos:end="107:20"><literal type="number" pos:start="107:19" pos:end="107:20">15</literal></expr>]</index></name> <operator pos:start="107:23" pos:end="107:23">=</operator> <name pos:start="107:25" pos:end="107:31">handler</name> <operator pos:start="107:33" pos:end="107:33">&amp;</operator> <operator pos:start="107:35" pos:end="107:35">(</operator><ternary pos:start="107:36" pos:end="107:50"><condition pos:start="107:36" pos:end="107:42"><expr pos:start="107:36" pos:end="107:40"><name pos:start="107:36" pos:end="107:40">thumb</name></expr> ?</condition><then pos:start="107:44" pos:end="107:45"> <expr pos:start="107:44" pos:end="107:45"><operator pos:start="107:44" pos:end="107:44">~</operator><literal type="number" pos:start="107:45" pos:end="107:45">1</literal></expr> </then><else pos:start="107:47" pos:end="107:50">: <expr pos:start="107:49" pos:end="107:50"><operator pos:start="107:49" pos:end="107:49">~</operator><literal type="number" pos:start="107:50" pos:end="107:50">3</literal></expr></else></ternary><operator pos:start="107:51" pos:end="107:51">)</operator></expr>;</expr_stmt>
+
+
+
+<cpp:if pos:start="111:1" pos:end="111:5">#<cpp:directive pos:start="111:2" pos:end="111:3">if</cpp:directive> <expr pos:start="111:5" pos:end="111:5"><literal type="number" pos:start="111:5" pos:end="111:5">0</literal></expr></cpp:if>
+
+<cpp:ifdef pos:start="113:1" pos:end="113:27">#<cpp:directive pos:start="113:2" pos:end="113:6">ifdef</cpp:directive> <name pos:start="113:8" pos:end="113:27">TARGET_CONFIG_CPU_32</name></cpp:ifdef>
+
+	env-&gt;cpsr = cpsr;
+
+<cpp:endif pos:start="117:1" pos:end="117:6">#<cpp:directive pos:start="117:2" pos:end="117:6">endif</cpp:directive></cpp:endif>
+
+<cpp:endif pos:start="119:1" pos:end="119:6">#<cpp:directive pos:start="119:2" pos:end="119:6">endif</cpp:directive></cpp:endif>
+
+
+
+	<return pos:start="123:9" pos:end="123:17">return <expr pos:start="123:16" pos:end="123:16"><literal type="number" pos:start="123:16" pos:end="123:16">0</literal></expr>;</return>
+
+</block_content>}</block>
+</unit>

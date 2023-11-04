@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/11411.c" pos:tabs="8"><macro pos:start="1:1" pos:end="1:32"><name pos:start="1:1" pos:end="1:14">do_kernel_trap</name><argument_list pos:start="1:15" pos:end="1:32">(<argument pos:start="1:16" pos:end="1:31">CPUARMState *env</argument>)</argument_list></macro>
+
+<block pos:start="3:1" pos:end="107:1">{<block_content pos:start="5:5" pos:end="105:13">
+
+    <decl_stmt pos:start="5:5" pos:end="5:18"><decl pos:start="5:5" pos:end="5:17"><type pos:start="5:5" pos:end="5:12"><name pos:start="5:5" pos:end="5:12">uint32_t</name></type> <name pos:start="5:14" pos:end="5:17">addr</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:18"><decl pos:start="7:5" pos:end="7:17"><type pos:start="7:5" pos:end="7:12"><name pos:start="7:5" pos:end="7:12">uint32_t</name></type> <name pos:start="7:14" pos:end="7:17">cpsr</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:17"><decl pos:start="9:5" pos:end="9:16"><type pos:start="9:5" pos:end="9:12"><name pos:start="9:5" pos:end="9:12">uint32_t</name></type> <name pos:start="9:14" pos:end="9:16">val</name></decl>;</decl_stmt>
+
+
+
+    <switch pos:start="13:5" pos:end="87:5">switch <condition pos:start="13:12" pos:end="13:26">(<expr pos:start="13:13" pos:end="13:25"><name pos:start="13:13" pos:end="13:25"><name pos:start="13:13" pos:end="13:15">env</name><operator pos:start="13:16" pos:end="13:17">-&gt;</operator><name pos:start="13:18" pos:end="13:21">regs</name><index pos:start="13:22" pos:end="13:25">[<expr pos:start="13:23" pos:end="13:24"><literal type="number" pos:start="13:23" pos:end="13:24">15</literal></expr>]</index></name></expr>)</condition> <block pos:start="13:28" pos:end="87:5">{<block_content pos:start="15:5" pos:end="85:17">
+
+    <case pos:start="15:5" pos:end="15:20">case <expr pos:start="15:10" pos:end="15:19"><literal type="number" pos:start="15:10" pos:end="15:19">0xffff0fa0</literal></expr>:</case> <comment type="block" pos:start="15:22" pos:end="15:50">/* __kernel_memory_barrier */</comment>
+
+        <comment type="block" pos:start="17:9" pos:end="17:57">/* ??? No-op. Will need to do better for SMP.  */</comment>
+
+        <break pos:start="19:9" pos:end="19:14">break;</break>
+
+    <case pos:start="21:5" pos:end="21:20">case <expr pos:start="21:10" pos:end="21:19"><literal type="number" pos:start="21:10" pos:end="21:19">0xffff0fc0</literal></expr>:</case> <comment type="block" pos:start="21:22" pos:end="21:43">/* __kernel_cmpxchg */</comment>
+
+         <comment type="block" pos:start="23:10" pos:end="29:46">/* XXX: This only works between threads, not between processes.
+
+            It's probably possible to implement this with native host
+
+            operations. However things like ldrex/strex are much harder so
+
+            there's not much point trying.  */</comment>
+
+        <expr_stmt pos:start="31:9" pos:end="31:26"><expr pos:start="31:9" pos:end="31:25"><call pos:start="31:9" pos:end="31:25"><name pos:start="31:9" pos:end="31:23">start_exclusive</name><argument_list pos:start="31:24" pos:end="31:25">()</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="33:9" pos:end="33:30"><expr pos:start="33:9" pos:end="33:29"><name pos:start="33:9" pos:end="33:12">cpsr</name> <operator pos:start="33:14" pos:end="33:14">=</operator> <call pos:start="33:16" pos:end="33:29"><name pos:start="33:16" pos:end="33:24">cpsr_read</name><argument_list pos:start="33:25" pos:end="33:29">(<argument pos:start="33:26" pos:end="33:28"><expr pos:start="33:26" pos:end="33:28"><name pos:start="33:26" pos:end="33:28">env</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="35:9" pos:end="35:28"><expr pos:start="35:9" pos:end="35:27"><name pos:start="35:9" pos:end="35:12">addr</name> <operator pos:start="35:14" pos:end="35:14">=</operator> <name pos:start="35:16" pos:end="35:27"><name pos:start="35:16" pos:end="35:18">env</name><operator pos:start="35:19" pos:end="35:20">-&gt;</operator><name pos:start="35:21" pos:end="35:24">regs</name><index pos:start="35:25" pos:end="35:27">[<expr pos:start="35:26" pos:end="35:26"><literal type="number" pos:start="35:26" pos:end="35:26">2</literal></expr>]</index></name></expr>;</expr_stmt>
+
+        <comment type="block" pos:start="37:9" pos:end="37:59">/* FIXME: This should SEGV if the access fails.  */</comment>
+
+        <if_stmt pos:start="39:9" pos:end="41:32"><if pos:start="39:9" pos:end="41:32">if <condition pos:start="39:12" pos:end="39:36">(<expr pos:start="39:13" pos:end="39:35"><call pos:start="39:13" pos:end="39:35"><name pos:start="39:13" pos:end="39:24">get_user_u32</name><argument_list pos:start="39:25" pos:end="39:35">(<argument pos:start="39:26" pos:end="39:28"><expr pos:start="39:26" pos:end="39:28"><name pos:start="39:26" pos:end="39:28">val</name></expr></argument>, <argument pos:start="39:31" pos:end="39:34"><expr pos:start="39:31" pos:end="39:34"><name pos:start="39:31" pos:end="39:34">addr</name></expr></argument>)</argument_list></call></expr>)</condition><block type="pseudo" pos:start="41:13" pos:end="41:32"><block_content pos:start="41:13" pos:end="41:32">
+
+            <expr_stmt pos:start="41:13" pos:end="41:32"><expr pos:start="41:13" pos:end="41:31"><name pos:start="41:13" pos:end="41:15">val</name> <operator pos:start="41:17" pos:end="41:17">=</operator> <operator pos:start="41:19" pos:end="41:19">~</operator><name pos:start="41:20" pos:end="41:31"><name pos:start="41:20" pos:end="41:22">env</name><operator pos:start="41:23" pos:end="41:24">-&gt;</operator><name pos:start="41:25" pos:end="41:28">regs</name><index pos:start="41:29" pos:end="41:31">[<expr pos:start="41:30" pos:end="41:30"><literal type="number" pos:start="41:30" pos:end="41:30">0</literal></expr>]</index></name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+        <if_stmt pos:start="43:9" pos:end="61:9"><if pos:start="43:9" pos:end="55:9">if <condition pos:start="43:12" pos:end="43:32">(<expr pos:start="43:13" pos:end="43:31"><name pos:start="43:13" pos:end="43:15">val</name> <operator pos:start="43:17" pos:end="43:18">==</operator> <name pos:start="43:20" pos:end="43:31"><name pos:start="43:20" pos:end="43:22">env</name><operator pos:start="43:23" pos:end="43:24">-&gt;</operator><name pos:start="43:25" pos:end="43:28">regs</name><index pos:start="43:29" pos:end="43:31">[<expr pos:start="43:30" pos:end="43:30"><literal type="number" pos:start="43:30" pos:end="43:30">0</literal></expr>]</index></name></expr>)</condition> <block pos:start="43:34" pos:end="55:9">{<block_content pos:start="45:13" pos:end="53:27">
+
+            <expr_stmt pos:start="45:13" pos:end="45:31"><expr pos:start="45:13" pos:end="45:30"><name pos:start="45:13" pos:end="45:15">val</name> <operator pos:start="45:17" pos:end="45:17">=</operator> <name pos:start="45:19" pos:end="45:30"><name pos:start="45:19" pos:end="45:21">env</name><operator pos:start="45:22" pos:end="45:23">-&gt;</operator><name pos:start="45:24" pos:end="45:27">regs</name><index pos:start="45:28" pos:end="45:30">[<expr pos:start="45:29" pos:end="45:29"><literal type="number" pos:start="45:29" pos:end="45:29">1</literal></expr>]</index></name></expr>;</expr_stmt>
+
+            <comment type="block" pos:start="47:13" pos:end="47:46">/* FIXME: Check for segfaults.  */</comment>
+
+            <expr_stmt pos:start="49:13" pos:end="49:36"><expr pos:start="49:13" pos:end="49:35"><call pos:start="49:13" pos:end="49:35"><name pos:start="49:13" pos:end="49:24">put_user_u32</name><argument_list pos:start="49:25" pos:end="49:35">(<argument pos:start="49:26" pos:end="49:28"><expr pos:start="49:26" pos:end="49:28"><name pos:start="49:26" pos:end="49:28">val</name></expr></argument>, <argument pos:start="49:31" pos:end="49:34"><expr pos:start="49:31" pos:end="49:34"><name pos:start="49:31" pos:end="49:34">addr</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="51:13" pos:end="51:29"><expr pos:start="51:13" pos:end="51:28"><name pos:start="51:13" pos:end="51:24"><name pos:start="51:13" pos:end="51:15">env</name><operator pos:start="51:16" pos:end="51:17">-&gt;</operator><name pos:start="51:18" pos:end="51:21">regs</name><index pos:start="51:22" pos:end="51:24">[<expr pos:start="51:23" pos:end="51:23"><literal type="number" pos:start="51:23" pos:end="51:23">0</literal></expr>]</index></name> <operator pos:start="51:26" pos:end="51:26">=</operator> <literal type="number" pos:start="51:28" pos:end="51:28">0</literal></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="53:13" pos:end="53:27"><expr pos:start="53:13" pos:end="53:26"><name pos:start="53:13" pos:end="53:16">cpsr</name> <operator pos:start="53:18" pos:end="53:19">|=</operator> <name pos:start="53:21" pos:end="53:26">CPSR_C</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="55:11" pos:end="61:9">else <block pos:start="55:16" pos:end="61:9">{<block_content pos:start="57:13" pos:end="59:28">
+
+            <expr_stmt pos:start="57:13" pos:end="57:30"><expr pos:start="57:13" pos:end="57:29"><name pos:start="57:13" pos:end="57:24"><name pos:start="57:13" pos:end="57:15">env</name><operator pos:start="57:16" pos:end="57:17">-&gt;</operator><name pos:start="57:18" pos:end="57:21">regs</name><index pos:start="57:22" pos:end="57:24">[<expr pos:start="57:23" pos:end="57:23"><literal type="number" pos:start="57:23" pos:end="57:23">0</literal></expr>]</index></name> <operator pos:start="57:26" pos:end="57:26">=</operator> <operator pos:start="57:28" pos:end="57:28">-</operator><literal type="number" pos:start="57:29" pos:end="57:29">1</literal></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="59:13" pos:end="59:28"><expr pos:start="59:13" pos:end="59:27"><name pos:start="59:13" pos:end="59:16">cpsr</name> <operator pos:start="59:18" pos:end="59:19">&amp;=</operator> <operator pos:start="59:21" pos:end="59:21">~</operator><name pos:start="59:22" pos:end="59:27">CPSR_C</name></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+        <expr_stmt pos:start="63:9" pos:end="63:38"><expr pos:start="63:9" pos:end="63:37"><call pos:start="63:9" pos:end="63:37"><name pos:start="63:9" pos:end="63:18">cpsr_write</name><argument_list pos:start="63:19" pos:end="63:37">(<argument pos:start="63:20" pos:end="63:22"><expr pos:start="63:20" pos:end="63:22"><name pos:start="63:20" pos:end="63:22">env</name></expr></argument>, <argument pos:start="63:25" pos:end="63:28"><expr pos:start="63:25" pos:end="63:28"><name pos:start="63:25" pos:end="63:28">cpsr</name></expr></argument>, <argument pos:start="63:31" pos:end="63:36"><expr pos:start="63:31" pos:end="63:36"><name pos:start="63:31" pos:end="63:36">CPSR_C</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="65:9" pos:end="65:24"><expr pos:start="65:9" pos:end="65:23"><call pos:start="65:9" pos:end="65:23"><name pos:start="65:9" pos:end="65:21">end_exclusive</name><argument_list pos:start="65:22" pos:end="65:23">()</argument_list></call></expr>;</expr_stmt>
+
+        <break pos:start="67:9" pos:end="67:14">break;</break>
+
+    <case pos:start="69:5" pos:end="69:20">case <expr pos:start="69:10" pos:end="69:19"><literal type="number" pos:start="69:10" pos:end="69:19">0xffff0fe0</literal></expr>:</case> <comment type="block" pos:start="69:22" pos:end="69:43">/* __kernel_get_tls */</comment>
+
+        <expr_stmt pos:start="71:9" pos:end="71:45"><expr pos:start="71:9" pos:end="71:44"><name pos:start="71:9" pos:end="71:20"><name pos:start="71:9" pos:end="71:11">env</name><operator pos:start="71:12" pos:end="71:13">-&gt;</operator><name pos:start="71:14" pos:end="71:17">regs</name><index pos:start="71:18" pos:end="71:20">[<expr pos:start="71:19" pos:end="71:19"><literal type="number" pos:start="71:19" pos:end="71:19">0</literal></expr>]</index></name> <operator pos:start="71:22" pos:end="71:22">=</operator> <name pos:start="71:24" pos:end="71:44"><name pos:start="71:24" pos:end="71:26">env</name><operator pos:start="71:27" pos:end="71:28">-&gt;</operator><name pos:start="71:29" pos:end="71:32">cp15</name><operator pos:start="71:33" pos:end="71:33">.</operator><name pos:start="71:34" pos:end="71:44">tpidrro_el0</name></name></expr>;</expr_stmt>
+
+        <break pos:start="73:9" pos:end="73:14">break;</break>
+
+    <case pos:start="75:5" pos:end="75:20">case <expr pos:start="75:10" pos:end="75:19"><literal type="number" pos:start="75:10" pos:end="75:19">0xffff0f60</literal></expr>:</case> <comment type="block" pos:start="75:22" pos:end="75:45">/* __kernel_cmpxchg64 */</comment>
+
+        <expr_stmt pos:start="77:9" pos:end="77:41"><expr pos:start="77:9" pos:end="77:40"><call pos:start="77:9" pos:end="77:40"><name pos:start="77:9" pos:end="77:35">arm_kernel_cmpxchg64_helper</name><argument_list pos:start="77:36" pos:end="77:40">(<argument pos:start="77:37" pos:end="77:39"><expr pos:start="77:37" pos:end="77:39"><name pos:start="77:37" pos:end="77:39">env</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <break pos:start="79:9" pos:end="79:14">break;</break>
+
+
+
+    <default pos:start="83:5" pos:end="83:12">default:</default>
+
+        <return pos:start="85:9" pos:end="85:17">return <expr pos:start="85:16" pos:end="85:16"><literal type="number" pos:start="85:16" pos:end="85:16">1</literal></expr>;</return>
+
+    </block_content>}</block></switch>
+
+    <comment type="block" pos:start="89:5" pos:end="89:35">/* Jump back to the caller.  */</comment>
+
+    <expr_stmt pos:start="91:5" pos:end="91:25"><expr pos:start="91:5" pos:end="91:24"><name pos:start="91:5" pos:end="91:8">addr</name> <operator pos:start="91:10" pos:end="91:10">=</operator> <name pos:start="91:12" pos:end="91:24"><name pos:start="91:12" pos:end="91:14">env</name><operator pos:start="91:15" pos:end="91:16">-&gt;</operator><name pos:start="91:17" pos:end="91:20">regs</name><index pos:start="91:21" pos:end="91:24">[<expr pos:start="91:22" pos:end="91:23"><literal type="number" pos:start="91:22" pos:end="91:23">14</literal></expr>]</index></name></expr>;</expr_stmt>
+
+    <if_stmt pos:start="93:5" pos:end="99:5"><if pos:start="93:5" pos:end="99:5">if <condition pos:start="93:8" pos:end="93:17">(<expr pos:start="93:9" pos:end="93:16"><name pos:start="93:9" pos:end="93:12">addr</name> <operator pos:start="93:14" pos:end="93:14">&amp;</operator> <literal type="number" pos:start="93:16" pos:end="93:16">1</literal></expr>)</condition> <block pos:start="93:19" pos:end="99:5">{<block_content pos:start="95:9" pos:end="97:19">
+
+        <expr_stmt pos:start="95:9" pos:end="95:23"><expr pos:start="95:9" pos:end="95:22"><name pos:start="95:9" pos:end="95:18"><name pos:start="95:9" pos:end="95:11">env</name><operator pos:start="95:12" pos:end="95:13">-&gt;</operator><name pos:start="95:14" pos:end="95:18">thumb</name></name> <operator pos:start="95:20" pos:end="95:20">=</operator> <literal type="number" pos:start="95:22" pos:end="95:22">1</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="97:9" pos:end="97:19"><expr pos:start="97:9" pos:end="97:18"><name pos:start="97:9" pos:end="97:12">addr</name> <operator pos:start="97:14" pos:end="97:15">&amp;=</operator> <operator pos:start="97:17" pos:end="97:17">~</operator><literal type="number" pos:start="97:18" pos:end="97:18">1</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <expr_stmt pos:start="101:5" pos:end="101:25"><expr pos:start="101:5" pos:end="101:24"><name pos:start="101:5" pos:end="101:17"><name pos:start="101:5" pos:end="101:7">env</name><operator pos:start="101:8" pos:end="101:9">-&gt;</operator><name pos:start="101:10" pos:end="101:13">regs</name><index pos:start="101:14" pos:end="101:17">[<expr pos:start="101:15" pos:end="101:16"><literal type="number" pos:start="101:15" pos:end="101:16">15</literal></expr>]</index></name> <operator pos:start="101:19" pos:end="101:19">=</operator> <name pos:start="101:21" pos:end="101:24">addr</name></expr>;</expr_stmt>
+
+
+
+    <return pos:start="105:5" pos:end="105:13">return <expr pos:start="105:12" pos:end="105:12"><literal type="number" pos:start="105:12" pos:end="105:12">0</literal></expr>;</return>
+
+</block_content>}</block>
+</unit>

@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/3060.c" pos:tabs="8"><function pos:start="1:1" pos:end="239:1"><type pos:start="1:1" pos:end="1:3"><name pos:start="1:1" pos:end="1:3">int</name></type> <name pos:start="1:5" pos:end="1:30">virtio_blk_handle_scsi_req</name><parameter_list pos:start="1:31" pos:end="3:54">(<parameter pos:start="1:32" pos:end="1:47"><decl pos:start="1:32" pos:end="1:47"><type pos:start="1:32" pos:end="1:47"><name pos:start="1:32" pos:end="1:42">VirtIOBlock</name> <modifier pos:start="1:44" pos:end="1:44">*</modifier></type><name pos:start="1:45" pos:end="1:47">blk</name></decl></parameter>,
+
+                               <parameter pos:start="3:32" pos:end="3:53"><decl pos:start="3:32" pos:end="3:53"><type pos:start="3:32" pos:end="3:53"><name pos:start="3:32" pos:end="3:47">VirtQueueElement</name> <modifier pos:start="3:49" pos:end="3:49">*</modifier></type><name pos:start="3:50" pos:end="3:53">elem</name></decl></parameter>)</parameter_list>
+
+<block pos:start="5:1" pos:end="239:1">{<block_content pos:start="7:5" pos:end="237:18">
+
+    <decl_stmt pos:start="7:5" pos:end="7:33"><decl pos:start="7:5" pos:end="7:32"><type pos:start="7:5" pos:end="7:7"><name pos:start="7:5" pos:end="7:7">int</name></type> <name pos:start="7:9" pos:end="7:14">status</name> <init pos:start="7:16" pos:end="7:32">= <expr pos:start="7:18" pos:end="7:32"><name pos:start="7:18" pos:end="7:32">VIRTIO_BLK_S_OK</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:42"><decl pos:start="9:5" pos:end="9:41"><type pos:start="9:5" pos:end="9:30"><name pos:start="9:5" pos:end="9:28"><name pos:start="9:5" pos:end="9:10">struct</name> <name pos:start="9:12" pos:end="9:28">virtio_scsi_inhdr</name></name> <modifier pos:start="9:30" pos:end="9:30">*</modifier></type><name pos:start="9:31" pos:end="9:34">scsi</name> <init pos:start="9:36" pos:end="9:41">= <expr pos:start="9:38" pos:end="9:41"><name pos:start="9:38" pos:end="9:41">NULL</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="16:0"><decl pos:start="11:5" pos:end="11:43"><type pos:start="11:5" pos:end="11:18"><name pos:start="11:5" pos:end="11:16">VirtIODevice</name> <modifier pos:start="11:18" pos:end="11:18">*</modifier></type><name pos:start="11:19" pos:end="11:22">vdev</name> <init pos:start="11:24" pos:end="11:43">= <expr pos:start="11:26" pos:end="11:43"><call pos:start="11:26" pos:end="11:43"><name pos:start="11:26" pos:end="11:38">VIRTIO_DEVICE</name><argument_list pos:start="11:39" pos:end="11:43">(<argument pos:start="11:40" pos:end="11:42"><expr pos:start="11:40" pos:end="11:42"><name pos:start="11:40" pos:end="11:42">blk</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+
+
+<cpp:ifdef pos:start="15:1" pos:end="15:16">#<cpp:directive pos:start="15:2" pos:end="15:6">ifdef</cpp:directive> <name pos:start="15:8" pos:end="15:16">__linux__</name></cpp:ifdef>
+
+    <decl_stmt pos:start="17:5" pos:end="17:10"><decl pos:start="17:5" pos:end="17:9"><type pos:start="17:5" pos:end="17:7"><name pos:start="17:5" pos:end="17:7">int</name></type> <name pos:start="17:9" pos:end="17:9">i</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="22:0"><decl pos:start="19:5" pos:end="19:24"><type pos:start="19:5" pos:end="19:20"><name pos:start="19:5" pos:end="19:20"><name pos:start="19:5" pos:end="19:10">struct</name> <name pos:start="19:12" pos:end="19:20">sg_io_hdr</name></name></type> <name pos:start="19:22" pos:end="19:24">hdr</name></decl>;</decl_stmt>
+
+<cpp:endif pos:start="21:1" pos:end="21:6">#<cpp:directive pos:start="21:2" pos:end="21:6">endif</cpp:directive></cpp:endif>
+
+
+
+    <comment type="block" pos:start="25:5" pos:end="37:7">/*
+
+     * We require at least one output segment each for the virtio_blk_outhdr
+
+     * and the SCSI command block.
+
+     *
+
+     * We also at least require the virtio_blk_inhdr, the virtio_scsi_inhdr
+
+     * and the sense buffer pointer in the input segments.
+
+     */</comment>
+
+    <if_stmt pos:start="39:5" pos:end="45:5"><if pos:start="39:5" pos:end="45:5">if <condition pos:start="39:8" pos:end="39:46">(<expr pos:start="39:9" pos:end="39:45"><name pos:start="39:9" pos:end="39:21"><name pos:start="39:9" pos:end="39:12">elem</name><operator pos:start="39:13" pos:end="39:14">-&gt;</operator><name pos:start="39:15" pos:end="39:21">out_num</name></name> <operator pos:start="39:23" pos:end="39:23">&lt;</operator> <literal type="number" pos:start="39:25" pos:end="39:25">2</literal> <operator pos:start="39:27" pos:end="39:28">||</operator> <name pos:start="39:30" pos:end="39:41"><name pos:start="39:30" pos:end="39:33">elem</name><operator pos:start="39:34" pos:end="39:35">-&gt;</operator><name pos:start="39:36" pos:end="39:41">in_num</name></name> <operator pos:start="39:43" pos:end="39:43">&lt;</operator> <literal type="number" pos:start="39:45" pos:end="39:45">3</literal></expr>)</condition> <block pos:start="39:48" pos:end="45:5">{<block_content pos:start="41:9" pos:end="43:18">
+
+        <expr_stmt pos:start="41:9" pos:end="41:36"><expr pos:start="41:9" pos:end="41:35"><name pos:start="41:9" pos:end="41:14">status</name> <operator pos:start="41:16" pos:end="41:16">=</operator> <name pos:start="41:18" pos:end="41:35">VIRTIO_BLK_S_IOERR</name></expr>;</expr_stmt>
+
+        <goto pos:start="43:9" pos:end="43:18">goto <name pos:start="43:14" pos:end="43:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="49:5" pos:end="55:7">/*
+
+     * The scsi inhdr is placed in the second-to-last input segment, just
+
+     * before the regular inhdr.
+
+     */</comment>
+
+    <expr_stmt pos:start="57:5" pos:end="57:58"><expr pos:start="57:5" pos:end="57:57"><name pos:start="57:5" pos:end="57:8">scsi</name> <operator pos:start="57:10" pos:end="57:10">=</operator> <operator pos:start="57:12" pos:end="57:12">(</operator><name pos:start="57:13" pos:end="57:16">void</name> <operator pos:start="57:18" pos:end="57:18">*</operator><operator pos:start="57:19" pos:end="57:19">)</operator><name pos:start="57:20" pos:end="57:48"><name pos:start="57:20" pos:end="57:23">elem</name><operator pos:start="57:24" pos:end="57:25">-&gt;</operator><name pos:start="57:26" pos:end="57:30">in_sg</name><index pos:start="57:31" pos:end="57:48">[<expr pos:start="57:32" pos:end="57:47"><name pos:start="57:32" pos:end="57:43"><name pos:start="57:32" pos:end="57:35">elem</name><operator pos:start="57:36" pos:end="57:37">-&gt;</operator><name pos:start="57:38" pos:end="57:43">in_num</name></name> <operator pos:start="57:45" pos:end="57:45">-</operator> <literal type="number" pos:start="57:47" pos:end="57:47">2</literal></expr>]</index></name><operator pos:start="57:49" pos:end="57:49">.</operator><name pos:start="57:50" pos:end="57:57">iov_base</name></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="61:5" pos:end="67:5"><if pos:start="61:5" pos:end="67:5">if <condition pos:start="61:8" pos:end="61:24">(<expr pos:start="61:9" pos:end="61:23"><operator pos:start="61:9" pos:end="61:9">!</operator><name pos:start="61:10" pos:end="61:23"><name pos:start="61:10" pos:end="61:12">blk</name><operator pos:start="61:13" pos:end="61:14">-&gt;</operator><name pos:start="61:15" pos:end="61:18">conf</name><operator pos:start="61:19" pos:end="61:19">.</operator><name pos:start="61:20" pos:end="61:23">scsi</name></name></expr>)</condition> <block pos:start="61:26" pos:end="67:5">{<block_content pos:start="63:9" pos:end="65:18">
+
+        <expr_stmt pos:start="63:9" pos:end="63:37"><expr pos:start="63:9" pos:end="63:36"><name pos:start="63:9" pos:end="63:14">status</name> <operator pos:start="63:16" pos:end="63:16">=</operator> <name pos:start="63:18" pos:end="63:36">VIRTIO_BLK_S_UNSUPP</name></expr>;</expr_stmt>
+
+        <goto pos:start="65:9" pos:end="65:18">goto <name pos:start="65:14" pos:end="65:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="71:5" pos:end="75:7">/*
+
+     * No support for bidirection commands yet.
+
+     */</comment>
+
+    <if_stmt pos:start="77:5" pos:end="88:0"><if pos:start="77:5" pos:end="88:0">if <condition pos:start="77:8" pos:end="77:46">(<expr pos:start="77:9" pos:end="77:45"><name pos:start="77:9" pos:end="77:21"><name pos:start="77:9" pos:end="77:12">elem</name><operator pos:start="77:13" pos:end="77:14">-&gt;</operator><name pos:start="77:15" pos:end="77:21">out_num</name></name> <operator pos:start="77:23" pos:end="77:23">&gt;</operator> <literal type="number" pos:start="77:25" pos:end="77:25">2</literal> <operator pos:start="77:27" pos:end="77:28">&amp;&amp;</operator> <name pos:start="77:30" pos:end="77:41"><name pos:start="77:30" pos:end="77:33">elem</name><operator pos:start="77:34" pos:end="77:35">-&gt;</operator><name pos:start="77:36" pos:end="77:41">in_num</name></name> <operator pos:start="77:43" pos:end="77:43">&gt;</operator> <literal type="number" pos:start="77:45" pos:end="77:45">3</literal></expr>)</condition> <block pos:start="77:48" pos:end="88:0">{<block_content pos:start="79:9" pos:end="81:18">
+
+        <expr_stmt pos:start="79:9" pos:end="79:37"><expr pos:start="79:9" pos:end="79:36"><name pos:start="79:9" pos:end="79:14">status</name> <operator pos:start="79:16" pos:end="79:16">=</operator> <name pos:start="79:18" pos:end="79:36">VIRTIO_BLK_S_UNSUPP</name></expr>;</expr_stmt>
+
+        <goto pos:start="81:9" pos:end="81:18">goto <name pos:start="81:14" pos:end="81:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+<cpp:ifdef pos:start="87:1" pos:end="87:16">#<cpp:directive pos:start="87:2" pos:end="87:6">ifdef</cpp:directive> <name pos:start="87:8" pos:end="87:16">__linux__</name></cpp:ifdef>
+
+    <expr_stmt pos:start="89:5" pos:end="89:46"><expr pos:start="89:5" pos:end="89:45"><call pos:start="89:5" pos:end="89:45"><name pos:start="89:5" pos:end="89:10">memset</name><argument_list pos:start="89:11" pos:end="89:45">(<argument pos:start="89:12" pos:end="89:15"><expr pos:start="89:12" pos:end="89:15"><operator pos:start="89:12" pos:end="89:12">&amp;</operator><name pos:start="89:13" pos:end="89:15">hdr</name></expr></argument>, <argument pos:start="89:18" pos:end="89:18"><expr pos:start="89:18" pos:end="89:18"><literal type="number" pos:start="89:18" pos:end="89:18">0</literal></expr></argument>, <argument pos:start="89:21" pos:end="89:44"><expr pos:start="89:21" pos:end="89:44"><sizeof pos:start="89:21" pos:end="89:44">sizeof<argument_list pos:start="89:27" pos:end="89:44">(<argument pos:start="89:28" pos:end="89:43"><expr pos:start="89:28" pos:end="89:43">struct <name pos:start="89:35" pos:end="89:43">sg_io_hdr</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="91:5" pos:end="91:27"><expr pos:start="91:5" pos:end="91:26"><name pos:start="91:5" pos:end="91:20"><name pos:start="91:5" pos:end="91:7">hdr</name><operator pos:start="91:8" pos:end="91:8">.</operator><name pos:start="91:9" pos:end="91:20">interface_id</name></name> <operator pos:start="91:22" pos:end="91:22">=</operator> <literal type="char" pos:start="91:24" pos:end="91:26">'S'</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="93:5" pos:end="93:42"><expr pos:start="93:5" pos:end="93:41"><name pos:start="93:5" pos:end="93:15"><name pos:start="93:5" pos:end="93:7">hdr</name><operator pos:start="93:8" pos:end="93:8">.</operator><name pos:start="93:9" pos:end="93:15">cmd_len</name></name> <operator pos:start="93:17" pos:end="93:17">=</operator> <name pos:start="93:19" pos:end="93:33"><name pos:start="93:19" pos:end="93:22">elem</name><operator pos:start="93:23" pos:end="93:24">-&gt;</operator><name pos:start="93:25" pos:end="93:30">out_sg</name><index pos:start="93:31" pos:end="93:33">[<expr pos:start="93:32" pos:end="93:32"><literal type="number" pos:start="93:32" pos:end="93:32">1</literal></expr>]</index></name><operator pos:start="93:34" pos:end="93:34">.</operator><name pos:start="93:35" pos:end="93:41">iov_len</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="95:5" pos:end="95:40"><expr pos:start="95:5" pos:end="95:39"><name pos:start="95:5" pos:end="95:12"><name pos:start="95:5" pos:end="95:7">hdr</name><operator pos:start="95:8" pos:end="95:8">.</operator><name pos:start="95:9" pos:end="95:12">cmdp</name></name> <operator pos:start="95:14" pos:end="95:14">=</operator> <name pos:start="95:16" pos:end="95:30"><name pos:start="95:16" pos:end="95:19">elem</name><operator pos:start="95:20" pos:end="95:21">-&gt;</operator><name pos:start="95:22" pos:end="95:27">out_sg</name><index pos:start="95:28" pos:end="95:30">[<expr pos:start="95:29" pos:end="95:29"><literal type="number" pos:start="95:29" pos:end="95:29">1</literal></expr>]</index></name><operator pos:start="95:31" pos:end="95:31">.</operator><name pos:start="95:32" pos:end="95:39">iov_base</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="97:5" pos:end="97:22"><expr pos:start="97:5" pos:end="97:21"><name pos:start="97:5" pos:end="97:17"><name pos:start="97:5" pos:end="97:7">hdr</name><operator pos:start="97:8" pos:end="97:8">.</operator><name pos:start="97:9" pos:end="97:17">dxfer_len</name></name> <operator pos:start="97:19" pos:end="97:19">=</operator> <literal type="number" pos:start="97:21" pos:end="97:21">0</literal></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="101:5" pos:end="159:5"><if pos:start="101:5" pos:end="127:5">if <condition pos:start="101:8" pos:end="101:26">(<expr pos:start="101:9" pos:end="101:25"><name pos:start="101:9" pos:end="101:21"><name pos:start="101:9" pos:end="101:12">elem</name><operator pos:start="101:13" pos:end="101:14">-&gt;</operator><name pos:start="101:15" pos:end="101:21">out_num</name></name> <operator pos:start="101:23" pos:end="101:23">&gt;</operator> <literal type="number" pos:start="101:25" pos:end="101:25">2</literal></expr>)</condition> <block pos:start="101:28" pos:end="127:5">{<block_content pos:start="111:9" pos:end="123:38">
+
+        <comment type="block" pos:start="103:9" pos:end="109:11">/*
+
+         * If there are more than the minimally required 2 output segments
+
+         * there is write payload starting from the third iovec.
+
+         */</comment>
+
+        <expr_stmt pos:start="111:9" pos:end="111:46"><expr pos:start="111:9" pos:end="111:45"><name pos:start="111:9" pos:end="111:27"><name pos:start="111:9" pos:end="111:11">hdr</name><operator pos:start="111:12" pos:end="111:12">.</operator><name pos:start="111:13" pos:end="111:27">dxfer_direction</name></name> <operator pos:start="111:29" pos:end="111:29">=</operator> <name pos:start="111:31" pos:end="111:45">SG_DXFER_TO_DEV</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="113:9" pos:end="113:44"><expr pos:start="113:9" pos:end="113:43"><name pos:start="113:9" pos:end="113:23"><name pos:start="113:9" pos:end="113:11">hdr</name><operator pos:start="113:12" pos:end="113:12">.</operator><name pos:start="113:13" pos:end="113:23">iovec_count</name></name> <operator pos:start="113:25" pos:end="113:25">=</operator> <name pos:start="113:27" pos:end="113:39"><name pos:start="113:27" pos:end="113:30">elem</name><operator pos:start="113:31" pos:end="113:32">-&gt;</operator><name pos:start="113:33" pos:end="113:39">out_num</name></name> <operator pos:start="113:41" pos:end="113:41">-</operator> <literal type="number" pos:start="113:43" pos:end="113:43">2</literal></expr>;</expr_stmt>
+
+
+
+        <for pos:start="117:9" pos:end="119:57">for <control pos:start="117:13" pos:end="117:45">(<init pos:start="117:14" pos:end="117:19"><expr pos:start="117:14" pos:end="117:18"><name pos:start="117:14" pos:end="117:14">i</name> <operator pos:start="117:16" pos:end="117:16">=</operator> <literal type="number" pos:start="117:18" pos:end="117:18">0</literal></expr>;</init> <condition pos:start="117:21" pos:end="117:40"><expr pos:start="117:21" pos:end="117:39"><name pos:start="117:21" pos:end="117:21">i</name> <operator pos:start="117:23" pos:end="117:23">&lt;</operator> <name pos:start="117:25" pos:end="117:39"><name pos:start="117:25" pos:end="117:27">hdr</name><operator pos:start="117:28" pos:end="117:28">.</operator><name pos:start="117:29" pos:end="117:39">iovec_count</name></name></expr>;</condition> <incr pos:start="117:42" pos:end="117:44"><expr pos:start="117:42" pos:end="117:44"><name pos:start="117:42" pos:end="117:42">i</name><operator pos:start="117:43" pos:end="117:44">++</operator></expr></incr>)</control><block type="pseudo" pos:start="119:13" pos:end="119:57"><block_content pos:start="119:13" pos:end="119:57">
+
+            <expr_stmt pos:start="119:13" pos:end="119:57"><expr pos:start="119:13" pos:end="119:56"><name pos:start="119:13" pos:end="119:25"><name pos:start="119:13" pos:end="119:15">hdr</name><operator pos:start="119:16" pos:end="119:16">.</operator><name pos:start="119:17" pos:end="119:25">dxfer_len</name></name> <operator pos:start="119:27" pos:end="119:28">+=</operator> <name pos:start="119:30" pos:end="119:48"><name pos:start="119:30" pos:end="119:33">elem</name><operator pos:start="119:34" pos:end="119:35">-&gt;</operator><name pos:start="119:36" pos:end="119:41">out_sg</name><index pos:start="119:42" pos:end="119:48">[<expr pos:start="119:43" pos:end="119:47"><name pos:start="119:43" pos:end="119:43">i</name> <operator pos:start="119:45" pos:end="119:45">+</operator> <literal type="number" pos:start="119:47" pos:end="119:47">2</literal></expr>]</index></name><operator pos:start="119:49" pos:end="119:49">.</operator><name pos:start="119:50" pos:end="119:56">iov_len</name></expr>;</expr_stmt></block_content></block></for>
+
+
+
+        <expr_stmt pos:start="123:9" pos:end="123:38"><expr pos:start="123:9" pos:end="123:37"><name pos:start="123:9" pos:end="123:18"><name pos:start="123:9" pos:end="123:11">hdr</name><operator pos:start="123:12" pos:end="123:12">.</operator><name pos:start="123:13" pos:end="123:18">dxferp</name></name> <operator pos:start="123:20" pos:end="123:20">=</operator> <name pos:start="123:22" pos:end="123:33"><name pos:start="123:22" pos:end="123:25">elem</name><operator pos:start="123:26" pos:end="123:27">-&gt;</operator><name pos:start="123:28" pos:end="123:33">out_sg</name></name> <operator pos:start="123:35" pos:end="123:35">+</operator> <literal type="number" pos:start="123:37" pos:end="123:37">2</literal></expr>;</expr_stmt>
+
+
+
+    </block_content>}</block></if> <if type="elseif" pos:start="127:7" pos:end="149:5">else if <condition pos:start="127:15" pos:end="127:32">(<expr pos:start="127:16" pos:end="127:31"><name pos:start="127:16" pos:end="127:27"><name pos:start="127:16" pos:end="127:19">elem</name><operator pos:start="127:20" pos:end="127:21">-&gt;</operator><name pos:start="127:22" pos:end="127:27">in_num</name></name> <operator pos:start="127:29" pos:end="127:29">&gt;</operator> <literal type="number" pos:start="127:31" pos:end="127:31">3</literal></expr>)</condition> <block pos:start="127:34" pos:end="149:5">{<block_content pos:start="137:9" pos:end="147:33">
+
+        <comment type="block" pos:start="129:9" pos:end="135:11">/*
+
+         * If we have more than 3 input segments the guest wants to actually
+
+         * read data.
+
+         */</comment>
+
+        <expr_stmt pos:start="137:9" pos:end="137:48"><expr pos:start="137:9" pos:end="137:47"><name pos:start="137:9" pos:end="137:27"><name pos:start="137:9" pos:end="137:11">hdr</name><operator pos:start="137:12" pos:end="137:12">.</operator><name pos:start="137:13" pos:end="137:27">dxfer_direction</name></name> <operator pos:start="137:29" pos:end="137:29">=</operator> <name pos:start="137:31" pos:end="137:47">SG_DXFER_FROM_DEV</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="139:9" pos:end="139:43"><expr pos:start="139:9" pos:end="139:42"><name pos:start="139:9" pos:end="139:23"><name pos:start="139:9" pos:end="139:11">hdr</name><operator pos:start="139:12" pos:end="139:12">.</operator><name pos:start="139:13" pos:end="139:23">iovec_count</name></name> <operator pos:start="139:25" pos:end="139:25">=</operator> <name pos:start="139:27" pos:end="139:38"><name pos:start="139:27" pos:end="139:30">elem</name><operator pos:start="139:31" pos:end="139:32">-&gt;</operator><name pos:start="139:33" pos:end="139:38">in_num</name></name> <operator pos:start="139:40" pos:end="139:40">-</operator> <literal type="number" pos:start="139:42" pos:end="139:42">3</literal></expr>;</expr_stmt>
+
+        <for pos:start="141:9" pos:end="143:52">for <control pos:start="141:13" pos:end="141:45">(<init pos:start="141:14" pos:end="141:19"><expr pos:start="141:14" pos:end="141:18"><name pos:start="141:14" pos:end="141:14">i</name> <operator pos:start="141:16" pos:end="141:16">=</operator> <literal type="number" pos:start="141:18" pos:end="141:18">0</literal></expr>;</init> <condition pos:start="141:21" pos:end="141:40"><expr pos:start="141:21" pos:end="141:39"><name pos:start="141:21" pos:end="141:21">i</name> <operator pos:start="141:23" pos:end="141:23">&lt;</operator> <name pos:start="141:25" pos:end="141:39"><name pos:start="141:25" pos:end="141:27">hdr</name><operator pos:start="141:28" pos:end="141:28">.</operator><name pos:start="141:29" pos:end="141:39">iovec_count</name></name></expr>;</condition> <incr pos:start="141:42" pos:end="141:44"><expr pos:start="141:42" pos:end="141:44"><name pos:start="141:42" pos:end="141:42">i</name><operator pos:start="141:43" pos:end="141:44">++</operator></expr></incr>)</control><block type="pseudo" pos:start="143:13" pos:end="143:52"><block_content pos:start="143:13" pos:end="143:52">
+
+            <expr_stmt pos:start="143:13" pos:end="143:52"><expr pos:start="143:13" pos:end="143:51"><name pos:start="143:13" pos:end="143:25"><name pos:start="143:13" pos:end="143:15">hdr</name><operator pos:start="143:16" pos:end="143:16">.</operator><name pos:start="143:17" pos:end="143:25">dxfer_len</name></name> <operator pos:start="143:27" pos:end="143:28">+=</operator> <name pos:start="143:30" pos:end="143:43"><name pos:start="143:30" pos:end="143:33">elem</name><operator pos:start="143:34" pos:end="143:35">-&gt;</operator><name pos:start="143:36" pos:end="143:40">in_sg</name><index pos:start="143:41" pos:end="143:43">[<expr pos:start="143:42" pos:end="143:42"><name pos:start="143:42" pos:end="143:42">i</name></expr>]</index></name><operator pos:start="143:44" pos:end="143:44">.</operator><name pos:start="143:45" pos:end="143:51">iov_len</name></expr>;</expr_stmt></block_content></block></for>
+
+
+
+        <expr_stmt pos:start="147:9" pos:end="147:33"><expr pos:start="147:9" pos:end="147:32"><name pos:start="147:9" pos:end="147:18"><name pos:start="147:9" pos:end="147:11">hdr</name><operator pos:start="147:12" pos:end="147:12">.</operator><name pos:start="147:13" pos:end="147:18">dxferp</name></name> <operator pos:start="147:20" pos:end="147:20">=</operator> <name pos:start="147:22" pos:end="147:32"><name pos:start="147:22" pos:end="147:25">elem</name><operator pos:start="147:26" pos:end="147:27">-&gt;</operator><name pos:start="147:28" pos:end="147:32">in_sg</name></name></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="149:7" pos:end="159:5">else <block pos:start="149:12" pos:end="159:5">{<block_content pos:start="157:9" pos:end="157:44">
+
+        <comment type="block" pos:start="151:9" pos:end="155:11">/*
+
+         * Some SCSI commands don't actually transfer any data.
+
+         */</comment>
+
+        <expr_stmt pos:start="157:9" pos:end="157:44"><expr pos:start="157:9" pos:end="157:43"><name pos:start="157:9" pos:end="157:27"><name pos:start="157:9" pos:end="157:11">hdr</name><operator pos:start="157:12" pos:end="157:12">.</operator><name pos:start="157:13" pos:end="157:27">dxfer_direction</name></name> <operator pos:start="157:29" pos:end="157:29">=</operator> <name pos:start="157:31" pos:end="157:43">SG_DXFER_NONE</name></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <expr_stmt pos:start="163:5" pos:end="163:53"><expr pos:start="163:5" pos:end="163:52"><name pos:start="163:5" pos:end="163:11"><name pos:start="163:5" pos:end="163:7">hdr</name><operator pos:start="163:8" pos:end="163:8">.</operator><name pos:start="163:9" pos:end="163:11">sbp</name></name> <operator pos:start="163:13" pos:end="163:13">=</operator> <name pos:start="163:15" pos:end="163:43"><name pos:start="163:15" pos:end="163:18">elem</name><operator pos:start="163:19" pos:end="163:20">-&gt;</operator><name pos:start="163:21" pos:end="163:25">in_sg</name><index pos:start="163:26" pos:end="163:43">[<expr pos:start="163:27" pos:end="163:42"><name pos:start="163:27" pos:end="163:38"><name pos:start="163:27" pos:end="163:30">elem</name><operator pos:start="163:31" pos:end="163:32">-&gt;</operator><name pos:start="163:33" pos:end="163:38">in_num</name></name> <operator pos:start="163:40" pos:end="163:40">-</operator> <literal type="number" pos:start="163:42" pos:end="163:42">3</literal></expr>]</index></name><operator pos:start="163:44" pos:end="163:44">.</operator><name pos:start="163:45" pos:end="163:52">iov_base</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="165:5" pos:end="165:58"><expr pos:start="165:5" pos:end="165:57"><name pos:start="165:5" pos:end="165:17"><name pos:start="165:5" pos:end="165:7">hdr</name><operator pos:start="165:8" pos:end="165:8">.</operator><name pos:start="165:9" pos:end="165:17">mx_sb_len</name></name> <operator pos:start="165:19" pos:end="165:19">=</operator> <name pos:start="165:21" pos:end="165:49"><name pos:start="165:21" pos:end="165:24">elem</name><operator pos:start="165:25" pos:end="165:26">-&gt;</operator><name pos:start="165:27" pos:end="165:31">in_sg</name><index pos:start="165:32" pos:end="165:49">[<expr pos:start="165:33" pos:end="165:48"><name pos:start="165:33" pos:end="165:44"><name pos:start="165:33" pos:end="165:36">elem</name><operator pos:start="165:37" pos:end="165:38">-&gt;</operator><name pos:start="165:39" pos:end="165:44">in_num</name></name> <operator pos:start="165:46" pos:end="165:46">-</operator> <literal type="number" pos:start="165:48" pos:end="165:48">3</literal></expr>]</index></name><operator pos:start="165:50" pos:end="165:50">.</operator><name pos:start="165:51" pos:end="165:57">iov_len</name></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="169:5" pos:end="169:46"><expr pos:start="169:5" pos:end="169:45"><name pos:start="169:5" pos:end="169:10">status</name> <operator pos:start="169:12" pos:end="169:12">=</operator> <call pos:start="169:14" pos:end="169:45"><name pos:start="169:14" pos:end="169:23">bdrv_ioctl</name><argument_list pos:start="169:24" pos:end="169:45">(<argument pos:start="169:25" pos:end="169:31"><expr pos:start="169:25" pos:end="169:31"><name pos:start="169:25" pos:end="169:31"><name pos:start="169:25" pos:end="169:27">blk</name><operator pos:start="169:28" pos:end="169:29">-&gt;</operator><name pos:start="169:30" pos:end="169:31">bs</name></name></expr></argument>, <argument pos:start="169:34" pos:end="169:38"><expr pos:start="169:34" pos:end="169:38"><name pos:start="169:34" pos:end="169:38">SG_IO</name></expr></argument>, <argument pos:start="169:41" pos:end="169:44"><expr pos:start="169:41" pos:end="169:44"><operator pos:start="169:41" pos:end="169:41">&amp;</operator><name pos:start="169:42" pos:end="169:44">hdr</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="171:5" pos:end="177:5"><if pos:start="171:5" pos:end="177:5">if <condition pos:start="171:8" pos:end="171:15">(<expr pos:start="171:9" pos:end="171:14"><name pos:start="171:9" pos:end="171:14">status</name></expr>)</condition> <block pos:start="171:17" pos:end="177:5">{<block_content pos:start="173:9" pos:end="175:18">
+
+        <expr_stmt pos:start="173:9" pos:end="173:37"><expr pos:start="173:9" pos:end="173:36"><name pos:start="173:9" pos:end="173:14">status</name> <operator pos:start="173:16" pos:end="173:16">=</operator> <name pos:start="173:18" pos:end="173:36">VIRTIO_BLK_S_UNSUPP</name></expr>;</expr_stmt>
+
+        <goto pos:start="175:9" pos:end="175:18">goto <name pos:start="175:14" pos:end="175:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="181:5" pos:end="193:7">/*
+
+     * From SCSI-Generic-HOWTO: "Some lower level drivers (e.g. ide-scsi)
+
+     * clear the masked_status field [hence status gets cleared too, see
+
+     * block/scsi_ioctl.c] even when a CHECK_CONDITION or COMMAND_TERMINATED
+
+     * status has occurred.  However they do set DRIVER_SENSE in driver_status
+
+     * field. Also a (sb_len_wr &gt; 0) indicates there is a sense buffer.
+
+     */</comment>
+
+    <if_stmt pos:start="195:5" pos:end="199:5"><if pos:start="195:5" pos:end="199:5">if <condition pos:start="195:8" pos:end="195:45">(<expr pos:start="195:9" pos:end="195:44"><name pos:start="195:9" pos:end="195:18"><name pos:start="195:9" pos:end="195:11">hdr</name><operator pos:start="195:12" pos:end="195:12">.</operator><name pos:start="195:13" pos:end="195:18">status</name></name> <operator pos:start="195:20" pos:end="195:21">==</operator> <literal type="number" pos:start="195:23" pos:end="195:23">0</literal> <operator pos:start="195:25" pos:end="195:26">&amp;&amp;</operator> <name pos:start="195:28" pos:end="195:40"><name pos:start="195:28" pos:end="195:30">hdr</name><operator pos:start="195:31" pos:end="195:31">.</operator><name pos:start="195:32" pos:end="195:40">sb_len_wr</name></name> <operator pos:start="195:42" pos:end="195:42">&gt;</operator> <literal type="number" pos:start="195:44" pos:end="195:44">0</literal></expr>)</condition> <block pos:start="195:47" pos:end="199:5">{<block_content pos:start="197:9" pos:end="197:37">
+
+        <expr_stmt pos:start="197:9" pos:end="197:37"><expr pos:start="197:9" pos:end="197:36"><name pos:start="197:9" pos:end="197:18"><name pos:start="197:9" pos:end="197:11">hdr</name><operator pos:start="197:12" pos:end="197:12">.</operator><name pos:start="197:13" pos:end="197:18">status</name></name> <operator pos:start="197:20" pos:end="197:20">=</operator> <name pos:start="197:22" pos:end="197:36">CHECK_CONDITION</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="203:5" pos:end="207:70"><expr pos:start="203:5" pos:end="207:69"><call pos:start="203:5" pos:end="207:69"><name pos:start="203:5" pos:end="203:16">virtio_stl_p</name><argument_list pos:start="203:17" pos:end="207:69">(<argument pos:start="203:18" pos:end="203:21"><expr pos:start="203:18" pos:end="203:21"><name pos:start="203:18" pos:end="203:21">vdev</name></expr></argument>, <argument pos:start="203:24" pos:end="203:36"><expr pos:start="203:24" pos:end="203:36"><operator pos:start="203:24" pos:end="203:24">&amp;</operator><name pos:start="203:25" pos:end="203:36"><name pos:start="203:25" pos:end="203:28">scsi</name><operator pos:start="203:29" pos:end="203:30">-&gt;</operator><name pos:start="203:31" pos:end="203:36">errors</name></name></expr></argument>,
+
+                 <argument pos:start="205:18" pos:end="207:68"><expr pos:start="205:18" pos:end="207:68"><name pos:start="205:18" pos:end="205:27"><name pos:start="205:18" pos:end="205:20">hdr</name><operator pos:start="205:21" pos:end="205:21">.</operator><name pos:start="205:22" pos:end="205:27">status</name></name> <operator pos:start="205:29" pos:end="205:29">|</operator> <operator pos:start="205:31" pos:end="205:31">(</operator><name pos:start="205:32" pos:end="205:45"><name pos:start="205:32" pos:end="205:34">hdr</name><operator pos:start="205:35" pos:end="205:35">.</operator><name pos:start="205:36" pos:end="205:45">msg_status</name></name> <operator pos:start="205:47" pos:end="205:48">&lt;&lt;</operator> <literal type="number" pos:start="205:50" pos:end="205:50">8</literal><operator pos:start="205:51" pos:end="205:51">)</operator> <operator pos:start="205:53" pos:end="205:53">|</operator>
+
+                 <operator pos:start="207:18" pos:end="207:18">(</operator><name pos:start="207:19" pos:end="207:33"><name pos:start="207:19" pos:end="207:21">hdr</name><operator pos:start="207:22" pos:end="207:22">.</operator><name pos:start="207:23" pos:end="207:33">host_status</name></name> <operator pos:start="207:35" pos:end="207:36">&lt;&lt;</operator> <literal type="number" pos:start="207:38" pos:end="207:39">16</literal><operator pos:start="207:40" pos:end="207:40">)</operator> <operator pos:start="207:42" pos:end="207:42">|</operator> <operator pos:start="207:44" pos:end="207:44">(</operator><name pos:start="207:45" pos:end="207:61"><name pos:start="207:45" pos:end="207:47">hdr</name><operator pos:start="207:48" pos:end="207:48">.</operator><name pos:start="207:49" pos:end="207:61">driver_status</name></name> <operator pos:start="207:63" pos:end="207:64">&lt;&lt;</operator> <literal type="number" pos:start="207:66" pos:end="207:67">24</literal><operator pos:start="207:68" pos:end="207:68">)</operator></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="209:5" pos:end="209:51"><expr pos:start="209:5" pos:end="209:50"><call pos:start="209:5" pos:end="209:50"><name pos:start="209:5" pos:end="209:16">virtio_stl_p</name><argument_list pos:start="209:17" pos:end="209:50">(<argument pos:start="209:18" pos:end="209:21"><expr pos:start="209:18" pos:end="209:21"><name pos:start="209:18" pos:end="209:21">vdev</name></expr></argument>, <argument pos:start="209:24" pos:end="209:38"><expr pos:start="209:24" pos:end="209:38"><operator pos:start="209:24" pos:end="209:24">&amp;</operator><name pos:start="209:25" pos:end="209:38"><name pos:start="209:25" pos:end="209:28">scsi</name><operator pos:start="209:29" pos:end="209:30">-&gt;</operator><name pos:start="209:31" pos:end="209:38">residual</name></name></expr></argument>, <argument pos:start="209:41" pos:end="209:49"><expr pos:start="209:41" pos:end="209:49"><name pos:start="209:41" pos:end="209:49"><name pos:start="209:41" pos:end="209:43">hdr</name><operator pos:start="209:44" pos:end="209:44">.</operator><name pos:start="209:45" pos:end="209:49">resid</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="211:5" pos:end="211:56"><expr pos:start="211:5" pos:end="211:55"><call pos:start="211:5" pos:end="211:55"><name pos:start="211:5" pos:end="211:16">virtio_stl_p</name><argument_list pos:start="211:17" pos:end="211:55">(<argument pos:start="211:18" pos:end="211:21"><expr pos:start="211:18" pos:end="211:21"><name pos:start="211:18" pos:end="211:21">vdev</name></expr></argument>, <argument pos:start="211:24" pos:end="211:39"><expr pos:start="211:24" pos:end="211:39"><operator pos:start="211:24" pos:end="211:24">&amp;</operator><name pos:start="211:25" pos:end="211:39"><name pos:start="211:25" pos:end="211:28">scsi</name><operator pos:start="211:29" pos:end="211:30">-&gt;</operator><name pos:start="211:31" pos:end="211:39">sense_len</name></name></expr></argument>, <argument pos:start="211:42" pos:end="211:54"><expr pos:start="211:42" pos:end="211:54"><name pos:start="211:42" pos:end="211:54"><name pos:start="211:42" pos:end="211:44">hdr</name><operator pos:start="211:45" pos:end="211:45">.</operator><name pos:start="211:46" pos:end="211:54">sb_len_wr</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="213:5" pos:end="213:55"><expr pos:start="213:5" pos:end="213:54"><call pos:start="213:5" pos:end="213:54"><name pos:start="213:5" pos:end="213:16">virtio_stl_p</name><argument_list pos:start="213:17" pos:end="213:54">(<argument pos:start="213:18" pos:end="213:21"><expr pos:start="213:18" pos:end="213:21"><name pos:start="213:18" pos:end="213:21">vdev</name></expr></argument>, <argument pos:start="213:24" pos:end="213:38"><expr pos:start="213:24" pos:end="213:38"><operator pos:start="213:24" pos:end="213:24">&amp;</operator><name pos:start="213:25" pos:end="213:38"><name pos:start="213:25" pos:end="213:28">scsi</name><operator pos:start="213:29" pos:end="213:30">-&gt;</operator><name pos:start="213:31" pos:end="213:38">data_len</name></name></expr></argument>, <argument pos:start="213:41" pos:end="213:53"><expr pos:start="213:41" pos:end="213:53"><name pos:start="213:41" pos:end="213:53"><name pos:start="213:41" pos:end="213:43">hdr</name><operator pos:start="213:44" pos:end="213:44">.</operator><name pos:start="213:45" pos:end="213:53">dxfer_len</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <return pos:start="217:5" pos:end="220:0">return <expr pos:start="217:12" pos:end="217:17"><name pos:start="217:12" pos:end="217:17">status</name></expr>;</return>
+
+<cpp:else pos:start="219:1" pos:end="219:5">#<cpp:directive pos:start="219:2" pos:end="219:5">else</cpp:directive></cpp:else>
+
+    <expr_stmt pos:start="221:5" pos:end="224:0"><expr pos:start="221:5" pos:end="221:11"><call pos:start="221:5" pos:end="221:11"><name pos:start="221:5" pos:end="221:9">abort</name><argument_list pos:start="221:10" pos:end="221:11">()</argument_list></call></expr>;</expr_stmt>
+
+<cpp:endif pos:start="223:1" pos:end="223:6">#<cpp:directive pos:start="223:2" pos:end="223:6">endif</cpp:directive></cpp:endif>
+
+
+
+<label pos:start="227:1" pos:end="227:5"><name pos:start="227:1" pos:end="227:4">fail</name>:</label>
+
+    <comment type="block" pos:start="229:5" pos:end="229:74">/* Just put anything nonzero so that the ioctl fails in the guest.  */</comment>
+
+    <if_stmt pos:start="231:5" pos:end="235:5"><if pos:start="231:5" pos:end="235:5">if <condition pos:start="231:8" pos:end="231:13">(<expr pos:start="231:9" pos:end="231:12"><name pos:start="231:9" pos:end="231:12">scsi</name></expr>)</condition> <block pos:start="231:15" pos:end="235:5">{<block_content pos:start="233:9" pos:end="233:47">
+
+        <expr_stmt pos:start="233:9" pos:end="233:47"><expr pos:start="233:9" pos:end="233:46"><call pos:start="233:9" pos:end="233:46"><name pos:start="233:9" pos:end="233:20">virtio_stl_p</name><argument_list pos:start="233:21" pos:end="233:46">(<argument pos:start="233:22" pos:end="233:25"><expr pos:start="233:22" pos:end="233:25"><name pos:start="233:22" pos:end="233:25">vdev</name></expr></argument>, <argument pos:start="233:28" pos:end="233:40"><expr pos:start="233:28" pos:end="233:40"><operator pos:start="233:28" pos:end="233:28">&amp;</operator><name pos:start="233:29" pos:end="233:40"><name pos:start="233:29" pos:end="233:32">scsi</name><operator pos:start="233:33" pos:end="233:34">-&gt;</operator><name pos:start="233:35" pos:end="233:40">errors</name></name></expr></argument>, <argument pos:start="233:43" pos:end="233:45"><expr pos:start="233:43" pos:end="233:45"><literal type="number" pos:start="233:43" pos:end="233:45">255</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <return pos:start="237:5" pos:end="237:18">return <expr pos:start="237:12" pos:end="237:17"><name pos:start="237:12" pos:end="237:17">status</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

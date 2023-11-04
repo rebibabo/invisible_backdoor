@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/23067.c" pos:tabs="8"><macro pos:start="1:1" pos:end="5:30"><name pos:start="1:1" pos:end="1:19">qemu_inject_x86_mce</name><argument_list pos:start="1:20" pos:end="5:30">(<argument pos:start="1:21" pos:end="1:32">Monitor *mon</argument>, <argument pos:start="1:35" pos:end="1:48">CPUState *cenv</argument>, <argument pos:start="1:51" pos:end="1:58">int bank</argument>, <argument pos:start="1:61" pos:end="1:75">uint64_t status</argument>,
+
+                    <argument pos:start="3:21" pos:end="3:39">uint64_t mcg_status</argument>, <argument pos:start="3:42" pos:end="3:54">uint64_t addr</argument>, <argument pos:start="3:57" pos:end="3:69">uint64_t misc</argument>,
+
+                    <argument pos:start="5:21" pos:end="5:29">int flags</argument>)</argument_list></macro>
+
+<block pos:start="7:1" pos:end="129:1">{<block_content pos:start="9:5" pos:end="127:5">
+
+    <decl_stmt pos:start="9:5" pos:end="9:37"><decl pos:start="9:5" pos:end="9:36"><type pos:start="9:5" pos:end="9:12"><name pos:start="9:5" pos:end="9:12">uint64_t</name></type> <name pos:start="9:14" pos:end="9:20">mcg_cap</name> <init pos:start="9:22" pos:end="9:36">= <expr pos:start="9:24" pos:end="9:36"><name pos:start="9:24" pos:end="9:36"><name pos:start="9:24" pos:end="9:27">cenv</name><operator pos:start="9:28" pos:end="9:29">-&gt;</operator><name pos:start="9:30" pos:end="9:36">mcg_cap</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:49"><decl pos:start="11:5" pos:end="11:48"><type pos:start="11:5" pos:end="11:14"><name pos:start="11:5" pos:end="11:12">uint64_t</name> <modifier pos:start="11:14" pos:end="11:14">*</modifier></type><name pos:start="11:15" pos:end="11:19">banks</name> <init pos:start="11:21" pos:end="11:48">= <expr pos:start="11:23" pos:end="11:48"><name pos:start="11:23" pos:end="11:37"><name pos:start="11:23" pos:end="11:26">cenv</name><operator pos:start="11:27" pos:end="11:28">-&gt;</operator><name pos:start="11:29" pos:end="11:37">mce_banks</name></name> <operator pos:start="11:39" pos:end="11:39">+</operator> <literal type="number" pos:start="11:41" pos:end="11:41">4</literal> <operator pos:start="11:43" pos:end="11:43">*</operator> <name pos:start="11:45" pos:end="11:48">bank</name></expr></init></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="15:5" pos:end="21:7">/*
+
+     * If there is an MCE exception being processed, ignore this SRAO MCE
+
+     * unless unconditional injection was requested.
+
+     */</comment>
+
+    <if_stmt pos:start="23:5" pos:end="29:5"><if pos:start="23:5" pos:end="29:5">if <condition pos:start="23:8" pos:end="25:48">(<expr pos:start="23:9" pos:end="25:47"><operator pos:start="23:9" pos:end="23:9">!</operator><operator pos:start="23:10" pos:end="23:10">(</operator><name pos:start="23:11" pos:end="23:15">flags</name> <operator pos:start="23:17" pos:end="23:17">&amp;</operator> <name pos:start="23:19" pos:end="23:38">MCE_INJECT_UNCOND_AO</name><operator pos:start="23:39" pos:end="23:39">)</operator> <operator pos:start="23:41" pos:end="23:42">&amp;&amp;</operator> <operator pos:start="23:44" pos:end="23:44">!</operator><operator pos:start="23:45" pos:end="23:45">(</operator><name pos:start="23:46" pos:end="23:51">status</name> <operator pos:start="23:53" pos:end="23:53">&amp;</operator> <name pos:start="23:55" pos:end="23:67">MCI_STATUS_AR</name><operator pos:start="23:68" pos:end="23:68">)</operator>
+
+        <operator pos:start="25:9" pos:end="25:10">&amp;&amp;</operator> <operator pos:start="25:12" pos:end="25:12">(</operator><name pos:start="25:13" pos:end="25:28"><name pos:start="25:13" pos:end="25:16">cenv</name><operator pos:start="25:17" pos:end="25:18">-&gt;</operator><name pos:start="25:19" pos:end="25:28">mcg_status</name></name> <operator pos:start="25:30" pos:end="25:30">&amp;</operator> <name pos:start="25:32" pos:end="25:46">MCG_STATUS_MCIP</name><operator pos:start="25:47" pos:end="25:47">)</operator></expr>)</condition> <block pos:start="25:50" pos:end="29:5">{<block_content pos:start="27:9" pos:end="27:15">
+
+        <return pos:start="27:9" pos:end="27:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+    <if_stmt pos:start="31:5" pos:end="127:5"><if pos:start="31:5" pos:end="107:5">if <condition pos:start="31:8" pos:end="31:31">(<expr pos:start="31:9" pos:end="31:30"><name pos:start="31:9" pos:end="31:14">status</name> <operator pos:start="31:16" pos:end="31:16">&amp;</operator> <name pos:start="31:18" pos:end="31:30">MCI_STATUS_UC</name></expr>)</condition> <block pos:start="31:33" pos:end="107:5">{<block_content pos:start="41:9" pos:end="105:47">
+
+        <comment type="block" pos:start="33:9" pos:end="39:11">/*
+
+         * if MSR_MCG_CTL is not all 1s, the uncorrected error
+
+         * reporting is disabled
+
+         */</comment>
+
+        <if_stmt pos:start="41:9" pos:end="51:9"><if pos:start="41:9" pos:end="51:9">if <condition pos:start="41:12" pos:end="41:67">(<expr pos:start="41:13" pos:end="41:66"><operator pos:start="41:13" pos:end="41:13">(</operator><name pos:start="41:14" pos:end="41:20">mcg_cap</name> <operator pos:start="41:22" pos:end="41:22">&amp;</operator> <name pos:start="41:24" pos:end="41:32">MCG_CTL_P</name><operator pos:start="41:33" pos:end="41:33">)</operator> <operator pos:start="41:35" pos:end="41:36">&amp;&amp;</operator> <name pos:start="41:38" pos:end="41:50"><name pos:start="41:38" pos:end="41:41">cenv</name><operator pos:start="41:42" pos:end="41:43">-&gt;</operator><name pos:start="41:44" pos:end="41:50">mcg_ctl</name></name> <operator pos:start="41:52" pos:end="41:53">!=</operator> <operator pos:start="41:55" pos:end="41:55">~</operator><operator pos:start="41:56" pos:end="41:56">(</operator><name pos:start="41:57" pos:end="41:64">uint64_t</name><operator pos:start="41:65" pos:end="41:65">)</operator><literal type="number" pos:start="41:66" pos:end="41:66">0</literal></expr>)</condition> <block pos:start="41:69" pos:end="51:9">{<block_content pos:start="43:13" pos:end="49:19">
+
+            <expr_stmt pos:start="43:13" pos:end="47:44"><expr pos:start="43:13" pos:end="47:43"><call pos:start="43:13" pos:end="47:43"><name pos:start="43:13" pos:end="43:26">monitor_printf</name><argument_list pos:start="43:27" pos:end="47:43">(<argument pos:start="43:28" pos:end="43:30"><expr pos:start="43:28" pos:end="43:30"><name pos:start="43:28" pos:end="43:30">mon</name></expr></argument>,
+
+                           <argument pos:start="45:28" pos:end="45:75"><expr pos:start="45:28" pos:end="45:75"><literal type="string" pos:start="45:28" pos:end="45:75">"CPU %d: Uncorrected error reporting disabled\n"</literal></expr></argument>,
+
+                           <argument pos:start="47:28" pos:end="47:42"><expr pos:start="47:28" pos:end="47:42"><name pos:start="47:28" pos:end="47:42"><name pos:start="47:28" pos:end="47:31">cenv</name><operator pos:start="47:32" pos:end="47:33">-&gt;</operator><name pos:start="47:34" pos:end="47:42">cpu_index</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="49:13" pos:end="49:19">return;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <comment type="block" pos:start="55:9" pos:end="61:11">/*
+
+         * if MSR_MCi_CTL is not all 1s, the uncorrected error
+
+         * reporting is disabled for the bank
+
+         */</comment>
+
+        <if_stmt pos:start="63:9" pos:end="71:9"><if pos:start="63:9" pos:end="71:9">if <condition pos:start="63:12" pos:end="63:37">(<expr pos:start="63:13" pos:end="63:36"><name pos:start="63:13" pos:end="63:20"><name pos:start="63:13" pos:end="63:17">banks</name><index pos:start="63:18" pos:end="63:20">[<expr pos:start="63:19" pos:end="63:19"><literal type="number" pos:start="63:19" pos:end="63:19">0</literal></expr>]</index></name> <operator pos:start="63:22" pos:end="63:23">!=</operator> <operator pos:start="63:25" pos:end="63:25">~</operator><operator pos:start="63:26" pos:end="63:26">(</operator><name pos:start="63:27" pos:end="63:34">uint64_t</name><operator pos:start="63:35" pos:end="63:35">)</operator><literal type="number" pos:start="63:36" pos:end="63:36">0</literal></expr>)</condition> <block pos:start="63:39" pos:end="71:9">{<block_content pos:start="65:13" pos:end="69:19">
+
+            <expr_stmt pos:start="65:13" pos:end="67:67"><expr pos:start="65:13" pos:end="67:66"><call pos:start="65:13" pos:end="67:66"><name pos:start="65:13" pos:end="65:26">monitor_printf</name><argument_list pos:start="65:27" pos:end="67:66">(<argument pos:start="65:28" pos:end="65:30"><expr pos:start="65:28" pos:end="65:30"><name pos:start="65:28" pos:end="65:30">mon</name></expr></argument>, <argument pos:start="65:33" pos:end="67:42"><expr pos:start="65:33" pos:end="67:42"><literal type="string" pos:start="65:33" pos:end="65:79">"CPU %d: Uncorrected error reporting disabled "</literal>
+
+                           <literal type="string" pos:start="67:28" pos:end="67:42">"for bank %d\n"</literal></expr></argument>, <argument pos:start="67:45" pos:end="67:59"><expr pos:start="67:45" pos:end="67:59"><name pos:start="67:45" pos:end="67:59"><name pos:start="67:45" pos:end="67:48">cenv</name><operator pos:start="67:49" pos:end="67:50">-&gt;</operator><name pos:start="67:51" pos:end="67:59">cpu_index</name></name></expr></argument>, <argument pos:start="67:62" pos:end="67:65"><expr pos:start="67:62" pos:end="67:65"><name pos:start="67:62" pos:end="67:65">bank</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="69:13" pos:end="69:19">return;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <if_stmt pos:start="75:9" pos:end="89:9"><if pos:start="75:9" pos:end="89:9">if <condition pos:start="75:12" pos:end="77:42">(<expr pos:start="75:13" pos:end="77:41"><operator pos:start="75:13" pos:end="75:13">(</operator><name pos:start="75:14" pos:end="75:29"><name pos:start="75:14" pos:end="75:17">cenv</name><operator pos:start="75:18" pos:end="75:19">-&gt;</operator><name pos:start="75:20" pos:end="75:29">mcg_status</name></name> <operator pos:start="75:31" pos:end="75:31">&amp;</operator> <name pos:start="75:33" pos:end="75:47">MCG_STATUS_MCIP</name><operator pos:start="75:48" pos:end="75:48">)</operator> <operator pos:start="75:50" pos:end="75:51">||</operator>
+
+            <operator pos:start="77:13" pos:end="77:13">!</operator><operator pos:start="77:14" pos:end="77:14">(</operator><name pos:start="77:15" pos:end="77:25"><name pos:start="77:15" pos:end="77:18">cenv</name><operator pos:start="77:19" pos:end="77:20">-&gt;</operator><name pos:start="77:21" pos:end="77:22">cr</name><index pos:start="77:23" pos:end="77:25">[<expr pos:start="77:24" pos:end="77:24"><literal type="number" pos:start="77:24" pos:end="77:24">4</literal></expr>]</index></name> <operator pos:start="77:27" pos:end="77:27">&amp;</operator> <name pos:start="77:29" pos:end="77:40">CR4_MCE_MASK</name><operator pos:start="77:41" pos:end="77:41">)</operator></expr>)</condition> <block pos:start="77:44" pos:end="89:9">{<block_content pos:start="79:13" pos:end="87:19">
+
+            <expr_stmt pos:start="79:13" pos:end="81:75"><expr pos:start="79:13" pos:end="81:74"><call pos:start="79:13" pos:end="81:74"><name pos:start="79:13" pos:end="79:26">monitor_printf</name><argument_list pos:start="79:27" pos:end="81:74">(<argument pos:start="79:28" pos:end="79:30"><expr pos:start="79:28" pos:end="79:30"><name pos:start="79:28" pos:end="79:30">mon</name></expr></argument>, <argument pos:start="79:33" pos:end="81:56"><expr pos:start="79:33" pos:end="81:56"><literal type="string" pos:start="79:33" pos:end="79:74">"CPU %d: Previous MCE still in progress, "</literal>
+
+                                <literal type="string" pos:start="81:33" pos:end="81:56">"raising triple fault\n"</literal></expr></argument>, <argument pos:start="81:59" pos:end="81:73"><expr pos:start="81:59" pos:end="81:73"><name pos:start="81:59" pos:end="81:73"><name pos:start="81:59" pos:end="81:62">cenv</name><operator pos:start="81:63" pos:end="81:64">-&gt;</operator><name pos:start="81:65" pos:end="81:73">cpu_index</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="83:13" pos:end="83:59"><expr pos:start="83:13" pos:end="83:58"><call pos:start="83:13" pos:end="83:58"><name pos:start="83:13" pos:end="83:25">qemu_log_mask</name><argument_list pos:start="83:26" pos:end="83:58">(<argument pos:start="83:27" pos:end="83:39"><expr pos:start="83:27" pos:end="83:39"><name pos:start="83:27" pos:end="83:39">CPU_LOG_RESET</name></expr></argument>, <argument pos:start="83:42" pos:end="83:57"><expr pos:start="83:42" pos:end="83:57"><literal type="string" pos:start="83:42" pos:end="83:57">"Triple fault\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="85:13" pos:end="85:40"><expr pos:start="85:13" pos:end="85:39"><call pos:start="85:13" pos:end="85:39"><name pos:start="85:13" pos:end="85:37">qemu_system_reset_request</name><argument_list pos:start="85:38" pos:end="85:39">()</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="87:13" pos:end="87:19">return;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <if_stmt pos:start="91:9" pos:end="95:9"><if pos:start="91:9" pos:end="95:9">if <condition pos:start="91:12" pos:end="91:38">(<expr pos:start="91:13" pos:end="91:37"><name pos:start="91:13" pos:end="91:20"><name pos:start="91:13" pos:end="91:17">banks</name><index pos:start="91:18" pos:end="91:20">[<expr pos:start="91:19" pos:end="91:19"><literal type="number" pos:start="91:19" pos:end="91:19">1</literal></expr>]</index></name> <operator pos:start="91:22" pos:end="91:22">&amp;</operator> <name pos:start="91:24" pos:end="91:37">MCI_STATUS_VAL</name></expr>)</condition> <block pos:start="91:40" pos:end="95:9">{<block_content pos:start="93:13" pos:end="93:38">
+
+            <expr_stmt pos:start="93:13" pos:end="93:38"><expr pos:start="93:13" pos:end="93:37"><name pos:start="93:13" pos:end="93:18">status</name> <operator pos:start="93:20" pos:end="93:21">|=</operator> <name pos:start="93:23" pos:end="93:37">MCI_STATUS_OVER</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="97:9" pos:end="97:24"><expr pos:start="97:9" pos:end="97:23"><name pos:start="97:9" pos:end="97:16"><name pos:start="97:9" pos:end="97:13">banks</name><index pos:start="97:14" pos:end="97:16">[<expr pos:start="97:15" pos:end="97:15"><literal type="number" pos:start="97:15" pos:end="97:15">2</literal></expr>]</index></name> <operator pos:start="97:18" pos:end="97:18">=</operator> <name pos:start="97:20" pos:end="97:23">addr</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="99:9" pos:end="99:24"><expr pos:start="99:9" pos:end="99:23"><name pos:start="99:9" pos:end="99:16"><name pos:start="99:9" pos:end="99:13">banks</name><index pos:start="99:14" pos:end="99:16">[<expr pos:start="99:15" pos:end="99:15"><literal type="number" pos:start="99:15" pos:end="99:15">3</literal></expr>]</index></name> <operator pos:start="99:18" pos:end="99:18">=</operator> <name pos:start="99:20" pos:end="99:23">misc</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="101:9" pos:end="101:38"><expr pos:start="101:9" pos:end="101:37"><name pos:start="101:9" pos:end="101:24"><name pos:start="101:9" pos:end="101:12">cenv</name><operator pos:start="101:13" pos:end="101:14">-&gt;</operator><name pos:start="101:15" pos:end="101:24">mcg_status</name></name> <operator pos:start="101:26" pos:end="101:26">=</operator> <name pos:start="101:28" pos:end="101:37">mcg_status</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="103:9" pos:end="103:26"><expr pos:start="103:9" pos:end="103:25"><name pos:start="103:9" pos:end="103:16"><name pos:start="103:9" pos:end="103:13">banks</name><index pos:start="103:14" pos:end="103:16">[<expr pos:start="103:15" pos:end="103:15"><literal type="number" pos:start="103:15" pos:end="103:15">1</literal></expr>]</index></name> <operator pos:start="103:18" pos:end="103:18">=</operator> <name pos:start="103:20" pos:end="103:25">status</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="105:9" pos:end="105:47"><expr pos:start="105:9" pos:end="105:46"><call pos:start="105:9" pos:end="105:46"><name pos:start="105:9" pos:end="105:21">cpu_interrupt</name><argument_list pos:start="105:22" pos:end="105:46">(<argument pos:start="105:23" pos:end="105:26"><expr pos:start="105:23" pos:end="105:26"><name pos:start="105:23" pos:end="105:26">cenv</name></expr></argument>, <argument pos:start="105:29" pos:end="105:45"><expr pos:start="105:29" pos:end="105:45"><name pos:start="105:29" pos:end="105:45">CPU_INTERRUPT_MCE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <if type="elseif" pos:start="107:7" pos:end="123:5">else if <condition pos:start="107:15" pos:end="109:46">(<expr pos:start="107:16" pos:end="109:45"><operator pos:start="107:16" pos:end="107:16">!</operator><operator pos:start="107:17" pos:end="107:17">(</operator><name pos:start="107:18" pos:end="107:25"><name pos:start="107:18" pos:end="107:22">banks</name><index pos:start="107:23" pos:end="107:25">[<expr pos:start="107:24" pos:end="107:24"><literal type="number" pos:start="107:24" pos:end="107:24">1</literal></expr>]</index></name> <operator pos:start="107:27" pos:end="107:27">&amp;</operator> <name pos:start="107:29" pos:end="107:42">MCI_STATUS_VAL</name><operator pos:start="107:43" pos:end="107:43">)</operator>
+
+               <operator pos:start="109:16" pos:end="109:17">||</operator> <operator pos:start="109:19" pos:end="109:19">!</operator><operator pos:start="109:20" pos:end="109:20">(</operator><name pos:start="109:21" pos:end="109:28"><name pos:start="109:21" pos:end="109:25">banks</name><index pos:start="109:26" pos:end="109:28">[<expr pos:start="109:27" pos:end="109:27"><literal type="number" pos:start="109:27" pos:end="109:27">1</literal></expr>]</index></name> <operator pos:start="109:30" pos:end="109:30">&amp;</operator> <name pos:start="109:32" pos:end="109:44">MCI_STATUS_UC</name><operator pos:start="109:45" pos:end="109:45">)</operator></expr>)</condition> <block pos:start="109:48" pos:end="123:5">{<block_content pos:start="111:9" pos:end="121:26">
+
+        <if_stmt pos:start="111:9" pos:end="115:9"><if pos:start="111:9" pos:end="115:9">if <condition pos:start="111:12" pos:end="111:38">(<expr pos:start="111:13" pos:end="111:37"><name pos:start="111:13" pos:end="111:20"><name pos:start="111:13" pos:end="111:17">banks</name><index pos:start="111:18" pos:end="111:20">[<expr pos:start="111:19" pos:end="111:19"><literal type="number" pos:start="111:19" pos:end="111:19">1</literal></expr>]</index></name> <operator pos:start="111:22" pos:end="111:22">&amp;</operator> <name pos:start="111:24" pos:end="111:37">MCI_STATUS_VAL</name></expr>)</condition> <block pos:start="111:40" pos:end="115:9">{<block_content pos:start="113:13" pos:end="113:38">
+
+            <expr_stmt pos:start="113:13" pos:end="113:38"><expr pos:start="113:13" pos:end="113:37"><name pos:start="113:13" pos:end="113:18">status</name> <operator pos:start="113:20" pos:end="113:21">|=</operator> <name pos:start="113:23" pos:end="113:37">MCI_STATUS_OVER</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="117:9" pos:end="117:24"><expr pos:start="117:9" pos:end="117:23"><name pos:start="117:9" pos:end="117:16"><name pos:start="117:9" pos:end="117:13">banks</name><index pos:start="117:14" pos:end="117:16">[<expr pos:start="117:15" pos:end="117:15"><literal type="number" pos:start="117:15" pos:end="117:15">2</literal></expr>]</index></name> <operator pos:start="117:18" pos:end="117:18">=</operator> <name pos:start="117:20" pos:end="117:23">addr</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="119:9" pos:end="119:24"><expr pos:start="119:9" pos:end="119:23"><name pos:start="119:9" pos:end="119:16"><name pos:start="119:9" pos:end="119:13">banks</name><index pos:start="119:14" pos:end="119:16">[<expr pos:start="119:15" pos:end="119:15"><literal type="number" pos:start="119:15" pos:end="119:15">3</literal></expr>]</index></name> <operator pos:start="119:18" pos:end="119:18">=</operator> <name pos:start="119:20" pos:end="119:23">misc</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="121:9" pos:end="121:26"><expr pos:start="121:9" pos:end="121:25"><name pos:start="121:9" pos:end="121:16"><name pos:start="121:9" pos:end="121:13">banks</name><index pos:start="121:14" pos:end="121:16">[<expr pos:start="121:15" pos:end="121:15"><literal type="number" pos:start="121:15" pos:end="121:15">1</literal></expr>]</index></name> <operator pos:start="121:18" pos:end="121:18">=</operator> <name pos:start="121:20" pos:end="121:25">status</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="123:7" pos:end="127:5">else <block pos:start="123:12" pos:end="127:5">{<block_content pos:start="125:9" pos:end="125:36">
+
+        <expr_stmt pos:start="125:9" pos:end="125:36"><expr pos:start="125:9" pos:end="125:35"><name pos:start="125:9" pos:end="125:16"><name pos:start="125:9" pos:end="125:13">banks</name><index pos:start="125:14" pos:end="125:16">[<expr pos:start="125:15" pos:end="125:15"><literal type="number" pos:start="125:15" pos:end="125:15">1</literal></expr>]</index></name> <operator pos:start="125:18" pos:end="125:19">|=</operator> <name pos:start="125:21" pos:end="125:35">MCI_STATUS_OVER</name></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+</block_content>}</block>
+</unit>

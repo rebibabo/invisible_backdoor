@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/4959.c" pos:tabs="8"><function pos:start="1:1" pos:end="157:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:30">nbd_receive_options</name><parameter_list pos:start="1:31" pos:end="1:49">(<parameter pos:start="1:32" pos:end="1:48"><decl pos:start="1:32" pos:end="1:48"><type pos:start="1:32" pos:end="1:42"><name pos:start="1:32" pos:end="1:40">NBDClient</name> <modifier pos:start="1:42" pos:end="1:42">*</modifier></type><name pos:start="1:43" pos:end="1:48">client</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="157:1">{<block_content pos:start="5:5" pos:end="155:5">
+
+    <decl_stmt pos:start="5:5" pos:end="5:29"><decl pos:start="5:5" pos:end="5:28"><type pos:start="5:5" pos:end="5:7"><name pos:start="5:5" pos:end="5:7">int</name></type> <name pos:start="5:9" pos:end="5:13">csock</name> <init pos:start="5:15" pos:end="5:28">= <expr pos:start="5:17" pos:end="5:28"><name pos:start="5:17" pos:end="5:28"><name pos:start="5:17" pos:end="5:22">client</name><operator pos:start="5:23" pos:end="5:24">-&gt;</operator><name pos:start="5:25" pos:end="5:28">sock</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:19"><decl pos:start="7:5" pos:end="7:18"><type pos:start="7:5" pos:end="7:12"><name pos:start="7:5" pos:end="7:12">uint32_t</name></type> <name pos:start="7:14" pos:end="7:18">flags</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="11:5" pos:end="35:6">/* Client sends:
+
+        [ 0 ..   3]   client flags
+
+
+
+        [ 0 ..   7]   NBD_OPTS_MAGIC
+
+        [ 8 ..  11]   NBD option
+
+        [12 ..  15]   Data length
+
+        ...           Rest of request
+
+
+
+        [ 0 ..   7]   NBD_OPTS_MAGIC
+
+        [ 8 ..  11]   Second NBD option
+
+        [12 ..  15]   Data length
+
+        ...           Rest of request
+
+    */</comment>
+
+
+
+    <if_stmt pos:start="39:5" pos:end="45:5"><if pos:start="39:5" pos:end="45:5">if <condition pos:start="39:8" pos:end="39:65">(<expr pos:start="39:9" pos:end="39:64"><call pos:start="39:9" pos:end="39:47"><name pos:start="39:9" pos:end="39:17">read_sync</name><argument_list pos:start="39:18" pos:end="39:47">(<argument pos:start="39:19" pos:end="39:23"><expr pos:start="39:19" pos:end="39:23"><name pos:start="39:19" pos:end="39:23">csock</name></expr></argument>, <argument pos:start="39:26" pos:end="39:31"><expr pos:start="39:26" pos:end="39:31"><operator pos:start="39:26" pos:end="39:26">&amp;</operator><name pos:start="39:27" pos:end="39:31">flags</name></expr></argument>, <argument pos:start="39:34" pos:end="39:46"><expr pos:start="39:34" pos:end="39:46"><sizeof pos:start="39:34" pos:end="39:46">sizeof<argument_list pos:start="39:40" pos:end="39:46">(<argument pos:start="39:41" pos:end="39:45"><expr pos:start="39:41" pos:end="39:45"><name pos:start="39:41" pos:end="39:45">flags</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call> <operator pos:start="39:49" pos:end="39:50">!=</operator> <sizeof pos:start="39:52" pos:end="39:64">sizeof<argument_list pos:start="39:58" pos:end="39:64">(<argument pos:start="39:59" pos:end="39:63"><expr pos:start="39:59" pos:end="39:63"><name pos:start="39:59" pos:end="39:63">flags</name></expr></argument>)</argument_list></sizeof></expr>)</condition> <block pos:start="39:67" pos:end="45:5">{<block_content pos:start="41:9" pos:end="43:20">
+
+        <expr_stmt pos:start="41:9" pos:end="41:27"><expr pos:start="41:9" pos:end="41:26"><call pos:start="41:9" pos:end="41:26"><name pos:start="41:9" pos:end="41:11">LOG</name><argument_list pos:start="41:12" pos:end="41:26">(<argument pos:start="41:13" pos:end="41:25"><expr pos:start="41:13" pos:end="41:25"><literal type="string" pos:start="41:13" pos:end="41:25">"read failed"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="43:9" pos:end="43:20">return <expr pos:start="43:16" pos:end="43:19"><operator pos:start="43:16" pos:end="43:16">-</operator><name pos:start="43:17" pos:end="43:19">EIO</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+    <expr_stmt pos:start="47:5" pos:end="47:35"><expr pos:start="47:5" pos:end="47:34"><call pos:start="47:5" pos:end="47:34"><name pos:start="47:5" pos:end="47:9">TRACE</name><argument_list pos:start="47:10" pos:end="47:34">(<argument pos:start="47:11" pos:end="47:33"><expr pos:start="47:11" pos:end="47:33"><literal type="string" pos:start="47:11" pos:end="47:33">"Checking client flags"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="49:5" pos:end="49:25"><expr pos:start="49:5" pos:end="49:24"><call pos:start="49:5" pos:end="49:24"><name pos:start="49:5" pos:end="49:16">be32_to_cpus</name><argument_list pos:start="49:17" pos:end="49:24">(<argument pos:start="49:18" pos:end="49:23"><expr pos:start="49:18" pos:end="49:23"><operator pos:start="49:18" pos:end="49:18">&amp;</operator><name pos:start="49:19" pos:end="49:23">flags</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="51:5" pos:end="57:5"><if pos:start="51:5" pos:end="57:5">if <condition pos:start="51:8" pos:end="51:57">(<expr pos:start="51:9" pos:end="51:56"><name pos:start="51:9" pos:end="51:13">flags</name> <operator pos:start="51:15" pos:end="51:16">!=</operator> <literal type="number" pos:start="51:18" pos:end="51:18">0</literal> <operator pos:start="51:20" pos:end="51:21">&amp;&amp;</operator> <name pos:start="51:23" pos:end="51:27">flags</name> <operator pos:start="51:29" pos:end="51:30">!=</operator> <name pos:start="51:32" pos:end="51:56">NBD_FLAG_C_FIXED_NEWSTYLE</name></expr>)</condition> <block pos:start="51:59" pos:end="57:5">{<block_content pos:start="53:9" pos:end="55:20">
+
+        <expr_stmt pos:start="53:9" pos:end="53:41"><expr pos:start="53:9" pos:end="53:40"><call pos:start="53:9" pos:end="53:40"><name pos:start="53:9" pos:end="53:11">LOG</name><argument_list pos:start="53:12" pos:end="53:40">(<argument pos:start="53:13" pos:end="53:39"><expr pos:start="53:13" pos:end="53:39"><literal type="string" pos:start="53:13" pos:end="53:39">"Bad client flags received"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="55:9" pos:end="55:20">return <expr pos:start="55:16" pos:end="55:19"><operator pos:start="55:16" pos:end="55:16">-</operator><name pos:start="55:17" pos:end="55:19">EIO</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <while pos:start="61:5" pos:end="155:5">while <condition pos:start="61:11" pos:end="61:13">(<expr pos:start="61:12" pos:end="61:12"><literal type="number" pos:start="61:12" pos:end="61:12">1</literal></expr>)</condition> <block pos:start="61:15" pos:end="155:5">{<block_content pos:start="63:9" pos:end="153:9">
+
+        <decl_stmt pos:start="63:9" pos:end="63:16"><decl pos:start="63:9" pos:end="63:15"><type pos:start="63:9" pos:end="63:11"><name pos:start="63:9" pos:end="63:11">int</name></type> <name pos:start="63:13" pos:end="63:15">ret</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="65:9" pos:end="65:29"><decl pos:start="65:9" pos:end="65:20"><type pos:start="65:9" pos:end="65:16"><name pos:start="65:9" pos:end="65:16">uint32_t</name></type> <name pos:start="65:18" pos:end="65:20">tmp</name></decl>, <decl pos:start="65:23" pos:end="65:28"><type ref="prev" pos:start="65:9" pos:end="65:16"/><name pos:start="65:23" pos:end="65:28">length</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="67:9" pos:end="67:23"><decl pos:start="67:9" pos:end="67:22"><type pos:start="67:9" pos:end="67:16"><name pos:start="67:9" pos:end="67:16">uint64_t</name></type> <name pos:start="67:18" pos:end="67:22">magic</name></decl>;</decl_stmt>
+
+
+
+        <if_stmt pos:start="71:9" pos:end="77:9"><if pos:start="71:9" pos:end="77:9">if <condition pos:start="71:12" pos:end="71:69">(<expr pos:start="71:13" pos:end="71:68"><call pos:start="71:13" pos:end="71:51"><name pos:start="71:13" pos:end="71:21">read_sync</name><argument_list pos:start="71:22" pos:end="71:51">(<argument pos:start="71:23" pos:end="71:27"><expr pos:start="71:23" pos:end="71:27"><name pos:start="71:23" pos:end="71:27">csock</name></expr></argument>, <argument pos:start="71:30" pos:end="71:35"><expr pos:start="71:30" pos:end="71:35"><operator pos:start="71:30" pos:end="71:30">&amp;</operator><name pos:start="71:31" pos:end="71:35">magic</name></expr></argument>, <argument pos:start="71:38" pos:end="71:50"><expr pos:start="71:38" pos:end="71:50"><sizeof pos:start="71:38" pos:end="71:50">sizeof<argument_list pos:start="71:44" pos:end="71:50">(<argument pos:start="71:45" pos:end="71:49"><expr pos:start="71:45" pos:end="71:49"><name pos:start="71:45" pos:end="71:49">magic</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call> <operator pos:start="71:53" pos:end="71:54">!=</operator> <sizeof pos:start="71:56" pos:end="71:68">sizeof<argument_list pos:start="71:62" pos:end="71:68">(<argument pos:start="71:63" pos:end="71:67"><expr pos:start="71:63" pos:end="71:67"><name pos:start="71:63" pos:end="71:67">magic</name></expr></argument>)</argument_list></sizeof></expr>)</condition> <block pos:start="71:71" pos:end="77:9">{<block_content pos:start="73:13" pos:end="75:27">
+
+            <expr_stmt pos:start="73:13" pos:end="73:31"><expr pos:start="73:13" pos:end="73:30"><call pos:start="73:13" pos:end="73:30"><name pos:start="73:13" pos:end="73:15">LOG</name><argument_list pos:start="73:16" pos:end="73:30">(<argument pos:start="73:17" pos:end="73:29"><expr pos:start="73:17" pos:end="73:29"><literal type="string" pos:start="73:17" pos:end="73:29">"read failed"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="75:13" pos:end="75:27">return <expr pos:start="75:20" pos:end="75:26"><operator pos:start="75:20" pos:end="75:20">-</operator><name pos:start="75:21" pos:end="75:26">EINVAL</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="79:9" pos:end="79:37"><expr pos:start="79:9" pos:end="79:36"><call pos:start="79:9" pos:end="79:36"><name pos:start="79:9" pos:end="79:13">TRACE</name><argument_list pos:start="79:14" pos:end="79:36">(<argument pos:start="79:15" pos:end="79:35"><expr pos:start="79:15" pos:end="79:35"><literal type="string" pos:start="79:15" pos:end="79:35">"Checking opts magic"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="81:9" pos:end="87:9"><if pos:start="81:9" pos:end="87:9">if <condition pos:start="81:12" pos:end="81:49">(<expr pos:start="81:13" pos:end="81:48"><name pos:start="81:13" pos:end="81:17">magic</name> <operator pos:start="81:19" pos:end="81:20">!=</operator> <call pos:start="81:22" pos:end="81:48"><name pos:start="81:22" pos:end="81:32">be64_to_cpu</name><argument_list pos:start="81:33" pos:end="81:48">(<argument pos:start="81:34" pos:end="81:47"><expr pos:start="81:34" pos:end="81:47"><name pos:start="81:34" pos:end="81:47">NBD_OPTS_MAGIC</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="81:51" pos:end="87:9">{<block_content pos:start="83:13" pos:end="85:27">
+
+            <expr_stmt pos:start="83:13" pos:end="83:38"><expr pos:start="83:13" pos:end="83:37"><call pos:start="83:13" pos:end="83:37"><name pos:start="83:13" pos:end="83:15">LOG</name><argument_list pos:start="83:16" pos:end="83:37">(<argument pos:start="83:17" pos:end="83:36"><expr pos:start="83:17" pos:end="83:36"><literal type="string" pos:start="83:17" pos:end="83:36">"Bad magic received"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="85:13" pos:end="85:27">return <expr pos:start="85:20" pos:end="85:26"><operator pos:start="85:20" pos:end="85:20">-</operator><name pos:start="85:21" pos:end="85:26">EINVAL</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <if_stmt pos:start="91:9" pos:end="97:9"><if pos:start="91:9" pos:end="97:9">if <condition pos:start="91:12" pos:end="91:63">(<expr pos:start="91:13" pos:end="91:62"><call pos:start="91:13" pos:end="91:47"><name pos:start="91:13" pos:end="91:21">read_sync</name><argument_list pos:start="91:22" pos:end="91:47">(<argument pos:start="91:23" pos:end="91:27"><expr pos:start="91:23" pos:end="91:27"><name pos:start="91:23" pos:end="91:27">csock</name></expr></argument>, <argument pos:start="91:30" pos:end="91:33"><expr pos:start="91:30" pos:end="91:33"><operator pos:start="91:30" pos:end="91:30">&amp;</operator><name pos:start="91:31" pos:end="91:33">tmp</name></expr></argument>, <argument pos:start="91:36" pos:end="91:46"><expr pos:start="91:36" pos:end="91:46"><sizeof pos:start="91:36" pos:end="91:46">sizeof<argument_list pos:start="91:42" pos:end="91:46">(<argument pos:start="91:43" pos:end="91:45"><expr pos:start="91:43" pos:end="91:45"><name pos:start="91:43" pos:end="91:45">tmp</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call> <operator pos:start="91:49" pos:end="91:50">!=</operator> <sizeof pos:start="91:52" pos:end="91:62">sizeof<argument_list pos:start="91:58" pos:end="91:62">(<argument pos:start="91:59" pos:end="91:61"><expr pos:start="91:59" pos:end="91:61"><name pos:start="91:59" pos:end="91:61">tmp</name></expr></argument>)</argument_list></sizeof></expr>)</condition> <block pos:start="91:65" pos:end="97:9">{<block_content pos:start="93:13" pos:end="95:27">
+
+            <expr_stmt pos:start="93:13" pos:end="93:31"><expr pos:start="93:13" pos:end="93:30"><call pos:start="93:13" pos:end="93:30"><name pos:start="93:13" pos:end="93:15">LOG</name><argument_list pos:start="93:16" pos:end="93:30">(<argument pos:start="93:17" pos:end="93:29"><expr pos:start="93:17" pos:end="93:29"><literal type="string" pos:start="93:17" pos:end="93:29">"read failed"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="95:13" pos:end="95:27">return <expr pos:start="95:20" pos:end="95:26"><operator pos:start="95:20" pos:end="95:20">-</operator><name pos:start="95:21" pos:end="95:26">EINVAL</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <if_stmt pos:start="101:9" pos:end="107:9"><if pos:start="101:9" pos:end="107:9">if <condition pos:start="101:12" pos:end="101:72">(<expr pos:start="101:13" pos:end="101:71"><call pos:start="101:13" pos:end="101:53"><name pos:start="101:13" pos:end="101:21">read_sync</name><argument_list pos:start="101:22" pos:end="101:53">(<argument pos:start="101:23" pos:end="101:27"><expr pos:start="101:23" pos:end="101:27"><name pos:start="101:23" pos:end="101:27">csock</name></expr></argument>, <argument pos:start="101:30" pos:end="101:36"><expr pos:start="101:30" pos:end="101:36"><operator pos:start="101:30" pos:end="101:30">&amp;</operator><name pos:start="101:31" pos:end="101:36">length</name></expr></argument>, <argument pos:start="101:39" pos:end="101:52"><expr pos:start="101:39" pos:end="101:52"><sizeof pos:start="101:39" pos:end="101:52">sizeof<argument_list pos:start="101:45" pos:end="101:52">(<argument pos:start="101:46" pos:end="101:51"><expr pos:start="101:46" pos:end="101:51"><name pos:start="101:46" pos:end="101:51">length</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call> <operator pos:start="101:55" pos:end="101:56">!=</operator> <sizeof pos:start="101:58" pos:end="101:71">sizeof<argument_list pos:start="101:64" pos:end="101:71">(<argument pos:start="101:65" pos:end="101:70"><expr pos:start="101:65" pos:end="101:70"><name pos:start="101:65" pos:end="101:70">length</name></expr></argument>)</argument_list></sizeof></expr>)</condition> <block pos:start="101:74" pos:end="107:9">{<block_content pos:start="103:13" pos:end="105:27">
+
+            <expr_stmt pos:start="103:13" pos:end="103:31"><expr pos:start="103:13" pos:end="103:30"><call pos:start="103:13" pos:end="103:30"><name pos:start="103:13" pos:end="103:15">LOG</name><argument_list pos:start="103:16" pos:end="103:30">(<argument pos:start="103:17" pos:end="103:29"><expr pos:start="103:17" pos:end="103:29"><literal type="string" pos:start="103:17" pos:end="103:29">"read failed"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="105:13" pos:end="105:27">return <expr pos:start="105:20" pos:end="105:26"><operator pos:start="105:20" pos:end="105:20">-</operator><name pos:start="105:21" pos:end="105:26">EINVAL</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="109:9" pos:end="109:37"><expr pos:start="109:9" pos:end="109:36"><name pos:start="109:9" pos:end="109:14">length</name> <operator pos:start="109:16" pos:end="109:16">=</operator> <call pos:start="109:18" pos:end="109:36"><name pos:start="109:18" pos:end="109:28">be32_to_cpu</name><argument_list pos:start="109:29" pos:end="109:36">(<argument pos:start="109:30" pos:end="109:35"><expr pos:start="109:30" pos:end="109:35"><name pos:start="109:30" pos:end="109:35">length</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="113:9" pos:end="113:33"><expr pos:start="113:9" pos:end="113:32"><call pos:start="113:9" pos:end="113:32"><name pos:start="113:9" pos:end="113:13">TRACE</name><argument_list pos:start="113:14" pos:end="113:32">(<argument pos:start="113:15" pos:end="113:31"><expr pos:start="113:15" pos:end="113:31"><literal type="string" pos:start="113:15" pos:end="113:31">"Checking option"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <switch pos:start="115:9" pos:end="153:9">switch <condition pos:start="115:16" pos:end="115:33">(<expr pos:start="115:17" pos:end="115:32"><call pos:start="115:17" pos:end="115:32"><name pos:start="115:17" pos:end="115:27">be32_to_cpu</name><argument_list pos:start="115:28" pos:end="115:32">(<argument pos:start="115:29" pos:end="115:31"><expr pos:start="115:29" pos:end="115:31"><name pos:start="115:29" pos:end="115:31">tmp</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="115:35" pos:end="153:9">{<block_content pos:start="117:9" pos:end="151:27">
+
+        <case pos:start="117:9" pos:end="117:26">case <expr pos:start="117:14" pos:end="117:25"><name pos:start="117:14" pos:end="117:25">NBD_OPT_LIST</name></expr>:</case>
+
+            <expr_stmt pos:start="119:13" pos:end="119:50"><expr pos:start="119:13" pos:end="119:49"><name pos:start="119:13" pos:end="119:15">ret</name> <operator pos:start="119:17" pos:end="119:17">=</operator> <call pos:start="119:19" pos:end="119:49"><name pos:start="119:19" pos:end="119:33">nbd_handle_list</name><argument_list pos:start="119:34" pos:end="119:49">(<argument pos:start="119:35" pos:end="119:40"><expr pos:start="119:35" pos:end="119:40"><name pos:start="119:35" pos:end="119:40">client</name></expr></argument>, <argument pos:start="119:43" pos:end="119:48"><expr pos:start="119:43" pos:end="119:48"><name pos:start="119:43" pos:end="119:48">length</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <if_stmt pos:start="121:13" pos:end="125:13"><if pos:start="121:13" pos:end="125:13">if <condition pos:start="121:16" pos:end="121:24">(<expr pos:start="121:17" pos:end="121:23"><name pos:start="121:17" pos:end="121:19">ret</name> <operator pos:start="121:21" pos:end="121:21">&lt;</operator> <literal type="number" pos:start="121:23" pos:end="121:23">0</literal></expr>)</condition> <block pos:start="121:26" pos:end="125:13">{<block_content pos:start="123:17" pos:end="123:27">
+
+                <return pos:start="123:17" pos:end="123:27">return <expr pos:start="123:24" pos:end="123:26"><name pos:start="123:24" pos:end="123:26">ret</name></expr>;</return>
+
+            </block_content>}</block></if></if_stmt>
+
+            <break pos:start="127:13" pos:end="127:18">break;</break>
+
+
+
+        <case pos:start="131:9" pos:end="131:27">case <expr pos:start="131:14" pos:end="131:26"><name pos:start="131:14" pos:end="131:26">NBD_OPT_ABORT</name></expr>:</case>
+
+            <return pos:start="133:13" pos:end="133:27">return <expr pos:start="133:20" pos:end="133:26"><operator pos:start="133:20" pos:end="133:20">-</operator><name pos:start="133:21" pos:end="133:26">EINVAL</name></expr>;</return>
+
+
+
+        <case pos:start="137:9" pos:end="137:33">case <expr pos:start="137:14" pos:end="137:32"><name pos:start="137:14" pos:end="137:32">NBD_OPT_EXPORT_NAME</name></expr>:</case>
+
+            <return pos:start="139:13" pos:end="139:58">return <expr pos:start="139:20" pos:end="139:57"><call pos:start="139:20" pos:end="139:57"><name pos:start="139:20" pos:end="139:41">nbd_handle_export_name</name><argument_list pos:start="139:42" pos:end="139:57">(<argument pos:start="139:43" pos:end="139:48"><expr pos:start="139:43" pos:end="139:48"><name pos:start="139:43" pos:end="139:48">client</name></expr></argument>, <argument pos:start="139:51" pos:end="139:56"><expr pos:start="139:51" pos:end="139:56"><name pos:start="139:51" pos:end="139:56">length</name></expr></argument>)</argument_list></call></expr>;</return>
+
+
+
+        <default pos:start="143:9" pos:end="143:16">default:</default>
+
+            <expr_stmt pos:start="145:13" pos:end="145:35"><expr pos:start="145:13" pos:end="145:34"><name pos:start="145:13" pos:end="145:15">tmp</name> <operator pos:start="145:17" pos:end="145:17">=</operator> <call pos:start="145:19" pos:end="145:34"><name pos:start="145:19" pos:end="145:29">be32_to_cpu</name><argument_list pos:start="145:30" pos:end="145:34">(<argument pos:start="145:31" pos:end="145:33"><expr pos:start="145:31" pos:end="145:33"><name pos:start="145:31" pos:end="145:33">tmp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="147:13" pos:end="147:48"><expr pos:start="147:13" pos:end="147:47"><call pos:start="147:13" pos:end="147:47"><name pos:start="147:13" pos:end="147:15">LOG</name><argument_list pos:start="147:16" pos:end="147:47">(<argument pos:start="147:17" pos:end="147:41"><expr pos:start="147:17" pos:end="147:41"><literal type="string" pos:start="147:17" pos:end="147:41">"Unsupported option 0x%x"</literal></expr></argument>, <argument pos:start="147:44" pos:end="147:46"><expr pos:start="147:44" pos:end="147:46"><name pos:start="147:44" pos:end="147:46">tmp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="149:13" pos:end="149:63"><expr pos:start="149:13" pos:end="149:62"><call pos:start="149:13" pos:end="149:62"><name pos:start="149:13" pos:end="149:24">nbd_send_rep</name><argument_list pos:start="149:25" pos:end="149:62">(<argument pos:start="149:26" pos:end="149:37"><expr pos:start="149:26" pos:end="149:37"><name pos:start="149:26" pos:end="149:37"><name pos:start="149:26" pos:end="149:31">client</name><operator pos:start="149:32" pos:end="149:33">-&gt;</operator><name pos:start="149:34" pos:end="149:37">sock</name></name></expr></argument>, <argument pos:start="149:40" pos:end="149:56"><expr pos:start="149:40" pos:end="149:56"><name pos:start="149:40" pos:end="149:56">NBD_REP_ERR_UNSUP</name></expr></argument>, <argument pos:start="149:59" pos:end="149:61"><expr pos:start="149:59" pos:end="149:61"><name pos:start="149:59" pos:end="149:61">tmp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="151:13" pos:end="151:27">return <expr pos:start="151:20" pos:end="151:26"><operator pos:start="151:20" pos:end="151:20">-</operator><name pos:start="151:21" pos:end="151:26">EINVAL</name></expr>;</return>
+
+        </block_content>}</block></switch>
+
+    </block_content>}</block></while>
+
+</block_content>}</block></function>
+</unit>

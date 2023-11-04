@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/2271.c" pos:tabs="8"><function pos:start="1:1" pos:end="138:0"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:29">put_pixels_x2_mmx</name><parameter_list pos:start="1:30" pos:end="1:86">(<parameter pos:start="1:31" pos:end="1:42"><decl pos:start="1:31" pos:end="1:42"><type pos:start="1:31" pos:end="1:42"><name pos:start="1:31" pos:end="1:35">UINT8</name> <modifier pos:start="1:37" pos:end="1:37">*</modifier></type><name pos:start="1:38" pos:end="1:42">block</name></decl></parameter>, <parameter pos:start="1:45" pos:end="1:63"><decl pos:start="1:45" pos:end="1:63"><type pos:start="1:45" pos:end="1:63"><specifier pos:start="1:45" pos:end="1:49">const</specifier> <name pos:start="1:51" pos:end="1:55">UINT8</name> <modifier pos:start="1:57" pos:end="1:57">*</modifier></type><name pos:start="1:58" pos:end="1:63">pixels</name></decl></parameter>, <parameter pos:start="1:66" pos:end="1:78"><decl pos:start="1:66" pos:end="1:78"><type pos:start="1:66" pos:end="1:78"><name pos:start="1:66" pos:end="1:68">int</name></type> <name pos:start="1:70" pos:end="1:78">line_size</name></decl></parameter>, <parameter pos:start="1:81" pos:end="1:85"><decl pos:start="1:81" pos:end="1:85"><type pos:start="1:81" pos:end="1:85"><name pos:start="1:81" pos:end="1:83">int</name></type> <name pos:start="1:85" pos:end="1:85">h</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="135:25">{<block_content pos:start="71:9" pos:end="135:25">
+
+<cpp:if pos:start="5:1" pos:end="5:5">#<cpp:directive pos:start="5:2" pos:end="5:3">if</cpp:directive> <expr pos:start="5:5" pos:end="5:5"><literal type="number" pos:start="5:5" pos:end="5:5">0</literal></expr></cpp:if>
+
+  UINT8 *p;
+
+  const UINT8 *pix;
+
+  p = block;
+
+  pix = pixels;
+
+  MOVQ_ZERO(mm7);
+
+  MOVQ_WONE(mm4);
+
+  JUMPALIGN();
+
+  do {
+
+      __asm __volatile(
+
+	"movq	%1, %%mm0\n\t"
+
+	"movq	1%1, %%mm1\n\t"
+
+	"movq	%%mm0, %%mm2\n\t"
+
+	"movq	%%mm1, %%mm3\n\t"
+
+	"punpcklbw %%mm7, %%mm0\n\t"
+
+	"punpcklbw %%mm7, %%mm1\n\t"
+
+	"punpckhbw %%mm7, %%mm2\n\t"
+
+	"punpckhbw %%mm7, %%mm3\n\t"
+
+	"paddusw %%mm1, %%mm0\n\t"
+
+	"paddusw %%mm3, %%mm2\n\t"
+
+	"paddusw %%mm4, %%mm0\n\t"
+
+	"paddusw %%mm4, %%mm2\n\t"
+
+	"psrlw	$1, %%mm0\n\t"
+
+	"psrlw	$1, %%mm2\n\t"
+
+	"packuswb  %%mm2, %%mm0\n\t"
+
+	"movq	%%mm0, %0\n\t"
+
+	:"=m"(*p)
+
+	:"m"(*pix)
+
+		       :"memory");
+
+   pix += line_size; p += line_size;
+
+  } while (--h);
+
+<cpp:else pos:start="67:1" pos:end="67:5">#<cpp:directive pos:start="67:2" pos:end="67:5">else</cpp:directive></cpp:else>
+
+  <asm pos:start="69:3" pos:end="69:19">__asm __volatile(</asm>
+
+  	<expr_stmt pos:start="71:9" pos:end="135:24"><expr pos:start="71:9" pos:end="131:16"><call pos:start="71:9" pos:end="71:23"><name pos:start="71:9" pos:end="71:16">MOVQ_BFE</name><argument_list pos:start="71:17" pos:end="71:23">(<argument pos:start="71:18" pos:end="71:22"><expr pos:start="71:18" pos:end="71:22"><operator pos:start="71:18" pos:end="71:18">%</operator><operator pos:start="71:19" pos:end="71:19">%</operator><name pos:start="71:20" pos:end="71:22">mm7</name></expr></argument>)</argument_list></call>
+
+	<literal type="string" pos:start="73:9" pos:end="73:37">"lea (%3, %3), %%eax	\n\t"</literal>
+
+	<literal type="string" pos:start="75:9" pos:end="75:37">".balign 8     		\n\t"</literal>
+
+	<literal type="string" pos:start="77:9" pos:end="77:37">"1:			\n\t"</literal>
+
+	<literal type="string" pos:start="79:9" pos:end="79:37">"movq (%1), %%mm0	\n\t"</literal>
+
+	<literal type="string" pos:start="81:9" pos:end="81:37">"movq (%1, %3), %%mm2	\n\t"</literal>
+
+	<literal type="string" pos:start="83:9" pos:end="83:37">"movq 1(%1), %%mm1	\n\t"</literal>
+
+	<literal type="string" pos:start="85:9" pos:end="85:37">"movq 1(%1, %3), %%mm3	\n\t"</literal>
+
+	<call pos:start="87:9" pos:end="87:30"><name pos:start="87:9" pos:end="87:16">PAVG_MMX</name><argument_list pos:start="87:17" pos:end="87:30">(<argument pos:start="87:18" pos:end="87:22"><expr pos:start="87:18" pos:end="87:22"><operator pos:start="87:18" pos:end="87:18">%</operator><operator pos:start="87:19" pos:end="87:19">%</operator><name pos:start="87:20" pos:end="87:22">mm0</name></expr></argument>, <argument pos:start="87:25" pos:end="87:29"><expr pos:start="87:25" pos:end="87:29"><operator pos:start="87:25" pos:end="87:25">%</operator><operator pos:start="87:26" pos:end="87:26">%</operator><name pos:start="87:27" pos:end="87:29">mm1</name></expr></argument>)</argument_list></call>
+
+	<literal type="string" pos:start="89:9" pos:end="89:37">"movq %%mm6, (%2)	\n\t"</literal>
+
+	<call pos:start="91:9" pos:end="91:30"><name pos:start="91:9" pos:end="91:16">PAVG_MMX</name><argument_list pos:start="91:17" pos:end="91:30">(<argument pos:start="91:18" pos:end="91:22"><expr pos:start="91:18" pos:end="91:22"><operator pos:start="91:18" pos:end="91:18">%</operator><operator pos:start="91:19" pos:end="91:19">%</operator><name pos:start="91:20" pos:end="91:22">mm2</name></expr></argument>, <argument pos:start="91:25" pos:end="91:29"><expr pos:start="91:25" pos:end="91:29"><operator pos:start="91:25" pos:end="91:25">%</operator><operator pos:start="91:26" pos:end="91:26">%</operator><name pos:start="91:27" pos:end="91:29">mm3</name></expr></argument>)</argument_list></call>
+
+	<literal type="string" pos:start="93:9" pos:end="93:37">"movq %%mm6, (%2, %3)	\n\t"</literal>
+
+	<literal type="string" pos:start="95:9" pos:end="95:37">"addl %%eax, %1		\n\t"</literal>
+
+	<literal type="string" pos:start="97:9" pos:end="100:0">"addl %%eax, %2		\n\t"</literal>
+
+<cpp:if pos:start="99:1" pos:end="99:15">#<cpp:directive pos:start="99:2" pos:end="99:3">if</cpp:directive> <expr pos:start="99:5" pos:end="99:15"><name pos:start="99:5" pos:end="99:15">LONG_UNROLL</name></expr></cpp:if>
+
+	<literal type="string" pos:start="101:9" pos:end="101:37">"movq (%1), %%mm0	\n\t"</literal>
+
+	<literal type="string" pos:start="103:9" pos:end="103:37">"movq (%1, %3), %%mm2	\n\t"</literal>
+
+	<literal type="string" pos:start="105:9" pos:end="105:37">"movq 1(%1), %%mm1	\n\t"</literal>
+
+	<literal type="string" pos:start="107:9" pos:end="107:37">"movq 1(%1, %3), %%mm3	\n\t"</literal>
+
+	<call pos:start="109:9" pos:end="109:30"><name pos:start="109:9" pos:end="109:16">PAVG_MMX</name><argument_list pos:start="109:17" pos:end="109:30">(<argument pos:start="109:18" pos:end="109:22"><expr pos:start="109:18" pos:end="109:22"><operator pos:start="109:18" pos:end="109:18">%</operator><operator pos:start="109:19" pos:end="109:19">%</operator><name pos:start="109:20" pos:end="109:22">mm0</name></expr></argument>, <argument pos:start="109:25" pos:end="109:29"><expr pos:start="109:25" pos:end="109:29"><operator pos:start="109:25" pos:end="109:25">%</operator><operator pos:start="109:26" pos:end="109:26">%</operator><name pos:start="109:27" pos:end="109:29">mm1</name></expr></argument>)</argument_list></call>
+
+	<literal type="string" pos:start="111:9" pos:end="111:37">"movq %%mm6, (%2)	\n\t"</literal>
+
+	<call pos:start="113:9" pos:end="113:30"><name pos:start="113:9" pos:end="113:16">PAVG_MMX</name><argument_list pos:start="113:17" pos:end="113:30">(<argument pos:start="113:18" pos:end="113:22"><expr pos:start="113:18" pos:end="113:22"><operator pos:start="113:18" pos:end="113:18">%</operator><operator pos:start="113:19" pos:end="113:19">%</operator><name pos:start="113:20" pos:end="113:22">mm2</name></expr></argument>, <argument pos:start="113:25" pos:end="113:29"><expr pos:start="113:25" pos:end="113:29"><operator pos:start="113:25" pos:end="113:25">%</operator><operator pos:start="113:26" pos:end="113:26">%</operator><name pos:start="113:27" pos:end="113:29">mm3</name></expr></argument>)</argument_list></call>
+
+	<literal type="string" pos:start="115:9" pos:end="115:37">"movq %%mm6, (%2, %3)	\n\t"</literal>
+
+	<literal type="string" pos:start="117:9" pos:end="117:37">"addl %%eax, %1		\n\t"</literal>
+
+	<literal type="string" pos:start="119:9" pos:end="119:37">"addl %%eax, %2		\n\t"</literal>
+
+	<literal type="string" pos:start="121:9" pos:end="124:0">"subl $4, %0		\n\t"</literal>
+
+<cpp:else pos:start="123:1" pos:end="123:5">#<cpp:directive pos:start="123:2" pos:end="123:5">else</cpp:directive></cpp:else>
+
+	<literal type="string" pos:start="125:9" pos:end="128:0">"subl $2, %0		\n\t"</literal>
+
+<cpp:endif pos:start="127:1" pos:end="127:6">#<cpp:directive pos:start="127:2" pos:end="127:6">endif</cpp:directive></cpp:endif>
+
+	<literal type="string" pos:start="129:9" pos:end="129:37">"jnz 1b			\n\t"</literal>
+
+	<operator pos:start="131:9" pos:end="131:9">:</operator><literal type="string" pos:start="131:10" pos:end="131:13">"+g"</literal><operator pos:start="131:14" pos:end="131:14">(</operator><name pos:start="131:15" pos:end="131:15">h</name><operator pos:start="131:16" pos:end="131:16">)</operator></expr><operator pos:start="131:17" pos:end="131:17">,</operator> <expr pos:start="131:19" pos:end="131:30"><literal type="string" pos:start="131:19" pos:end="131:22">"+S"</literal><operator pos:start="131:23" pos:end="131:23">(</operator><name pos:start="131:24" pos:end="131:29">pixels</name><operator pos:start="131:30" pos:end="131:30">)</operator></expr><operator pos:start="131:31" pos:end="131:31">,</operator> <expr pos:start="131:33" pos:end="135:14"><literal type="string" pos:start="131:33" pos:end="131:36">"+D"</literal><operator pos:start="131:37" pos:end="131:37">(</operator><name pos:start="131:38" pos:end="131:42">block</name><operator pos:start="131:43" pos:end="131:43">)</operator>
+
+	<operator pos:start="133:9" pos:end="133:9">:</operator><literal type="string" pos:start="133:10" pos:end="133:12">"r"</literal><operator pos:start="133:13" pos:end="133:13">(</operator><name pos:start="133:14" pos:end="133:22">line_size</name><operator pos:start="133:23" pos:end="133:23">)</operator>
+
+	<operator pos:start="135:9" pos:end="135:9">:</operator><literal type="string" pos:start="135:10" pos:end="135:14">"eax"</literal></expr><operator pos:start="135:15" pos:end="135:15">,</operator> <expr pos:start="135:17" pos:end="135:24"><literal type="string" pos:start="135:17" pos:end="135:24">"memory"</literal></expr></expr_stmt>)</block_content></block>;</function>
+
+<cpp:endif pos:start="137:1" pos:end="137:6">#<cpp:directive pos:start="137:2" pos:end="137:6">endif</cpp:directive></cpp:endif>
+
+}
+</unit>

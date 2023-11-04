@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/18961.c" pos:tabs="8"><function pos:start="1:1" pos:end="175:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:29">vhdx_parse_header</name><parameter_list pos:start="1:30" pos:end="3:43">(<parameter pos:start="1:31" pos:end="1:50"><decl pos:start="1:31" pos:end="1:50"><type pos:start="1:31" pos:end="1:50"><name pos:start="1:31" pos:end="1:46">BlockDriverState</name> <modifier pos:start="1:48" pos:end="1:48">*</modifier></type><name pos:start="1:49" pos:end="1:50">bs</name></decl></parameter>, <parameter pos:start="1:53" pos:end="1:68"><decl pos:start="1:53" pos:end="1:68"><type pos:start="1:53" pos:end="1:68"><name pos:start="1:53" pos:end="1:65">BDRVVHDXState</name> <modifier pos:start="1:67" pos:end="1:67">*</modifier></type><name pos:start="1:68" pos:end="1:68">s</name></decl></parameter>,
+
+                              <parameter pos:start="3:31" pos:end="3:42"><decl pos:start="3:31" pos:end="3:42"><type pos:start="3:31" pos:end="3:42"><name pos:start="3:31" pos:end="3:35">Error</name> <modifier pos:start="3:37" pos:end="3:37">*</modifier><modifier pos:start="3:38" pos:end="3:38">*</modifier></type><name pos:start="3:39" pos:end="3:42">errp</name></decl></parameter>)</parameter_list>
+
+<block pos:start="5:1" pos:end="175:1">{<block_content pos:start="7:5" pos:end="173:23">
+
+    <decl_stmt pos:start="7:5" pos:end="7:12"><decl pos:start="7:5" pos:end="7:11"><type pos:start="7:5" pos:end="7:7"><name pos:start="7:5" pos:end="7:7">int</name></type> <name pos:start="7:9" pos:end="7:11">ret</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:24"><decl pos:start="9:5" pos:end="9:23"><type pos:start="9:5" pos:end="9:16"><name pos:start="9:5" pos:end="9:14">VHDXHeader</name> <modifier pos:start="9:16" pos:end="9:16">*</modifier></type><name pos:start="9:17" pos:end="9:23">header1</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:24"><decl pos:start="11:5" pos:end="11:23"><type pos:start="11:5" pos:end="11:16"><name pos:start="11:5" pos:end="11:14">VHDXHeader</name> <modifier pos:start="11:16" pos:end="11:16">*</modifier></type><name pos:start="11:17" pos:end="11:23">header2</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:26"><decl pos:start="13:5" pos:end="13:25"><type pos:start="13:5" pos:end="13:8"><name pos:start="13:5" pos:end="13:8">bool</name></type> <name pos:start="13:10" pos:end="13:17">h1_valid</name> <init pos:start="13:19" pos:end="13:25">= <expr pos:start="13:21" pos:end="13:25"><name pos:start="13:21" pos:end="13:25">false</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:26"><decl pos:start="15:5" pos:end="15:25"><type pos:start="15:5" pos:end="15:8"><name pos:start="15:5" pos:end="15:8">bool</name></type> <name pos:start="15:10" pos:end="15:17">h2_valid</name> <init pos:start="15:19" pos:end="15:25">= <expr pos:start="15:21" pos:end="15:25"><name pos:start="15:21" pos:end="15:25">false</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="17:5" pos:end="17:24"><decl pos:start="17:5" pos:end="17:23"><type pos:start="17:5" pos:end="17:12"><name pos:start="17:5" pos:end="17:12">uint64_t</name></type> <name pos:start="17:14" pos:end="17:19">h1_seq</name> <init pos:start="17:21" pos:end="17:23">= <expr pos:start="17:23" pos:end="17:23"><literal type="number" pos:start="17:23" pos:end="17:23">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:24"><decl pos:start="19:5" pos:end="19:23"><type pos:start="19:5" pos:end="19:12"><name pos:start="19:5" pos:end="19:12">uint64_t</name></type> <name pos:start="19:14" pos:end="19:19">h2_seq</name> <init pos:start="19:21" pos:end="19:23">= <expr pos:start="19:23" pos:end="19:23"><literal type="number" pos:start="19:23" pos:end="19:23">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="21:5" pos:end="21:20"><decl pos:start="21:5" pos:end="21:19"><type pos:start="21:5" pos:end="21:13"><name pos:start="21:5" pos:end="21:11">uint8_t</name> <modifier pos:start="21:13" pos:end="21:13">*</modifier></type><name pos:start="21:14" pos:end="21:19">buffer</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="25:5" pos:end="25:53">/* header1 &amp; header2 are freed in vhdx_close() */</comment>
+
+    <expr_stmt pos:start="27:5" pos:end="27:54"><expr pos:start="27:5" pos:end="27:53"><name pos:start="27:5" pos:end="27:11">header1</name> <operator pos:start="27:13" pos:end="27:13">=</operator> <call pos:start="27:15" pos:end="27:53"><name pos:start="27:15" pos:end="27:29">qemu_blockalign</name><argument_list pos:start="27:30" pos:end="27:53">(<argument pos:start="27:31" pos:end="27:32"><expr pos:start="27:31" pos:end="27:32"><name pos:start="27:31" pos:end="27:32">bs</name></expr></argument>, <argument pos:start="27:35" pos:end="27:52"><expr pos:start="27:35" pos:end="27:52"><sizeof pos:start="27:35" pos:end="27:52">sizeof<argument_list pos:start="27:41" pos:end="27:52">(<argument pos:start="27:42" pos:end="27:51"><expr pos:start="27:42" pos:end="27:51"><name pos:start="27:42" pos:end="27:51">VHDXHeader</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="29:5" pos:end="29:54"><expr pos:start="29:5" pos:end="29:53"><name pos:start="29:5" pos:end="29:11">header2</name> <operator pos:start="29:13" pos:end="29:13">=</operator> <call pos:start="29:15" pos:end="29:53"><name pos:start="29:15" pos:end="29:29">qemu_blockalign</name><argument_list pos:start="29:30" pos:end="29:53">(<argument pos:start="29:31" pos:end="29:32"><expr pos:start="29:31" pos:end="29:32"><name pos:start="29:31" pos:end="29:32">bs</name></expr></argument>, <argument pos:start="29:35" pos:end="29:52"><expr pos:start="29:35" pos:end="29:52"><sizeof pos:start="29:35" pos:end="29:52">sizeof<argument_list pos:start="29:41" pos:end="29:52">(<argument pos:start="29:42" pos:end="29:51"><expr pos:start="29:42" pos:end="29:51"><name pos:start="29:42" pos:end="29:51">VHDXHeader</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="33:5" pos:end="33:51"><expr pos:start="33:5" pos:end="33:50"><name pos:start="33:5" pos:end="33:10">buffer</name> <operator pos:start="33:12" pos:end="33:12">=</operator> <call pos:start="33:14" pos:end="33:50"><name pos:start="33:14" pos:end="33:28">qemu_blockalign</name><argument_list pos:start="33:29" pos:end="33:50">(<argument pos:start="33:30" pos:end="33:31"><expr pos:start="33:30" pos:end="33:31"><name pos:start="33:30" pos:end="33:31">bs</name></expr></argument>, <argument pos:start="33:34" pos:end="33:49"><expr pos:start="33:34" pos:end="33:49"><name pos:start="33:34" pos:end="33:49">VHDX_HEADER_SIZE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="37:5" pos:end="37:28"><expr pos:start="37:5" pos:end="37:27"><name pos:start="37:5" pos:end="37:17"><name pos:start="37:5" pos:end="37:5">s</name><operator pos:start="37:6" pos:end="37:7">-&gt;</operator><name pos:start="37:8" pos:end="37:14">headers</name><index pos:start="37:15" pos:end="37:17">[<expr pos:start="37:16" pos:end="37:16"><literal type="number" pos:start="37:16" pos:end="37:16">0</literal></expr>]</index></name> <operator pos:start="37:19" pos:end="37:19">=</operator> <name pos:start="37:21" pos:end="37:27">header1</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="39:5" pos:end="39:28"><expr pos:start="39:5" pos:end="39:27"><name pos:start="39:5" pos:end="39:17"><name pos:start="39:5" pos:end="39:5">s</name><operator pos:start="39:6" pos:end="39:7">-&gt;</operator><name pos:start="39:8" pos:end="39:14">headers</name><index pos:start="39:15" pos:end="39:17">[<expr pos:start="39:16" pos:end="39:16"><literal type="number" pos:start="39:16" pos:end="39:16">1</literal></expr>]</index></name> <operator pos:start="39:19" pos:end="39:19">=</operator> <name pos:start="39:21" pos:end="39:27">header2</name></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="43:5" pos:end="47:16">/* We have to read the whole VHDX_HEADER_SIZE instead of
+
+     * sizeof(VHDXHeader), because the checksum is over the whole
+
+     * region */</comment>
+
+    <expr_stmt pos:start="49:5" pos:end="49:78"><expr pos:start="49:5" pos:end="49:77"><name pos:start="49:5" pos:end="49:7">ret</name> <operator pos:start="49:9" pos:end="49:9">=</operator> <call pos:start="49:11" pos:end="49:77"><name pos:start="49:11" pos:end="49:20">bdrv_pread</name><argument_list pos:start="49:21" pos:end="49:77">(<argument pos:start="49:22" pos:end="49:29"><expr pos:start="49:22" pos:end="49:29"><name pos:start="49:22" pos:end="49:29"><name pos:start="49:22" pos:end="49:23">bs</name><operator pos:start="49:24" pos:end="49:25">-&gt;</operator><name pos:start="49:26" pos:end="49:29">file</name></name></expr></argument>, <argument pos:start="49:32" pos:end="49:50"><expr pos:start="49:32" pos:end="49:50"><name pos:start="49:32" pos:end="49:50">VHDX_HEADER1_OFFSET</name></expr></argument>, <argument pos:start="49:53" pos:end="49:58"><expr pos:start="49:53" pos:end="49:58"><name pos:start="49:53" pos:end="49:58">buffer</name></expr></argument>, <argument pos:start="49:61" pos:end="49:76"><expr pos:start="49:61" pos:end="49:76"><name pos:start="49:61" pos:end="49:76">VHDX_HEADER_SIZE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="51:5" pos:end="55:5"><if pos:start="51:5" pos:end="55:5">if <condition pos:start="51:8" pos:end="51:16">(<expr pos:start="51:9" pos:end="51:15"><name pos:start="51:9" pos:end="51:11">ret</name> <operator pos:start="51:13" pos:end="51:13">&lt;</operator> <literal type="number" pos:start="51:15" pos:end="51:15">0</literal></expr>)</condition> <block pos:start="51:18" pos:end="55:5">{<block_content pos:start="53:9" pos:end="53:18">
+
+        <goto pos:start="53:9" pos:end="53:18">goto <name pos:start="53:14" pos:end="53:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+    <comment type="block" pos:start="57:5" pos:end="57:58">/* copy over just the relevant portion that we need */</comment>
+
+    <expr_stmt pos:start="59:5" pos:end="59:48"><expr pos:start="59:5" pos:end="59:47"><call pos:start="59:5" pos:end="59:47"><name pos:start="59:5" pos:end="59:10">memcpy</name><argument_list pos:start="59:11" pos:end="59:47">(<argument pos:start="59:12" pos:end="59:18"><expr pos:start="59:12" pos:end="59:18"><name pos:start="59:12" pos:end="59:18">header1</name></expr></argument>, <argument pos:start="59:21" pos:end="59:26"><expr pos:start="59:21" pos:end="59:26"><name pos:start="59:21" pos:end="59:26">buffer</name></expr></argument>, <argument pos:start="59:29" pos:end="59:46"><expr pos:start="59:29" pos:end="59:46"><sizeof pos:start="59:29" pos:end="59:46">sizeof<argument_list pos:start="59:35" pos:end="59:46">(<argument pos:start="59:36" pos:end="59:45"><expr pos:start="59:36" pos:end="59:45"><name pos:start="59:36" pos:end="59:45">VHDXHeader</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="61:5" pos:end="61:35"><expr pos:start="61:5" pos:end="61:34"><call pos:start="61:5" pos:end="61:34"><name pos:start="61:5" pos:end="61:25">vhdx_header_le_import</name><argument_list pos:start="61:26" pos:end="61:34">(<argument pos:start="61:27" pos:end="61:33"><expr pos:start="61:27" pos:end="61:33"><name pos:start="61:27" pos:end="61:33">header1</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="65:5" pos:end="75:5"><if pos:start="65:5" pos:end="75:5">if <condition pos:start="65:8" pos:end="69:30">(<expr pos:start="65:9" pos:end="69:29"><call pos:start="65:9" pos:end="65:59"><name pos:start="65:9" pos:end="65:30">vhdx_checksum_is_valid</name><argument_list pos:start="65:31" pos:end="65:59">(<argument pos:start="65:32" pos:end="65:37"><expr pos:start="65:32" pos:end="65:37"><name pos:start="65:32" pos:end="65:37">buffer</name></expr></argument>, <argument pos:start="65:40" pos:end="65:55"><expr pos:start="65:40" pos:end="65:55"><name pos:start="65:40" pos:end="65:55">VHDX_HEADER_SIZE</name></expr></argument>, <argument pos:start="65:58" pos:end="65:58"><expr pos:start="65:58" pos:end="65:58"><literal type="number" pos:start="65:58" pos:end="65:58">4</literal></expr></argument>)</argument_list></call> <operator pos:start="65:61" pos:end="65:62">&amp;&amp;</operator>
+
+        <operator pos:start="67:9" pos:end="67:9">!</operator><call pos:start="67:10" pos:end="67:47"><name pos:start="67:10" pos:end="67:15">memcmp</name><argument_list pos:start="67:16" pos:end="67:47">(<argument pos:start="67:17" pos:end="67:35"><expr pos:start="67:17" pos:end="67:35"><operator pos:start="67:17" pos:end="67:17">&amp;</operator><name pos:start="67:18" pos:end="67:35"><name pos:start="67:18" pos:end="67:24">header1</name><operator pos:start="67:25" pos:end="67:26">-&gt;</operator><name pos:start="67:27" pos:end="67:35">signature</name></name></expr></argument>, <argument pos:start="67:38" pos:end="67:43"><expr pos:start="67:38" pos:end="67:43"><literal type="string" pos:start="67:38" pos:end="67:43">"head"</literal></expr></argument>, <argument pos:start="67:46" pos:end="67:46"><expr pos:start="67:46" pos:end="67:46"><literal type="number" pos:start="67:46" pos:end="67:46">4</literal></expr></argument>)</argument_list></call>             <operator pos:start="67:61" pos:end="67:62">&amp;&amp;</operator>
+
+        <name pos:start="69:9" pos:end="69:24"><name pos:start="69:9" pos:end="69:15">header1</name><operator pos:start="69:16" pos:end="69:17">-&gt;</operator><name pos:start="69:18" pos:end="69:24">version</name></name> <operator pos:start="69:26" pos:end="69:27">==</operator> <literal type="number" pos:start="69:29" pos:end="69:29">1</literal></expr>)</condition> <block pos:start="69:32" pos:end="75:5">{<block_content pos:start="71:9" pos:end="73:24">
+
+        <expr_stmt pos:start="71:9" pos:end="71:42"><expr pos:start="71:9" pos:end="71:41"><name pos:start="71:9" pos:end="71:14">h1_seq</name> <operator pos:start="71:16" pos:end="71:16">=</operator> <name pos:start="71:18" pos:end="71:41"><name pos:start="71:18" pos:end="71:24">header1</name><operator pos:start="71:25" pos:end="71:26">-&gt;</operator><name pos:start="71:27" pos:end="71:41">sequence_number</name></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="73:9" pos:end="73:24"><expr pos:start="73:9" pos:end="73:23"><name pos:start="73:9" pos:end="73:16">h1_valid</name> <operator pos:start="73:18" pos:end="73:18">=</operator> <name pos:start="73:20" pos:end="73:23">true</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="79:5" pos:end="79:78"><expr pos:start="79:5" pos:end="79:77"><name pos:start="79:5" pos:end="79:7">ret</name> <operator pos:start="79:9" pos:end="79:9">=</operator> <call pos:start="79:11" pos:end="79:77"><name pos:start="79:11" pos:end="79:20">bdrv_pread</name><argument_list pos:start="79:21" pos:end="79:77">(<argument pos:start="79:22" pos:end="79:29"><expr pos:start="79:22" pos:end="79:29"><name pos:start="79:22" pos:end="79:29"><name pos:start="79:22" pos:end="79:23">bs</name><operator pos:start="79:24" pos:end="79:25">-&gt;</operator><name pos:start="79:26" pos:end="79:29">file</name></name></expr></argument>, <argument pos:start="79:32" pos:end="79:50"><expr pos:start="79:32" pos:end="79:50"><name pos:start="79:32" pos:end="79:50">VHDX_HEADER2_OFFSET</name></expr></argument>, <argument pos:start="79:53" pos:end="79:58"><expr pos:start="79:53" pos:end="79:58"><name pos:start="79:53" pos:end="79:58">buffer</name></expr></argument>, <argument pos:start="79:61" pos:end="79:76"><expr pos:start="79:61" pos:end="79:76"><name pos:start="79:61" pos:end="79:76">VHDX_HEADER_SIZE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="81:5" pos:end="85:5"><if pos:start="81:5" pos:end="85:5">if <condition pos:start="81:8" pos:end="81:16">(<expr pos:start="81:9" pos:end="81:15"><name pos:start="81:9" pos:end="81:11">ret</name> <operator pos:start="81:13" pos:end="81:13">&lt;</operator> <literal type="number" pos:start="81:15" pos:end="81:15">0</literal></expr>)</condition> <block pos:start="81:18" pos:end="85:5">{<block_content pos:start="83:9" pos:end="83:18">
+
+        <goto pos:start="83:9" pos:end="83:18">goto <name pos:start="83:14" pos:end="83:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+    <comment type="block" pos:start="87:5" pos:end="87:58">/* copy over just the relevant portion that we need */</comment>
+
+    <expr_stmt pos:start="89:5" pos:end="89:48"><expr pos:start="89:5" pos:end="89:47"><call pos:start="89:5" pos:end="89:47"><name pos:start="89:5" pos:end="89:10">memcpy</name><argument_list pos:start="89:11" pos:end="89:47">(<argument pos:start="89:12" pos:end="89:18"><expr pos:start="89:12" pos:end="89:18"><name pos:start="89:12" pos:end="89:18">header2</name></expr></argument>, <argument pos:start="89:21" pos:end="89:26"><expr pos:start="89:21" pos:end="89:26"><name pos:start="89:21" pos:end="89:26">buffer</name></expr></argument>, <argument pos:start="89:29" pos:end="89:46"><expr pos:start="89:29" pos:end="89:46"><sizeof pos:start="89:29" pos:end="89:46">sizeof<argument_list pos:start="89:35" pos:end="89:46">(<argument pos:start="89:36" pos:end="89:45"><expr pos:start="89:36" pos:end="89:45"><name pos:start="89:36" pos:end="89:45">VHDXHeader</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="91:5" pos:end="91:35"><expr pos:start="91:5" pos:end="91:34"><call pos:start="91:5" pos:end="91:34"><name pos:start="91:5" pos:end="91:25">vhdx_header_le_import</name><argument_list pos:start="91:26" pos:end="91:34">(<argument pos:start="91:27" pos:end="91:33"><expr pos:start="91:27" pos:end="91:33"><name pos:start="91:27" pos:end="91:33">header2</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="95:5" pos:end="105:5"><if pos:start="95:5" pos:end="105:5">if <condition pos:start="95:8" pos:end="99:30">(<expr pos:start="95:9" pos:end="99:29"><call pos:start="95:9" pos:end="95:59"><name pos:start="95:9" pos:end="95:30">vhdx_checksum_is_valid</name><argument_list pos:start="95:31" pos:end="95:59">(<argument pos:start="95:32" pos:end="95:37"><expr pos:start="95:32" pos:end="95:37"><name pos:start="95:32" pos:end="95:37">buffer</name></expr></argument>, <argument pos:start="95:40" pos:end="95:55"><expr pos:start="95:40" pos:end="95:55"><name pos:start="95:40" pos:end="95:55">VHDX_HEADER_SIZE</name></expr></argument>, <argument pos:start="95:58" pos:end="95:58"><expr pos:start="95:58" pos:end="95:58"><literal type="number" pos:start="95:58" pos:end="95:58">4</literal></expr></argument>)</argument_list></call> <operator pos:start="95:61" pos:end="95:62">&amp;&amp;</operator>
+
+        <operator pos:start="97:9" pos:end="97:9">!</operator><call pos:start="97:10" pos:end="97:47"><name pos:start="97:10" pos:end="97:15">memcmp</name><argument_list pos:start="97:16" pos:end="97:47">(<argument pos:start="97:17" pos:end="97:35"><expr pos:start="97:17" pos:end="97:35"><operator pos:start="97:17" pos:end="97:17">&amp;</operator><name pos:start="97:18" pos:end="97:35"><name pos:start="97:18" pos:end="97:24">header2</name><operator pos:start="97:25" pos:end="97:26">-&gt;</operator><name pos:start="97:27" pos:end="97:35">signature</name></name></expr></argument>, <argument pos:start="97:38" pos:end="97:43"><expr pos:start="97:38" pos:end="97:43"><literal type="string" pos:start="97:38" pos:end="97:43">"head"</literal></expr></argument>, <argument pos:start="97:46" pos:end="97:46"><expr pos:start="97:46" pos:end="97:46"><literal type="number" pos:start="97:46" pos:end="97:46">4</literal></expr></argument>)</argument_list></call>             <operator pos:start="97:61" pos:end="97:62">&amp;&amp;</operator>
+
+        <name pos:start="99:9" pos:end="99:24"><name pos:start="99:9" pos:end="99:15">header2</name><operator pos:start="99:16" pos:end="99:17">-&gt;</operator><name pos:start="99:18" pos:end="99:24">version</name></name> <operator pos:start="99:26" pos:end="99:27">==</operator> <literal type="number" pos:start="99:29" pos:end="99:29">1</literal></expr>)</condition> <block pos:start="99:32" pos:end="105:5">{<block_content pos:start="101:9" pos:end="103:24">
+
+        <expr_stmt pos:start="101:9" pos:end="101:42"><expr pos:start="101:9" pos:end="101:41"><name pos:start="101:9" pos:end="101:14">h2_seq</name> <operator pos:start="101:16" pos:end="101:16">=</operator> <name pos:start="101:18" pos:end="101:41"><name pos:start="101:18" pos:end="101:24">header2</name><operator pos:start="101:25" pos:end="101:26">-&gt;</operator><name pos:start="101:27" pos:end="101:41">sequence_number</name></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="103:9" pos:end="103:24"><expr pos:start="103:9" pos:end="103:23"><name pos:start="103:9" pos:end="103:16">h2_valid</name> <operator pos:start="103:18" pos:end="103:18">=</operator> <name pos:start="103:20" pos:end="103:23">true</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="109:5" pos:end="111:50">/* If there is only 1 valid header (or no valid headers), we
+
+     * don't care what the sequence numbers are */</comment>
+
+    <if_stmt pos:start="113:5" pos:end="147:5"><if pos:start="113:5" pos:end="117:5">if <condition pos:start="113:8" pos:end="113:30">(<expr pos:start="113:9" pos:end="113:29"><name pos:start="113:9" pos:end="113:16">h1_valid</name> <operator pos:start="113:18" pos:end="113:19">&amp;&amp;</operator> <operator pos:start="113:21" pos:end="113:21">!</operator><name pos:start="113:22" pos:end="113:29">h2_valid</name></expr>)</condition> <block pos:start="113:32" pos:end="117:5">{<block_content pos:start="115:9" pos:end="115:27">
+
+        <expr_stmt pos:start="115:9" pos:end="115:27"><expr pos:start="115:9" pos:end="115:26"><name pos:start="115:9" pos:end="115:22"><name pos:start="115:9" pos:end="115:9">s</name><operator pos:start="115:10" pos:end="115:11">-&gt;</operator><name pos:start="115:12" pos:end="115:22">curr_header</name></name> <operator pos:start="115:24" pos:end="115:24">=</operator> <literal type="number" pos:start="115:26" pos:end="115:26">0</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <if type="elseif" pos:start="117:7" pos:end="121:5">else if <condition pos:start="117:15" pos:end="117:37">(<expr pos:start="117:16" pos:end="117:36"><operator pos:start="117:16" pos:end="117:16">!</operator><name pos:start="117:17" pos:end="117:24">h1_valid</name> <operator pos:start="117:26" pos:end="117:27">&amp;&amp;</operator> <name pos:start="117:29" pos:end="117:36">h2_valid</name></expr>)</condition> <block pos:start="117:39" pos:end="121:5">{<block_content pos:start="119:9" pos:end="119:27">
+
+        <expr_stmt pos:start="119:9" pos:end="119:27"><expr pos:start="119:9" pos:end="119:26"><name pos:start="119:9" pos:end="119:22"><name pos:start="119:9" pos:end="119:9">s</name><operator pos:start="119:10" pos:end="119:11">-&gt;</operator><name pos:start="119:12" pos:end="119:22">curr_header</name></name> <operator pos:start="119:24" pos:end="119:24">=</operator> <literal type="number" pos:start="119:26" pos:end="119:26">1</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <if type="elseif" pos:start="121:7" pos:end="125:5">else if <condition pos:start="121:15" pos:end="121:38">(<expr pos:start="121:16" pos:end="121:37"><operator pos:start="121:16" pos:end="121:16">!</operator><name pos:start="121:17" pos:end="121:24">h1_valid</name> <operator pos:start="121:26" pos:end="121:27">&amp;&amp;</operator> <operator pos:start="121:29" pos:end="121:29">!</operator><name pos:start="121:30" pos:end="121:37">h2_valid</name></expr>)</condition> <block pos:start="121:40" pos:end="125:5">{<block_content pos:start="123:9" pos:end="123:18">
+
+        <goto pos:start="123:9" pos:end="123:18">goto <name pos:start="123:14" pos:end="123:17">fail</name>;</goto>
+
+    </block_content>}</block></if> <else pos:start="125:7" pos:end="147:5">else <block pos:start="125:12" pos:end="147:5">{<block_content pos:start="133:9" pos:end="145:9">
+
+        <comment type="block" pos:start="127:9" pos:end="131:21">/* If both headers are valid, then we choose the active one by the
+
+         * highest sequence number.  If the sequence numbers are equal, that is
+
+         * invalid */</comment>
+
+        <if_stmt pos:start="133:9" pos:end="145:9"><if pos:start="133:9" pos:end="137:9">if <condition pos:start="133:12" pos:end="133:28">(<expr pos:start="133:13" pos:end="133:27"><name pos:start="133:13" pos:end="133:18">h1_seq</name> <operator pos:start="133:20" pos:end="133:20">&gt;</operator> <name pos:start="133:22" pos:end="133:27">h2_seq</name></expr>)</condition> <block pos:start="133:30" pos:end="137:9">{<block_content pos:start="135:13" pos:end="135:31">
+
+            <expr_stmt pos:start="135:13" pos:end="135:31"><expr pos:start="135:13" pos:end="135:30"><name pos:start="135:13" pos:end="135:26"><name pos:start="135:13" pos:end="135:13">s</name><operator pos:start="135:14" pos:end="135:15">-&gt;</operator><name pos:start="135:16" pos:end="135:26">curr_header</name></name> <operator pos:start="135:28" pos:end="135:28">=</operator> <literal type="number" pos:start="135:30" pos:end="135:30">0</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <if type="elseif" pos:start="137:11" pos:end="141:9">else if <condition pos:start="137:19" pos:end="137:35">(<expr pos:start="137:20" pos:end="137:34"><name pos:start="137:20" pos:end="137:25">h2_seq</name> <operator pos:start="137:27" pos:end="137:27">&gt;</operator> <name pos:start="137:29" pos:end="137:34">h1_seq</name></expr>)</condition> <block pos:start="137:37" pos:end="141:9">{<block_content pos:start="139:13" pos:end="139:31">
+
+            <expr_stmt pos:start="139:13" pos:end="139:31"><expr pos:start="139:13" pos:end="139:30"><name pos:start="139:13" pos:end="139:26"><name pos:start="139:13" pos:end="139:13">s</name><operator pos:start="139:14" pos:end="139:15">-&gt;</operator><name pos:start="139:16" pos:end="139:26">curr_header</name></name> <operator pos:start="139:28" pos:end="139:28">=</operator> <literal type="number" pos:start="139:30" pos:end="139:30">1</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="141:11" pos:end="145:9">else <block pos:start="141:16" pos:end="145:9">{<block_content pos:start="143:13" pos:end="143:22">
+
+            <goto pos:start="143:13" pos:end="143:22">goto <name pos:start="143:18" pos:end="143:21">fail</name>;</goto>
+
+        </block_content>}</block></else></if_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <expr_stmt pos:start="151:5" pos:end="153:68"><expr pos:start="151:5" pos:end="153:67"><call pos:start="151:5" pos:end="153:67"><name pos:start="151:5" pos:end="151:24">vhdx_region_register</name><argument_list pos:start="151:25" pos:end="153:67">(<argument pos:start="151:26" pos:end="151:26"><expr pos:start="151:26" pos:end="151:26"><name pos:start="151:26" pos:end="151:26">s</name></expr></argument>, <argument pos:start="151:29" pos:end="151:66"><expr pos:start="151:29" pos:end="151:66"><name pos:start="151:29" pos:end="151:54"><name pos:start="151:29" pos:end="151:29">s</name><operator pos:start="151:30" pos:end="151:31">-&gt;</operator><name pos:start="151:32" pos:end="151:38">headers</name><index pos:start="151:39" pos:end="151:54">[<expr pos:start="151:40" pos:end="151:53"><name pos:start="151:40" pos:end="151:53"><name pos:start="151:40" pos:end="151:40">s</name><operator pos:start="151:41" pos:end="151:42">-&gt;</operator><name pos:start="151:43" pos:end="151:53">curr_header</name></name></expr>]</index></name><operator pos:start="151:55" pos:end="151:56">-&gt;</operator><name pos:start="151:57" pos:end="151:66">log_offset</name></expr></argument>,
+
+                            <argument pos:start="153:29" pos:end="153:66"><expr pos:start="153:29" pos:end="153:66"><name pos:start="153:29" pos:end="153:54"><name pos:start="153:29" pos:end="153:29">s</name><operator pos:start="153:30" pos:end="153:31">-&gt;</operator><name pos:start="153:32" pos:end="153:38">headers</name><index pos:start="153:39" pos:end="153:54">[<expr pos:start="153:40" pos:end="153:53"><name pos:start="153:40" pos:end="153:53"><name pos:start="153:40" pos:end="153:40">s</name><operator pos:start="153:41" pos:end="153:42">-&gt;</operator><name pos:start="153:43" pos:end="153:53">curr_header</name></name></expr>]</index></name><operator pos:start="153:55" pos:end="153:56">-&gt;</operator><name pos:start="153:57" pos:end="153:66">log_length</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <goto pos:start="155:5" pos:end="155:14">goto <name pos:start="155:10" pos:end="155:13">exit</name>;</goto>
+
+
+
+<label pos:start="159:1" pos:end="159:5"><name pos:start="159:1" pos:end="159:4">fail</name>:</label>
+
+    <expr_stmt pos:start="161:5" pos:end="161:63"><expr pos:start="161:5" pos:end="161:62"><call pos:start="161:5" pos:end="161:62"><name pos:start="161:5" pos:end="161:20">error_setg_errno</name><argument_list pos:start="161:21" pos:end="161:62">(<argument pos:start="161:22" pos:end="161:25"><expr pos:start="161:22" pos:end="161:25"><name pos:start="161:22" pos:end="161:25">errp</name></expr></argument>, <argument pos:start="161:28" pos:end="161:31"><expr pos:start="161:28" pos:end="161:31"><operator pos:start="161:28" pos:end="161:28">-</operator><name pos:start="161:29" pos:end="161:31">ret</name></expr></argument>, <argument pos:start="161:34" pos:end="161:61"><expr pos:start="161:34" pos:end="161:61"><literal type="string" pos:start="161:34" pos:end="161:61">"No valid VHDX header found"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="163:5" pos:end="163:24"><expr pos:start="163:5" pos:end="163:23"><call pos:start="163:5" pos:end="163:23"><name pos:start="163:5" pos:end="163:14">qemu_vfree</name><argument_list pos:start="163:15" pos:end="163:23">(<argument pos:start="163:16" pos:end="163:22"><expr pos:start="163:16" pos:end="163:22"><name pos:start="163:16" pos:end="163:22">header1</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="165:5" pos:end="165:24"><expr pos:start="165:5" pos:end="165:23"><call pos:start="165:5" pos:end="165:23"><name pos:start="165:5" pos:end="165:14">qemu_vfree</name><argument_list pos:start="165:15" pos:end="165:23">(<argument pos:start="165:16" pos:end="165:22"><expr pos:start="165:16" pos:end="165:22"><name pos:start="165:16" pos:end="165:22">header2</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="167:5" pos:end="167:25"><expr pos:start="167:5" pos:end="167:24"><name pos:start="167:5" pos:end="167:17"><name pos:start="167:5" pos:end="167:5">s</name><operator pos:start="167:6" pos:end="167:7">-&gt;</operator><name pos:start="167:8" pos:end="167:14">headers</name><index pos:start="167:15" pos:end="167:17">[<expr pos:start="167:16" pos:end="167:16"><literal type="number" pos:start="167:16" pos:end="167:16">0</literal></expr>]</index></name> <operator pos:start="167:19" pos:end="167:19">=</operator> <name pos:start="167:21" pos:end="167:24">NULL</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="169:5" pos:end="169:25"><expr pos:start="169:5" pos:end="169:24"><name pos:start="169:5" pos:end="169:17"><name pos:start="169:5" pos:end="169:5">s</name><operator pos:start="169:6" pos:end="169:7">-&gt;</operator><name pos:start="169:8" pos:end="169:14">headers</name><index pos:start="169:15" pos:end="169:17">[<expr pos:start="169:16" pos:end="169:16"><literal type="number" pos:start="169:16" pos:end="169:16">1</literal></expr>]</index></name> <operator pos:start="169:19" pos:end="169:19">=</operator> <name pos:start="169:21" pos:end="169:24">NULL</name></expr>;</expr_stmt>
+
+<label pos:start="171:1" pos:end="171:5"><name pos:start="171:1" pos:end="171:4">exit</name>:</label>
+
+    <expr_stmt pos:start="173:5" pos:end="173:23"><expr pos:start="173:5" pos:end="173:22"><call pos:start="173:5" pos:end="173:22"><name pos:start="173:5" pos:end="173:14">qemu_vfree</name><argument_list pos:start="173:15" pos:end="173:22">(<argument pos:start="173:16" pos:end="173:21"><expr pos:start="173:16" pos:end="173:21"><name pos:start="173:16" pos:end="173:21">buffer</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+</block_content>}</block></function>
+</unit>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/18401.c" pos:tabs="8"><function pos:start="1:1" pos:end="93:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:25">init_resampler</name><parameter_list pos:start="1:26" pos:end="5:56">(<parameter pos:start="1:27" pos:end="1:61"><decl pos:start="1:27" pos:end="1:61"><type pos:start="1:27" pos:end="1:61"><name pos:start="1:27" pos:end="1:40">AVCodecContext</name> <modifier pos:start="1:42" pos:end="1:42">*</modifier></type><name pos:start="1:43" pos:end="1:61">input_codec_context</name></decl></parameter>,
+
+                          <parameter pos:start="3:27" pos:end="3:62"><decl pos:start="3:27" pos:end="3:62"><type pos:start="3:27" pos:end="3:62"><name pos:start="3:27" pos:end="3:40">AVCodecContext</name> <modifier pos:start="3:42" pos:end="3:42">*</modifier></type><name pos:start="3:43" pos:end="3:62">output_codec_context</name></decl></parameter>,
+
+                          <parameter pos:start="5:27" pos:end="5:55"><decl pos:start="5:27" pos:end="5:55"><type pos:start="5:27" pos:end="5:55"><name pos:start="5:27" pos:end="5:36">SwrContext</name> <modifier pos:start="5:38" pos:end="5:38">*</modifier><modifier pos:start="5:39" pos:end="5:39">*</modifier></type><name pos:start="5:40" pos:end="5:55">resample_context</name></decl></parameter>)</parameter_list>
+
+<block pos:start="7:1" pos:end="93:1">{<block_content pos:start="17:5" pos:end="91:13">
+
+    <comment type="block" format="doxygen" pos:start="9:5" pos:end="15:7">/**
+
+     * Only initialize the resampler if it is necessary, i.e.,
+
+     * if and only if the sample formats differ.
+
+     */</comment>
+
+    <if_stmt pos:start="17:5" pos:end="89:5"><if pos:start="17:5" pos:end="89:5">if <condition pos:start="17:8" pos:end="19:72">(<expr pos:start="17:9" pos:end="19:71"><name pos:start="17:9" pos:end="17:39"><name pos:start="17:9" pos:end="17:27">input_codec_context</name><operator pos:start="17:28" pos:end="17:29">-&gt;</operator><name pos:start="17:30" pos:end="17:39">sample_fmt</name></name> <operator pos:start="17:41" pos:end="17:42">!=</operator> <name pos:start="17:44" pos:end="17:75"><name pos:start="17:44" pos:end="17:63">output_codec_context</name><operator pos:start="17:64" pos:end="17:65">-&gt;</operator><name pos:start="17:66" pos:end="17:75">sample_fmt</name></name> <operator pos:start="17:77" pos:end="17:78">||</operator>
+
+        <name pos:start="19:9" pos:end="19:37"><name pos:start="19:9" pos:end="19:27">input_codec_context</name><operator pos:start="19:28" pos:end="19:29">-&gt;</operator><name pos:start="19:30" pos:end="19:37">channels</name></name> <operator pos:start="19:39" pos:end="19:40">!=</operator> <name pos:start="19:42" pos:end="19:71"><name pos:start="19:42" pos:end="19:61">output_codec_context</name><operator pos:start="19:62" pos:end="19:63">-&gt;</operator><name pos:start="19:64" pos:end="19:71">channels</name></name></expr>)</condition> <block pos:start="19:74" pos:end="89:5">{<block_content pos:start="21:9" pos:end="87:9">
+
+        <decl_stmt pos:start="21:9" pos:end="21:18"><decl pos:start="21:9" pos:end="21:17"><type pos:start="21:9" pos:end="21:11"><name pos:start="21:9" pos:end="21:11">int</name></type> <name pos:start="21:13" pos:end="21:17">error</name></decl>;</decl_stmt>
+
+
+
+        <comment type="block" format="doxygen" pos:start="25:9" pos:end="37:11">/**
+
+         * Create a resampler context for the conversion.
+
+         * Set the conversion parameters.
+
+         * Default channel layouts based on the number of channels
+
+         * are assumed for simplicity (they are sometimes not detected
+
+         * properly by the demuxer and/or decoder).
+
+         */</comment>
+
+        <expr_stmt pos:start="39:9" pos:end="53:55"><expr pos:start="39:9" pos:end="53:54"><operator pos:start="39:9" pos:end="39:9">*</operator><name pos:start="39:10" pos:end="39:25">resample_context</name> <operator pos:start="39:27" pos:end="39:27">=</operator> <call pos:start="39:29" pos:end="53:54"><name pos:start="39:29" pos:end="39:46">swr_alloc_set_opts</name><argument_list pos:start="39:47" pos:end="53:54">(<argument pos:start="39:48" pos:end="39:51"><expr pos:start="39:48" pos:end="39:51"><name pos:start="39:48" pos:end="39:51">NULL</name></expr></argument>,
+
+                                              <argument pos:start="41:47" pos:end="41:107"><expr pos:start="41:47" pos:end="41:107"><call pos:start="41:47" pos:end="41:107"><name pos:start="41:47" pos:end="41:75">av_get_default_channel_layout</name><argument_list pos:start="41:76" pos:end="41:107">(<argument pos:start="41:77" pos:end="41:106"><expr pos:start="41:77" pos:end="41:106"><name pos:start="41:77" pos:end="41:106"><name pos:start="41:77" pos:end="41:96">output_codec_context</name><operator pos:start="41:97" pos:end="41:98">-&gt;</operator><name pos:start="41:99" pos:end="41:106">channels</name></name></expr></argument>)</argument_list></call></expr></argument>,
+
+                                              <argument pos:start="43:47" pos:end="43:78"><expr pos:start="43:47" pos:end="43:78"><name pos:start="43:47" pos:end="43:78"><name pos:start="43:47" pos:end="43:66">output_codec_context</name><operator pos:start="43:67" pos:end="43:68">-&gt;</operator><name pos:start="43:69" pos:end="43:78">sample_fmt</name></name></expr></argument>,
+
+                                              <argument pos:start="45:47" pos:end="45:79"><expr pos:start="45:47" pos:end="45:79"><name pos:start="45:47" pos:end="45:79"><name pos:start="45:47" pos:end="45:66">output_codec_context</name><operator pos:start="45:67" pos:end="45:68">-&gt;</operator><name pos:start="45:69" pos:end="45:79">sample_rate</name></name></expr></argument>,
+
+                                              <argument pos:start="47:47" pos:end="47:106"><expr pos:start="47:47" pos:end="47:106"><call pos:start="47:47" pos:end="47:106"><name pos:start="47:47" pos:end="47:75">av_get_default_channel_layout</name><argument_list pos:start="47:76" pos:end="47:106">(<argument pos:start="47:77" pos:end="47:105"><expr pos:start="47:77" pos:end="47:105"><name pos:start="47:77" pos:end="47:105"><name pos:start="47:77" pos:end="47:95">input_codec_context</name><operator pos:start="47:96" pos:end="47:97">-&gt;</operator><name pos:start="47:98" pos:end="47:105">channels</name></name></expr></argument>)</argument_list></call></expr></argument>,
+
+                                              <argument pos:start="49:47" pos:end="49:77"><expr pos:start="49:47" pos:end="49:77"><name pos:start="49:47" pos:end="49:77"><name pos:start="49:47" pos:end="49:65">input_codec_context</name><operator pos:start="49:66" pos:end="49:67">-&gt;</operator><name pos:start="49:68" pos:end="49:77">sample_fmt</name></name></expr></argument>,
+
+                                              <argument pos:start="51:47" pos:end="51:78"><expr pos:start="51:47" pos:end="51:78"><name pos:start="51:47" pos:end="51:78"><name pos:start="51:47" pos:end="51:65">input_codec_context</name><operator pos:start="51:66" pos:end="51:67">-&gt;</operator><name pos:start="51:68" pos:end="51:78">sample_rate</name></name></expr></argument>,
+
+                                              <argument pos:start="53:47" pos:end="53:47"><expr pos:start="53:47" pos:end="53:47"><literal type="number" pos:start="53:47" pos:end="53:47">0</literal></expr></argument>, <argument pos:start="53:50" pos:end="53:53"><expr pos:start="53:50" pos:end="53:53"><name pos:start="53:50" pos:end="53:53">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="55:9" pos:end="61:9"><if pos:start="55:9" pos:end="61:9">if <condition pos:start="55:12" pos:end="55:31">(<expr pos:start="55:13" pos:end="55:30"><operator pos:start="55:13" pos:end="55:13">!</operator><operator pos:start="55:14" pos:end="55:14">*</operator><name pos:start="55:15" pos:end="55:30">resample_context</name></expr>)</condition> <block pos:start="55:33" pos:end="61:9">{<block_content pos:start="57:13" pos:end="59:35">
+
+            <expr_stmt pos:start="57:13" pos:end="57:69"><expr pos:start="57:13" pos:end="57:68"><call pos:start="57:13" pos:end="57:68"><name pos:start="57:13" pos:end="57:19">fprintf</name><argument_list pos:start="57:20" pos:end="57:68">(<argument pos:start="57:21" pos:end="57:26"><expr pos:start="57:21" pos:end="57:26"><name pos:start="57:21" pos:end="57:26">stderr</name></expr></argument>, <argument pos:start="57:29" pos:end="57:67"><expr pos:start="57:29" pos:end="57:67"><literal type="string" pos:start="57:29" pos:end="57:67">"Could not allocate resample context\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="59:13" pos:end="59:35">return <expr pos:start="59:20" pos:end="59:34"><call pos:start="59:20" pos:end="59:34"><name pos:start="59:20" pos:end="59:26">AVERROR</name><argument_list pos:start="59:27" pos:end="59:34">(<argument pos:start="59:28" pos:end="59:33"><expr pos:start="59:28" pos:end="59:33"><name pos:start="59:28" pos:end="59:33">ENOMEM</name></expr></argument>)</argument_list></call></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <comment type="block" format="doxygen" pos:start="63:9" pos:end="71:10">/**
+
+        * Perform a sanity check so that the number of converted samples is
+
+        * not greater than the number of samples to be converted.
+
+        * If the sample rates differ, this case has to be handled differently
+
+        */</comment>
+
+        <expr_stmt pos:start="73:9" pos:end="73:90"><expr pos:start="73:9" pos:end="73:89"><call pos:start="73:9" pos:end="73:89"><name pos:start="73:9" pos:end="73:18">av_assert0</name><argument_list pos:start="73:19" pos:end="73:89">(<argument pos:start="73:20" pos:end="73:88"><expr pos:start="73:20" pos:end="73:88"><name pos:start="73:20" pos:end="73:52"><name pos:start="73:20" pos:end="73:39">output_codec_context</name><operator pos:start="73:40" pos:end="73:41">-&gt;</operator><name pos:start="73:42" pos:end="73:52">sample_rate</name></name> <operator pos:start="73:54" pos:end="73:55">==</operator> <name pos:start="73:57" pos:end="73:88"><name pos:start="73:57" pos:end="73:75">input_codec_context</name><operator pos:start="73:76" pos:end="73:77">-&gt;</operator><name pos:start="73:78" pos:end="73:88">sample_rate</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <comment type="block" format="doxygen" pos:start="77:9" pos:end="77:64">/** Open the resampler with the specified parameters. */</comment>
+
+        <if_stmt pos:start="79:9" pos:end="87:9"><if pos:start="79:9" pos:end="87:9">if <condition pos:start="79:12" pos:end="79:54">(<expr pos:start="79:13" pos:end="79:53"><operator pos:start="79:13" pos:end="79:13">(</operator><name pos:start="79:14" pos:end="79:18">error</name> <operator pos:start="79:20" pos:end="79:20">=</operator> <call pos:start="79:22" pos:end="79:48"><name pos:start="79:22" pos:end="79:29">swr_init</name><argument_list pos:start="79:30" pos:end="79:48">(<argument pos:start="79:31" pos:end="79:47"><expr pos:start="79:31" pos:end="79:47"><operator pos:start="79:31" pos:end="79:31">*</operator><name pos:start="79:32" pos:end="79:47">resample_context</name></expr></argument>)</argument_list></call><operator pos:start="79:49" pos:end="79:49">)</operator> <operator pos:start="79:51" pos:end="79:51">&lt;</operator> <literal type="number" pos:start="79:53" pos:end="79:53">0</literal></expr>)</condition> <block pos:start="79:56" pos:end="87:9">{<block_content pos:start="81:13" pos:end="85:25">
+
+            <expr_stmt pos:start="81:13" pos:end="81:65"><expr pos:start="81:13" pos:end="81:64"><call pos:start="81:13" pos:end="81:64"><name pos:start="81:13" pos:end="81:19">fprintf</name><argument_list pos:start="81:20" pos:end="81:64">(<argument pos:start="81:21" pos:end="81:26"><expr pos:start="81:21" pos:end="81:26"><name pos:start="81:21" pos:end="81:26">stderr</name></expr></argument>, <argument pos:start="81:29" pos:end="81:63"><expr pos:start="81:29" pos:end="81:63"><literal type="string" pos:start="81:29" pos:end="81:63">"Could not open resample context\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="83:13" pos:end="83:39"><expr pos:start="83:13" pos:end="83:38"><call pos:start="83:13" pos:end="83:38"><name pos:start="83:13" pos:end="83:20">swr_free</name><argument_list pos:start="83:21" pos:end="83:38">(<argument pos:start="83:22" pos:end="83:37"><expr pos:start="83:22" pos:end="83:37"><name pos:start="83:22" pos:end="83:37">resample_context</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="85:13" pos:end="85:25">return <expr pos:start="85:20" pos:end="85:24"><name pos:start="85:20" pos:end="85:24">error</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <return pos:start="91:5" pos:end="91:13">return <expr pos:start="91:12" pos:end="91:12"><literal type="number" pos:start="91:12" pos:end="91:12">0</literal></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/5502.c" pos:tabs="8"><macro pos:start="1:1" pos:end="1:43"><name pos:start="1:1" pos:end="1:8">sbappend</name><argument_list pos:start="1:9" pos:end="1:43">(<argument pos:start="1:10" pos:end="1:26">struct socket *so</argument>, <argument pos:start="1:29" pos:end="1:42">struct mbuf *m</argument>)</argument_list></macro>
+
+<block pos:start="3:1" pos:end="107:1">{<block_content pos:start="5:9" pos:end="105:18">
+
+	<decl_stmt pos:start="5:9" pos:end="5:20"><decl pos:start="5:9" pos:end="5:19"><type pos:start="5:9" pos:end="5:11"><name pos:start="5:9" pos:end="5:11">int</name></type> <name pos:start="5:13" pos:end="5:15">ret</name> <init pos:start="5:17" pos:end="5:19">= <expr pos:start="5:19" pos:end="5:19"><literal type="number" pos:start="5:19" pos:end="5:19">0</literal></expr></init></decl>;</decl_stmt>
+
+
+
+	<expr_stmt pos:start="9:9" pos:end="9:31"><expr pos:start="9:9" pos:end="9:30"><call pos:start="9:9" pos:end="9:30"><name pos:start="9:9" pos:end="9:18">DEBUG_CALL</name><argument_list pos:start="9:19" pos:end="9:30">(<argument pos:start="9:20" pos:end="9:29"><expr pos:start="9:20" pos:end="9:29"><literal type="string" pos:start="9:20" pos:end="9:29">"sbappend"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+	<expr_stmt pos:start="11:9" pos:end="11:33"><expr pos:start="11:9" pos:end="11:32"><call pos:start="11:9" pos:end="11:32"><name pos:start="11:9" pos:end="11:17">DEBUG_ARG</name><argument_list pos:start="11:18" pos:end="11:32">(<argument pos:start="11:19" pos:end="11:27"><expr pos:start="11:19" pos:end="11:27"><literal type="string" pos:start="11:19" pos:end="11:27">"so = %p"</literal></expr></argument>, <argument pos:start="11:30" pos:end="11:31"><expr pos:start="11:30" pos:end="11:31"><name pos:start="11:30" pos:end="11:31">so</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+	<expr_stmt pos:start="13:9" pos:end="13:31"><expr pos:start="13:9" pos:end="13:30"><call pos:start="13:9" pos:end="13:30"><name pos:start="13:9" pos:end="13:17">DEBUG_ARG</name><argument_list pos:start="13:18" pos:end="13:30">(<argument pos:start="13:19" pos:end="13:26"><expr pos:start="13:19" pos:end="13:26"><literal type="string" pos:start="13:19" pos:end="13:26">"m = %p"</literal></expr></argument>, <argument pos:start="13:29" pos:end="13:29"><expr pos:start="13:29" pos:end="13:29"><name pos:start="13:29" pos:end="13:29">m</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+	<expr_stmt pos:start="15:9" pos:end="15:45"><expr pos:start="15:9" pos:end="15:44"><call pos:start="15:9" pos:end="15:44"><name pos:start="15:9" pos:end="15:17">DEBUG_ARG</name><argument_list pos:start="15:18" pos:end="15:44">(<argument pos:start="15:19" pos:end="15:33"><expr pos:start="15:19" pos:end="15:33"><literal type="string" pos:start="15:19" pos:end="15:33">"m-&gt;m_len = %d"</literal></expr></argument>, <argument pos:start="15:36" pos:end="15:43"><expr pos:start="15:36" pos:end="15:43"><name pos:start="15:36" pos:end="15:43"><name pos:start="15:36" pos:end="15:36">m</name><operator pos:start="15:37" pos:end="15:38">-&gt;</operator><name pos:start="15:39" pos:end="15:43">m_len</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+	<comment type="block" pos:start="19:9" pos:end="19:75">/* Shouldn't happen, but...  e.g. foreign host closes connection */</comment>
+
+	<if_stmt pos:start="21:9" pos:end="27:9"><if pos:start="21:9" pos:end="27:9">if <condition pos:start="21:12" pos:end="21:26">(<expr pos:start="21:13" pos:end="21:25"><name pos:start="21:13" pos:end="21:20"><name pos:start="21:13" pos:end="21:13">m</name><operator pos:start="21:14" pos:end="21:15">-&gt;</operator><name pos:start="21:16" pos:end="21:20">m_len</name></name> <operator pos:start="21:22" pos:end="21:23">&lt;=</operator> <literal type="number" pos:start="21:25" pos:end="21:25">0</literal></expr>)</condition> <block pos:start="21:28" pos:end="27:9">{<block_content pos:start="23:17" pos:end="25:23">
+
+		<expr_stmt pos:start="23:17" pos:end="23:26"><expr pos:start="23:17" pos:end="23:25"><call pos:start="23:17" pos:end="23:25"><name pos:start="23:17" pos:end="23:22">m_free</name><argument_list pos:start="23:23" pos:end="23:25">(<argument pos:start="23:24" pos:end="23:24"><expr pos:start="23:24" pos:end="23:24"><name pos:start="23:24" pos:end="23:24">m</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+		<return pos:start="25:17" pos:end="25:23">return;</return>
+
+	</block_content>}</block></if></if_stmt>
+
+
+
+	<comment type="block" pos:start="31:9" pos:end="39:11">/*
+
+	 * If there is urgent data, call sosendoob
+
+	 * if not all was sent, sowrite will take care of the rest
+
+	 * (The rest of this function is just an optimisation)
+
+	 */</comment>
+
+	<if_stmt pos:start="41:9" pos:end="51:9"><if pos:start="41:9" pos:end="51:9">if <condition pos:start="41:12" pos:end="41:24">(<expr pos:start="41:13" pos:end="41:23"><name pos:start="41:13" pos:end="41:23"><name pos:start="41:13" pos:end="41:14">so</name><operator pos:start="41:15" pos:end="41:16">-&gt;</operator><name pos:start="41:17" pos:end="41:23">so_urgc</name></name></expr>)</condition> <block pos:start="41:26" pos:end="51:9">{<block_content pos:start="43:17" pos:end="49:23">
+
+		<expr_stmt pos:start="43:17" pos:end="43:43"><expr pos:start="43:17" pos:end="43:42"><call pos:start="43:17" pos:end="43:42"><name pos:start="43:17" pos:end="43:26">sbappendsb</name><argument_list pos:start="43:27" pos:end="43:42">(<argument pos:start="43:28" pos:end="43:38"><expr pos:start="43:28" pos:end="43:38"><operator pos:start="43:28" pos:end="43:28">&amp;</operator><name pos:start="43:29" pos:end="43:38"><name pos:start="43:29" pos:end="43:30">so</name><operator pos:start="43:31" pos:end="43:32">-&gt;</operator><name pos:start="43:33" pos:end="43:38">so_rcv</name></name></expr></argument>, <argument pos:start="43:41" pos:end="43:41"><expr pos:start="43:41" pos:end="43:41"><name pos:start="43:41" pos:end="43:41">m</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+		<expr_stmt pos:start="45:17" pos:end="45:26"><expr pos:start="45:17" pos:end="45:25"><call pos:start="45:17" pos:end="45:25"><name pos:start="45:17" pos:end="45:22">m_free</name><argument_list pos:start="45:23" pos:end="45:25">(<argument pos:start="45:24" pos:end="45:24"><expr pos:start="45:24" pos:end="45:24"><name pos:start="45:24" pos:end="45:24">m</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+		<expr_stmt pos:start="47:17" pos:end="47:30"><expr pos:start="47:17" pos:end="47:29"><call pos:start="47:17" pos:end="47:29"><name pos:start="47:17" pos:end="47:25">sosendoob</name><argument_list pos:start="47:26" pos:end="47:29">(<argument pos:start="47:27" pos:end="47:28"><expr pos:start="47:27" pos:end="47:28"><name pos:start="47:27" pos:end="47:28">so</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+		<return pos:start="49:17" pos:end="49:23">return;</return>
+
+	</block_content>}</block></if></if_stmt>
+
+
+
+	<comment type="block" pos:start="55:9" pos:end="61:11">/*
+
+	 * We only write if there's nothing in the buffer,
+
+	 * ottherwise it'll arrive out of order, and hence corrupt
+
+	 */</comment>
+
+	<if_stmt pos:start="63:9" pos:end="65:56"><if pos:start="63:9" pos:end="65:56">if <condition pos:start="63:12" pos:end="63:30">(<expr pos:start="63:13" pos:end="63:29"><operator pos:start="63:13" pos:end="63:13">!</operator><name pos:start="63:14" pos:end="63:29"><name pos:start="63:14" pos:end="63:15">so</name><operator pos:start="63:16" pos:end="63:17">-&gt;</operator><name pos:start="63:18" pos:end="63:23">so_rcv</name><operator pos:start="63:24" pos:end="63:24">.</operator><name pos:start="63:25" pos:end="63:29">sb_cc</name></name></expr>)</condition><block type="pseudo" pos:start="65:12" pos:end="65:56"><block_content pos:start="65:12" pos:end="65:56">
+
+	   <expr_stmt pos:start="65:12" pos:end="65:56"><expr pos:start="65:12" pos:end="65:55"><name pos:start="65:12" pos:end="65:14">ret</name> <operator pos:start="65:16" pos:end="65:16">=</operator> <call pos:start="65:18" pos:end="65:55"><name pos:start="65:18" pos:end="65:27">slirp_send</name><argument_list pos:start="65:28" pos:end="65:55">(<argument pos:start="65:29" pos:end="65:30"><expr pos:start="65:29" pos:end="65:30"><name pos:start="65:29" pos:end="65:30">so</name></expr></argument>, <argument pos:start="65:33" pos:end="65:41"><expr pos:start="65:33" pos:end="65:41"><name pos:start="65:33" pos:end="65:41"><name pos:start="65:33" pos:end="65:33">m</name><operator pos:start="65:34" pos:end="65:35">-&gt;</operator><name pos:start="65:36" pos:end="65:41">m_data</name></name></expr></argument>, <argument pos:start="65:44" pos:end="65:51"><expr pos:start="65:44" pos:end="65:51"><name pos:start="65:44" pos:end="65:51"><name pos:start="65:44" pos:end="65:44">m</name><operator pos:start="65:45" pos:end="65:46">-&gt;</operator><name pos:start="65:47" pos:end="65:51">m_len</name></name></expr></argument>, <argument pos:start="65:54" pos:end="65:54"><expr pos:start="65:54" pos:end="65:54"><literal type="number" pos:start="65:54" pos:end="65:54">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+
+
+	<if_stmt pos:start="69:9" pos:end="101:9"><if pos:start="69:9" pos:end="85:9">if <condition pos:start="69:12" pos:end="69:21">(<expr pos:start="69:13" pos:end="69:20"><name pos:start="69:13" pos:end="69:15">ret</name> <operator pos:start="69:17" pos:end="69:18">&lt;=</operator> <literal type="number" pos:start="69:20" pos:end="69:20">0</literal></expr>)</condition> <block pos:start="69:23" pos:end="85:9">{<block_content pos:start="83:17" pos:end="83:43">
+
+		<comment type="block" pos:start="71:17" pos:end="81:19">/*
+
+		 * Nothing was written
+
+		 * It's possible that the socket has closed, but
+
+		 * we don't need to check because if it has closed,
+
+		 * it will be detected in the normal way by soread()
+
+		 */</comment>
+
+		<expr_stmt pos:start="83:17" pos:end="83:43"><expr pos:start="83:17" pos:end="83:42"><call pos:start="83:17" pos:end="83:42"><name pos:start="83:17" pos:end="83:26">sbappendsb</name><argument_list pos:start="83:27" pos:end="83:42">(<argument pos:start="83:28" pos:end="83:38"><expr pos:start="83:28" pos:end="83:38"><operator pos:start="83:28" pos:end="83:28">&amp;</operator><name pos:start="83:29" pos:end="83:38"><name pos:start="83:29" pos:end="83:30">so</name><operator pos:start="83:31" pos:end="83:32">-&gt;</operator><name pos:start="83:33" pos:end="83:38">so_rcv</name></name></expr></argument>, <argument pos:start="83:41" pos:end="83:41"><expr pos:start="83:41" pos:end="83:41"><name pos:start="83:41" pos:end="83:41">m</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+	</block_content>}</block></if> <if type="elseif" pos:start="85:11" pos:end="101:9">else if <condition pos:start="85:19" pos:end="85:35">(<expr pos:start="85:20" pos:end="85:34"><name pos:start="85:20" pos:end="85:22">ret</name> <operator pos:start="85:24" pos:end="85:25">!=</operator> <name pos:start="85:27" pos:end="85:34"><name pos:start="85:27" pos:end="85:27">m</name><operator pos:start="85:28" pos:end="85:29">-&gt;</operator><name pos:start="85:30" pos:end="85:34">m_len</name></name></expr>)</condition> <block pos:start="85:37" pos:end="101:9">{<block_content pos:start="95:17" pos:end="99:43">
+
+		<comment type="block" pos:start="87:17" pos:end="93:19">/*
+
+		 * Something was written, but not everything..
+
+		 * sbappendsb the rest
+
+		 */</comment>
+
+		<expr_stmt pos:start="95:17" pos:end="95:32"><expr pos:start="95:17" pos:end="95:31"><name pos:start="95:17" pos:end="95:24"><name pos:start="95:17" pos:end="95:17">m</name><operator pos:start="95:18" pos:end="95:19">-&gt;</operator><name pos:start="95:20" pos:end="95:24">m_len</name></name> <operator pos:start="95:26" pos:end="95:27">-=</operator> <name pos:start="95:29" pos:end="95:31">ret</name></expr>;</expr_stmt>
+
+		<expr_stmt pos:start="97:17" pos:end="97:33"><expr pos:start="97:17" pos:end="97:32"><name pos:start="97:17" pos:end="97:25"><name pos:start="97:17" pos:end="97:17">m</name><operator pos:start="97:18" pos:end="97:19">-&gt;</operator><name pos:start="97:20" pos:end="97:25">m_data</name></name> <operator pos:start="97:27" pos:end="97:28">+=</operator> <name pos:start="97:30" pos:end="97:32">ret</name></expr>;</expr_stmt>
+
+		<expr_stmt pos:start="99:17" pos:end="99:43"><expr pos:start="99:17" pos:end="99:42"><call pos:start="99:17" pos:end="99:42"><name pos:start="99:17" pos:end="99:26">sbappendsb</name><argument_list pos:start="99:27" pos:end="99:42">(<argument pos:start="99:28" pos:end="99:38"><expr pos:start="99:28" pos:end="99:38"><operator pos:start="99:28" pos:end="99:28">&amp;</operator><name pos:start="99:29" pos:end="99:38"><name pos:start="99:29" pos:end="99:30">so</name><operator pos:start="99:31" pos:end="99:32">-&gt;</operator><name pos:start="99:33" pos:end="99:38">so_rcv</name></name></expr></argument>, <argument pos:start="99:41" pos:end="99:41"><expr pos:start="99:41" pos:end="99:41"><name pos:start="99:41" pos:end="99:41">m</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+	</block_content>}</block></if></if_stmt> <comment type="block" pos:start="101:11" pos:end="101:20">/* else */</comment>
+
+	<comment type="block" pos:start="103:9" pos:end="103:49">/* Whatever happened, we free the mbuf */</comment>
+
+	<expr_stmt pos:start="105:9" pos:end="105:18"><expr pos:start="105:9" pos:end="105:17"><call pos:start="105:9" pos:end="105:17"><name pos:start="105:9" pos:end="105:14">m_free</name><argument_list pos:start="105:15" pos:end="105:17">(<argument pos:start="105:16" pos:end="105:16"><expr pos:start="105:16" pos:end="105:16"><name pos:start="105:16" pos:end="105:16">m</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+</block_content>}</block>
+</unit>

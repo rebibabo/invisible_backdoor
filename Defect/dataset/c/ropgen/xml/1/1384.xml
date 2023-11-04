@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/1384.c" pos:tabs="8"><function pos:start="1:1" pos:end="99:1"><type pos:start="1:1" pos:end="1:3"><name pos:start="1:1" pos:end="1:3">int</name></type> <name pos:start="1:5" pos:end="1:18">page_unprotect</name><parameter_list pos:start="1:19" pos:end="1:54">(<parameter pos:start="1:20" pos:end="1:39"><decl pos:start="1:20" pos:end="1:39"><type pos:start="1:20" pos:end="1:39"><name pos:start="1:20" pos:end="1:31">target_ulong</name></type> <name pos:start="1:33" pos:end="1:39">address</name></decl></parameter>, <parameter pos:start="1:42" pos:end="1:53"><decl pos:start="1:42" pos:end="1:53"><type pos:start="1:42" pos:end="1:53"><name pos:start="1:42" pos:end="1:50">uintptr_t</name></type> <name pos:start="1:52" pos:end="1:53">pc</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="99:1">{<block_content pos:start="5:5" pos:end="97:13">
+
+    <decl_stmt pos:start="5:5" pos:end="5:22"><decl pos:start="5:5" pos:end="5:21"><type pos:start="5:5" pos:end="5:16"><name pos:start="5:5" pos:end="5:12">unsigned</name> <name pos:start="5:14" pos:end="5:16">int</name></type> <name pos:start="5:18" pos:end="5:21">prot</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:32"><decl pos:start="7:5" pos:end="7:31"><type pos:start="7:5" pos:end="7:8"><name pos:start="7:5" pos:end="7:8">bool</name></type> <name pos:start="7:10" pos:end="7:31">current_tb_invalidated</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:16"><decl pos:start="9:5" pos:end="9:15"><type pos:start="9:5" pos:end="9:14"><name pos:start="9:5" pos:end="9:12">PageDesc</name> <modifier pos:start="9:14" pos:end="9:14">*</modifier></type><name pos:start="9:15" pos:end="9:15">p</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:44"><decl pos:start="11:5" pos:end="11:27"><type pos:start="11:5" pos:end="11:16"><name pos:start="11:5" pos:end="11:16">target_ulong</name></type> <name pos:start="11:18" pos:end="11:27">host_start</name></decl>, <decl pos:start="11:30" pos:end="11:37"><type ref="prev" pos:start="11:5" pos:end="11:16"/><name pos:start="11:30" pos:end="11:37">host_end</name></decl>, <decl pos:start="11:40" pos:end="11:43"><type ref="prev" pos:start="11:5" pos:end="11:16"/><name pos:start="11:40" pos:end="11:43">addr</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="15:5" pos:end="19:38">/* Technically this isn't safe inside a signal handler.  However we
+
+       know this only ever happens in a synchronous SEGV handler, so in
+
+       practice it seems to be ok.  */</comment>
+
+    <expr_stmt pos:start="21:5" pos:end="21:16"><expr pos:start="21:5" pos:end="21:15"><call pos:start="21:5" pos:end="21:15"><name pos:start="21:5" pos:end="21:13">mmap_lock</name><argument_list pos:start="21:14" pos:end="21:15">()</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="25:5" pos:end="25:47"><expr pos:start="25:5" pos:end="25:46"><name pos:start="25:5" pos:end="25:5">p</name> <operator pos:start="25:7" pos:end="25:7">=</operator> <call pos:start="25:9" pos:end="25:46"><name pos:start="25:9" pos:end="25:17">page_find</name><argument_list pos:start="25:18" pos:end="25:46">(<argument pos:start="25:19" pos:end="25:45"><expr pos:start="25:19" pos:end="25:45"><name pos:start="25:19" pos:end="25:25">address</name> <operator pos:start="25:27" pos:end="25:28">&gt;&gt;</operator> <name pos:start="25:30" pos:end="25:45">TARGET_PAGE_BITS</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="27:5" pos:end="33:5"><if pos:start="27:5" pos:end="33:5">if <condition pos:start="27:8" pos:end="27:11">(<expr pos:start="27:9" pos:end="27:10"><operator pos:start="27:9" pos:end="27:9">!</operator><name pos:start="27:10" pos:end="27:10">p</name></expr>)</condition> <block pos:start="27:13" pos:end="33:5">{<block_content pos:start="29:9" pos:end="31:17">
+
+        <expr_stmt pos:start="29:9" pos:end="29:22"><expr pos:start="29:9" pos:end="29:21"><call pos:start="29:9" pos:end="29:21"><name pos:start="29:9" pos:end="29:19">mmap_unlock</name><argument_list pos:start="29:20" pos:end="29:21">()</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="31:9" pos:end="31:17">return <expr pos:start="31:16" pos:end="31:16"><literal type="number" pos:start="31:16" pos:end="31:16">0</literal></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="37:5" pos:end="39:37">/* if the page was really writable, then we change its
+
+       protection back to writable */</comment>
+
+    <if_stmt pos:start="41:5" pos:end="93:5"><if pos:start="41:5" pos:end="93:5">if <condition pos:start="41:8" pos:end="41:64">(<expr pos:start="41:9" pos:end="41:63"><operator pos:start="41:9" pos:end="41:9">(</operator><name pos:start="41:10" pos:end="41:17"><name pos:start="41:10" pos:end="41:10">p</name><operator pos:start="41:11" pos:end="41:12">-&gt;</operator><name pos:start="41:13" pos:end="41:17">flags</name></name> <operator pos:start="41:19" pos:end="41:19">&amp;</operator> <name pos:start="41:21" pos:end="41:34">PAGE_WRITE_ORG</name><operator pos:start="41:35" pos:end="41:35">)</operator> <operator pos:start="41:37" pos:end="41:38">&amp;&amp;</operator> <operator pos:start="41:40" pos:end="41:40">!</operator><operator pos:start="41:41" pos:end="41:41">(</operator><name pos:start="41:42" pos:end="41:49"><name pos:start="41:42" pos:end="41:42">p</name><operator pos:start="41:43" pos:end="41:44">-&gt;</operator><name pos:start="41:45" pos:end="41:49">flags</name></name> <operator pos:start="41:51" pos:end="41:51">&amp;</operator> <name pos:start="41:53" pos:end="41:62">PAGE_WRITE</name><operator pos:start="41:63" pos:end="41:63">)</operator></expr>)</condition> <block pos:start="41:66" pos:end="93:5">{<block_content pos:start="43:9" pos:end="91:46">
+
+        <expr_stmt pos:start="43:9" pos:end="43:51"><expr pos:start="43:9" pos:end="43:50"><name pos:start="43:9" pos:end="43:18">host_start</name> <operator pos:start="43:20" pos:end="43:20">=</operator> <name pos:start="43:22" pos:end="43:28">address</name> <operator pos:start="43:30" pos:end="43:30">&amp;</operator> <name pos:start="43:32" pos:end="43:50">qemu_host_page_mask</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="45:9" pos:end="45:52"><expr pos:start="45:9" pos:end="45:51"><name pos:start="45:9" pos:end="45:16">host_end</name> <operator pos:start="45:18" pos:end="45:18">=</operator> <name pos:start="45:20" pos:end="45:29">host_start</name> <operator pos:start="45:31" pos:end="45:31">+</operator> <name pos:start="45:33" pos:end="45:51">qemu_host_page_size</name></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="49:9" pos:end="49:17"><expr pos:start="49:9" pos:end="49:16"><name pos:start="49:9" pos:end="49:12">prot</name> <operator pos:start="49:14" pos:end="49:14">=</operator> <literal type="number" pos:start="49:16" pos:end="49:16">0</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="51:9" pos:end="51:39"><expr pos:start="51:9" pos:end="51:38"><name pos:start="51:9" pos:end="51:30">current_tb_invalidated</name> <operator pos:start="51:32" pos:end="51:32">=</operator> <name pos:start="51:34" pos:end="51:38">false</name></expr>;</expr_stmt>
+
+        <for pos:start="53:9" pos:end="79:9">for <control pos:start="53:13" pos:end="53:76">(<init pos:start="53:14" pos:end="53:32"><expr pos:start="53:14" pos:end="53:30"><name pos:start="53:14" pos:end="53:17">addr</name> <operator pos:start="53:19" pos:end="53:19">=</operator> <name pos:start="53:21" pos:end="53:30">host_start</name></expr> ;</init> <condition pos:start="53:34" pos:end="53:50"><expr pos:start="53:34" pos:end="53:48"><name pos:start="53:34" pos:end="53:37">addr</name> <operator pos:start="53:39" pos:end="53:39">&lt;</operator> <name pos:start="53:41" pos:end="53:48">host_end</name></expr> ;</condition> <incr pos:start="53:52" pos:end="53:75"><expr pos:start="53:52" pos:end="53:75"><name pos:start="53:52" pos:end="53:55">addr</name> <operator pos:start="53:57" pos:end="53:58">+=</operator> <name pos:start="53:60" pos:end="53:75">TARGET_PAGE_SIZE</name></expr></incr>)</control> <block pos:start="53:78" pos:end="79:9">{<block_content pos:start="55:13" pos:end="78:0">
+
+            <expr_stmt pos:start="55:13" pos:end="55:52"><expr pos:start="55:13" pos:end="55:51"><name pos:start="55:13" pos:end="55:13">p</name> <operator pos:start="55:15" pos:end="55:15">=</operator> <call pos:start="55:17" pos:end="55:51"><name pos:start="55:17" pos:end="55:25">page_find</name><argument_list pos:start="55:26" pos:end="55:51">(<argument pos:start="55:27" pos:end="55:50"><expr pos:start="55:27" pos:end="55:50"><name pos:start="55:27" pos:end="55:30">addr</name> <operator pos:start="55:32" pos:end="55:33">&gt;&gt;</operator> <name pos:start="55:35" pos:end="55:50">TARGET_PAGE_BITS</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="57:13" pos:end="57:35"><expr pos:start="57:13" pos:end="57:34"><name pos:start="57:13" pos:end="57:20"><name pos:start="57:13" pos:end="57:13">p</name><operator pos:start="57:14" pos:end="57:15">-&gt;</operator><name pos:start="57:16" pos:end="57:20">flags</name></name> <operator pos:start="57:22" pos:end="57:23">|=</operator> <name pos:start="57:25" pos:end="57:34">PAGE_WRITE</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="59:13" pos:end="59:29"><expr pos:start="59:13" pos:end="59:28"><name pos:start="59:13" pos:end="59:16">prot</name> <operator pos:start="59:18" pos:end="59:19">|=</operator> <name pos:start="59:21" pos:end="59:28"><name pos:start="59:21" pos:end="59:21">p</name><operator pos:start="59:22" pos:end="59:23">-&gt;</operator><name pos:start="59:24" pos:end="59:28">flags</name></name></expr>;</expr_stmt>
+
+
+
+            <comment type="block" pos:start="63:13" pos:end="65:52">/* and since the content will be modified, we must invalidate
+
+               the corresponding translated code. */</comment>
+
+            <expr_stmt pos:start="67:13" pos:end="70:0"><expr pos:start="67:13" pos:end="67:71"><name pos:start="67:13" pos:end="67:34">current_tb_invalidated</name> <operator pos:start="67:36" pos:end="67:37">|=</operator> <call pos:start="67:39" pos:end="67:71"><name pos:start="67:39" pos:end="67:61">tb_invalidate_phys_page</name><argument_list pos:start="67:62" pos:end="67:71">(<argument pos:start="67:63" pos:end="67:66"><expr pos:start="67:63" pos:end="67:66"><name pos:start="67:63" pos:end="67:66">addr</name></expr></argument>, <argument pos:start="67:69" pos:end="67:70"><expr pos:start="67:69" pos:end="67:70"><name pos:start="67:69" pos:end="67:70">pc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+<cpp:ifdef pos:start="69:1" pos:end="69:23">#<cpp:directive pos:start="69:2" pos:end="69:6">ifdef</cpp:directive> <name pos:start="69:8" pos:end="69:23">CONFIG_USER_ONLY</name></cpp:ifdef>
+
+            <if_stmt pos:start="71:13" pos:end="78:0"><if pos:start="71:13" pos:end="78:0">if <condition pos:start="71:16" pos:end="71:36">(<expr pos:start="71:17" pos:end="71:35"><name pos:start="71:17" pos:end="71:35">DEBUG_TB_CHECK_GATE</name></expr>)</condition> <block pos:start="71:38" pos:end="78:0">{<block_content pos:start="73:17" pos:end="73:42">
+
+                <expr_stmt pos:start="73:17" pos:end="73:42"><expr pos:start="73:17" pos:end="73:41"><call pos:start="73:17" pos:end="73:41"><name pos:start="73:17" pos:end="73:35">tb_invalidate_check</name><argument_list pos:start="73:36" pos:end="73:41">(<argument pos:start="73:37" pos:end="73:40"><expr pos:start="73:37" pos:end="73:40"><name pos:start="73:37" pos:end="73:40">addr</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+<cpp:endif pos:start="77:1" pos:end="77:6">#<cpp:directive pos:start="77:2" pos:end="77:6">endif</cpp:directive></cpp:endif>
+
+        </block_content>}</block></for>
+
+        <expr_stmt pos:start="81:9" pos:end="83:35"><expr pos:start="81:9" pos:end="83:34"><call pos:start="81:9" pos:end="83:34"><name pos:start="81:9" pos:end="81:16">mprotect</name><argument_list pos:start="81:17" pos:end="83:34">(<argument pos:start="81:18" pos:end="81:40"><expr pos:start="81:18" pos:end="81:40"><operator pos:start="81:18" pos:end="81:18">(</operator><name pos:start="81:19" pos:end="81:22">void</name> <operator pos:start="81:24" pos:end="81:24">*</operator><operator pos:start="81:25" pos:end="81:25">)</operator><call pos:start="81:26" pos:end="81:40"><name pos:start="81:26" pos:end="81:28">g2h</name><argument_list pos:start="81:29" pos:end="81:40">(<argument pos:start="81:30" pos:end="81:39"><expr pos:start="81:30" pos:end="81:39"><name pos:start="81:30" pos:end="81:39">host_start</name></expr></argument>)</argument_list></call></expr></argument>, <argument pos:start="81:43" pos:end="81:61"><expr pos:start="81:43" pos:end="81:61"><name pos:start="81:43" pos:end="81:61">qemu_host_page_size</name></expr></argument>,
+
+                 <argument pos:start="83:18" pos:end="83:33"><expr pos:start="83:18" pos:end="83:33"><name pos:start="83:18" pos:end="83:21">prot</name> <operator pos:start="83:23" pos:end="83:23">&amp;</operator> <name pos:start="83:25" pos:end="83:33">PAGE_BITS</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="87:9" pos:end="87:22"><expr pos:start="87:9" pos:end="87:21"><call pos:start="87:9" pos:end="87:21"><name pos:start="87:9" pos:end="87:19">mmap_unlock</name><argument_list pos:start="87:20" pos:end="87:21">()</argument_list></call></expr>;</expr_stmt>
+
+        <comment type="block" pos:start="89:9" pos:end="89:63">/* If current TB was invalidated return to main loop */</comment>
+
+        <return pos:start="91:9" pos:end="91:46">return <expr pos:start="91:16" pos:end="91:45"><ternary pos:start="91:16" pos:end="91:45"><condition pos:start="91:16" pos:end="91:39"><expr pos:start="91:16" pos:end="91:37"><name pos:start="91:16" pos:end="91:37">current_tb_invalidated</name></expr> ?</condition><then pos:start="91:41" pos:end="91:41"> <expr pos:start="91:41" pos:end="91:41"><literal type="number" pos:start="91:41" pos:end="91:41">2</literal></expr> </then><else pos:start="91:43" pos:end="91:45">: <expr pos:start="91:45" pos:end="91:45"><literal type="number" pos:start="91:45" pos:end="91:45">1</literal></expr></else></ternary></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+    <expr_stmt pos:start="95:5" pos:end="95:18"><expr pos:start="95:5" pos:end="95:17"><call pos:start="95:5" pos:end="95:17"><name pos:start="95:5" pos:end="95:15">mmap_unlock</name><argument_list pos:start="95:16" pos:end="95:17">()</argument_list></call></expr>;</expr_stmt>
+
+    <return pos:start="97:5" pos:end="97:13">return <expr pos:start="97:12" pos:end="97:12"><literal type="number" pos:start="97:12" pos:end="97:12">0</literal></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

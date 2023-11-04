@@ -1,0 +1,1681 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/14156.c" pos:tabs="8"><macro pos:start="1:1" pos:end="4:0"><name pos:start="1:1" pos:end="1:5">PAETH</name><argument_list pos:start="1:6" pos:end="4:0">(<argument pos:start="1:7" pos:end="1:10">mmx2</argument>, <argument pos:start="1:13" pos:end="1:21">ABS3_MMX2</argument>)</argument_list></macro>
+
+<cpp:ifdef pos:start="3:1" pos:end="3:17">#<cpp:directive pos:start="3:2" pos:end="3:6">ifdef</cpp:directive> <name pos:start="3:8" pos:end="3:17">HAVE_SSSE3</name></cpp:ifdef>
+
+<macro pos:start="5:1" pos:end="1322:0"><name pos:start="5:1" pos:end="5:5">PAETH</name><argument_list pos:start="5:6" pos:end="1322:0">(<argument pos:start="5:7" pos:end="5:11">ssse3</argument>, <argument pos:start="5:14" pos:end="5:23">ABS3_SSSE3</argument>)</argument_list></macro>
+
+<cpp:endif pos:start="7:1" pos:end="7:6">#<cpp:directive pos:start="7:2" pos:end="7:6">endif</cpp:directive></cpp:endif>
+
+
+
+<cpp:define pos:start="11:1" pos:end="49:32">#<cpp:directive pos:start="11:2" pos:end="11:7">define</cpp:directive> <cpp:macro pos:start="11:9" pos:end="11:78"><name pos:start="11:9" pos:end="11:18">QPEL_V_LOW</name><parameter_list pos:start="11:19" pos:end="11:78">(<parameter pos:start="11:20" pos:end="11:21"><type pos:start="11:20" pos:end="11:21"><name pos:start="11:20" pos:end="11:21">m3</name></type></parameter>,<parameter pos:start="11:23" pos:end="11:24"><type pos:start="11:23" pos:end="11:24"><name pos:start="11:23" pos:end="11:24">m4</name></type></parameter>,<parameter pos:start="11:26" pos:end="11:27"><type pos:start="11:26" pos:end="11:27"><name pos:start="11:26" pos:end="11:27">m5</name></type></parameter>,<parameter pos:start="11:29" pos:end="11:30"><type pos:start="11:29" pos:end="11:30"><name pos:start="11:29" pos:end="11:30">m6</name></type></parameter>, <parameter pos:start="11:33" pos:end="11:37"><type pos:start="11:33" pos:end="11:37"><name pos:start="11:33" pos:end="11:37">pw_20</name></type></parameter>, <parameter pos:start="11:40" pos:end="11:43"><type pos:start="11:40" pos:end="11:43"><name pos:start="11:40" pos:end="11:43">pw_3</name></type></parameter>, <parameter pos:start="11:46" pos:end="11:48"><type pos:start="11:46" pos:end="11:48"><name pos:start="11:46" pos:end="11:48">rnd</name></type></parameter>, <parameter pos:start="11:51" pos:end="11:53"><type pos:start="11:51" pos:end="11:53"><name pos:start="11:51" pos:end="11:53">in0</name></type></parameter>, <parameter pos:start="11:56" pos:end="11:58"><type pos:start="11:56" pos:end="11:58"><name pos:start="11:56" pos:end="11:58">in1</name></type></parameter>, <parameter pos:start="11:61" pos:end="11:63"><type pos:start="11:61" pos:end="11:63"><name pos:start="11:61" pos:end="11:63">in2</name></type></parameter>, <parameter pos:start="11:66" pos:end="11:68"><type pos:start="11:66" pos:end="11:68"><name pos:start="11:66" pos:end="11:68">in7</name></type></parameter>, <parameter pos:start="11:71" pos:end="11:73"><type pos:start="11:71" pos:end="11:73"><name pos:start="11:71" pos:end="11:73">out</name></type></parameter>, <parameter pos:start="11:76" pos:end="11:77"><type pos:start="11:76" pos:end="11:77"><name pos:start="11:76" pos:end="11:77">OP</name></type></parameter>)</parameter_list></cpp:macro>\
+
+        <cpp:value pos:start="13:9" pos:end="49:32">"paddw " #m4 ", " #m3 "           \n\t" <comment type="block" pos:start="13:49" pos:end="13:56">/* x1 */</comment>\
+
+        "movq "MANGLE(ff_pw_20)", %%mm4   \n\t" <comment type="block" pos:start="15:49" pos:end="15:56">/* 20 */</comment>\
+
+        "pmullw " #m3 ", %%mm4            \n\t" <comment type="block" pos:start="17:49" pos:end="17:58">/* 20x1 */</comment>\
+
+        "movq "#in7", " #m3 "             \n\t" <comment type="block" pos:start="19:49" pos:end="19:55">/* d */</comment>\
+
+        "movq "#in0", %%mm5               \n\t" <comment type="block" pos:start="21:49" pos:end="21:55">/* D */</comment>\
+
+        "paddw " #m3 ", %%mm5             \n\t" <comment type="block" pos:start="23:49" pos:end="23:56">/* x4 */</comment>\
+
+        "psubw %%mm5, %%mm4               \n\t" <comment type="block" pos:start="25:49" pos:end="25:63">/* 20x1 - x4 */</comment>\
+
+        "movq "#in1", %%mm5               \n\t" <comment type="block" pos:start="27:49" pos:end="27:55">/* C */</comment>\
+
+        "movq "#in2", %%mm6               \n\t" <comment type="block" pos:start="29:49" pos:end="29:55">/* B */</comment>\
+
+        "paddw " #m6 ", %%mm5             \n\t" <comment type="block" pos:start="31:49" pos:end="31:56">/* x3 */</comment>\
+
+        "paddw " #m5 ", %%mm6             \n\t" <comment type="block" pos:start="33:49" pos:end="33:56">/* x2 */</comment>\
+
+        "paddw %%mm6, %%mm6               \n\t" <comment type="block" pos:start="35:49" pos:end="35:57">/* 2x2 */</comment>\
+
+        "psubw %%mm6, %%mm5               \n\t" <comment type="block" pos:start="37:49" pos:end="37:63">/* -2x2 + x3 */</comment>\
+
+        "pmullw "MANGLE(ff_pw_3)", %%mm5  \n\t" <comment type="block" pos:start="39:49" pos:end="39:64">/* -6x2 + 3x3 */</comment>\
+
+        "paddw " #rnd ", %%mm4            \n\t" <comment type="block" pos:start="41:49" pos:end="41:56">/* x2 */</comment>\
+
+        "paddw %%mm4, %%mm5               \n\t" <comment type="block" pos:start="43:49" pos:end="43:75">/* 20x1 - 6x2 + 3x3 - x4 */</comment>\
+
+        "psraw $5, %%mm5                  \n\t"\
+
+        "packuswb %%mm5, %%mm5            \n\t"\
+
+        OP(%%mm5, out, %%mm7, d)</cpp:value></cpp:define>
+
+
+
+<cpp:define pos:start="53:1" pos:end="575:1">#<cpp:directive pos:start="53:2" pos:end="53:7">define</cpp:directive> <cpp:macro pos:start="53:9" pos:end="53:58"><name pos:start="53:9" pos:end="53:17">QPEL_BASE</name><parameter_list pos:start="53:18" pos:end="53:58">(<parameter pos:start="53:19" pos:end="53:24"><type pos:start="53:19" pos:end="53:24"><name pos:start="53:19" pos:end="53:24">OPNAME</name></type></parameter>, <parameter pos:start="53:27" pos:end="53:33"><type pos:start="53:27" pos:end="53:33"><name pos:start="53:27" pos:end="53:33">ROUNDER</name></type></parameter>, <parameter pos:start="53:36" pos:end="53:38"><type pos:start="53:36" pos:end="53:38"><name pos:start="53:36" pos:end="53:38">RND</name></type></parameter>, <parameter pos:start="53:41" pos:end="53:47"><type pos:start="53:41" pos:end="53:47"><name pos:start="53:41" pos:end="53:47">OP_MMX2</name></type></parameter>, <parameter pos:start="53:50" pos:end="53:57"><type pos:start="53:50" pos:end="53:57"><name pos:start="53:50" pos:end="53:57">OP_3DNOW</name></type></parameter>)</parameter_list></cpp:macro>\
+
+<cpp:value pos:start="55:1" pos:end="575:1">static void OPNAME ## mpeg4_qpel16_h_lowpass_mmx2(uint8_t *dst, uint8_t *src, int dstStride, int srcStride, int h){\
+
+    uint64_t temp;\
+
+\
+
+    asm volatile(\
+
+        "pxor %%mm7, %%mm7                \n\t"\
+
+        "1:                               \n\t"\
+
+        "movq  (%0), %%mm0                \n\t" <comment type="block" pos:start="67:49" pos:end="67:62">/* ABCDEFGH */</comment>\
+
+        "movq %%mm0, %%mm1                \n\t" <comment type="block" pos:start="69:49" pos:end="69:62">/* ABCDEFGH */</comment>\
+
+        "movq %%mm0, %%mm2                \n\t" <comment type="block" pos:start="71:49" pos:end="71:62">/* ABCDEFGH */</comment>\
+
+        "punpcklbw %%mm7, %%mm0           \n\t" <comment type="block" pos:start="73:49" pos:end="73:62">/* 0A0B0C0D */</comment>\
+
+        "punpckhbw %%mm7, %%mm1           \n\t" <comment type="block" pos:start="75:49" pos:end="75:62">/* 0E0F0G0H */</comment>\
+
+        "pshufw $0x90, %%mm0, %%mm5       \n\t" <comment type="block" pos:start="77:49" pos:end="77:62">/* 0A0A0B0C */</comment>\
+
+        "pshufw $0x41, %%mm0, %%mm6       \n\t" <comment type="block" pos:start="79:49" pos:end="79:62">/* 0B0A0A0B */</comment>\
+
+        "movq %%mm2, %%mm3                \n\t" <comment type="block" pos:start="81:49" pos:end="81:62">/* ABCDEFGH */</comment>\
+
+        "movq %%mm2, %%mm4                \n\t" <comment type="block" pos:start="83:49" pos:end="83:62">/* ABCDEFGH */</comment>\
+
+        "psllq $8, %%mm2                  \n\t" <comment type="block" pos:start="85:49" pos:end="85:62">/* 0ABCDEFG */</comment>\
+
+        "psllq $16, %%mm3                 \n\t" <comment type="block" pos:start="87:49" pos:end="87:62">/* 00ABCDEF */</comment>\
+
+        "psllq $24, %%mm4                 \n\t" <comment type="block" pos:start="89:49" pos:end="89:62">/* 000ABCDE */</comment>\
+
+        "punpckhbw %%mm7, %%mm2           \n\t" <comment type="block" pos:start="91:49" pos:end="91:62">/* 0D0E0F0G */</comment>\
+
+        "punpckhbw %%mm7, %%mm3           \n\t" <comment type="block" pos:start="93:49" pos:end="93:62">/* 0C0D0E0F */</comment>\
+
+        "punpckhbw %%mm7, %%mm4           \n\t" <comment type="block" pos:start="95:49" pos:end="95:62">/* 0B0C0D0E */</comment>\
+
+        "paddw %%mm3, %%mm5               \n\t" <comment type="block" pos:start="97:49" pos:end="97:55">/* b */</comment>\
+
+        "paddw %%mm2, %%mm6               \n\t" <comment type="block" pos:start="99:49" pos:end="99:55">/* c */</comment>\
+
+        "paddw %%mm5, %%mm5               \n\t" <comment type="block" pos:start="101:49" pos:end="101:56">/* 2b */</comment>\
+
+        "psubw %%mm5, %%mm6               \n\t" <comment type="block" pos:start="103:49" pos:end="103:60">/* c - 2b */</comment>\
+
+        "pshufw $0x06, %%mm0, %%mm5       \n\t" <comment type="block" pos:start="105:49" pos:end="105:62">/* 0C0B0A0A */</comment>\
+
+        "pmullw "MANGLE(ff_pw_3)", %%mm6  \n\t" <comment type="block" pos:start="107:49" pos:end="107:61">/* 3c - 6b */</comment>\
+
+        "paddw %%mm4, %%mm0               \n\t" <comment type="block" pos:start="109:49" pos:end="109:55">/* a */</comment>\
+
+        "paddw %%mm1, %%mm5               \n\t" <comment type="block" pos:start="111:49" pos:end="111:55">/* d */</comment>\
+
+        "pmullw "MANGLE(ff_pw_20)", %%mm0 \n\t" <comment type="block" pos:start="113:49" pos:end="113:57">/* 20a */</comment>\
+
+        "psubw %%mm5, %%mm0               \n\t" <comment type="block" pos:start="115:49" pos:end="115:61">/* 20a - d */</comment>\
+
+        "paddw %6, %%mm6                  \n\t"\
+
+        "paddw %%mm6, %%mm0               \n\t" <comment type="block" pos:start="119:49" pos:end="119:71">/* 20a - 6b + 3c - d */</comment>\
+
+        "psraw $5, %%mm0                  \n\t"\
+
+        "movq %%mm0, %5                   \n\t"\
+
+        <comment type="block" pos:start="125:9" pos:end="125:59">/* mm1=EFGH, mm2=DEFG, mm3=CDEF, mm4=BCDE, mm7=0 */</comment>\
+
+        \
+
+        "movq 5(%0), %%mm0                \n\t" <comment type="block" pos:start="129:49" pos:end="129:62">/* FGHIJKLM */</comment>\
+
+        "movq %%mm0, %%mm5                \n\t" <comment type="block" pos:start="131:49" pos:end="131:62">/* FGHIJKLM */</comment>\
+
+        "movq %%mm0, %%mm6                \n\t" <comment type="block" pos:start="133:49" pos:end="133:62">/* FGHIJKLM */</comment>\
+
+        "psrlq $8, %%mm0                  \n\t" <comment type="block" pos:start="135:49" pos:end="135:62">/* GHIJKLM0 */</comment>\
+
+        "psrlq $16, %%mm5                 \n\t" <comment type="block" pos:start="137:49" pos:end="137:62">/* HIJKLM00 */</comment>\
+
+        "punpcklbw %%mm7, %%mm0           \n\t" <comment type="block" pos:start="139:49" pos:end="139:62">/* 0G0H0I0J */</comment>\
+
+        "punpcklbw %%mm7, %%mm5           \n\t" <comment type="block" pos:start="141:49" pos:end="141:62">/* 0H0I0J0K */</comment>\
+
+        "paddw %%mm0, %%mm2               \n\t" <comment type="block" pos:start="143:49" pos:end="143:55">/* b */</comment>\
+
+        "paddw %%mm5, %%mm3               \n\t" <comment type="block" pos:start="145:49" pos:end="145:55">/* c */</comment>\
+
+        "paddw %%mm2, %%mm2               \n\t" <comment type="block" pos:start="147:49" pos:end="147:56">/* 2b */</comment>\
+
+        "psubw %%mm2, %%mm3               \n\t" <comment type="block" pos:start="149:49" pos:end="149:60">/* c - 2b */</comment>\
+
+        "movq %%mm6, %%mm2                \n\t" <comment type="block" pos:start="151:49" pos:end="151:62">/* FGHIJKLM */</comment>\
+
+        "psrlq $24, %%mm6                 \n\t" <comment type="block" pos:start="153:49" pos:end="153:62">/* IJKLM000 */</comment>\
+
+        "punpcklbw %%mm7, %%mm2           \n\t" <comment type="block" pos:start="155:49" pos:end="155:62">/* 0F0G0H0I */</comment>\
+
+        "punpcklbw %%mm7, %%mm6           \n\t" <comment type="block" pos:start="157:49" pos:end="157:62">/* 0I0J0K0L */</comment>\
+
+        "pmullw "MANGLE(ff_pw_3)", %%mm3  \n\t" <comment type="block" pos:start="159:49" pos:end="159:61">/* 3c - 6b */</comment>\
+
+        "paddw %%mm2, %%mm1               \n\t" <comment type="block" pos:start="161:49" pos:end="161:55">/* a */</comment>\
+
+        "paddw %%mm6, %%mm4               \n\t" <comment type="block" pos:start="163:49" pos:end="163:55">/* d */</comment>\
+
+        "pmullw "MANGLE(ff_pw_20)", %%mm1 \n\t" <comment type="block" pos:start="165:49" pos:end="165:57">/* 20a */</comment>\
+
+        "psubw %%mm4, %%mm3               \n\t" <comment type="block" pos:start="167:49" pos:end="167:66">/* - 6b +3c - d */</comment>\
+
+        "paddw %6, %%mm1                  \n\t"\
+
+        "paddw %%mm1, %%mm3               \n\t" <comment type="block" pos:start="171:49" pos:end="171:70">/* 20a - 6b +3c - d */</comment>\
+
+        "psraw $5, %%mm3                  \n\t"\
+
+        "movq %5, %%mm1                   \n\t"\
+
+        "packuswb %%mm3, %%mm1            \n\t"\
+
+        OP_MMX2(%%mm1, (%1),%%mm4, q)\
+
+        <comment type="block" pos:start="181:9" pos:end="181:60">/* mm0= GHIJ, mm2=FGHI, mm5=HIJK, mm6=IJKL, mm7=0 */</comment>\
+
+        \
+
+        "movq 9(%0), %%mm1                \n\t" <comment type="block" pos:start="185:49" pos:end="185:62">/* JKLMNOPQ */</comment>\
+
+        "movq %%mm1, %%mm4                \n\t" <comment type="block" pos:start="187:49" pos:end="187:62">/* JKLMNOPQ */</comment>\
+
+        "movq %%mm1, %%mm3                \n\t" <comment type="block" pos:start="189:49" pos:end="189:62">/* JKLMNOPQ */</comment>\
+
+        "psrlq $8, %%mm1                  \n\t" <comment type="block" pos:start="191:49" pos:end="191:62">/* KLMNOPQ0 */</comment>\
+
+        "psrlq $16, %%mm4                 \n\t" <comment type="block" pos:start="193:49" pos:end="193:62">/* LMNOPQ00 */</comment>\
+
+        "punpcklbw %%mm7, %%mm1           \n\t" <comment type="block" pos:start="195:49" pos:end="195:62">/* 0K0L0M0N */</comment>\
+
+        "punpcklbw %%mm7, %%mm4           \n\t" <comment type="block" pos:start="197:49" pos:end="197:62">/* 0L0M0N0O */</comment>\
+
+        "paddw %%mm1, %%mm5               \n\t" <comment type="block" pos:start="199:49" pos:end="199:55">/* b */</comment>\
+
+        "paddw %%mm4, %%mm0               \n\t" <comment type="block" pos:start="201:49" pos:end="201:55">/* c */</comment>\
+
+        "paddw %%mm5, %%mm5               \n\t" <comment type="block" pos:start="203:49" pos:end="203:56">/* 2b */</comment>\
+
+        "psubw %%mm5, %%mm0               \n\t" <comment type="block" pos:start="205:49" pos:end="205:60">/* c - 2b */</comment>\
+
+        "movq %%mm3, %%mm5                \n\t" <comment type="block" pos:start="207:49" pos:end="207:62">/* JKLMNOPQ */</comment>\
+
+        "psrlq $24, %%mm3                 \n\t" <comment type="block" pos:start="209:49" pos:end="209:62">/* MNOPQ000 */</comment>\
+
+        "pmullw "MANGLE(ff_pw_3)", %%mm0  \n\t" <comment type="block" pos:start="211:49" pos:end="211:61">/* 3c - 6b */</comment>\
+
+        "punpcklbw %%mm7, %%mm3           \n\t" <comment type="block" pos:start="213:49" pos:end="213:62">/* 0M0N0O0P */</comment>\
+
+        "paddw %%mm3, %%mm2               \n\t" <comment type="block" pos:start="215:49" pos:end="215:55">/* d */</comment>\
+
+        "psubw %%mm2, %%mm0               \n\t" <comment type="block" pos:start="217:49" pos:end="217:66">/* -6b + 3c - d */</comment>\
+
+        "movq %%mm5, %%mm2                \n\t" <comment type="block" pos:start="219:49" pos:end="219:62">/* JKLMNOPQ */</comment>\
+
+        "punpcklbw %%mm7, %%mm2           \n\t" <comment type="block" pos:start="221:49" pos:end="221:62">/* 0J0K0L0M */</comment>\
+
+        "punpckhbw %%mm7, %%mm5           \n\t" <comment type="block" pos:start="223:49" pos:end="223:62">/* 0N0O0P0Q */</comment>\
+
+        "paddw %%mm2, %%mm6               \n\t" <comment type="block" pos:start="225:49" pos:end="225:55">/* a */</comment>\
+
+        "pmullw "MANGLE(ff_pw_20)", %%mm6 \n\t" <comment type="block" pos:start="227:49" pos:end="227:57">/* 20a */</comment>\
+
+        "paddw %6, %%mm0                  \n\t"\
+
+        "paddw %%mm6, %%mm0               \n\t" <comment type="block" pos:start="231:49" pos:end="231:71">/* 20a - 6b + 3c - d */</comment>\
+
+        "psraw $5, %%mm0                  \n\t"\
+
+        <comment type="block" pos:start="235:9" pos:end="235:68">/* mm1=KLMN, mm2=JKLM, mm3=MNOP, mm4=LMNO, mm5=NOPQ mm7=0 */</comment>\
+
+        \
+
+        "paddw %%mm5, %%mm3               \n\t" <comment type="block" pos:start="239:49" pos:end="239:55">/* a */</comment>\
+
+        "pshufw $0xF9, %%mm5, %%mm6       \n\t" <comment type="block" pos:start="241:49" pos:end="241:62">/* 0O0P0Q0Q */</comment>\
+
+        "paddw %%mm4, %%mm6               \n\t" <comment type="block" pos:start="243:49" pos:end="243:55">/* b */</comment>\
+
+        "pshufw $0xBE, %%mm5, %%mm4       \n\t" <comment type="block" pos:start="245:49" pos:end="245:62">/* 0P0Q0Q0P */</comment>\
+
+        "pshufw $0x6F, %%mm5, %%mm5       \n\t" <comment type="block" pos:start="247:49" pos:end="247:62">/* 0Q0Q0P0O */</comment>\
+
+        "paddw %%mm1, %%mm4               \n\t" <comment type="block" pos:start="249:49" pos:end="249:55">/* c */</comment>\
+
+        "paddw %%mm2, %%mm5               \n\t" <comment type="block" pos:start="251:49" pos:end="251:55">/* d */</comment>\
+
+        "paddw %%mm6, %%mm6               \n\t" <comment type="block" pos:start="253:49" pos:end="253:56">/* 2b */</comment>\
+
+        "psubw %%mm6, %%mm4               \n\t" <comment type="block" pos:start="255:49" pos:end="255:60">/* c - 2b */</comment>\
+
+        "pmullw "MANGLE(ff_pw_20)", %%mm3 \n\t" <comment type="block" pos:start="257:49" pos:end="257:57">/* 20a */</comment>\
+
+        "pmullw "MANGLE(ff_pw_3)", %%mm4  \n\t" <comment type="block" pos:start="259:49" pos:end="259:61">/* 3c - 6b */</comment>\
+
+        "psubw %%mm5, %%mm3               \n\t" <comment type="block" pos:start="261:49" pos:end="261:66">/* -6b + 3c - d */</comment>\
+
+        "paddw %6, %%mm4                  \n\t"\
+
+        "paddw %%mm3, %%mm4               \n\t" <comment type="block" pos:start="265:49" pos:end="265:71">/* 20a - 6b + 3c - d */</comment>\
+
+        "psraw $5, %%mm4                  \n\t"\
+
+        "packuswb %%mm4, %%mm0            \n\t"\
+
+        OP_MMX2(%%mm0, 8(%1), %%mm4, q)\
+
+        \
+
+        "add %3, %0                       \n\t"\
+
+        "add %4, %1                       \n\t"\
+
+        "decl %2                          \n\t"\
+
+        " jnz 1b                          \n\t"\
+
+        : "+a"(src), "+c"(dst), "+g"(h)\
+
+        : "d"((long)srcStride), "S"((long)dstStride), <comment type="block" pos:start="285:55" pos:end="285:86">/*"m"(ff_pw_20), "m"(ff_pw_3),*/</comment> "m"(temp), "m"(ROUNDER)\
+
+        : "memory"\
+
+    );\
+
+}\
+
+\
+
+static void OPNAME ## mpeg4_qpel16_h_lowpass_3dnow(uint8_t *dst, uint8_t *src, int dstStride, int srcStride, int h){\
+
+    int i;\
+
+    int16_t temp[16];\
+
+    <comment type="block" pos:start="301:5" pos:end="301:49">/* quick HACK, XXX FIXME MUST be optimized */</comment>\
+
+    for(i=0; i&lt;h; i++)\
+
+    {\
+
+        temp[ 0]= (src[ 0]+src[ 1])*20 - (src[ 0]+src[ 2])*6 + (src[ 1]+src[ 3])*3 - (src[ 2]+src[ 4]);\
+
+        temp[ 1]= (src[ 1]+src[ 2])*20 - (src[ 0]+src[ 3])*6 + (src[ 0]+src[ 4])*3 - (src[ 1]+src[ 5]);\
+
+        temp[ 2]= (src[ 2]+src[ 3])*20 - (src[ 1]+src[ 4])*6 + (src[ 0]+src[ 5])*3 - (src[ 0]+src[ 6]);\
+
+        temp[ 3]= (src[ 3]+src[ 4])*20 - (src[ 2]+src[ 5])*6 + (src[ 1]+src[ 6])*3 - (src[ 0]+src[ 7]);\
+
+        temp[ 4]= (src[ 4]+src[ 5])*20 - (src[ 3]+src[ 6])*6 + (src[ 2]+src[ 7])*3 - (src[ 1]+src[ 8]);\
+
+        temp[ 5]= (src[ 5]+src[ 6])*20 - (src[ 4]+src[ 7])*6 + (src[ 3]+src[ 8])*3 - (src[ 2]+src[ 9]);\
+
+        temp[ 6]= (src[ 6]+src[ 7])*20 - (src[ 5]+src[ 8])*6 + (src[ 4]+src[ 9])*3 - (src[ 3]+src[10]);\
+
+        temp[ 7]= (src[ 7]+src[ 8])*20 - (src[ 6]+src[ 9])*6 + (src[ 5]+src[10])*3 - (src[ 4]+src[11]);\
+
+        temp[ 8]= (src[ 8]+src[ 9])*20 - (src[ 7]+src[10])*6 + (src[ 6]+src[11])*3 - (src[ 5]+src[12]);\
+
+        temp[ 9]= (src[ 9]+src[10])*20 - (src[ 8]+src[11])*6 + (src[ 7]+src[12])*3 - (src[ 6]+src[13]);\
+
+        temp[10]= (src[10]+src[11])*20 - (src[ 9]+src[12])*6 + (src[ 8]+src[13])*3 - (src[ 7]+src[14]);\
+
+        temp[11]= (src[11]+src[12])*20 - (src[10]+src[13])*6 + (src[ 9]+src[14])*3 - (src[ 8]+src[15]);\
+
+        temp[12]= (src[12]+src[13])*20 - (src[11]+src[14])*6 + (src[10]+src[15])*3 - (src[ 9]+src[16]);\
+
+        temp[13]= (src[13]+src[14])*20 - (src[12]+src[15])*6 + (src[11]+src[16])*3 - (src[10]+src[16]);\
+
+        temp[14]= (src[14]+src[15])*20 - (src[13]+src[16])*6 + (src[12]+src[16])*3 - (src[11]+src[15]);\
+
+        temp[15]= (src[15]+src[16])*20 - (src[14]+src[16])*6 + (src[13]+src[15])*3 - (src[12]+src[14]);\
+
+        asm volatile(\
+
+            "movq (%0), %%mm0               \n\t"\
+
+            "movq 8(%0), %%mm1              \n\t"\
+
+            "paddw %2, %%mm0                \n\t"\
+
+            "paddw %2, %%mm1                \n\t"\
+
+            "psraw $5, %%mm0                \n\t"\
+
+            "psraw $5, %%mm1                \n\t"\
+
+            "packuswb %%mm1, %%mm0          \n\t"\
+
+            OP_3DNOW(%%mm0, (%1), %%mm1, q)\
+
+            "movq 16(%0), %%mm0             \n\t"\
+
+            "movq 24(%0), %%mm1             \n\t"\
+
+            "paddw %2, %%mm0                \n\t"\
+
+            "paddw %2, %%mm1                \n\t"\
+
+            "psraw $5, %%mm0                \n\t"\
+
+            "psraw $5, %%mm1                \n\t"\
+
+            "packuswb %%mm1, %%mm0          \n\t"\
+
+            OP_3DNOW(%%mm0, 8(%1), %%mm1, q)\
+
+            :: "r"(temp), "r"(dst), "m"(ROUNDER)\
+
+            : "memory"\
+
+        );\
+
+        dst+=dstStride;\
+
+        src+=srcStride;\
+
+    }\
+
+}\
+
+\
+
+static void OPNAME ## mpeg4_qpel8_h_lowpass_mmx2(uint8_t *dst, uint8_t *src, int dstStride, int srcStride, int h){\
+
+    asm volatile(\
+
+        "pxor %%mm7, %%mm7                \n\t"\
+
+        "1:                               \n\t"\
+
+        "movq  (%0), %%mm0                \n\t" <comment type="block" pos:start="397:49" pos:end="397:62">/* ABCDEFGH */</comment>\
+
+        "movq %%mm0, %%mm1                \n\t" <comment type="block" pos:start="399:49" pos:end="399:62">/* ABCDEFGH */</comment>\
+
+        "movq %%mm0, %%mm2                \n\t" <comment type="block" pos:start="401:49" pos:end="401:62">/* ABCDEFGH */</comment>\
+
+        "punpcklbw %%mm7, %%mm0           \n\t" <comment type="block" pos:start="403:49" pos:end="403:62">/* 0A0B0C0D */</comment>\
+
+        "punpckhbw %%mm7, %%mm1           \n\t" <comment type="block" pos:start="405:49" pos:end="405:62">/* 0E0F0G0H */</comment>\
+
+        "pshufw $0x90, %%mm0, %%mm5       \n\t" <comment type="block" pos:start="407:49" pos:end="407:62">/* 0A0A0B0C */</comment>\
+
+        "pshufw $0x41, %%mm0, %%mm6       \n\t" <comment type="block" pos:start="409:49" pos:end="409:62">/* 0B0A0A0B */</comment>\
+
+        "movq %%mm2, %%mm3                \n\t" <comment type="block" pos:start="411:49" pos:end="411:62">/* ABCDEFGH */</comment>\
+
+        "movq %%mm2, %%mm4                \n\t" <comment type="block" pos:start="413:49" pos:end="413:62">/* ABCDEFGH */</comment>\
+
+        "psllq $8, %%mm2                  \n\t" <comment type="block" pos:start="415:49" pos:end="415:62">/* 0ABCDEFG */</comment>\
+
+        "psllq $16, %%mm3                 \n\t" <comment type="block" pos:start="417:49" pos:end="417:62">/* 00ABCDEF */</comment>\
+
+        "psllq $24, %%mm4                 \n\t" <comment type="block" pos:start="419:49" pos:end="419:62">/* 000ABCDE */</comment>\
+
+        "punpckhbw %%mm7, %%mm2           \n\t" <comment type="block" pos:start="421:49" pos:end="421:62">/* 0D0E0F0G */</comment>\
+
+        "punpckhbw %%mm7, %%mm3           \n\t" <comment type="block" pos:start="423:49" pos:end="423:62">/* 0C0D0E0F */</comment>\
+
+        "punpckhbw %%mm7, %%mm4           \n\t" <comment type="block" pos:start="425:49" pos:end="425:62">/* 0B0C0D0E */</comment>\
+
+        "paddw %%mm3, %%mm5               \n\t" <comment type="block" pos:start="427:49" pos:end="427:55">/* b */</comment>\
+
+        "paddw %%mm2, %%mm6               \n\t" <comment type="block" pos:start="429:49" pos:end="429:55">/* c */</comment>\
+
+        "paddw %%mm5, %%mm5               \n\t" <comment type="block" pos:start="431:49" pos:end="431:56">/* 2b */</comment>\
+
+        "psubw %%mm5, %%mm6               \n\t" <comment type="block" pos:start="433:49" pos:end="433:60">/* c - 2b */</comment>\
+
+        "pshufw $0x06, %%mm0, %%mm5       \n\t" <comment type="block" pos:start="435:49" pos:end="435:62">/* 0C0B0A0A */</comment>\
+
+        "pmullw "MANGLE(ff_pw_3)", %%mm6  \n\t" <comment type="block" pos:start="437:49" pos:end="437:61">/* 3c - 6b */</comment>\
+
+        "paddw %%mm4, %%mm0               \n\t" <comment type="block" pos:start="439:49" pos:end="439:55">/* a */</comment>\
+
+        "paddw %%mm1, %%mm5               \n\t" <comment type="block" pos:start="441:49" pos:end="441:55">/* d */</comment>\
+
+        "pmullw "MANGLE(ff_pw_20)", %%mm0 \n\t" <comment type="block" pos:start="443:49" pos:end="443:57">/* 20a */</comment>\
+
+        "psubw %%mm5, %%mm0               \n\t" <comment type="block" pos:start="445:49" pos:end="445:61">/* 20a - d */</comment>\
+
+        "paddw %5, %%mm6                  \n\t"\
+
+        "paddw %%mm6, %%mm0               \n\t" <comment type="block" pos:start="449:49" pos:end="449:71">/* 20a - 6b + 3c - d */</comment>\
+
+        "psraw $5, %%mm0                  \n\t"\
+
+        <comment type="block" pos:start="453:9" pos:end="453:59">/* mm1=EFGH, mm2=DEFG, mm3=CDEF, mm4=BCDE, mm7=0 */</comment>\
+
+        \
+
+        "movd 5(%0), %%mm5                \n\t" <comment type="block" pos:start="457:49" pos:end="457:58">/* FGHI */</comment>\
+
+        "punpcklbw %%mm7, %%mm5           \n\t" <comment type="block" pos:start="459:49" pos:end="459:62">/* 0F0G0H0I */</comment>\
+
+        "pshufw $0xF9, %%mm5, %%mm6       \n\t" <comment type="block" pos:start="461:49" pos:end="461:62">/* 0G0H0I0I */</comment>\
+
+        "paddw %%mm5, %%mm1               \n\t" <comment type="block" pos:start="463:49" pos:end="463:55">/* a */</comment>\
+
+        "paddw %%mm6, %%mm2               \n\t" <comment type="block" pos:start="465:49" pos:end="465:55">/* b */</comment>\
+
+        "pshufw $0xBE, %%mm5, %%mm6       \n\t" <comment type="block" pos:start="467:49" pos:end="467:62">/* 0H0I0I0H */</comment>\
+
+        "pshufw $0x6F, %%mm5, %%mm5       \n\t" <comment type="block" pos:start="469:49" pos:end="469:62">/* 0I0I0H0G */</comment>\
+
+        "paddw %%mm6, %%mm3               \n\t" <comment type="block" pos:start="471:49" pos:end="471:55">/* c */</comment>\
+
+        "paddw %%mm5, %%mm4               \n\t" <comment type="block" pos:start="473:49" pos:end="473:55">/* d */</comment>\
+
+        "paddw %%mm2, %%mm2               \n\t" <comment type="block" pos:start="475:49" pos:end="475:56">/* 2b */</comment>\
+
+        "psubw %%mm2, %%mm3               \n\t" <comment type="block" pos:start="477:49" pos:end="477:60">/* c - 2b */</comment>\
+
+        "pmullw "MANGLE(ff_pw_20)", %%mm1 \n\t" <comment type="block" pos:start="479:49" pos:end="479:57">/* 20a */</comment>\
+
+        "pmullw "MANGLE(ff_pw_3)", %%mm3  \n\t" <comment type="block" pos:start="481:49" pos:end="481:61">/* 3c - 6b */</comment>\
+
+        "psubw %%mm4, %%mm3               \n\t" <comment type="block" pos:start="483:49" pos:end="483:66">/* -6b + 3c - d */</comment>\
+
+        "paddw %5, %%mm1                  \n\t"\
+
+        "paddw %%mm1, %%mm3               \n\t" <comment type="block" pos:start="487:49" pos:end="487:71">/* 20a - 6b + 3c - d */</comment>\
+
+        "psraw $5, %%mm3                  \n\t"\
+
+        "packuswb %%mm3, %%mm0            \n\t"\
+
+        OP_MMX2(%%mm0, (%1), %%mm4, q)\
+
+        \
+
+        "add %3, %0                       \n\t"\
+
+        "add %4, %1                       \n\t"\
+
+        "decl %2                          \n\t"\
+
+        " jnz 1b                          \n\t"\
+
+        : "+a"(src), "+c"(dst), "+g"(h)\
+
+        : "S"((long)srcStride), "D"((long)dstStride), <comment type="block" pos:start="507:55" pos:end="507:86">/*"m"(ff_pw_20), "m"(ff_pw_3),*/</comment> "m"(ROUNDER)\
+
+        : "memory"\
+
+    );\
+
+}\
+
+\
+
+static void OPNAME ## mpeg4_qpel8_h_lowpass_3dnow(uint8_t *dst, uint8_t *src, int dstStride, int srcStride, int h){\
+
+    int i;\
+
+    int16_t temp[8];\
+
+    <comment type="block" pos:start="523:5" pos:end="523:49">/* quick HACK, XXX FIXME MUST be optimized */</comment>\
+
+    for(i=0; i&lt;h; i++)\
+
+    {\
+
+        temp[ 0]= (src[ 0]+src[ 1])*20 - (src[ 0]+src[ 2])*6 + (src[ 1]+src[ 3])*3 - (src[ 2]+src[ 4]);\
+
+        temp[ 1]= (src[ 1]+src[ 2])*20 - (src[ 0]+src[ 3])*6 + (src[ 0]+src[ 4])*3 - (src[ 1]+src[ 5]);\
+
+        temp[ 2]= (src[ 2]+src[ 3])*20 - (src[ 1]+src[ 4])*6 + (src[ 0]+src[ 5])*3 - (src[ 0]+src[ 6]);\
+
+        temp[ 3]= (src[ 3]+src[ 4])*20 - (src[ 2]+src[ 5])*6 + (src[ 1]+src[ 6])*3 - (src[ 0]+src[ 7]);\
+
+        temp[ 4]= (src[ 4]+src[ 5])*20 - (src[ 3]+src[ 6])*6 + (src[ 2]+src[ 7])*3 - (src[ 1]+src[ 8]);\
+
+        temp[ 5]= (src[ 5]+src[ 6])*20 - (src[ 4]+src[ 7])*6 + (src[ 3]+src[ 8])*3 - (src[ 2]+src[ 8]);\
+
+        temp[ 6]= (src[ 6]+src[ 7])*20 - (src[ 5]+src[ 8])*6 + (src[ 4]+src[ 8])*3 - (src[ 3]+src[ 7]);\
+
+        temp[ 7]= (src[ 7]+src[ 8])*20 - (src[ 6]+src[ 8])*6 + (src[ 5]+src[ 7])*3 - (src[ 4]+src[ 6]);\
+
+        asm volatile(\
+
+            "movq (%0), %%mm0           \n\t"\
+
+            "movq 8(%0), %%mm1          \n\t"\
+
+            "paddw %2, %%mm0            \n\t"\
+
+            "paddw %2, %%mm1            \n\t"\
+
+            "psraw $5, %%mm0            \n\t"\
+
+            "psraw $5, %%mm1            \n\t"\
+
+            "packuswb %%mm1, %%mm0      \n\t"\
+
+            OP_3DNOW(%%mm0, (%1), %%mm1, q)\
+
+            :: "r"(temp), "r"(dst), "m"(ROUNDER)\
+
+            :"memory"\
+
+        );\
+
+        dst+=dstStride;\
+
+        src+=srcStride;\
+
+    }\
+
+}</cpp:value></cpp:define>
+
+
+
+<cpp:define pos:start="579:1" pos:end="1301:1">#<cpp:directive pos:start="579:2" pos:end="579:7">define</cpp:directive> <cpp:macro pos:start="579:9" pos:end="579:46"><name pos:start="579:9" pos:end="579:15">QPEL_OP</name><parameter_list pos:start="579:16" pos:end="579:46">(<parameter pos:start="579:17" pos:end="579:22"><type pos:start="579:17" pos:end="579:22"><name pos:start="579:17" pos:end="579:22">OPNAME</name></type></parameter>, <parameter pos:start="579:25" pos:end="579:31"><type pos:start="579:25" pos:end="579:31"><name pos:start="579:25" pos:end="579:31">ROUNDER</name></type></parameter>, <parameter pos:start="579:34" pos:end="579:36"><type pos:start="579:34" pos:end="579:36"><name pos:start="579:34" pos:end="579:36">RND</name></type></parameter>, <parameter pos:start="579:39" pos:end="579:40"><type pos:start="579:39" pos:end="579:40"><name pos:start="579:39" pos:end="579:40">OP</name></type></parameter>, <parameter pos:start="579:43" pos:end="579:45"><type pos:start="579:43" pos:end="579:45"><name pos:start="579:43" pos:end="579:45">MMX</name></type></parameter>)</parameter_list></cpp:macro>\
+
+\
+
+<cpp:value pos:start="583:1" pos:end="1301:1">static void OPNAME ## mpeg4_qpel16_v_lowpass_ ## MMX(uint8_t *dst, uint8_t *src, int dstStride, int srcStride){\
+
+    uint64_t temp[17*4];\
+
+    uint64_t *temp_ptr= temp;\
+
+    int count= 17;\
+
+\
+
+    <comment type="block" pos:start="593:5" pos:end="593:21">/*FIXME unroll */</comment>\
+
+    asm volatile(\
+
+        "pxor %%mm7, %%mm7              \n\t"\
+
+        "1:                             \n\t"\
+
+        "movq (%0), %%mm0               \n\t"\
+
+        "movq (%0), %%mm1               \n\t"\
+
+        "movq 8(%0), %%mm2              \n\t"\
+
+        "movq 8(%0), %%mm3              \n\t"\
+
+        "punpcklbw %%mm7, %%mm0         \n\t"\
+
+        "punpckhbw %%mm7, %%mm1         \n\t"\
+
+        "punpcklbw %%mm7, %%mm2         \n\t"\
+
+        "punpckhbw %%mm7, %%mm3         \n\t"\
+
+        "movq %%mm0, (%1)               \n\t"\
+
+        "movq %%mm1, 17*8(%1)           \n\t"\
+
+        "movq %%mm2, 2*17*8(%1)         \n\t"\
+
+        "movq %%mm3, 3*17*8(%1)         \n\t"\
+
+        "add $8, %1                     \n\t"\
+
+        "add %3, %0                     \n\t"\
+
+        "decl %2                        \n\t"\
+
+        " jnz 1b                        \n\t"\
+
+        : "+r" (src), "+r" (temp_ptr), "+r"(count)\
+
+        : "r" ((long)srcStride)\
+
+        : "memory"\
+
+    );\
+
+    \
+
+    temp_ptr= temp;\
+
+    count=4;\
+
+    \
+
+<comment type="block" pos:start="649:1" pos:end="649:28">/*FIXME reorder for speed */</comment>\
+
+    asm volatile(\
+
+        <comment type="block" pos:start="653:9" pos:end="653:49">/*"pxor %%mm7, %%mm7              \n\t"*/</comment>\
+
+        "1:                             \n\t"\
+
+        "movq (%0), %%mm0               \n\t"\
+
+        "movq 8(%0), %%mm1              \n\t"\
+
+        "movq 16(%0), %%mm2             \n\t"\
+
+        "movq 24(%0), %%mm3             \n\t"\
+
+        QPEL_V_LOW(%%mm0, %%mm1, %%mm2, %%mm3, %5, %6, %5, 16(%0),  8(%0),   (%0), 32(%0), (%1), OP)\
+
+        QPEL_V_LOW(%%mm1, %%mm2, %%mm3, %%mm0, %5, %6, %5,  8(%0),   (%0),   (%0), 40(%0), (%1, %3), OP)\
+
+        "add %4, %1                     \n\t"\
+
+        QPEL_V_LOW(%%mm2, %%mm3, %%mm0, %%mm1, %5, %6, %5,   (%0),   (%0),  8(%0), 48(%0), (%1), OP)\
+
+        \
+
+        QPEL_V_LOW(%%mm3, %%mm0, %%mm1, %%mm2, %5, %6, %5,   (%0),  8(%0), 16(%0), 56(%0), (%1, %3), OP)\
+
+        "add %4, %1                     \n\t"\
+
+        QPEL_V_LOW(%%mm0, %%mm1, %%mm2, %%mm3, %5, %6, %5,  8(%0), 16(%0), 24(%0), 64(%0), (%1), OP)\
+
+        QPEL_V_LOW(%%mm1, %%mm2, %%mm3, %%mm0, %5, %6, %5, 16(%0), 24(%0), 32(%0), 72(%0), (%1, %3), OP)\
+
+        "add %4, %1                     \n\t"\
+
+        QPEL_V_LOW(%%mm2, %%mm3, %%mm0, %%mm1, %5, %6, %5, 24(%0), 32(%0), 40(%0), 80(%0), (%1), OP)\
+
+        QPEL_V_LOW(%%mm3, %%mm0, %%mm1, %%mm2, %5, %6, %5, 32(%0), 40(%0), 48(%0), 88(%0), (%1, %3), OP)\
+
+        "add %4, %1                     \n\t"\
+
+        QPEL_V_LOW(%%mm0, %%mm1, %%mm2, %%mm3, %5, %6, %5, 40(%0), 48(%0), 56(%0), 96(%0), (%1), OP)\
+
+        QPEL_V_LOW(%%mm1, %%mm2, %%mm3, %%mm0, %5, %6, %5, 48(%0), 56(%0), 64(%0),104(%0), (%1, %3), OP)\
+
+        "add %4, %1                     \n\t"\
+
+        QPEL_V_LOW(%%mm2, %%mm3, %%mm0, %%mm1, %5, %6, %5, 56(%0), 64(%0), 72(%0),112(%0), (%1), OP)\
+
+        QPEL_V_LOW(%%mm3, %%mm0, %%mm1, %%mm2, %5, %6, %5, 64(%0), 72(%0), 80(%0),120(%0), (%1, %3), OP)\
+
+        "add %4, %1                     \n\t"\
+
+        QPEL_V_LOW(%%mm0, %%mm1, %%mm2, %%mm3, %5, %6, %5, 72(%0), 80(%0), 88(%0),128(%0), (%1), OP)\
+
+        \
+
+        QPEL_V_LOW(%%mm1, %%mm2, %%mm3, %%mm0, %5, %6, %5, 80(%0), 88(%0), 96(%0),128(%0), (%1, %3), OP)\
+
+        "add %4, %1                     \n\t"  \
+
+        QPEL_V_LOW(%%mm2, %%mm3, %%mm0, %%mm1, %5, %6, %5, 88(%0), 96(%0),104(%0),120(%0), (%1), OP)\
+
+        QPEL_V_LOW(%%mm3, %%mm0, %%mm1, %%mm2, %5, %6, %5, 96(%0),104(%0),112(%0),112(%0), (%1, %3), OP)\
+
+        \
+
+        "add $136, %0                   \n\t"\
+
+        "add %6, %1                     \n\t"\
+
+        "decl %2                        \n\t"\
+
+        " jnz 1b                        \n\t"\
+
+        \
+
+        : "+r"(temp_ptr), "+r"(dst), "+g"(count)\
+
+        : "r"((long)dstStride), "r"(2*(long)dstStride), <comment type="block" pos:start="729:57" pos:end="729:88">/*"m"(ff_pw_20), "m"(ff_pw_3),*/</comment> "m"(ROUNDER), "g"(4-14*(long)dstStride)\
+
+        :"memory"\
+
+    );\
+
+}\
+
+\
+
+static void OPNAME ## mpeg4_qpel8_v_lowpass_ ## MMX(uint8_t *dst, uint8_t *src, int dstStride, int srcStride){\
+
+    uint64_t temp[9*2];\
+
+    uint64_t *temp_ptr= temp;\
+
+    int count= 9;\
+
+\
+
+    <comment type="block" pos:start="749:5" pos:end="749:21">/*FIXME unroll */</comment>\
+
+    asm volatile(\
+
+        "pxor %%mm7, %%mm7              \n\t"\
+
+        "1:                             \n\t"\
+
+        "movq (%0), %%mm0               \n\t"\
+
+        "movq (%0), %%mm1               \n\t"\
+
+        "punpcklbw %%mm7, %%mm0         \n\t"\
+
+        "punpckhbw %%mm7, %%mm1         \n\t"\
+
+        "movq %%mm0, (%1)               \n\t"\
+
+        "movq %%mm1, 9*8(%1)            \n\t"\
+
+        "add $8, %1                     \n\t"\
+
+        "add %3, %0                     \n\t"\
+
+        "decl %2                        \n\t"\
+
+        " jnz 1b                        \n\t"\
+
+        : "+r" (src), "+r" (temp_ptr), "+r"(count)\
+
+        : "r" ((long)srcStride)\
+
+        : "memory"\
+
+    );\
+
+    \
+
+    temp_ptr= temp;\
+
+    count=2;\
+
+    \
+
+<comment type="block" pos:start="793:1" pos:end="793:28">/*FIXME reorder for speed */</comment>\
+
+    asm volatile(\
+
+        <comment type="block" pos:start="797:9" pos:end="797:49">/*"pxor %%mm7, %%mm7              \n\t"*/</comment>\
+
+        "1:                             \n\t"\
+
+        "movq (%0), %%mm0               \n\t"\
+
+        "movq 8(%0), %%mm1              \n\t"\
+
+        "movq 16(%0), %%mm2             \n\t"\
+
+        "movq 24(%0), %%mm3             \n\t"\
+
+        QPEL_V_LOW(%%mm0, %%mm1, %%mm2, %%mm3, %5, %6, %5, 16(%0),  8(%0),   (%0), 32(%0), (%1), OP)\
+
+        QPEL_V_LOW(%%mm1, %%mm2, %%mm3, %%mm0, %5, %6, %5,  8(%0),   (%0),   (%0), 40(%0), (%1, %3), OP)\
+
+        "add %4, %1                     \n\t"\
+
+        QPEL_V_LOW(%%mm2, %%mm3, %%mm0, %%mm1, %5, %6, %5,   (%0),   (%0),  8(%0), 48(%0), (%1), OP)\
+
+        \
+
+        QPEL_V_LOW(%%mm3, %%mm0, %%mm1, %%mm2, %5, %6, %5,   (%0),  8(%0), 16(%0), 56(%0), (%1, %3), OP)\
+
+        "add %4, %1                     \n\t"\
+
+        QPEL_V_LOW(%%mm0, %%mm1, %%mm2, %%mm3, %5, %6, %5,  8(%0), 16(%0), 24(%0), 64(%0), (%1), OP)\
+
+        \
+
+        QPEL_V_LOW(%%mm1, %%mm2, %%mm3, %%mm0, %5, %6, %5, 16(%0), 24(%0), 32(%0), 64(%0), (%1, %3), OP)\
+
+        "add %4, %1                     \n\t"\
+
+        QPEL_V_LOW(%%mm2, %%mm3, %%mm0, %%mm1, %5, %6, %5, 24(%0), 32(%0), 40(%0), 56(%0), (%1), OP)\
+
+        QPEL_V_LOW(%%mm3, %%mm0, %%mm1, %%mm2, %5, %6, %5, 32(%0), 40(%0), 48(%0), 48(%0), (%1, %3), OP)\
+
+                \
+
+        "add $72, %0                    \n\t"\
+
+        "add %6, %1                     \n\t"\
+
+        "decl %2                        \n\t"\
+
+        " jnz 1b                        \n\t"\
+
+         \
+
+        : "+r"(temp_ptr), "+r"(dst), "+g"(count)\
+
+        : "r"((long)dstStride), "r"(2*(long)dstStride), <comment type="block" pos:start="849:57" pos:end="849:88">/*"m"(ff_pw_20), "m"(ff_pw_3),*/</comment> "m"(ROUNDER), "g"(4-6*(long)dstStride)\
+
+        : "memory"\
+
+   );\
+
+}\
+
+\
+
+static void OPNAME ## qpel8_mc00_ ## MMX (uint8_t *dst, uint8_t *src, int stride){\
+
+    OPNAME ## pixels8_ ## MMX(dst, src, stride, 8);\
+
+}\
+
+\
+
+static void OPNAME ## qpel8_mc10_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t temp[8];\
+
+    uint8_t * const half= (uint8_t*)temp;\
+
+    put ## RND ## mpeg4_qpel8_h_lowpass_ ## MMX(half, src, 8, stride, 8);\
+
+    OPNAME ## pixels8_l2_ ## MMX(dst, src, half, stride, stride, 8);\
+
+}\
+
+\
+
+static void OPNAME ## qpel8_mc20_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    OPNAME ## mpeg4_qpel8_h_lowpass_ ## MMX(dst, src, stride, stride, 8);\
+
+}\
+
+\
+
+static void OPNAME ## qpel8_mc30_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t temp[8];\
+
+    uint8_t * const half= (uint8_t*)temp;\
+
+    put ## RND ## mpeg4_qpel8_h_lowpass_ ## MMX(half, src, 8, stride, 8);\
+
+    OPNAME ## pixels8_l2_ ## MMX(dst, src+1, half, stride, stride, 8);\
+
+}\
+
+\
+
+static void OPNAME ## qpel8_mc01_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t temp[8];\
+
+    uint8_t * const half= (uint8_t*)temp;\
+
+    put ## RND ## mpeg4_qpel8_v_lowpass_ ## MMX(half, src, 8, stride);\
+
+    OPNAME ## pixels8_l2_ ## MMX(dst, src, half, stride, stride, 8);\
+
+}\
+
+\
+
+static void OPNAME ## qpel8_mc02_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    OPNAME ## mpeg4_qpel8_v_lowpass_ ## MMX(dst, src, stride, stride);\
+
+}\
+
+\
+
+static void OPNAME ## qpel8_mc03_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t temp[8];\
+
+    uint8_t * const half= (uint8_t*)temp;\
+
+    put ## RND ## mpeg4_qpel8_v_lowpass_ ## MMX(half, src, 8, stride);\
+
+    OPNAME ## pixels8_l2_ ## MMX(dst, src+stride, half, stride, stride, 8);\
+
+}\
+
+static void OPNAME ## qpel8_mc11_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t half[8 + 9];\
+
+    uint8_t * const halfH= ((uint8_t*)half) + 64;\
+
+    uint8_t * const halfHV= ((uint8_t*)half);\
+
+    put ## RND ## mpeg4_qpel8_h_lowpass_ ## MMX(halfH, src, 8, stride, 9);\
+
+    put ## RND ## pixels8_l2_ ## MMX(halfH, src, halfH, 8, stride, 9);\
+
+    put ## RND ## mpeg4_qpel8_v_lowpass_ ## MMX(halfHV, halfH, 8, 8);\
+
+    OPNAME ## pixels8_l2_ ## MMX(dst, halfH, halfHV, stride, 8, 8);\
+
+}\
+
+static void OPNAME ## qpel8_mc31_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t half[8 + 9];\
+
+    uint8_t * const halfH= ((uint8_t*)half) + 64;\
+
+    uint8_t * const halfHV= ((uint8_t*)half);\
+
+    put ## RND ## mpeg4_qpel8_h_lowpass_ ## MMX(halfH, src, 8, stride, 9);\
+
+    put ## RND ## pixels8_l2_ ## MMX(halfH, src+1, halfH, 8, stride, 9);\
+
+    put ## RND ## mpeg4_qpel8_v_lowpass_ ## MMX(halfHV, halfH, 8, 8);\
+
+    OPNAME ## pixels8_l2_ ## MMX(dst, halfH, halfHV, stride, 8, 8);\
+
+}\
+
+static void OPNAME ## qpel8_mc13_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t half[8 + 9];\
+
+    uint8_t * const halfH= ((uint8_t*)half) + 64;\
+
+    uint8_t * const halfHV= ((uint8_t*)half);\
+
+    put ## RND ## mpeg4_qpel8_h_lowpass_ ## MMX(halfH, src, 8, stride, 9);\
+
+    put ## RND ## pixels8_l2_ ## MMX(halfH, src, halfH, 8, stride, 9);\
+
+    put ## RND ## mpeg4_qpel8_v_lowpass_ ## MMX(halfHV, halfH, 8, 8);\
+
+    OPNAME ## pixels8_l2_ ## MMX(dst, halfH+8, halfHV, stride, 8, 8);\
+
+}\
+
+static void OPNAME ## qpel8_mc33_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t half[8 + 9];\
+
+    uint8_t * const halfH= ((uint8_t*)half) + 64;\
+
+    uint8_t * const halfHV= ((uint8_t*)half);\
+
+    put ## RND ## mpeg4_qpel8_h_lowpass_ ## MMX(halfH, src, 8, stride, 9);\
+
+    put ## RND ## pixels8_l2_ ## MMX(halfH, src+1, halfH, 8, stride, 9);\
+
+    put ## RND ## mpeg4_qpel8_v_lowpass_ ## MMX(halfHV, halfH, 8, 8);\
+
+    OPNAME ## pixels8_l2_ ## MMX(dst, halfH+8, halfHV, stride, 8, 8);\
+
+}\
+
+static void OPNAME ## qpel8_mc21_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t half[8 + 9];\
+
+    uint8_t * const halfH= ((uint8_t*)half) + 64;\
+
+    uint8_t * const halfHV= ((uint8_t*)half);\
+
+    put ## RND ## mpeg4_qpel8_h_lowpass_ ## MMX(halfH, src, 8, stride, 9);\
+
+    put ## RND ## mpeg4_qpel8_v_lowpass_ ## MMX(halfHV, halfH, 8, 8);\
+
+    OPNAME ## pixels8_l2_ ## MMX(dst, halfH, halfHV, stride, 8, 8);\
+
+}\
+
+static void OPNAME ## qpel8_mc23_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t half[8 + 9];\
+
+    uint8_t * const halfH= ((uint8_t*)half) + 64;\
+
+    uint8_t * const halfHV= ((uint8_t*)half);\
+
+    put ## RND ## mpeg4_qpel8_h_lowpass_ ## MMX(halfH, src, 8, stride, 9);\
+
+    put ## RND ## mpeg4_qpel8_v_lowpass_ ## MMX(halfHV, halfH, 8, 8);\
+
+    OPNAME ## pixels8_l2_ ## MMX(dst, halfH+8, halfHV, stride, 8, 8);\
+
+}\
+
+static void OPNAME ## qpel8_mc12_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t half[8 + 9];\
+
+    uint8_t * const halfH= ((uint8_t*)half);\
+
+    put ## RND ## mpeg4_qpel8_h_lowpass_ ## MMX(halfH, src, 8, stride, 9);\
+
+    put ## RND ## pixels8_l2_ ## MMX(halfH, src, halfH, 8, stride, 9);\
+
+    OPNAME ## mpeg4_qpel8_v_lowpass_ ## MMX(dst, halfH, stride, 8);\
+
+}\
+
+static void OPNAME ## qpel8_mc32_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t half[8 + 9];\
+
+    uint8_t * const halfH= ((uint8_t*)half);\
+
+    put ## RND ## mpeg4_qpel8_h_lowpass_ ## MMX(halfH, src, 8, stride, 9);\
+
+    put ## RND ## pixels8_l2_ ## MMX(halfH, src+1, halfH, 8, stride, 9);\
+
+    OPNAME ## mpeg4_qpel8_v_lowpass_ ## MMX(dst, halfH, stride, 8);\
+
+}\
+
+static void OPNAME ## qpel8_mc22_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t half[9];\
+
+    uint8_t * const halfH= ((uint8_t*)half);\
+
+    put ## RND ## mpeg4_qpel8_h_lowpass_ ## MMX(halfH, src, 8, stride, 9);\
+
+    OPNAME ## mpeg4_qpel8_v_lowpass_ ## MMX(dst, halfH, stride, 8);\
+
+}\
+
+static void OPNAME ## qpel16_mc00_ ## MMX (uint8_t *dst, uint8_t *src, int stride){\
+
+    OPNAME ## pixels16_ ## MMX(dst, src, stride, 16);\
+
+}\
+
+\
+
+static void OPNAME ## qpel16_mc10_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t temp[32];\
+
+    uint8_t * const half= (uint8_t*)temp;\
+
+    put ## RND ## mpeg4_qpel16_h_lowpass_ ## MMX(half, src, 16, stride, 16);\
+
+    OPNAME ## pixels16_l2_ ## MMX(dst, src, half, stride, stride, 16);\
+
+}\
+
+\
+
+static void OPNAME ## qpel16_mc20_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    OPNAME ## mpeg4_qpel16_h_lowpass_ ## MMX(dst, src, stride, stride, 16);\
+
+}\
+
+\
+
+static void OPNAME ## qpel16_mc30_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t temp[32];\
+
+    uint8_t * const half= (uint8_t*)temp;\
+
+    put ## RND ## mpeg4_qpel16_h_lowpass_ ## MMX(half, src, 16, stride, 16);\
+
+    OPNAME ## pixels16_l2_ ## MMX(dst, src+1, half, stride, stride, 16);\
+
+}\
+
+\
+
+static void OPNAME ## qpel16_mc01_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t temp[32];\
+
+    uint8_t * const half= (uint8_t*)temp;\
+
+    put ## RND ## mpeg4_qpel16_v_lowpass_ ## MMX(half, src, 16, stride);\
+
+    OPNAME ## pixels16_l2_ ## MMX(dst, src, half, stride, stride, 16);\
+
+}\
+
+\
+
+static void OPNAME ## qpel16_mc02_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    OPNAME ## mpeg4_qpel16_v_lowpass_ ## MMX(dst, src, stride, stride);\
+
+}\
+
+\
+
+static void OPNAME ## qpel16_mc03_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t temp[32];\
+
+    uint8_t * const half= (uint8_t*)temp;\
+
+    put ## RND ## mpeg4_qpel16_v_lowpass_ ## MMX(half, src, 16, stride);\
+
+    OPNAME ## pixels16_l2_ ## MMX(dst, src+stride, half, stride, stride, 16);\
+
+}\
+
+static void OPNAME ## qpel16_mc11_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t half[16*2 + 17*2];\
+
+    uint8_t * const halfH= ((uint8_t*)half) + 256;\
+
+    uint8_t * const halfHV= ((uint8_t*)half);\
+
+    put ## RND ## mpeg4_qpel16_h_lowpass_ ## MMX(halfH, src, 16, stride, 17);\
+
+    put ## RND ## pixels16_l2_ ## MMX(halfH, src, halfH, 16, stride, 17);\
+
+    put ## RND ## mpeg4_qpel16_v_lowpass_ ## MMX(halfHV, halfH, 16, 16);\
+
+    OPNAME ## pixels16_l2_ ## MMX(dst, halfH, halfHV, stride, 16, 16);\
+
+}\
+
+static void OPNAME ## qpel16_mc31_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t half[16*2 + 17*2];\
+
+    uint8_t * const halfH= ((uint8_t*)half) + 256;\
+
+    uint8_t * const halfHV= ((uint8_t*)half);\
+
+    put ## RND ## mpeg4_qpel16_h_lowpass_ ## MMX(halfH, src, 16, stride, 17);\
+
+    put ## RND ## pixels16_l2_ ## MMX(halfH, src+1, halfH, 16, stride, 17);\
+
+    put ## RND ## mpeg4_qpel16_v_lowpass_ ## MMX(halfHV, halfH, 16, 16);\
+
+    OPNAME ## pixels16_l2_ ## MMX(dst, halfH, halfHV, stride, 16, 16);\
+
+}\
+
+static void OPNAME ## qpel16_mc13_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t half[16*2 + 17*2];\
+
+    uint8_t * const halfH= ((uint8_t*)half) + 256;\
+
+    uint8_t * const halfHV= ((uint8_t*)half);\
+
+    put ## RND ## mpeg4_qpel16_h_lowpass_ ## MMX(halfH, src, 16, stride, 17);\
+
+    put ## RND ## pixels16_l2_ ## MMX(halfH, src, halfH, 16, stride, 17);\
+
+    put ## RND ## mpeg4_qpel16_v_lowpass_ ## MMX(halfHV, halfH, 16, 16);\
+
+    OPNAME ## pixels16_l2_ ## MMX(dst, halfH+16, halfHV, stride, 16, 16);\
+
+}\
+
+static void OPNAME ## qpel16_mc33_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t half[16*2 + 17*2];\
+
+    uint8_t * const halfH= ((uint8_t*)half) + 256;\
+
+    uint8_t * const halfHV= ((uint8_t*)half);\
+
+    put ## RND ## mpeg4_qpel16_h_lowpass_ ## MMX(halfH, src, 16, stride, 17);\
+
+    put ## RND ## pixels16_l2_ ## MMX(halfH, src+1, halfH, 16, stride, 17);\
+
+    put ## RND ## mpeg4_qpel16_v_lowpass_ ## MMX(halfHV, halfH, 16, 16);\
+
+    OPNAME ## pixels16_l2_ ## MMX(dst, halfH+16, halfHV, stride, 16, 16);\
+
+}\
+
+static void OPNAME ## qpel16_mc21_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t half[16*2 + 17*2];\
+
+    uint8_t * const halfH= ((uint8_t*)half) + 256;\
+
+    uint8_t * const halfHV= ((uint8_t*)half);\
+
+    put ## RND ## mpeg4_qpel16_h_lowpass_ ## MMX(halfH, src, 16, stride, 17);\
+
+    put ## RND ## mpeg4_qpel16_v_lowpass_ ## MMX(halfHV, halfH, 16, 16);\
+
+    OPNAME ## pixels16_l2_ ## MMX(dst, halfH, halfHV, stride, 16, 16);\
+
+}\
+
+static void OPNAME ## qpel16_mc23_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t half[16*2 + 17*2];\
+
+    uint8_t * const halfH= ((uint8_t*)half) + 256;\
+
+    uint8_t * const halfHV= ((uint8_t*)half);\
+
+    put ## RND ## mpeg4_qpel16_h_lowpass_ ## MMX(halfH, src, 16, stride, 17);\
+
+    put ## RND ## mpeg4_qpel16_v_lowpass_ ## MMX(halfHV, halfH, 16, 16);\
+
+    OPNAME ## pixels16_l2_ ## MMX(dst, halfH+16, halfHV, stride, 16, 16);\
+
+}\
+
+static void OPNAME ## qpel16_mc12_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t half[17*2];\
+
+    uint8_t * const halfH= ((uint8_t*)half);\
+
+    put ## RND ## mpeg4_qpel16_h_lowpass_ ## MMX(halfH, src, 16, stride, 17);\
+
+    put ## RND ## pixels16_l2_ ## MMX(halfH, src, halfH, 16, stride, 17);\
+
+    OPNAME ## mpeg4_qpel16_v_lowpass_ ## MMX(dst, halfH, stride, 16);\
+
+}\
+
+static void OPNAME ## qpel16_mc32_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t half[17*2];\
+
+    uint8_t * const halfH= ((uint8_t*)half);\
+
+    put ## RND ## mpeg4_qpel16_h_lowpass_ ## MMX(halfH, src, 16, stride, 17);\
+
+    put ## RND ## pixels16_l2_ ## MMX(halfH, src+1, halfH, 16, stride, 17);\
+
+    OPNAME ## mpeg4_qpel16_v_lowpass_ ## MMX(dst, halfH, stride, 16);\
+
+}\
+
+static void OPNAME ## qpel16_mc22_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    uint64_t half[17*2];\
+
+    uint8_t * const halfH= ((uint8_t*)half);\
+
+    put ## RND ## mpeg4_qpel16_h_lowpass_ ## MMX(halfH, src, 16, stride, 17);\
+
+    OPNAME ## mpeg4_qpel16_v_lowpass_ ## MMX(dst, halfH, stride, 16);\
+
+}</cpp:value></cpp:define>
+
+
+
+<cpp:define pos:start="1305:1" pos:end="1305:72">#<cpp:directive pos:start="1305:2" pos:end="1305:7">define</cpp:directive> <cpp:macro pos:start="1305:9" pos:end="1305:30"><name pos:start="1305:9" pos:end="1305:14">PUT_OP</name><parameter_list pos:start="1305:15" pos:end="1305:30">(<parameter pos:start="1305:16" pos:end="1305:16"><type pos:start="1305:16" pos:end="1305:16"><name pos:start="1305:16" pos:end="1305:16">a</name></type></parameter>,<parameter pos:start="1305:18" pos:end="1305:18"><type pos:start="1305:18" pos:end="1305:18"><name pos:start="1305:18" pos:end="1305:18">b</name></type></parameter>,<parameter pos:start="1305:20" pos:end="1305:23"><type pos:start="1305:20" pos:end="1305:23"><name pos:start="1305:20" pos:end="1305:23">temp</name></type></parameter>, <parameter pos:start="1305:26" pos:end="1305:29"><type pos:start="1305:26" pos:end="1305:29"><name pos:start="1305:26" pos:end="1305:29">size</name></type></parameter>)</parameter_list></cpp:macro> <cpp:value pos:start="1305:32" pos:end="1305:72">"mov" #size " " #a ", " #b "        \n\t"</cpp:value></cpp:define>
+
+<cpp:define pos:start="1307:1" pos:end="1313:39">#<cpp:directive pos:start="1307:2" pos:end="1307:7">define</cpp:directive> <cpp:macro pos:start="1307:9" pos:end="1307:36"><name pos:start="1307:9" pos:end="1307:20">AVG_3DNOW_OP</name><parameter_list pos:start="1307:21" pos:end="1307:36">(<parameter pos:start="1307:22" pos:end="1307:22"><type pos:start="1307:22" pos:end="1307:22"><name pos:start="1307:22" pos:end="1307:22">a</name></type></parameter>,<parameter pos:start="1307:24" pos:end="1307:24"><type pos:start="1307:24" pos:end="1307:24"><name pos:start="1307:24" pos:end="1307:24">b</name></type></parameter>,<parameter pos:start="1307:26" pos:end="1307:29"><type pos:start="1307:26" pos:end="1307:29"><name pos:start="1307:26" pos:end="1307:29">temp</name></type></parameter>, <parameter pos:start="1307:32" pos:end="1307:35"><type pos:start="1307:32" pos:end="1307:35"><name pos:start="1307:32" pos:end="1307:35">size</name></type></parameter>)</parameter_list></cpp:macro> \
+
+<cpp:value pos:start="1309:1" pos:end="1313:39">"mov" #size " " #b ", " #temp "   \n\t"\
+
+"pavgusb " #temp ", " #a "        \n\t"\
+
+"mov" #size " " #a ", " #b "      \n\t"</cpp:value></cpp:define>
+
+<cpp:define pos:start="1315:1" pos:end="1321:39">#<cpp:directive pos:start="1315:2" pos:end="1315:7">define</cpp:directive> <cpp:macro pos:start="1315:9" pos:end="1315:35"><name pos:start="1315:9" pos:end="1315:19">AVG_MMX2_OP</name><parameter_list pos:start="1315:20" pos:end="1315:35">(<parameter pos:start="1315:21" pos:end="1315:21"><type pos:start="1315:21" pos:end="1315:21"><name pos:start="1315:21" pos:end="1315:21">a</name></type></parameter>,<parameter pos:start="1315:23" pos:end="1315:23"><type pos:start="1315:23" pos:end="1315:23"><name pos:start="1315:23" pos:end="1315:23">b</name></type></parameter>,<parameter pos:start="1315:25" pos:end="1315:28"><type pos:start="1315:25" pos:end="1315:28"><name pos:start="1315:25" pos:end="1315:28">temp</name></type></parameter>, <parameter pos:start="1315:31" pos:end="1315:34"><type pos:start="1315:31" pos:end="1315:34"><name pos:start="1315:31" pos:end="1315:34">size</name></type></parameter>)</parameter_list></cpp:macro> \
+
+<cpp:value pos:start="1317:1" pos:end="1321:39">"mov" #size " " #b ", " #temp "   \n\t"\
+
+"pavgb " #temp ", " #a "          \n\t"\
+
+"mov" #size " " #a ", " #b "      \n\t"</cpp:value></cpp:define>
+
+
+
+<macro pos:start="1325:1" pos:end="1325:58"><name pos:start="1325:1" pos:end="1325:9">QPEL_BASE</name><argument_list pos:start="1325:10" pos:end="1325:58">(<argument pos:start="1325:11" pos:end="1325:14">put_</argument>       , <argument pos:start="1325:24" pos:end="1325:31">ff_pw_16</argument>, <argument pos:start="1325:34" pos:end="1325:34">_</argument>       , <argument pos:start="1325:44" pos:end="1325:49">PUT_OP</argument>, <argument pos:start="1325:52" pos:end="1325:57">PUT_OP</argument>)</argument_list></macro>
+
+<macro pos:start="1327:1" pos:end="1327:69"><name pos:start="1327:1" pos:end="1327:9">QPEL_BASE</name><argument_list pos:start="1327:10" pos:end="1327:69">(<argument pos:start="1327:11" pos:end="1327:14">avg_</argument>       , <argument pos:start="1327:24" pos:end="1327:31">ff_pw_16</argument>, <argument pos:start="1327:34" pos:end="1327:34">_</argument>       , <argument pos:start="1327:44" pos:end="1327:54">AVG_MMX2_OP</argument>, <argument pos:start="1327:57" pos:end="1327:68">AVG_3DNOW_OP</argument>)</argument_list></macro>
+
+<macro pos:start="1329:1" pos:end="1329:58"><name pos:start="1329:1" pos:end="1329:9">QPEL_BASE</name><argument_list pos:start="1329:10" pos:end="1329:58">(<argument pos:start="1329:11" pos:end="1329:21">put_no_rnd_</argument>, <argument pos:start="1329:24" pos:end="1329:31">ff_pw_15</argument>, <argument pos:start="1329:34" pos:end="1329:41">_no_rnd_</argument>, <argument pos:start="1329:44" pos:end="1329:49">PUT_OP</argument>, <argument pos:start="1329:52" pos:end="1329:57">PUT_OP</argument>)</argument_list></macro>
+
+<macro pos:start="1331:1" pos:end="1331:55"><name pos:start="1331:1" pos:end="1331:7">QPEL_OP</name><argument_list pos:start="1331:8" pos:end="1331:55">(<argument pos:start="1331:9" pos:end="1331:12">put_</argument>       , <argument pos:start="1331:22" pos:end="1331:29">ff_pw_16</argument>, <argument pos:start="1331:32" pos:end="1331:32">_</argument>       , <argument pos:start="1331:42" pos:end="1331:47">PUT_OP</argument>, <argument pos:start="1331:50" pos:end="1331:54"><literal type="number" pos:start="1331:50" pos:end="1331:54">3dnow</literal></argument>)</argument_list></macro>
+
+<macro pos:start="1333:1" pos:end="1333:61"><name pos:start="1333:1" pos:end="1333:7">QPEL_OP</name><argument_list pos:start="1333:8" pos:end="1333:61">(<argument pos:start="1333:9" pos:end="1333:12">avg_</argument>       , <argument pos:start="1333:22" pos:end="1333:29">ff_pw_16</argument>, <argument pos:start="1333:32" pos:end="1333:32">_</argument>       , <argument pos:start="1333:42" pos:end="1333:53">AVG_3DNOW_OP</argument>, <argument pos:start="1333:56" pos:end="1333:60"><literal type="number" pos:start="1333:56" pos:end="1333:60">3dnow</literal></argument>)</argument_list></macro>
+
+<macro pos:start="1335:1" pos:end="1335:55"><name pos:start="1335:1" pos:end="1335:7">QPEL_OP</name><argument_list pos:start="1335:8" pos:end="1335:55">(<argument pos:start="1335:9" pos:end="1335:19">put_no_rnd_</argument>, <argument pos:start="1335:22" pos:end="1335:29">ff_pw_15</argument>, <argument pos:start="1335:32" pos:end="1335:39">_no_rnd_</argument>, <argument pos:start="1335:42" pos:end="1335:47">PUT_OP</argument>, <argument pos:start="1335:50" pos:end="1335:54"><literal type="number" pos:start="1335:50" pos:end="1335:54">3dnow</literal></argument>)</argument_list></macro>
+
+<macro pos:start="1337:1" pos:end="1337:54"><name pos:start="1337:1" pos:end="1337:7">QPEL_OP</name><argument_list pos:start="1337:8" pos:end="1337:54">(<argument pos:start="1337:9" pos:end="1337:12">put_</argument>       , <argument pos:start="1337:22" pos:end="1337:29">ff_pw_16</argument>, <argument pos:start="1337:32" pos:end="1337:32">_</argument>       , <argument pos:start="1337:42" pos:end="1337:47">PUT_OP</argument>, <argument pos:start="1337:50" pos:end="1337:53">mmx2</argument>)</argument_list></macro>
+
+<macro pos:start="1339:1" pos:end="1339:59"><name pos:start="1339:1" pos:end="1339:7">QPEL_OP</name><argument_list pos:start="1339:8" pos:end="1339:59">(<argument pos:start="1339:9" pos:end="1339:12">avg_</argument>       , <argument pos:start="1339:22" pos:end="1339:29">ff_pw_16</argument>, <argument pos:start="1339:32" pos:end="1339:32">_</argument>       , <argument pos:start="1339:42" pos:end="1339:52">AVG_MMX2_OP</argument>, <argument pos:start="1339:55" pos:end="1339:58">mmx2</argument>)</argument_list></macro>
+
+<macro pos:start="1341:1" pos:end="1420:0"><name pos:start="1341:1" pos:end="1341:7">QPEL_OP</name><argument_list pos:start="1341:8" pos:end="1420:0">(<argument pos:start="1341:9" pos:end="1341:19">put_no_rnd_</argument>, <argument pos:start="1341:22" pos:end="1341:29">ff_pw_15</argument>, <argument pos:start="1341:32" pos:end="1341:39">_no_rnd_</argument>, <argument pos:start="1341:42" pos:end="1341:47">PUT_OP</argument>, <argument pos:start="1341:50" pos:end="1341:53">mmx2</argument>)</argument_list></macro>
+
+
+
+<comment type="block" format="doxygen" pos:start="1345:1" pos:end="1345:37">/***********************************/</comment>
+
+<comment type="block" pos:start="1347:1" pos:end="1347:71">/* bilinear qpel: not compliant to any spec, only for -lavdopts fast */</comment>
+
+
+
+<cpp:define pos:start="1351:1" pos:end="1357:1">#<cpp:directive pos:start="1351:2" pos:end="1351:7">define</cpp:directive> <cpp:macro pos:start="1351:9" pos:end="1351:49"><name pos:start="1351:9" pos:end="1351:20">QPEL_2TAP_XY</name><parameter_list pos:start="1351:21" pos:end="1351:49">(<parameter pos:start="1351:22" pos:end="1351:27"><type pos:start="1351:22" pos:end="1351:27"><name pos:start="1351:22" pos:end="1351:27">OPNAME</name></type></parameter>, <parameter pos:start="1351:30" pos:end="1351:33"><type pos:start="1351:30" pos:end="1351:33"><name pos:start="1351:30" pos:end="1351:33">SIZE</name></type></parameter>, <parameter pos:start="1351:36" pos:end="1351:38"><type pos:start="1351:36" pos:end="1351:38"><name pos:start="1351:36" pos:end="1351:38">MMX</name></type></parameter>, <parameter pos:start="1351:41" pos:end="1351:42"><type pos:start="1351:41" pos:end="1351:42"><name pos:start="1351:41" pos:end="1351:42">XY</name></type></parameter>, <parameter pos:start="1351:45" pos:end="1351:48"><type pos:start="1351:45" pos:end="1351:48"><name pos:start="1351:45" pos:end="1351:48">HPEL</name></type></parameter>)</parameter_list></cpp:macro>\
+
+<cpp:value pos:start="1353:1" pos:end="1357:1">static void OPNAME ## 2tap_qpel ## SIZE ## _mc ## XY ## _ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    OPNAME ## pixels ## SIZE ## HPEL(dst, src, stride, SIZE);\
+
+}</cpp:value></cpp:define>
+
+<cpp:define pos:start="1359:1" pos:end="1365:1">#<cpp:directive pos:start="1359:2" pos:end="1359:7">define</cpp:directive> <cpp:macro pos:start="1359:9" pos:end="1359:55"><name pos:start="1359:9" pos:end="1359:20">QPEL_2TAP_L3</name><parameter_list pos:start="1359:21" pos:end="1359:55">(<parameter pos:start="1359:22" pos:end="1359:27"><type pos:start="1359:22" pos:end="1359:27"><name pos:start="1359:22" pos:end="1359:27">OPNAME</name></type></parameter>, <parameter pos:start="1359:30" pos:end="1359:33"><type pos:start="1359:30" pos:end="1359:33"><name pos:start="1359:30" pos:end="1359:33">SIZE</name></type></parameter>, <parameter pos:start="1359:36" pos:end="1359:38"><type pos:start="1359:36" pos:end="1359:38"><name pos:start="1359:36" pos:end="1359:38">MMX</name></type></parameter>, <parameter pos:start="1359:41" pos:end="1359:42"><type pos:start="1359:41" pos:end="1359:42"><name pos:start="1359:41" pos:end="1359:42">XY</name></type></parameter>, <parameter pos:start="1359:45" pos:end="1359:46"><type pos:start="1359:45" pos:end="1359:46"><name pos:start="1359:45" pos:end="1359:46">S0</name></type></parameter>, <parameter pos:start="1359:49" pos:end="1359:50"><type pos:start="1359:49" pos:end="1359:50"><name pos:start="1359:49" pos:end="1359:50">S1</name></type></parameter>, <parameter pos:start="1359:53" pos:end="1359:54"><type pos:start="1359:53" pos:end="1359:54"><name pos:start="1359:53" pos:end="1359:54">S2</name></type></parameter>)</parameter_list></cpp:macro>\
+
+<cpp:value pos:start="1361:1" pos:end="1365:1">static void OPNAME ## 2tap_qpel ## SIZE ## _mc ## XY ## _ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    OPNAME ## 2tap_qpel ## SIZE ## _l3_ ## MMX(dst, src+S0, stride, SIZE, S1, S2);\
+
+}</cpp:value></cpp:define>
+
+
+
+<cpp:define pos:start="1369:1" pos:end="1419:25">#<cpp:directive pos:start="1369:2" pos:end="1369:7">define</cpp:directive> <cpp:macro pos:start="1369:9" pos:end="1369:36"><name pos:start="1369:9" pos:end="1369:17">QPEL_2TAP</name><parameter_list pos:start="1369:18" pos:end="1369:36">(<parameter pos:start="1369:19" pos:end="1369:24"><type pos:start="1369:19" pos:end="1369:24"><name pos:start="1369:19" pos:end="1369:24">OPNAME</name></type></parameter>, <parameter pos:start="1369:27" pos:end="1369:30"><type pos:start="1369:27" pos:end="1369:30"><name pos:start="1369:27" pos:end="1369:30">SIZE</name></type></parameter>, <parameter pos:start="1369:33" pos:end="1369:35"><type pos:start="1369:33" pos:end="1369:35"><name pos:start="1369:33" pos:end="1369:35">MMX</name></type></parameter>)</parameter_list></cpp:macro>\
+
+<cpp:value pos:start="1371:1" pos:end="1419:25">QPEL_2TAP_XY(OPNAME, SIZE, MMX, 20, _x2_ ## MMX)\
+
+QPEL_2TAP_XY(OPNAME, SIZE, MMX, 02, _y2_ ## MMX)\
+
+QPEL_2TAP_XY(OPNAME, SIZE, MMX, 22, _xy2_mmx)\
+
+static const qpel_mc_func OPNAME ## 2tap_qpel ## SIZE ## _mc00_ ## MMX =\
+
+                          OPNAME ## qpel ## SIZE ## _mc00_ ## MMX;\
+
+static const qpel_mc_func OPNAME ## 2tap_qpel ## SIZE ## _mc21_ ## MMX =\
+
+                          OPNAME ## 2tap_qpel ## SIZE ## _mc20_ ## MMX;\
+
+static const qpel_mc_func OPNAME ## 2tap_qpel ## SIZE ## _mc12_ ## MMX =\
+
+                          OPNAME ## 2tap_qpel ## SIZE ## _mc02_ ## MMX;\
+
+static void OPNAME ## 2tap_qpel ## SIZE ## _mc32_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    OPNAME ## pixels ## SIZE ## _y2_ ## MMX(dst, src+1, stride, SIZE);\
+
+}\
+
+static void OPNAME ## 2tap_qpel ## SIZE ## _mc23_ ## MMX(uint8_t *dst, uint8_t *src, int stride){\
+
+    OPNAME ## pixels ## SIZE ## _x2_ ## MMX(dst, src+stride, stride, SIZE);\
+
+}\
+
+QPEL_2TAP_L3(OPNAME, SIZE, MMX, 10, 0,         1,       0)\
+
+QPEL_2TAP_L3(OPNAME, SIZE, MMX, 30, 1,        -1,       0)\
+
+QPEL_2TAP_L3(OPNAME, SIZE, MMX, 01, 0,         stride,  0)\
+
+QPEL_2TAP_L3(OPNAME, SIZE, MMX, 03, stride,   -stride,  0)\
+
+QPEL_2TAP_L3(OPNAME, SIZE, MMX, 11, 0,         stride,  1)\
+
+QPEL_2TAP_L3(OPNAME, SIZE, MMX, 31, 1,         stride, -1)\
+
+QPEL_2TAP_L3(OPNAME, SIZE, MMX, 13, stride,   -stride,  1)\
+
+QPEL_2TAP_L3(OPNAME, SIZE, MMX, 33, stride+1, -stride, -1)\
+
+
+
+QPEL_2TAP(put_, 16, mmx2)</cpp:value></cpp:define>
+
+<macro pos:start="1421:1" pos:end="1421:25"><name pos:start="1421:1" pos:end="1421:9">QPEL_2TAP</name><argument_list pos:start="1421:10" pos:end="1421:25">(<argument pos:start="1421:11" pos:end="1421:14">avg_</argument>, <argument pos:start="1421:17" pos:end="1421:18"><literal type="number" pos:start="1421:17" pos:end="1421:18">16</literal></argument>, <argument pos:start="1421:21" pos:end="1421:24">mmx2</argument>)</argument_list></macro>
+
+<macro pos:start="1423:1" pos:end="1423:25"><name pos:start="1423:1" pos:end="1423:9">QPEL_2TAP</name><argument_list pos:start="1423:10" pos:end="1423:25">(<argument pos:start="1423:11" pos:end="1423:14">put_</argument>,  <argument pos:start="1423:18" pos:end="1423:18"><literal type="number" pos:start="1423:18" pos:end="1423:18">8</literal></argument>, <argument pos:start="1423:21" pos:end="1423:24">mmx2</argument>)</argument_list></macro>
+
+<macro pos:start="1425:1" pos:end="1425:25"><name pos:start="1425:1" pos:end="1425:9">QPEL_2TAP</name><argument_list pos:start="1425:10" pos:end="1425:25">(<argument pos:start="1425:11" pos:end="1425:14">avg_</argument>,  <argument pos:start="1425:18" pos:end="1425:18"><literal type="number" pos:start="1425:18" pos:end="1425:18">8</literal></argument>, <argument pos:start="1425:21" pos:end="1425:24">mmx2</argument>)</argument_list></macro>
+
+<macro pos:start="1427:1" pos:end="1427:26"><name pos:start="1427:1" pos:end="1427:9">QPEL_2TAP</name><argument_list pos:start="1427:10" pos:end="1427:26">(<argument pos:start="1427:11" pos:end="1427:14">put_</argument>, <argument pos:start="1427:17" pos:end="1427:18"><literal type="number" pos:start="1427:17" pos:end="1427:18">16</literal></argument>, <argument pos:start="1427:21" pos:end="1427:25"><literal type="number" pos:start="1427:21" pos:end="1427:25">3dnow</literal></argument>)</argument_list></macro>
+
+<macro pos:start="1429:1" pos:end="1429:26"><name pos:start="1429:1" pos:end="1429:9">QPEL_2TAP</name><argument_list pos:start="1429:10" pos:end="1429:26">(<argument pos:start="1429:11" pos:end="1429:14">avg_</argument>, <argument pos:start="1429:17" pos:end="1429:18"><literal type="number" pos:start="1429:17" pos:end="1429:18">16</literal></argument>, <argument pos:start="1429:21" pos:end="1429:25"><literal type="number" pos:start="1429:21" pos:end="1429:25">3dnow</literal></argument>)</argument_list></macro>
+
+<macro pos:start="1431:1" pos:end="1431:26"><name pos:start="1431:1" pos:end="1431:9">QPEL_2TAP</name><argument_list pos:start="1431:10" pos:end="1431:26">(<argument pos:start="1431:11" pos:end="1431:14">put_</argument>,  <argument pos:start="1431:18" pos:end="1431:18"><literal type="number" pos:start="1431:18" pos:end="1431:18">8</literal></argument>, <argument pos:start="1431:21" pos:end="1431:25"><literal type="number" pos:start="1431:21" pos:end="1431:25">3dnow</literal></argument>)</argument_list></macro>
+
+<macro pos:start="1433:1" pos:end="1444:0"><name pos:start="1433:1" pos:end="1433:9">QPEL_2TAP</name><argument_list pos:start="1433:10" pos:end="1444:0">(<argument pos:start="1433:11" pos:end="1433:14">avg_</argument>,  <argument pos:start="1433:18" pos:end="1433:18"><literal type="number" pos:start="1433:18" pos:end="1433:18">8</literal></argument>, <argument pos:start="1433:21" pos:end="1433:25"><literal type="number" pos:start="1433:21" pos:end="1433:25">3dnow</literal></argument>)</argument_list></macro>
+
+
+
+
+
+<cpp:if pos:start="1439:1" pos:end="1439:5">#<cpp:directive pos:start="1439:2" pos:end="1439:3">if</cpp:directive> <expr pos:start="1439:5" pos:end="1439:5"><literal type="number" pos:start="1439:5" pos:end="1439:5">0</literal></expr></cpp:if>
+
+static void just_return() { return; }
+
+<cpp:endif pos:start="1443:1" pos:end="1443:6">#<cpp:directive pos:start="1443:2" pos:end="1443:6">endif</cpp:directive></cpp:endif>
+
+
+
+<function pos:start="1447:1" pos:end="1679:1"><type pos:start="1447:1" pos:end="1447:11"><specifier pos:start="1447:1" pos:end="1447:6">static</specifier> <name pos:start="1447:8" pos:end="1447:11">void</name></type> <name pos:start="1447:13" pos:end="1447:19">gmc_mmx</name><parameter_list pos:start="1447:20" pos:end="1449:96">(<parameter pos:start="1447:21" pos:end="1447:32"><decl pos:start="1447:21" pos:end="1447:32"><type pos:start="1447:21" pos:end="1447:32"><name pos:start="1447:21" pos:end="1447:27">uint8_t</name> <modifier pos:start="1447:29" pos:end="1447:29">*</modifier></type><name pos:start="1447:30" pos:end="1447:32">dst</name></decl></parameter>, <parameter pos:start="1447:35" pos:end="1447:46"><decl pos:start="1447:35" pos:end="1447:46"><type pos:start="1447:35" pos:end="1447:46"><name pos:start="1447:35" pos:end="1447:41">uint8_t</name> <modifier pos:start="1447:43" pos:end="1447:43">*</modifier></type><name pos:start="1447:44" pos:end="1447:46">src</name></decl></parameter>, <parameter pos:start="1447:49" pos:end="1447:58"><decl pos:start="1447:49" pos:end="1447:58"><type pos:start="1447:49" pos:end="1447:58"><name pos:start="1447:49" pos:end="1447:51">int</name></type> <name pos:start="1447:53" pos:end="1447:58">stride</name></decl></parameter>, <parameter pos:start="1447:61" pos:end="1447:65"><decl pos:start="1447:61" pos:end="1447:65"><type pos:start="1447:61" pos:end="1447:65"><name pos:start="1447:61" pos:end="1447:63">int</name></type> <name pos:start="1447:65" pos:end="1447:65">h</name></decl></parameter>, <parameter pos:start="1447:68" pos:end="1447:73"><decl pos:start="1447:68" pos:end="1447:73"><type pos:start="1447:68" pos:end="1447:73"><name pos:start="1447:68" pos:end="1447:70">int</name></type> <name pos:start="1447:72" pos:end="1447:73">ox</name></decl></parameter>, <parameter pos:start="1447:76" pos:end="1447:81"><decl pos:start="1447:76" pos:end="1447:81"><type pos:start="1447:76" pos:end="1447:81"><name pos:start="1447:76" pos:end="1447:78">int</name></type> <name pos:start="1447:80" pos:end="1447:81">oy</name></decl></parameter>,
+
+                    <parameter pos:start="1449:21" pos:end="1449:27"><decl pos:start="1449:21" pos:end="1449:27"><type pos:start="1449:21" pos:end="1449:27"><name pos:start="1449:21" pos:end="1449:23">int</name></type> <name pos:start="1449:25" pos:end="1449:27">dxx</name></decl></parameter>, <parameter pos:start="1449:30" pos:end="1449:36"><decl pos:start="1449:30" pos:end="1449:36"><type pos:start="1449:30" pos:end="1449:36"><name pos:start="1449:30" pos:end="1449:32">int</name></type> <name pos:start="1449:34" pos:end="1449:36">dxy</name></decl></parameter>, <parameter pos:start="1449:39" pos:end="1449:45"><decl pos:start="1449:39" pos:end="1449:45"><type pos:start="1449:39" pos:end="1449:45"><name pos:start="1449:39" pos:end="1449:41">int</name></type> <name pos:start="1449:43" pos:end="1449:45">dyx</name></decl></parameter>, <parameter pos:start="1449:48" pos:end="1449:54"><decl pos:start="1449:48" pos:end="1449:54"><type pos:start="1449:48" pos:end="1449:54"><name pos:start="1449:48" pos:end="1449:50">int</name></type> <name pos:start="1449:52" pos:end="1449:54">dyy</name></decl></parameter>, <parameter pos:start="1449:57" pos:end="1449:65"><decl pos:start="1449:57" pos:end="1449:65"><type pos:start="1449:57" pos:end="1449:65"><name pos:start="1449:57" pos:end="1449:59">int</name></type> <name pos:start="1449:61" pos:end="1449:65">shift</name></decl></parameter>, <parameter pos:start="1449:68" pos:end="1449:72"><decl pos:start="1449:68" pos:end="1449:72"><type pos:start="1449:68" pos:end="1449:72"><name pos:start="1449:68" pos:end="1449:70">int</name></type> <name pos:start="1449:72" pos:end="1449:72">r</name></decl></parameter>, <parameter pos:start="1449:75" pos:end="1449:83"><decl pos:start="1449:75" pos:end="1449:83"><type pos:start="1449:75" pos:end="1449:83"><name pos:start="1449:75" pos:end="1449:77">int</name></type> <name pos:start="1449:79" pos:end="1449:83">width</name></decl></parameter>, <parameter pos:start="1449:86" pos:end="1449:95"><decl pos:start="1449:86" pos:end="1449:95"><type pos:start="1449:86" pos:end="1449:95"><name pos:start="1449:86" pos:end="1449:88">int</name></type> <name pos:start="1449:90" pos:end="1449:95">height</name></decl></parameter>)</parameter_list><block pos:start="1449:97" pos:end="1679:1">{<block_content pos:start="1451:5" pos:end="1677:5">
+
+    <decl_stmt pos:start="1451:5" pos:end="1451:20"><decl pos:start="1451:5" pos:end="1451:19"><type pos:start="1451:5" pos:end="1451:13"><specifier pos:start="1451:5" pos:end="1451:9">const</specifier> <name pos:start="1451:11" pos:end="1451:13">int</name></type> <name pos:start="1451:15" pos:end="1451:15">w</name> <init pos:start="1451:17" pos:end="1451:19">= <expr pos:start="1451:19" pos:end="1451:19"><literal type="number" pos:start="1451:19" pos:end="1451:19">8</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1453:5" pos:end="1453:34"><decl pos:start="1453:5" pos:end="1453:33"><type pos:start="1453:5" pos:end="1453:13"><specifier pos:start="1453:5" pos:end="1453:9">const</specifier> <name pos:start="1453:11" pos:end="1453:13">int</name></type> <name pos:start="1453:15" pos:end="1453:16">ix</name> <init pos:start="1453:18" pos:end="1453:33">= <expr pos:start="1453:20" pos:end="1453:33"><name pos:start="1453:20" pos:end="1453:21">ox</name><operator pos:start="1453:22" pos:end="1453:23">&gt;&gt;</operator><operator pos:start="1453:24" pos:end="1453:24">(</operator><literal type="number" pos:start="1453:25" pos:end="1453:27">16</literal><operator pos:start="1453:27" pos:end="1453:27">+</operator><name pos:start="1453:28" pos:end="1453:32">shift</name><operator pos:start="1453:33" pos:end="1453:33">)</operator></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1455:5" pos:end="1455:34"><decl pos:start="1455:5" pos:end="1455:33"><type pos:start="1455:5" pos:end="1455:13"><specifier pos:start="1455:5" pos:end="1455:9">const</specifier> <name pos:start="1455:11" pos:end="1455:13">int</name></type> <name pos:start="1455:15" pos:end="1455:16">iy</name> <init pos:start="1455:18" pos:end="1455:33">= <expr pos:start="1455:20" pos:end="1455:33"><name pos:start="1455:20" pos:end="1455:21">oy</name><operator pos:start="1455:22" pos:end="1455:23">&gt;&gt;</operator><operator pos:start="1455:24" pos:end="1455:24">(</operator><literal type="number" pos:start="1455:25" pos:end="1455:27">16</literal><operator pos:start="1455:27" pos:end="1455:27">+</operator><name pos:start="1455:28" pos:end="1455:32">shift</name><operator pos:start="1455:33" pos:end="1455:33">)</operator></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1457:5" pos:end="1457:26"><decl pos:start="1457:5" pos:end="1457:25"><type pos:start="1457:5" pos:end="1457:13"><specifier pos:start="1457:5" pos:end="1457:9">const</specifier> <name pos:start="1457:11" pos:end="1457:13">int</name></type> <name pos:start="1457:15" pos:end="1457:17">oxs</name> <init pos:start="1457:19" pos:end="1457:25">= <expr pos:start="1457:21" pos:end="1457:25"><name pos:start="1457:21" pos:end="1457:22">ox</name><operator pos:start="1457:23" pos:end="1457:24">&gt;&gt;</operator><literal type="number" pos:start="1457:25" pos:end="1457:25">4</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1459:5" pos:end="1459:26"><decl pos:start="1459:5" pos:end="1459:25"><type pos:start="1459:5" pos:end="1459:13"><specifier pos:start="1459:5" pos:end="1459:9">const</specifier> <name pos:start="1459:11" pos:end="1459:13">int</name></type> <name pos:start="1459:15" pos:end="1459:17">oys</name> <init pos:start="1459:19" pos:end="1459:25">= <expr pos:start="1459:21" pos:end="1459:25"><name pos:start="1459:21" pos:end="1459:22">oy</name><operator pos:start="1459:23" pos:end="1459:24">&gt;&gt;</operator><literal type="number" pos:start="1459:25" pos:end="1459:25">4</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1461:5" pos:end="1461:28"><decl pos:start="1461:5" pos:end="1461:27"><type pos:start="1461:5" pos:end="1461:13"><specifier pos:start="1461:5" pos:end="1461:9">const</specifier> <name pos:start="1461:11" pos:end="1461:13">int</name></type> <name pos:start="1461:15" pos:end="1461:18">dxxs</name> <init pos:start="1461:20" pos:end="1461:27">= <expr pos:start="1461:22" pos:end="1461:27"><name pos:start="1461:22" pos:end="1461:24">dxx</name><operator pos:start="1461:25" pos:end="1461:26">&gt;&gt;</operator><literal type="number" pos:start="1461:27" pos:end="1461:27">4</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1463:5" pos:end="1463:28"><decl pos:start="1463:5" pos:end="1463:27"><type pos:start="1463:5" pos:end="1463:13"><specifier pos:start="1463:5" pos:end="1463:9">const</specifier> <name pos:start="1463:11" pos:end="1463:13">int</name></type> <name pos:start="1463:15" pos:end="1463:18">dxys</name> <init pos:start="1463:20" pos:end="1463:27">= <expr pos:start="1463:22" pos:end="1463:27"><name pos:start="1463:22" pos:end="1463:24">dxy</name><operator pos:start="1463:25" pos:end="1463:26">&gt;&gt;</operator><literal type="number" pos:start="1463:27" pos:end="1463:27">4</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1465:5" pos:end="1465:28"><decl pos:start="1465:5" pos:end="1465:27"><type pos:start="1465:5" pos:end="1465:13"><specifier pos:start="1465:5" pos:end="1465:9">const</specifier> <name pos:start="1465:11" pos:end="1465:13">int</name></type> <name pos:start="1465:15" pos:end="1465:18">dyxs</name> <init pos:start="1465:20" pos:end="1465:27">= <expr pos:start="1465:22" pos:end="1465:27"><name pos:start="1465:22" pos:end="1465:24">dyx</name><operator pos:start="1465:25" pos:end="1465:26">&gt;&gt;</operator><literal type="number" pos:start="1465:27" pos:end="1465:27">4</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1467:5" pos:end="1467:28"><decl pos:start="1467:5" pos:end="1467:27"><type pos:start="1467:5" pos:end="1467:13"><specifier pos:start="1467:5" pos:end="1467:9">const</specifier> <name pos:start="1467:11" pos:end="1467:13">int</name></type> <name pos:start="1467:15" pos:end="1467:18">dyys</name> <init pos:start="1467:20" pos:end="1467:27">= <expr pos:start="1467:22" pos:end="1467:27"><name pos:start="1467:22" pos:end="1467:24">dyy</name><operator pos:start="1467:25" pos:end="1467:26">&gt;&gt;</operator><literal type="number" pos:start="1467:27" pos:end="1467:27">4</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1469:5" pos:end="1469:37"><decl pos:start="1469:5" pos:end="1469:36"><type pos:start="1469:5" pos:end="1469:18"><specifier pos:start="1469:5" pos:end="1469:9">const</specifier> <name pos:start="1469:11" pos:end="1469:18">uint16_t</name></type> <name pos:start="1469:20" pos:end="1469:24"><name pos:start="1469:20" pos:end="1469:21">r4</name><index pos:start="1469:22" pos:end="1469:24">[<expr pos:start="1469:23" pos:end="1469:23"><literal type="number" pos:start="1469:23" pos:end="1469:23">4</literal></expr>]</index></name> <init pos:start="1469:26" pos:end="1469:36">= <expr pos:start="1469:28" pos:end="1469:36"><block pos:start="1469:28" pos:end="1469:36">{<expr pos:start="1469:29" pos:end="1469:29"><name pos:start="1469:29" pos:end="1469:29">r</name></expr>,<expr pos:start="1469:31" pos:end="1469:31"><name pos:start="1469:31" pos:end="1469:31">r</name></expr>,<expr pos:start="1469:33" pos:end="1469:33"><name pos:start="1469:33" pos:end="1469:33">r</name></expr>,<expr pos:start="1469:35" pos:end="1469:35"><name pos:start="1469:35" pos:end="1469:35">r</name></expr>}</block></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1471:5" pos:end="1471:51"><decl pos:start="1471:5" pos:end="1471:50"><type pos:start="1471:5" pos:end="1471:18"><specifier pos:start="1471:5" pos:end="1471:9">const</specifier> <name pos:start="1471:11" pos:end="1471:18">uint16_t</name></type> <name pos:start="1471:20" pos:end="1471:26"><name pos:start="1471:20" pos:end="1471:23">dxy4</name><index pos:start="1471:24" pos:end="1471:26">[<expr pos:start="1471:25" pos:end="1471:25"><literal type="number" pos:start="1471:25" pos:end="1471:25">4</literal></expr>]</index></name> <init pos:start="1471:28" pos:end="1471:50">= <expr pos:start="1471:30" pos:end="1471:50"><block pos:start="1471:30" pos:end="1471:50">{<expr pos:start="1471:31" pos:end="1471:34"><name pos:start="1471:31" pos:end="1471:34">dxys</name></expr>,<expr pos:start="1471:36" pos:end="1471:39"><name pos:start="1471:36" pos:end="1471:39">dxys</name></expr>,<expr pos:start="1471:41" pos:end="1471:44"><name pos:start="1471:41" pos:end="1471:44">dxys</name></expr>,<expr pos:start="1471:46" pos:end="1471:49"><name pos:start="1471:46" pos:end="1471:49">dxys</name></expr>}</block></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1473:5" pos:end="1473:51"><decl pos:start="1473:5" pos:end="1473:50"><type pos:start="1473:5" pos:end="1473:18"><specifier pos:start="1473:5" pos:end="1473:9">const</specifier> <name pos:start="1473:11" pos:end="1473:18">uint16_t</name></type> <name pos:start="1473:20" pos:end="1473:26"><name pos:start="1473:20" pos:end="1473:23">dyy4</name><index pos:start="1473:24" pos:end="1473:26">[<expr pos:start="1473:25" pos:end="1473:25"><literal type="number" pos:start="1473:25" pos:end="1473:25">4</literal></expr>]</index></name> <init pos:start="1473:28" pos:end="1473:50">= <expr pos:start="1473:30" pos:end="1473:50"><block pos:start="1473:30" pos:end="1473:50">{<expr pos:start="1473:31" pos:end="1473:34"><name pos:start="1473:31" pos:end="1473:34">dyys</name></expr>,<expr pos:start="1473:36" pos:end="1473:39"><name pos:start="1473:36" pos:end="1473:39">dyys</name></expr>,<expr pos:start="1473:41" pos:end="1473:44"><name pos:start="1473:41" pos:end="1473:44">dyys</name></expr>,<expr pos:start="1473:46" pos:end="1473:49"><name pos:start="1473:46" pos:end="1473:49">dyys</name></expr>}</block></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1475:5" pos:end="1475:36"><decl pos:start="1475:5" pos:end="1475:35"><type pos:start="1475:5" pos:end="1475:18"><specifier pos:start="1475:5" pos:end="1475:9">const</specifier> <name pos:start="1475:11" pos:end="1475:18">uint64_t</name></type> <name pos:start="1475:20" pos:end="1475:25">shift2</name> <init pos:start="1475:27" pos:end="1475:35">= <expr pos:start="1475:29" pos:end="1475:35"><literal type="number" pos:start="1475:29" pos:end="1475:29">2</literal><operator pos:start="1475:30" pos:end="1475:30">*</operator><name pos:start="1475:31" pos:end="1475:35">shift</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1477:5" pos:end="1477:35"><decl pos:start="1477:5" pos:end="1477:34"><type pos:start="1477:5" pos:end="1477:11"><name pos:start="1477:5" pos:end="1477:11">uint8_t</name></type> <name pos:start="1477:13" pos:end="1477:34"><name pos:start="1477:13" pos:end="1477:20">edge_buf</name><index pos:start="1477:21" pos:end="1477:34">[<expr pos:start="1477:22" pos:end="1477:33"><operator pos:start="1477:22" pos:end="1477:22">(</operator><name pos:start="1477:23" pos:end="1477:23">h</name><operator pos:start="1477:24" pos:end="1477:24">+</operator><literal type="number" pos:start="1477:25" pos:end="1477:25">1</literal><operator pos:start="1477:26" pos:end="1477:26">)</operator><operator pos:start="1477:27" pos:end="1477:27">*</operator><name pos:start="1477:28" pos:end="1477:33">stride</name></expr>]</index></name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1479:5" pos:end="1479:13"><decl pos:start="1479:5" pos:end="1479:9"><type pos:start="1479:5" pos:end="1479:7"><name pos:start="1479:5" pos:end="1479:7">int</name></type> <name pos:start="1479:9" pos:end="1479:9">x</name></decl>, <decl pos:start="1479:12" pos:end="1479:12"><type ref="prev" pos:start="1479:5" pos:end="1479:7"/><name pos:start="1479:12" pos:end="1479:12">y</name></decl>;</decl_stmt>
+
+
+
+    <decl_stmt pos:start="1483:5" pos:end="1483:48"><decl pos:start="1483:5" pos:end="1483:47"><type pos:start="1483:5" pos:end="1483:13"><specifier pos:start="1483:5" pos:end="1483:9">const</specifier> <name pos:start="1483:11" pos:end="1483:13">int</name></type> <name pos:start="1483:15" pos:end="1483:17">dxw</name> <init pos:start="1483:19" pos:end="1483:47">= <expr pos:start="1483:21" pos:end="1483:47"><operator pos:start="1483:21" pos:end="1483:21">(</operator><name pos:start="1483:22" pos:end="1483:24">dxx</name><operator pos:start="1483:25" pos:end="1483:25">-</operator><operator pos:start="1483:26" pos:end="1483:26">(</operator><literal type="number" pos:start="1483:27" pos:end="1483:27">1</literal><operator pos:start="1483:28" pos:end="1483:29">&lt;&lt;</operator><operator pos:start="1483:30" pos:end="1483:30">(</operator><literal type="number" pos:start="1483:31" pos:end="1483:33">16</literal><operator pos:start="1483:33" pos:end="1483:33">+</operator><name pos:start="1483:34" pos:end="1483:38">shift</name><operator pos:start="1483:39" pos:end="1483:39">)</operator><operator pos:start="1483:40" pos:end="1483:40">)</operator><operator pos:start="1483:41" pos:end="1483:41">)</operator><operator pos:start="1483:42" pos:end="1483:42">*</operator><operator pos:start="1483:43" pos:end="1483:43">(</operator><name pos:start="1483:44" pos:end="1483:44">w</name><operator pos:start="1483:45" pos:end="1483:45">-</operator><literal type="number" pos:start="1483:46" pos:end="1483:46">1</literal><operator pos:start="1483:47" pos:end="1483:47">)</operator></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1485:5" pos:end="1485:48"><decl pos:start="1485:5" pos:end="1485:47"><type pos:start="1485:5" pos:end="1485:13"><specifier pos:start="1485:5" pos:end="1485:9">const</specifier> <name pos:start="1485:11" pos:end="1485:13">int</name></type> <name pos:start="1485:15" pos:end="1485:17">dyh</name> <init pos:start="1485:19" pos:end="1485:47">= <expr pos:start="1485:21" pos:end="1485:47"><operator pos:start="1485:21" pos:end="1485:21">(</operator><name pos:start="1485:22" pos:end="1485:24">dyy</name><operator pos:start="1485:25" pos:end="1485:25">-</operator><operator pos:start="1485:26" pos:end="1485:26">(</operator><literal type="number" pos:start="1485:27" pos:end="1485:27">1</literal><operator pos:start="1485:28" pos:end="1485:29">&lt;&lt;</operator><operator pos:start="1485:30" pos:end="1485:30">(</operator><literal type="number" pos:start="1485:31" pos:end="1485:33">16</literal><operator pos:start="1485:33" pos:end="1485:33">+</operator><name pos:start="1485:34" pos:end="1485:38">shift</name><operator pos:start="1485:39" pos:end="1485:39">)</operator><operator pos:start="1485:40" pos:end="1485:40">)</operator><operator pos:start="1485:41" pos:end="1485:41">)</operator><operator pos:start="1485:42" pos:end="1485:42">*</operator><operator pos:start="1485:43" pos:end="1485:43">(</operator><name pos:start="1485:44" pos:end="1485:44">h</name><operator pos:start="1485:45" pos:end="1485:45">-</operator><literal type="number" pos:start="1485:46" pos:end="1485:46">1</literal><operator pos:start="1485:47" pos:end="1485:47">)</operator></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1487:5" pos:end="1487:30"><decl pos:start="1487:5" pos:end="1487:29"><type pos:start="1487:5" pos:end="1487:13"><specifier pos:start="1487:5" pos:end="1487:9">const</specifier> <name pos:start="1487:11" pos:end="1487:13">int</name></type> <name pos:start="1487:15" pos:end="1487:17">dxh</name> <init pos:start="1487:19" pos:end="1487:29">= <expr pos:start="1487:21" pos:end="1487:29"><name pos:start="1487:21" pos:end="1487:23">dxy</name><operator pos:start="1487:24" pos:end="1487:24">*</operator><operator pos:start="1487:25" pos:end="1487:25">(</operator><name pos:start="1487:26" pos:end="1487:26">h</name><operator pos:start="1487:27" pos:end="1487:27">-</operator><literal type="number" pos:start="1487:28" pos:end="1487:28">1</literal><operator pos:start="1487:29" pos:end="1487:29">)</operator></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="1489:5" pos:end="1489:30"><decl pos:start="1489:5" pos:end="1489:29"><type pos:start="1489:5" pos:end="1489:13"><specifier pos:start="1489:5" pos:end="1489:9">const</specifier> <name pos:start="1489:11" pos:end="1489:13">int</name></type> <name pos:start="1489:15" pos:end="1489:17">dyw</name> <init pos:start="1489:19" pos:end="1489:29">= <expr pos:start="1489:21" pos:end="1489:29"><name pos:start="1489:21" pos:end="1489:23">dyx</name><operator pos:start="1489:24" pos:end="1489:24">*</operator><operator pos:start="1489:25" pos:end="1489:25">(</operator><name pos:start="1489:26" pos:end="1489:26">w</name><operator pos:start="1489:27" pos:end="1489:27">-</operator><literal type="number" pos:start="1489:28" pos:end="1489:28">1</literal><operator pos:start="1489:29" pos:end="1489:29">)</operator></expr></init></decl>;</decl_stmt>
+
+    <if_stmt pos:start="1491:5" pos:end="1509:5"><if pos:start="1491:5" pos:end="1509:5">if<condition pos:start="1491:7" pos:end="1499:33">( <comment type="line" pos:start="1491:9" pos:end="1491:53">// non-constant fullpel offset (3% of blocks)</comment>
+
+        <expr pos:start="1493:9" pos:end="1499:31"><operator pos:start="1493:9" pos:end="1493:9">(</operator><operator pos:start="1493:10" pos:end="1493:10">(</operator><name pos:start="1493:11" pos:end="1493:12">ox</name><operator pos:start="1493:13" pos:end="1493:13">^</operator><operator pos:start="1493:14" pos:end="1493:14">(</operator><name pos:start="1493:15" pos:end="1493:16">ox</name><operator pos:start="1493:17" pos:end="1493:17">+</operator><name pos:start="1493:18" pos:end="1493:20">dxw</name><operator pos:start="1493:21" pos:end="1493:21">)</operator><operator pos:start="1493:22" pos:end="1493:22">)</operator> <operator pos:start="1493:24" pos:end="1493:24">|</operator> <operator pos:start="1493:26" pos:end="1493:26">(</operator><name pos:start="1493:27" pos:end="1493:28">ox</name><operator pos:start="1493:29" pos:end="1493:29">^</operator><operator pos:start="1493:30" pos:end="1493:30">(</operator><name pos:start="1493:31" pos:end="1493:32">ox</name><operator pos:start="1493:33" pos:end="1493:33">+</operator><name pos:start="1493:34" pos:end="1493:36">dxh</name><operator pos:start="1493:37" pos:end="1493:37">)</operator><operator pos:start="1493:38" pos:end="1493:38">)</operator> <operator pos:start="1493:40" pos:end="1493:40">|</operator> <operator pos:start="1493:42" pos:end="1493:42">(</operator><name pos:start="1493:43" pos:end="1493:44">ox</name><operator pos:start="1493:45" pos:end="1493:45">^</operator><operator pos:start="1493:46" pos:end="1493:46">(</operator><name pos:start="1493:47" pos:end="1493:48">ox</name><operator pos:start="1493:49" pos:end="1493:49">+</operator><name pos:start="1493:50" pos:end="1493:52">dxw</name><operator pos:start="1493:53" pos:end="1493:53">+</operator><name pos:start="1493:54" pos:end="1493:56">dxh</name><operator pos:start="1493:57" pos:end="1493:57">)</operator><operator pos:start="1493:58" pos:end="1493:58">)</operator> <operator pos:start="1493:60" pos:end="1493:60">|</operator>
+
+         <operator pos:start="1495:10" pos:end="1495:10">(</operator><name pos:start="1495:11" pos:end="1495:12">oy</name><operator pos:start="1495:13" pos:end="1495:13">^</operator><operator pos:start="1495:14" pos:end="1495:14">(</operator><name pos:start="1495:15" pos:end="1495:16">oy</name><operator pos:start="1495:17" pos:end="1495:17">+</operator><name pos:start="1495:18" pos:end="1495:20">dyw</name><operator pos:start="1495:21" pos:end="1495:21">)</operator><operator pos:start="1495:22" pos:end="1495:22">)</operator> <operator pos:start="1495:24" pos:end="1495:24">|</operator> <operator pos:start="1495:26" pos:end="1495:26">(</operator><name pos:start="1495:27" pos:end="1495:28">oy</name><operator pos:start="1495:29" pos:end="1495:29">^</operator><operator pos:start="1495:30" pos:end="1495:30">(</operator><name pos:start="1495:31" pos:end="1495:32">oy</name><operator pos:start="1495:33" pos:end="1495:33">+</operator><name pos:start="1495:34" pos:end="1495:36">dyh</name><operator pos:start="1495:37" pos:end="1495:37">)</operator><operator pos:start="1495:38" pos:end="1495:38">)</operator> <operator pos:start="1495:40" pos:end="1495:40">|</operator> <operator pos:start="1495:42" pos:end="1495:42">(</operator><name pos:start="1495:43" pos:end="1495:44">oy</name><operator pos:start="1495:45" pos:end="1495:45">^</operator><operator pos:start="1495:46" pos:end="1495:46">(</operator><name pos:start="1495:47" pos:end="1495:48">oy</name><operator pos:start="1495:49" pos:end="1495:49">+</operator><name pos:start="1495:50" pos:end="1495:52">dyw</name><operator pos:start="1495:53" pos:end="1495:53">+</operator><name pos:start="1495:54" pos:end="1495:56">dyh</name><operator pos:start="1495:57" pos:end="1495:57">)</operator><operator pos:start="1495:58" pos:end="1495:58">)</operator><operator pos:start="1495:59" pos:end="1495:59">)</operator> <operator pos:start="1495:61" pos:end="1495:62">&gt;&gt;</operator> <operator pos:start="1495:64" pos:end="1495:64">(</operator><literal type="number" pos:start="1495:65" pos:end="1495:67">16</literal><operator pos:start="1495:67" pos:end="1495:67">+</operator><name pos:start="1495:68" pos:end="1495:72">shift</name><operator pos:start="1495:73" pos:end="1495:73">)</operator>
+
+        <comment type="line" pos:start="1497:9" pos:end="1497:72">// uses more than 16 bits of subpel mv (only at huge resolution)</comment>
+
+        <operator pos:start="1499:9" pos:end="1499:10">||</operator> <operator pos:start="1499:12" pos:end="1499:12">(</operator><name pos:start="1499:13" pos:end="1499:15">dxx</name><operator pos:start="1499:16" pos:end="1499:16">|</operator><name pos:start="1499:17" pos:end="1499:19">dxy</name><operator pos:start="1499:20" pos:end="1499:20">|</operator><name pos:start="1499:21" pos:end="1499:23">dyx</name><operator pos:start="1499:24" pos:end="1499:24">|</operator><name pos:start="1499:25" pos:end="1499:27">dyy</name><operator pos:start="1499:28" pos:end="1499:28">)</operator><operator pos:start="1499:29" pos:end="1499:29">&amp;</operator><literal type="number" pos:start="1499:30" pos:end="1499:31">15</literal></expr> )</condition>
+
+    <block pos:start="1501:5" pos:end="1509:5">{<block_content pos:start="1505:9" pos:end="1507:15">
+
+        <comment type="line" pos:start="1503:9" pos:end="1503:56">//FIXME could still use mmx for some of the rows</comment>
+
+        <expr_stmt pos:start="1505:9" pos:end="1505:91"><expr pos:start="1505:9" pos:end="1505:90"><call pos:start="1505:9" pos:end="1505:90"><name pos:start="1505:9" pos:end="1505:16">ff_gmc_c</name><argument_list pos:start="1505:17" pos:end="1505:90">(<argument pos:start="1505:18" pos:end="1505:20"><expr pos:start="1505:18" pos:end="1505:20"><name pos:start="1505:18" pos:end="1505:20">dst</name></expr></argument>, <argument pos:start="1505:23" pos:end="1505:25"><expr pos:start="1505:23" pos:end="1505:25"><name pos:start="1505:23" pos:end="1505:25">src</name></expr></argument>, <argument pos:start="1505:28" pos:end="1505:33"><expr pos:start="1505:28" pos:end="1505:33"><name pos:start="1505:28" pos:end="1505:33">stride</name></expr></argument>, <argument pos:start="1505:36" pos:end="1505:36"><expr pos:start="1505:36" pos:end="1505:36"><name pos:start="1505:36" pos:end="1505:36">h</name></expr></argument>, <argument pos:start="1505:39" pos:end="1505:40"><expr pos:start="1505:39" pos:end="1505:40"><name pos:start="1505:39" pos:end="1505:40">ox</name></expr></argument>, <argument pos:start="1505:43" pos:end="1505:44"><expr pos:start="1505:43" pos:end="1505:44"><name pos:start="1505:43" pos:end="1505:44">oy</name></expr></argument>, <argument pos:start="1505:47" pos:end="1505:49"><expr pos:start="1505:47" pos:end="1505:49"><name pos:start="1505:47" pos:end="1505:49">dxx</name></expr></argument>, <argument pos:start="1505:52" pos:end="1505:54"><expr pos:start="1505:52" pos:end="1505:54"><name pos:start="1505:52" pos:end="1505:54">dxy</name></expr></argument>, <argument pos:start="1505:57" pos:end="1505:59"><expr pos:start="1505:57" pos:end="1505:59"><name pos:start="1505:57" pos:end="1505:59">dyx</name></expr></argument>, <argument pos:start="1505:62" pos:end="1505:64"><expr pos:start="1505:62" pos:end="1505:64"><name pos:start="1505:62" pos:end="1505:64">dyy</name></expr></argument>, <argument pos:start="1505:67" pos:end="1505:71"><expr pos:start="1505:67" pos:end="1505:71"><name pos:start="1505:67" pos:end="1505:71">shift</name></expr></argument>, <argument pos:start="1505:74" pos:end="1505:74"><expr pos:start="1505:74" pos:end="1505:74"><name pos:start="1505:74" pos:end="1505:74">r</name></expr></argument>, <argument pos:start="1505:77" pos:end="1505:81"><expr pos:start="1505:77" pos:end="1505:81"><name pos:start="1505:77" pos:end="1505:81">width</name></expr></argument>, <argument pos:start="1505:84" pos:end="1505:89"><expr pos:start="1505:84" pos:end="1505:89"><name pos:start="1505:84" pos:end="1505:89">height</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="1507:9" pos:end="1507:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="1513:5" pos:end="1513:26"><expr pos:start="1513:5" pos:end="1513:25"><name pos:start="1513:5" pos:end="1513:7">src</name> <operator pos:start="1513:9" pos:end="1513:10">+=</operator> <name pos:start="1513:12" pos:end="1513:13">ix</name> <operator pos:start="1513:15" pos:end="1513:15">+</operator> <name pos:start="1513:17" pos:end="1513:18">iy</name><operator pos:start="1513:19" pos:end="1513:19">*</operator><name pos:start="1513:20" pos:end="1513:25">stride</name></expr>;</expr_stmt>
+
+    <if_stmt pos:start="1515:5" pos:end="1525:5"><if pos:start="1515:5" pos:end="1525:5">if<condition pos:start="1515:7" pos:end="1517:34">( <expr pos:start="1515:9" pos:end="1517:32"><operator pos:start="1515:9" pos:end="1515:9">(</operator><name pos:start="1515:10" pos:end="1515:17">unsigned</name><operator pos:start="1515:18" pos:end="1515:18">)</operator><name pos:start="1515:19" pos:end="1515:20">ix</name> <operator pos:start="1515:22" pos:end="1515:23">&gt;=</operator> <name pos:start="1515:25" pos:end="1515:29">width</name><operator pos:start="1515:30" pos:end="1515:30">-</operator><name pos:start="1515:31" pos:end="1515:31">w</name> <operator pos:start="1515:33" pos:end="1515:34">||</operator>
+
+        <operator pos:start="1517:9" pos:end="1517:9">(</operator><name pos:start="1517:10" pos:end="1517:17">unsigned</name><operator pos:start="1517:18" pos:end="1517:18">)</operator><name pos:start="1517:19" pos:end="1517:20">iy</name> <operator pos:start="1517:22" pos:end="1517:23">&gt;=</operator> <name pos:start="1517:25" pos:end="1517:30">height</name><operator pos:start="1517:31" pos:end="1517:31">-</operator><name pos:start="1517:32" pos:end="1517:32">h</name></expr> )</condition>
+
+    <block pos:start="1519:5" pos:end="1525:5">{<block_content pos:start="1521:9" pos:end="1523:23">
+
+        <expr_stmt pos:start="1521:9" pos:end="1521:84"><expr pos:start="1521:9" pos:end="1521:83"><call pos:start="1521:9" pos:end="1521:83"><name pos:start="1521:9" pos:end="1521:27">ff_emulated_edge_mc</name><argument_list pos:start="1521:28" pos:end="1521:83">(<argument pos:start="1521:29" pos:end="1521:36"><expr pos:start="1521:29" pos:end="1521:36"><name pos:start="1521:29" pos:end="1521:36">edge_buf</name></expr></argument>, <argument pos:start="1521:39" pos:end="1521:41"><expr pos:start="1521:39" pos:end="1521:41"><name pos:start="1521:39" pos:end="1521:41">src</name></expr></argument>, <argument pos:start="1521:44" pos:end="1521:49"><expr pos:start="1521:44" pos:end="1521:49"><name pos:start="1521:44" pos:end="1521:49">stride</name></expr></argument>, <argument pos:start="1521:52" pos:end="1521:54"><expr pos:start="1521:52" pos:end="1521:54"><name pos:start="1521:52" pos:end="1521:52">w</name><operator pos:start="1521:53" pos:end="1521:53">+</operator><literal type="number" pos:start="1521:54" pos:end="1521:54">1</literal></expr></argument>, <argument pos:start="1521:57" pos:end="1521:59"><expr pos:start="1521:57" pos:end="1521:59"><name pos:start="1521:57" pos:end="1521:57">h</name><operator pos:start="1521:58" pos:end="1521:58">+</operator><literal type="number" pos:start="1521:59" pos:end="1521:59">1</literal></expr></argument>, <argument pos:start="1521:62" pos:end="1521:63"><expr pos:start="1521:62" pos:end="1521:63"><name pos:start="1521:62" pos:end="1521:63">ix</name></expr></argument>, <argument pos:start="1521:66" pos:end="1521:67"><expr pos:start="1521:66" pos:end="1521:67"><name pos:start="1521:66" pos:end="1521:67">iy</name></expr></argument>, <argument pos:start="1521:70" pos:end="1521:74"><expr pos:start="1521:70" pos:end="1521:74"><name pos:start="1521:70" pos:end="1521:74">width</name></expr></argument>, <argument pos:start="1521:77" pos:end="1521:82"><expr pos:start="1521:77" pos:end="1521:82"><name pos:start="1521:77" pos:end="1521:82">height</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="1523:9" pos:end="1523:23"><expr pos:start="1523:9" pos:end="1523:22"><name pos:start="1523:9" pos:end="1523:11">src</name> <operator pos:start="1523:13" pos:end="1523:13">=</operator> <name pos:start="1523:15" pos:end="1523:22">edge_buf</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <asm pos:start="1529:5" pos:end="1541:6">asm <specifier pos:start="1529:9" pos:end="1529:16">volatile</specifier>(
+
+        "movd         %0, %%mm6 \n\t"
+
+        "pxor      %%mm7, %%mm7 \n\t"
+
+        "punpcklwd %%mm6, %%mm6 \n\t"
+
+        "punpcklwd %%mm6, %%mm6 \n\t"
+
+        :: "r"(1&lt;&lt;shift)
+
+    );</asm>
+
+
+
+    <for pos:start="1545:5" pos:end="1677:5">for<control pos:start="1545:8" pos:end="1545:23">(<init pos:start="1545:9" pos:end="1545:12"><expr pos:start="1545:9" pos:end="1545:11"><name pos:start="1545:9" pos:end="1545:9">x</name><operator pos:start="1545:10" pos:end="1545:10">=</operator><literal type="number" pos:start="1545:11" pos:end="1545:11">0</literal></expr>;</init> <condition pos:start="1545:14" pos:end="1545:17"><expr pos:start="1545:14" pos:end="1545:16"><name pos:start="1545:14" pos:end="1545:14">x</name><operator pos:start="1545:15" pos:end="1545:15">&lt;</operator><name pos:start="1545:16" pos:end="1545:16">w</name></expr>;</condition> <incr pos:start="1545:19" pos:end="1545:22"><expr pos:start="1545:19" pos:end="1545:22"><name pos:start="1545:19" pos:end="1545:19">x</name><operator pos:start="1545:20" pos:end="1545:21">+=</operator><literal type="number" pos:start="1545:22" pos:end="1545:22">4</literal></expr></incr>)</control><block pos:start="1545:24" pos:end="1677:5">{<block_content pos:start="1547:9" pos:end="1675:26">
+
+        <decl_stmt pos:start="1547:9" pos:end="1553:54"><decl pos:start="1547:9" pos:end="1553:53"><type pos:start="1547:9" pos:end="1547:16"><name pos:start="1547:9" pos:end="1547:16">uint16_t</name></type> <name pos:start="1547:18" pos:end="1547:23"><name pos:start="1547:18" pos:end="1547:20">dx4</name><index pos:start="1547:21" pos:end="1547:23">[<expr pos:start="1547:22" pos:end="1547:22"><literal type="number" pos:start="1547:22" pos:end="1547:22">4</literal></expr>]</index></name> <init pos:start="1547:25" pos:end="1553:53">= <expr pos:start="1547:27" pos:end="1553:53"><block pos:start="1547:27" pos:end="1553:53">{ <expr pos:start="1547:29" pos:end="1547:51"><name pos:start="1547:29" pos:end="1547:31">oxs</name> <operator pos:start="1547:33" pos:end="1547:33">-</operator> <name pos:start="1547:35" pos:end="1547:38">dxys</name> <operator pos:start="1547:40" pos:end="1547:40">+</operator> <name pos:start="1547:42" pos:end="1547:45">dxxs</name><operator pos:start="1547:46" pos:end="1547:46">*</operator><operator pos:start="1547:47" pos:end="1547:47">(</operator><name pos:start="1547:48" pos:end="1547:48">x</name><operator pos:start="1547:49" pos:end="1547:49">+</operator><literal type="number" pos:start="1547:50" pos:end="1547:50">0</literal><operator pos:start="1547:51" pos:end="1547:51">)</operator></expr>,
+
+                            <expr pos:start="1549:29" pos:end="1549:51"><name pos:start="1549:29" pos:end="1549:31">oxs</name> <operator pos:start="1549:33" pos:end="1549:33">-</operator> <name pos:start="1549:35" pos:end="1549:38">dxys</name> <operator pos:start="1549:40" pos:end="1549:40">+</operator> <name pos:start="1549:42" pos:end="1549:45">dxxs</name><operator pos:start="1549:46" pos:end="1549:46">*</operator><operator pos:start="1549:47" pos:end="1549:47">(</operator><name pos:start="1549:48" pos:end="1549:48">x</name><operator pos:start="1549:49" pos:end="1549:49">+</operator><literal type="number" pos:start="1549:50" pos:end="1549:50">1</literal><operator pos:start="1549:51" pos:end="1549:51">)</operator></expr>,
+
+                            <expr pos:start="1551:29" pos:end="1551:51"><name pos:start="1551:29" pos:end="1551:31">oxs</name> <operator pos:start="1551:33" pos:end="1551:33">-</operator> <name pos:start="1551:35" pos:end="1551:38">dxys</name> <operator pos:start="1551:40" pos:end="1551:40">+</operator> <name pos:start="1551:42" pos:end="1551:45">dxxs</name><operator pos:start="1551:46" pos:end="1551:46">*</operator><operator pos:start="1551:47" pos:end="1551:47">(</operator><name pos:start="1551:48" pos:end="1551:48">x</name><operator pos:start="1551:49" pos:end="1551:49">+</operator><literal type="number" pos:start="1551:50" pos:end="1551:50">2</literal><operator pos:start="1551:51" pos:end="1551:51">)</operator></expr>,
+
+                            <expr pos:start="1553:29" pos:end="1553:51"><name pos:start="1553:29" pos:end="1553:31">oxs</name> <operator pos:start="1553:33" pos:end="1553:33">-</operator> <name pos:start="1553:35" pos:end="1553:38">dxys</name> <operator pos:start="1553:40" pos:end="1553:40">+</operator> <name pos:start="1553:42" pos:end="1553:45">dxxs</name><operator pos:start="1553:46" pos:end="1553:46">*</operator><operator pos:start="1553:47" pos:end="1553:47">(</operator><name pos:start="1553:48" pos:end="1553:48">x</name><operator pos:start="1553:49" pos:end="1553:49">+</operator><literal type="number" pos:start="1553:50" pos:end="1553:50">3</literal><operator pos:start="1553:51" pos:end="1553:51">)</operator></expr> }</block></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="1555:9" pos:end="1561:54"><decl pos:start="1555:9" pos:end="1561:53"><type pos:start="1555:9" pos:end="1555:16"><name pos:start="1555:9" pos:end="1555:16">uint16_t</name></type> <name pos:start="1555:18" pos:end="1555:23"><name pos:start="1555:18" pos:end="1555:20">dy4</name><index pos:start="1555:21" pos:end="1555:23">[<expr pos:start="1555:22" pos:end="1555:22"><literal type="number" pos:start="1555:22" pos:end="1555:22">4</literal></expr>]</index></name> <init pos:start="1555:25" pos:end="1561:53">= <expr pos:start="1555:27" pos:end="1561:53"><block pos:start="1555:27" pos:end="1561:53">{ <expr pos:start="1555:29" pos:end="1555:51"><name pos:start="1555:29" pos:end="1555:31">oys</name> <operator pos:start="1555:33" pos:end="1555:33">-</operator> <name pos:start="1555:35" pos:end="1555:38">dyys</name> <operator pos:start="1555:40" pos:end="1555:40">+</operator> <name pos:start="1555:42" pos:end="1555:45">dyxs</name><operator pos:start="1555:46" pos:end="1555:46">*</operator><operator pos:start="1555:47" pos:end="1555:47">(</operator><name pos:start="1555:48" pos:end="1555:48">x</name><operator pos:start="1555:49" pos:end="1555:49">+</operator><literal type="number" pos:start="1555:50" pos:end="1555:50">0</literal><operator pos:start="1555:51" pos:end="1555:51">)</operator></expr>,
+
+                            <expr pos:start="1557:29" pos:end="1557:51"><name pos:start="1557:29" pos:end="1557:31">oys</name> <operator pos:start="1557:33" pos:end="1557:33">-</operator> <name pos:start="1557:35" pos:end="1557:38">dyys</name> <operator pos:start="1557:40" pos:end="1557:40">+</operator> <name pos:start="1557:42" pos:end="1557:45">dyxs</name><operator pos:start="1557:46" pos:end="1557:46">*</operator><operator pos:start="1557:47" pos:end="1557:47">(</operator><name pos:start="1557:48" pos:end="1557:48">x</name><operator pos:start="1557:49" pos:end="1557:49">+</operator><literal type="number" pos:start="1557:50" pos:end="1557:50">1</literal><operator pos:start="1557:51" pos:end="1557:51">)</operator></expr>,
+
+                            <expr pos:start="1559:29" pos:end="1559:51"><name pos:start="1559:29" pos:end="1559:31">oys</name> <operator pos:start="1559:33" pos:end="1559:33">-</operator> <name pos:start="1559:35" pos:end="1559:38">dyys</name> <operator pos:start="1559:40" pos:end="1559:40">+</operator> <name pos:start="1559:42" pos:end="1559:45">dyxs</name><operator pos:start="1559:46" pos:end="1559:46">*</operator><operator pos:start="1559:47" pos:end="1559:47">(</operator><name pos:start="1559:48" pos:end="1559:48">x</name><operator pos:start="1559:49" pos:end="1559:49">+</operator><literal type="number" pos:start="1559:50" pos:end="1559:50">2</literal><operator pos:start="1559:51" pos:end="1559:51">)</operator></expr>,
+
+                            <expr pos:start="1561:29" pos:end="1561:51"><name pos:start="1561:29" pos:end="1561:31">oys</name> <operator pos:start="1561:33" pos:end="1561:33">-</operator> <name pos:start="1561:35" pos:end="1561:38">dyys</name> <operator pos:start="1561:40" pos:end="1561:40">+</operator> <name pos:start="1561:42" pos:end="1561:45">dyxs</name><operator pos:start="1561:46" pos:end="1561:46">*</operator><operator pos:start="1561:47" pos:end="1561:47">(</operator><name pos:start="1561:48" pos:end="1561:48">x</name><operator pos:start="1561:49" pos:end="1561:49">+</operator><literal type="number" pos:start="1561:50" pos:end="1561:50">3</literal><operator pos:start="1561:51" pos:end="1561:51">)</operator></expr> }</block></expr></init></decl>;</decl_stmt>
+
+
+
+        <for pos:start="1565:9" pos:end="1673:9">for<control pos:start="1565:12" pos:end="1565:26">(<init pos:start="1565:13" pos:end="1565:16"><expr pos:start="1565:13" pos:end="1565:15"><name pos:start="1565:13" pos:end="1565:13">y</name><operator pos:start="1565:14" pos:end="1565:14">=</operator><literal type="number" pos:start="1565:15" pos:end="1565:15">0</literal></expr>;</init> <condition pos:start="1565:18" pos:end="1565:21"><expr pos:start="1565:18" pos:end="1565:20"><name pos:start="1565:18" pos:end="1565:18">y</name><operator pos:start="1565:19" pos:end="1565:19">&lt;</operator><name pos:start="1565:20" pos:end="1565:20">h</name></expr>;</condition> <incr pos:start="1565:23" pos:end="1565:25"><expr pos:start="1565:23" pos:end="1565:25"><name pos:start="1565:23" pos:end="1565:23">y</name><operator pos:start="1565:24" pos:end="1565:25">++</operator></expr></incr>)</control><block pos:start="1565:27" pos:end="1673:9">{<block_content pos:start="1567:13" pos:end="1671:26">
+
+            <asm pos:start="1567:13" pos:end="1589:14">asm <specifier pos:start="1567:17" pos:end="1567:24">volatile</specifier>(
+
+                "movq   %0,  %%mm4 \n\t"
+
+                "movq   %1,  %%mm5 \n\t"
+
+                "paddw  %2,  %%mm4 \n\t"
+
+                "paddw  %3,  %%mm5 \n\t"
+
+                "movq   %%mm4, %0  \n\t"
+
+                "movq   %%mm5, %1  \n\t"
+
+                "psrlw  $12, %%mm4 \n\t"
+
+                "psrlw  $12, %%mm5 \n\t"
+
+                : "+m"(*dx4), "+m"(*dy4)
+
+                : "m"(*dxy4), "m"(*dyy4)
+
+            );</asm>
+
+
+
+            <asm pos:start="1593:13" pos:end="1669:14">asm <specifier pos:start="1593:17" pos:end="1593:24">volatile</specifier>(
+
+                "movq   %%mm6, %%mm2 \n\t"
+
+                "movq   %%mm6, %%mm1 \n\t"
+
+                "psubw  %%mm4, %%mm2 \n\t"
+
+                "psubw  %%mm5, %%mm1 \n\t"
+
+                "movq   %%mm2, %%mm0 \n\t"
+
+                "movq   %%mm4, %%mm3 \n\t"
+
+                "pmullw %%mm1, %%mm0 \n\t" <comment type="line" pos:start="1607:44" pos:end="1607:59">// (s-dx)*(s-dy)</comment>
+
+                "pmullw %%mm5, %%mm3 \n\t" <comment type="line" pos:start="1609:44" pos:end="1609:51">// dx*dy</comment>
+
+                "pmullw %%mm5, %%mm2 \n\t" <comment type="line" pos:start="1611:44" pos:end="1611:55">// (s-dx)*dy</comment>
+
+                "pmullw %%mm4, %%mm1 \n\t" <comment type="line" pos:start="1613:44" pos:end="1613:55">// dx*(s-dy)</comment>
+
+
+
+                "movd   %4,    %%mm5 \n\t"
+
+                "movd   %3,    %%mm4 \n\t"
+
+                "punpcklbw %%mm7, %%mm5 \n\t"
+
+                "punpcklbw %%mm7, %%mm4 \n\t"
+
+                "pmullw %%mm5, %%mm3 \n\t" <comment type="line" pos:start="1625:44" pos:end="1625:62">// src[1,1] * dx*dy</comment>
+
+                "pmullw %%mm4, %%mm2 \n\t" <comment type="line" pos:start="1627:44" pos:end="1627:66">// src[0,1] * (s-dx)*dy</comment>
+
+
+
+                "movd   %2,    %%mm5 \n\t"
+
+                "movd   %1,    %%mm4 \n\t"
+
+                "punpcklbw %%mm7, %%mm5 \n\t"
+
+                "punpcklbw %%mm7, %%mm4 \n\t"
+
+                "pmullw %%mm5, %%mm1 \n\t" <comment type="line" pos:start="1639:44" pos:end="1639:66">// src[1,0] * dx*(s-dy)</comment>
+
+                "pmullw %%mm4, %%mm0 \n\t" <comment type="line" pos:start="1641:44" pos:end="1641:70">// src[0,0] * (s-dx)*(s-dy)</comment>
+
+                "paddw  %5,    %%mm1 \n\t"
+
+                "paddw  %%mm3, %%mm2 \n\t"
+
+                "paddw  %%mm1, %%mm0 \n\t"
+
+                "paddw  %%mm2, %%mm0 \n\t"
+
+
+
+                "psrlw    %6,    %%mm0 \n\t"
+
+                "packuswb %%mm0, %%mm0 \n\t"
+
+                "movd     %%mm0, %0    \n\t"
+
+
+
+                : "=m"(dst[x+y*stride])
+
+                : "m"(src[0]), "m"(src[1]),
+
+                  "m"(src[stride]), "m"(src[stride+1]),
+
+                  "m"(*r4), "m"(shift2)
+
+            );</asm>
+
+            <expr_stmt pos:start="1671:13" pos:end="1671:26"><expr pos:start="1671:13" pos:end="1671:25"><name pos:start="1671:13" pos:end="1671:15">src</name> <operator pos:start="1671:17" pos:end="1671:18">+=</operator> <name pos:start="1671:20" pos:end="1671:25">stride</name></expr>;</expr_stmt>
+
+        </block_content>}</block></for>
+
+        <expr_stmt pos:start="1675:9" pos:end="1675:26"><expr pos:start="1675:9" pos:end="1675:25"><name pos:start="1675:9" pos:end="1675:11">src</name> <operator pos:start="1675:13" pos:end="1675:14">+=</operator> <literal type="number" pos:start="1675:16" pos:end="1675:17">4</literal><operator pos:start="1675:17" pos:end="1675:17">-</operator><name pos:start="1675:18" pos:end="1675:18">h</name><operator pos:start="1675:19" pos:end="1675:19">*</operator><name pos:start="1675:20" pos:end="1675:25">stride</name></expr>;</expr_stmt>
+
+    </block_content>}</block></for>
+
+</block_content>}</block></function>
+</unit>

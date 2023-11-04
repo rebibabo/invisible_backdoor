@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/13880.c" pos:tabs="8"><function pos:start="1:1" pos:end="45:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:26">hpet_set_timer</name><parameter_list pos:start="1:27" pos:end="1:40">(<parameter pos:start="1:28" pos:end="1:39"><decl pos:start="1:28" pos:end="1:39"><type pos:start="1:28" pos:end="1:38"><name pos:start="1:28" pos:end="1:36">HPETTimer</name> <modifier pos:start="1:38" pos:end="1:38">*</modifier></type><name pos:start="1:39" pos:end="1:39">t</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="45:1">{<block_content pos:start="5:5" pos:end="43:49">
+
+    <decl_stmt pos:start="5:5" pos:end="5:18"><decl pos:start="5:5" pos:end="5:17"><type pos:start="5:5" pos:end="5:12"><name pos:start="5:5" pos:end="5:12">uint64_t</name></type> <name pos:start="5:14" pos:end="5:17">diff</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:23"><decl pos:start="7:5" pos:end="7:22"><type pos:start="7:5" pos:end="7:12"><name pos:start="7:5" pos:end="7:12">uint32_t</name></type> <name pos:start="7:14" pos:end="7:22">wrap_diff</name></decl>;</decl_stmt>  <comment type="block" pos:start="7:26" pos:end="7:60">/* how many ticks until we wrap? */</comment>
+
+    <decl_stmt pos:start="9:5" pos:end="9:41"><decl pos:start="9:5" pos:end="9:40"><type pos:start="9:5" pos:end="9:12"><name pos:start="9:5" pos:end="9:12">uint64_t</name></type> <name pos:start="9:14" pos:end="9:21">cur_tick</name> <init pos:start="9:23" pos:end="9:40">= <expr pos:start="9:25" pos:end="9:40"><call pos:start="9:25" pos:end="9:40"><name pos:start="9:25" pos:end="9:38">hpet_get_ticks</name><argument_list pos:start="9:39" pos:end="9:40">()</argument_list></call></expr></init></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="13:5" pos:end="13:70">/* whenever new timer is being set up, make sure wrap_flag is 0 */</comment>
+
+    <expr_stmt pos:start="15:5" pos:end="15:21"><expr pos:start="15:5" pos:end="15:20"><name pos:start="15:5" pos:end="15:16"><name pos:start="15:5" pos:end="15:5">t</name><operator pos:start="15:6" pos:end="15:7">-&gt;</operator><name pos:start="15:8" pos:end="15:16">wrap_flag</name></name> <operator pos:start="15:18" pos:end="15:18">=</operator> <literal type="number" pos:start="15:20" pos:end="15:20">0</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="17:5" pos:end="17:44"><expr pos:start="17:5" pos:end="17:43"><name pos:start="17:5" pos:end="17:8">diff</name> <operator pos:start="17:10" pos:end="17:10">=</operator> <call pos:start="17:12" pos:end="17:43"><name pos:start="17:12" pos:end="17:30">hpet_calculate_diff</name><argument_list pos:start="17:31" pos:end="17:43">(<argument pos:start="17:32" pos:end="17:32"><expr pos:start="17:32" pos:end="17:32"><name pos:start="17:32" pos:end="17:32">t</name></expr></argument>, <argument pos:start="17:35" pos:end="17:42"><expr pos:start="17:35" pos:end="17:42"><name pos:start="17:35" pos:end="17:42">cur_tick</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="21:5" pos:end="25:7">/* hpet spec says in one-shot 32-bit mode, generate an interrupt when
+
+     * counter wraps in addition to an interrupt with comparator match.
+
+     */</comment>
+
+    <if_stmt pos:start="27:5" pos:end="39:5"><if pos:start="27:5" pos:end="39:5">if <condition pos:start="27:8" pos:end="27:59">(<expr pos:start="27:9" pos:end="27:58"><name pos:start="27:9" pos:end="27:17"><name pos:start="27:9" pos:end="27:9">t</name><operator pos:start="27:10" pos:end="27:11">-&gt;</operator><name pos:start="27:12" pos:end="27:17">config</name></name> <operator pos:start="27:19" pos:end="27:19">&amp;</operator> <name pos:start="27:21" pos:end="27:33">HPET_TN_32BIT</name> <operator pos:start="27:35" pos:end="27:36">&amp;&amp;</operator> <operator pos:start="27:38" pos:end="27:38">!</operator><call pos:start="27:39" pos:end="27:58"><name pos:start="27:39" pos:end="27:55">timer_is_periodic</name><argument_list pos:start="27:56" pos:end="27:58">(<argument pos:start="27:57" pos:end="27:57"><expr pos:start="27:57" pos:end="27:57"><name pos:start="27:57" pos:end="27:57">t</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="27:61" pos:end="39:5">{<block_content pos:start="29:9" pos:end="37:9">
+
+        <expr_stmt pos:start="29:9" pos:end="29:52"><expr pos:start="29:9" pos:end="29:51"><name pos:start="29:9" pos:end="29:17">wrap_diff</name> <operator pos:start="29:19" pos:end="29:19">=</operator> <literal type="number" pos:start="29:21" pos:end="29:32">0xffffffff</literal> <operator pos:start="29:32" pos:end="29:32">-</operator> <operator pos:start="29:34" pos:end="29:34">(</operator><name pos:start="29:35" pos:end="29:42">uint32_t</name><operator pos:start="29:43" pos:end="29:43">)</operator><name pos:start="29:44" pos:end="29:51">cur_tick</name></expr>;</expr_stmt>
+
+        <if_stmt pos:start="31:9" pos:end="37:9"><if pos:start="31:9" pos:end="37:9">if <condition pos:start="31:12" pos:end="31:39">(<expr pos:start="31:13" pos:end="31:38"><name pos:start="31:13" pos:end="31:21">wrap_diff</name> <operator pos:start="31:23" pos:end="31:23">&lt;</operator> <operator pos:start="31:25" pos:end="31:25">(</operator><name pos:start="31:26" pos:end="31:33">uint32_t</name><operator pos:start="31:34" pos:end="31:34">)</operator><name pos:start="31:35" pos:end="31:38">diff</name></expr>)</condition> <block pos:start="31:41" pos:end="37:9">{<block_content pos:start="33:13" pos:end="35:29">
+
+            <expr_stmt pos:start="33:13" pos:end="33:29"><expr pos:start="33:13" pos:end="33:28"><name pos:start="33:13" pos:end="33:16">diff</name> <operator pos:start="33:18" pos:end="33:18">=</operator> <name pos:start="33:20" pos:end="33:28">wrap_diff</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="35:13" pos:end="35:29"><expr pos:start="35:13" pos:end="35:28"><name pos:start="35:13" pos:end="35:24"><name pos:start="35:13" pos:end="35:13">t</name><operator pos:start="35:14" pos:end="35:15">-&gt;</operator><name pos:start="35:16" pos:end="35:24">wrap_flag</name></name> <operator pos:start="35:26" pos:end="35:26">=</operator> <literal type="number" pos:start="35:28" pos:end="35:28">1</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <expr_stmt pos:start="41:5" pos:end="43:49"><expr pos:start="41:5" pos:end="43:48"><call pos:start="41:5" pos:end="43:48"><name pos:start="41:5" pos:end="41:18">qemu_mod_timer</name><argument_list pos:start="41:19" pos:end="43:48">(<argument pos:start="41:20" pos:end="41:32"><expr pos:start="41:20" pos:end="41:32"><name pos:start="41:20" pos:end="41:32"><name pos:start="41:20" pos:end="41:20">t</name><operator pos:start="41:21" pos:end="41:22">-&gt;</operator><name pos:start="41:23" pos:end="41:32">qemu_timer</name></name></expr></argument>, <argument pos:start="41:35" pos:end="43:47"><expr pos:start="41:35" pos:end="43:47"><call pos:start="41:35" pos:end="41:58"><name pos:start="41:35" pos:end="41:48">qemu_get_clock</name><argument_list pos:start="41:49" pos:end="41:58">(<argument pos:start="41:50" pos:end="41:57"><expr pos:start="41:50" pos:end="41:57"><name pos:start="41:50" pos:end="41:57">vm_clock</name></expr></argument>)</argument_list></call>
+
+                   <operator pos:start="43:20" pos:end="43:20">+</operator> <operator pos:start="43:22" pos:end="43:22">(</operator><name pos:start="43:23" pos:end="43:29">int64_t</name><operator pos:start="43:30" pos:end="43:30">)</operator><call pos:start="43:31" pos:end="43:47"><name pos:start="43:31" pos:end="43:41">ticks_to_ns</name><argument_list pos:start="43:42" pos:end="43:47">(<argument pos:start="43:43" pos:end="43:46"><expr pos:start="43:43" pos:end="43:46"><name pos:start="43:43" pos:end="43:46">diff</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+</block_content>}</block></function>
+</unit>

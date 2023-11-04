@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/20016.c" pos:tabs="8"><function pos:start="1:1" pos:end="239:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:33">process_output_surface</name><parameter_list pos:start="1:34" pos:end="1:97">(<parameter pos:start="1:35" pos:end="1:55"><decl pos:start="1:35" pos:end="1:55"><type pos:start="1:35" pos:end="1:55"><name pos:start="1:35" pos:end="1:48">AVCodecContext</name> <modifier pos:start="1:50" pos:end="1:50">*</modifier></type><name pos:start="1:51" pos:end="1:55">avctx</name></decl></parameter>, <parameter pos:start="1:58" pos:end="1:70"><decl pos:start="1:58" pos:end="1:70"><type pos:start="1:58" pos:end="1:70"><name pos:start="1:58" pos:end="1:65">AVPacket</name> <modifier pos:start="1:67" pos:end="1:67">*</modifier></type><name pos:start="1:68" pos:end="1:70">pkt</name></decl></parameter>, <parameter pos:start="1:73" pos:end="1:96"><decl pos:start="1:73" pos:end="1:96"><type pos:start="1:73" pos:end="1:96"><name pos:start="1:73" pos:end="1:84">NvencSurface</name> <modifier pos:start="1:86" pos:end="1:86">*</modifier></type><name pos:start="1:87" pos:end="1:96">tmpoutsurf</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="239:1">{<block_content pos:start="5:5" pos:end="237:15">
+
+    <decl_stmt pos:start="5:5" pos:end="5:41"><decl pos:start="5:5" pos:end="5:40"><type pos:start="5:5" pos:end="5:18"><name pos:start="5:5" pos:end="5:16">NvencContext</name> <modifier pos:start="5:18" pos:end="5:18">*</modifier></type><name pos:start="5:19" pos:end="5:21">ctx</name> <init pos:start="5:23" pos:end="5:40">= <expr pos:start="5:25" pos:end="5:40"><name pos:start="5:25" pos:end="5:40"><name pos:start="5:25" pos:end="5:29">avctx</name><operator pos:start="5:30" pos:end="5:31">-&gt;</operator><name pos:start="5:32" pos:end="5:40">priv_data</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:59"><decl pos:start="7:5" pos:end="7:58"><type pos:start="7:5" pos:end="7:27"><name pos:start="7:5" pos:end="7:25">NvencDynLoadFunctions</name> <modifier pos:start="7:27" pos:end="7:27">*</modifier></type><name pos:start="7:28" pos:end="7:32">dl_fn</name> <init pos:start="7:34" pos:end="7:58">= <expr pos:start="7:36" pos:end="7:58"><operator pos:start="7:36" pos:end="7:36">&amp;</operator><name pos:start="7:37" pos:end="7:58"><name pos:start="7:37" pos:end="7:39">ctx</name><operator pos:start="7:40" pos:end="7:41">-&gt;</operator><name pos:start="7:42" pos:end="7:58">nvenc_dload_funcs</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:63"><decl pos:start="9:5" pos:end="9:62"><type pos:start="9:5" pos:end="9:33"><name pos:start="9:5" pos:end="9:31">NV_ENCODE_API_FUNCTION_LIST</name> <modifier pos:start="9:33" pos:end="9:33">*</modifier></type><name pos:start="9:34" pos:end="9:40">p_nvenc</name> <init pos:start="9:42" pos:end="9:62">= <expr pos:start="9:44" pos:end="9:62"><operator pos:start="9:44" pos:end="9:44">&amp;</operator><name pos:start="9:45" pos:end="9:62"><name pos:start="9:45" pos:end="9:49">dl_fn</name><operator pos:start="9:50" pos:end="9:51">-&gt;</operator><name pos:start="9:52" pos:end="9:62">nvenc_funcs</name></name></expr></init></decl>;</decl_stmt>
+
+
+
+    <decl_stmt pos:start="13:5" pos:end="13:29"><decl pos:start="13:5" pos:end="13:28"><type pos:start="13:5" pos:end="13:12"><name pos:start="13:5" pos:end="13:12">uint32_t</name></type> <name pos:start="13:14" pos:end="13:28">slice_mode_data</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:35"><decl pos:start="15:5" pos:end="15:34"><type pos:start="15:5" pos:end="15:14"><name pos:start="15:5" pos:end="15:12">uint32_t</name> <modifier pos:start="15:14" pos:end="15:14">*</modifier></type><name pos:start="15:15" pos:end="15:27">slice_offsets</name> <init pos:start="15:29" pos:end="15:34">= <expr pos:start="15:31" pos:end="15:34"><name pos:start="15:31" pos:end="15:34">NULL</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="17:5" pos:end="17:46"><decl pos:start="17:5" pos:end="17:45"><type pos:start="17:5" pos:end="17:25"><name pos:start="17:5" pos:end="17:25">NV_ENC_LOCK_BITSTREAM</name></type> <name pos:start="17:27" pos:end="17:37">lock_params</name> <init pos:start="17:39" pos:end="17:45">= <expr pos:start="17:41" pos:end="17:45"><block pos:start="17:41" pos:end="17:45">{ <expr pos:start="17:43" pos:end="17:43"><literal type="number" pos:start="17:43" pos:end="17:43">0</literal></expr> }</block></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:26"><decl pos:start="19:5" pos:end="19:25"><type pos:start="19:5" pos:end="19:15"><name pos:start="19:5" pos:end="19:15">NVENCSTATUS</name></type> <name pos:start="19:17" pos:end="19:25">nv_status</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="21:5" pos:end="21:16"><decl pos:start="21:5" pos:end="21:15"><type pos:start="21:5" pos:end="21:7"><name pos:start="21:5" pos:end="21:7">int</name></type> <name pos:start="21:9" pos:end="21:11">res</name> <init pos:start="21:13" pos:end="21:15">= <expr pos:start="21:15" pos:end="21:15"><literal type="number" pos:start="21:15" pos:end="21:15">0</literal></expr></init></decl>;</decl_stmt>
+
+
+
+    <decl_stmt pos:start="25:5" pos:end="25:33"><decl pos:start="25:5" pos:end="25:32"><type pos:start="25:5" pos:end="25:22"><name pos:start="25:5" pos:end="25:22"><name pos:start="25:5" pos:end="25:8">enum</name> <name pos:start="25:10" pos:end="25:22">AVPictureType</name></name></type> <name pos:start="25:24" pos:end="25:32">pict_type</name></decl>;</decl_stmt>
+
+
+
+    <switch pos:start="29:5" pos:end="51:5">switch <condition pos:start="29:12" pos:end="29:29">(<expr pos:start="29:13" pos:end="29:28"><name pos:start="29:13" pos:end="29:28"><name pos:start="29:13" pos:end="29:17">avctx</name><operator pos:start="29:18" pos:end="29:19">-&gt;</operator><name pos:start="29:20" pos:end="29:24">codec</name><operator pos:start="29:25" pos:end="29:26">-&gt;</operator><name pos:start="29:27" pos:end="29:28">id</name></name></expr>)</condition> <block pos:start="29:31" pos:end="51:5">{<block_content pos:start="31:5" pos:end="49:17">
+
+    <case pos:start="31:5" pos:end="31:26">case <expr pos:start="31:10" pos:end="31:25"><name pos:start="31:10" pos:end="31:25">AV_CODEC_ID_H264</name></expr>:</case>
+
+      <expr_stmt pos:start="33:7" pos:end="33:86"><expr pos:start="33:7" pos:end="33:85"><name pos:start="33:7" pos:end="33:21">slice_mode_data</name> <operator pos:start="33:23" pos:end="33:23">=</operator> <name pos:start="33:25" pos:end="33:85"><name pos:start="33:25" pos:end="33:27">ctx</name><operator pos:start="33:28" pos:end="33:29">-&gt;</operator><name pos:start="33:30" pos:end="33:42">encode_config</name><operator pos:start="33:43" pos:end="33:43">.</operator><name pos:start="33:44" pos:end="33:60">encodeCodecConfig</name><operator pos:start="33:61" pos:end="33:61">.</operator><name pos:start="33:62" pos:end="33:71">h264Config</name><operator pos:start="33:72" pos:end="33:72">.</operator><name pos:start="33:73" pos:end="33:85">sliceModeData</name></name></expr>;</expr_stmt>
+
+      <break pos:start="35:7" pos:end="35:12">break;</break>
+
+    <case pos:start="37:5" pos:end="37:26">case <expr pos:start="37:10" pos:end="37:25"><name pos:start="37:10" pos:end="37:25">AV_CODEC_ID_H265</name></expr>:</case>
+
+      <expr_stmt pos:start="39:7" pos:end="39:86"><expr pos:start="39:7" pos:end="39:85"><name pos:start="39:7" pos:end="39:21">slice_mode_data</name> <operator pos:start="39:23" pos:end="39:23">=</operator> <name pos:start="39:25" pos:end="39:85"><name pos:start="39:25" pos:end="39:27">ctx</name><operator pos:start="39:28" pos:end="39:29">-&gt;</operator><name pos:start="39:30" pos:end="39:42">encode_config</name><operator pos:start="39:43" pos:end="39:43">.</operator><name pos:start="39:44" pos:end="39:60">encodeCodecConfig</name><operator pos:start="39:61" pos:end="39:61">.</operator><name pos:start="39:62" pos:end="39:71">hevcConfig</name><operator pos:start="39:72" pos:end="39:72">.</operator><name pos:start="39:73" pos:end="39:85">sliceModeData</name></name></expr>;</expr_stmt>
+
+      <break pos:start="41:7" pos:end="41:12">break;</break>
+
+    <default pos:start="43:5" pos:end="43:12">default:</default>
+
+      <expr_stmt pos:start="45:7" pos:end="45:58"><expr pos:start="45:7" pos:end="45:57"><call pos:start="45:7" pos:end="45:57"><name pos:start="45:7" pos:end="45:12">av_log</name><argument_list pos:start="45:13" pos:end="45:57">(<argument pos:start="45:14" pos:end="45:18"><expr pos:start="45:14" pos:end="45:18"><name pos:start="45:14" pos:end="45:18">avctx</name></expr></argument>, <argument pos:start="45:21" pos:end="45:32"><expr pos:start="45:21" pos:end="45:32"><name pos:start="45:21" pos:end="45:32">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="45:35" pos:end="45:56"><expr pos:start="45:35" pos:end="45:56"><literal type="string" pos:start="45:35" pos:end="45:56">"Unknown codec name\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+      <expr_stmt pos:start="47:7" pos:end="47:28"><expr pos:start="47:7" pos:end="47:27"><name pos:start="47:7" pos:end="47:9">res</name> <operator pos:start="47:11" pos:end="47:11">=</operator> <call pos:start="47:13" pos:end="47:27"><name pos:start="47:13" pos:end="47:19">AVERROR</name><argument_list pos:start="47:20" pos:end="47:27">(<argument pos:start="47:21" pos:end="47:26"><expr pos:start="47:21" pos:end="47:26"><name pos:start="47:21" pos:end="47:26">EINVAL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+      <goto pos:start="49:7" pos:end="49:17">goto <name pos:start="49:12" pos:end="49:16">error</name>;</goto>
+
+    </block_content>}</block></switch>
+
+    <expr_stmt pos:start="53:5" pos:end="53:73"><expr pos:start="53:5" pos:end="53:72"><name pos:start="53:5" pos:end="53:17">slice_offsets</name> <operator pos:start="53:19" pos:end="53:19">=</operator> <call pos:start="53:21" pos:end="53:72"><name pos:start="53:21" pos:end="53:30">av_mallocz</name><argument_list pos:start="53:31" pos:end="53:72">(<argument pos:start="53:32" pos:end="53:71"><expr pos:start="53:32" pos:end="53:71"><name pos:start="53:32" pos:end="53:46">slice_mode_data</name> <operator pos:start="53:48" pos:end="53:48">*</operator> <sizeof pos:start="53:50" pos:end="53:71">sizeof<argument_list pos:start="53:56" pos:end="53:71">(<argument pos:start="53:57" pos:end="53:70"><expr pos:start="53:57" pos:end="53:70"><operator pos:start="53:57" pos:end="53:57">*</operator><name pos:start="53:58" pos:end="53:70">slice_offsets</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="57:5" pos:end="63:5"><if pos:start="57:5" pos:end="63:5">if <condition pos:start="57:8" pos:end="57:23">(<expr pos:start="57:9" pos:end="57:22"><operator pos:start="57:9" pos:end="57:9">!</operator><name pos:start="57:10" pos:end="57:22">slice_offsets</name></expr>)</condition> <block pos:start="57:25" pos:end="63:5">{<block_content pos:start="59:9" pos:end="61:19">
+
+        <expr_stmt pos:start="59:9" pos:end="59:30"><expr pos:start="59:9" pos:end="59:29"><name pos:start="59:9" pos:end="59:11">res</name> <operator pos:start="59:13" pos:end="59:13">=</operator> <call pos:start="59:15" pos:end="59:29"><name pos:start="59:15" pos:end="59:21">AVERROR</name><argument_list pos:start="59:22" pos:end="59:29">(<argument pos:start="59:23" pos:end="59:28"><expr pos:start="59:23" pos:end="59:28"><name pos:start="59:23" pos:end="59:28">ENOMEM</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <goto pos:start="61:9" pos:end="61:19">goto <name pos:start="61:14" pos:end="61:18">error</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="67:5" pos:end="67:52"><expr pos:start="67:5" pos:end="67:51"><name pos:start="67:5" pos:end="67:23"><name pos:start="67:5" pos:end="67:15">lock_params</name><operator pos:start="67:16" pos:end="67:16">.</operator><name pos:start="67:17" pos:end="67:23">version</name></name> <operator pos:start="67:25" pos:end="67:25">=</operator> <name pos:start="67:27" pos:end="67:51">NV_ENC_LOCK_BITSTREAM_VER</name></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="71:5" pos:end="71:30"><expr pos:start="71:5" pos:end="71:29"><name pos:start="71:5" pos:end="71:25"><name pos:start="71:5" pos:end="71:15">lock_params</name><operator pos:start="71:16" pos:end="71:16">.</operator><name pos:start="71:17" pos:end="71:25">doNotWait</name></name> <operator pos:start="71:27" pos:end="71:27">=</operator> <literal type="number" pos:start="71:29" pos:end="71:29">0</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="73:5" pos:end="73:61"><expr pos:start="73:5" pos:end="73:60"><name pos:start="73:5" pos:end="73:31"><name pos:start="73:5" pos:end="73:15">lock_params</name><operator pos:start="73:16" pos:end="73:16">.</operator><name pos:start="73:17" pos:end="73:31">outputBitstream</name></name> <operator pos:start="73:33" pos:end="73:33">=</operator> <name pos:start="73:35" pos:end="73:60"><name pos:start="73:35" pos:end="73:44">tmpoutsurf</name><operator pos:start="73:45" pos:end="73:46">-&gt;</operator><name pos:start="73:47" pos:end="73:60">output_surface</name></name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="75:5" pos:end="75:45"><expr pos:start="75:5" pos:end="75:44"><name pos:start="75:5" pos:end="75:28"><name pos:start="75:5" pos:end="75:15">lock_params</name><operator pos:start="75:16" pos:end="75:16">.</operator><name pos:start="75:17" pos:end="75:28">sliceOffsets</name></name> <operator pos:start="75:30" pos:end="75:30">=</operator> <name pos:start="75:32" pos:end="75:44">slice_offsets</name></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="79:5" pos:end="79:74"><expr pos:start="79:5" pos:end="79:73"><name pos:start="79:5" pos:end="79:13">nv_status</name> <operator pos:start="79:15" pos:end="79:15">=</operator> <call pos:start="79:17" pos:end="79:73"><name pos:start="79:17" pos:end="79:43"><name pos:start="79:17" pos:end="79:23">p_nvenc</name><operator pos:start="79:24" pos:end="79:25">-&gt;</operator><name pos:start="79:26" pos:end="79:43">nvEncLockBitstream</name></name><argument_list pos:start="79:44" pos:end="79:73">(<argument pos:start="79:45" pos:end="79:58"><expr pos:start="79:45" pos:end="79:58"><name pos:start="79:45" pos:end="79:58"><name pos:start="79:45" pos:end="79:47">ctx</name><operator pos:start="79:48" pos:end="79:49">-&gt;</operator><name pos:start="79:50" pos:end="79:58">nvencoder</name></name></expr></argument>, <argument pos:start="79:61" pos:end="79:72"><expr pos:start="79:61" pos:end="79:72"><operator pos:start="79:61" pos:end="79:61">&amp;</operator><name pos:start="79:62" pos:end="79:72">lock_params</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="81:5" pos:end="87:5"><if pos:start="81:5" pos:end="87:5">if <condition pos:start="81:8" pos:end="81:36">(<expr pos:start="81:9" pos:end="81:35"><name pos:start="81:9" pos:end="81:17">nv_status</name> <operator pos:start="81:19" pos:end="81:20">!=</operator> <name pos:start="81:22" pos:end="81:35">NV_ENC_SUCCESS</name></expr>)</condition> <block pos:start="81:38" pos:end="87:5">{<block_content pos:start="83:9" pos:end="85:19">
+
+        <expr_stmt pos:start="83:9" pos:end="83:85"><expr pos:start="83:9" pos:end="83:84"><name pos:start="83:9" pos:end="83:11">res</name> <operator pos:start="83:13" pos:end="83:13">=</operator> <call pos:start="83:15" pos:end="83:84"><name pos:start="83:15" pos:end="83:31">nvenc_print_error</name><argument_list pos:start="83:32" pos:end="83:84">(<argument pos:start="83:33" pos:end="83:37"><expr pos:start="83:33" pos:end="83:37"><name pos:start="83:33" pos:end="83:37">avctx</name></expr></argument>, <argument pos:start="83:40" pos:end="83:48"><expr pos:start="83:40" pos:end="83:48"><name pos:start="83:40" pos:end="83:48">nv_status</name></expr></argument>, <argument pos:start="83:51" pos:end="83:83"><expr pos:start="83:51" pos:end="83:83"><literal type="string" pos:start="83:51" pos:end="83:83">"Failed locking bitstream buffer"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <goto pos:start="85:9" pos:end="85:19">goto <name pos:start="85:14" pos:end="85:18">error</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="91:5" pos:end="97:5"><if pos:start="91:5" pos:end="97:5">if <condition pos:start="91:8" pos:end="91:79">(<expr pos:start="91:9" pos:end="91:78"><name pos:start="91:9" pos:end="91:11">res</name> <operator pos:start="91:13" pos:end="91:13">=</operator> <call pos:start="91:15" pos:end="91:78"><name pos:start="91:15" pos:end="91:30">ff_alloc_packet2</name><argument_list pos:start="91:31" pos:end="91:78">(<argument pos:start="91:32" pos:end="91:36"><expr pos:start="91:32" pos:end="91:36"><name pos:start="91:32" pos:end="91:36">avctx</name></expr></argument>, <argument pos:start="91:39" pos:end="91:41"><expr pos:start="91:39" pos:end="91:41"><name pos:start="91:39" pos:end="91:41">pkt</name></expr></argument>, <argument pos:start="91:44" pos:end="91:75"><expr pos:start="91:44" pos:end="91:75"><name pos:start="91:44" pos:end="91:75"><name pos:start="91:44" pos:end="91:54">lock_params</name><operator pos:start="91:55" pos:end="91:55">.</operator><name pos:start="91:56" pos:end="91:75">bitstreamSizeInBytes</name></name></expr></argument>,<argument pos:start="91:77" pos:end="91:77"><expr pos:start="91:77" pos:end="91:77"><literal type="number" pos:start="91:77" pos:end="91:77">0</literal></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="91:81" pos:end="97:5">{<block_content pos:start="93:9" pos:end="95:19">
+
+        <expr_stmt pos:start="93:9" pos:end="93:82"><expr pos:start="93:9" pos:end="93:81"><call pos:start="93:9" pos:end="93:81"><name pos:start="93:9" pos:end="93:37"><name pos:start="93:9" pos:end="93:15">p_nvenc</name><operator pos:start="93:16" pos:end="93:17">-&gt;</operator><name pos:start="93:18" pos:end="93:37">nvEncUnlockBitstream</name></name><argument_list pos:start="93:38" pos:end="93:81">(<argument pos:start="93:39" pos:end="93:52"><expr pos:start="93:39" pos:end="93:52"><name pos:start="93:39" pos:end="93:52"><name pos:start="93:39" pos:end="93:41">ctx</name><operator pos:start="93:42" pos:end="93:43">-&gt;</operator><name pos:start="93:44" pos:end="93:52">nvencoder</name></name></expr></argument>, <argument pos:start="93:55" pos:end="93:80"><expr pos:start="93:55" pos:end="93:80"><name pos:start="93:55" pos:end="93:80"><name pos:start="93:55" pos:end="93:64">tmpoutsurf</name><operator pos:start="93:65" pos:end="93:66">-&gt;</operator><name pos:start="93:67" pos:end="93:80">output_surface</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <goto pos:start="95:9" pos:end="95:19">goto <name pos:start="95:14" pos:end="95:18">error</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="101:5" pos:end="101:88"><expr pos:start="101:5" pos:end="101:87"><call pos:start="101:5" pos:end="101:87"><name pos:start="101:5" pos:end="101:10">memcpy</name><argument_list pos:start="101:11" pos:end="101:87">(<argument pos:start="101:12" pos:end="101:20"><expr pos:start="101:12" pos:end="101:20"><name pos:start="101:12" pos:end="101:20"><name pos:start="101:12" pos:end="101:14">pkt</name><operator pos:start="101:15" pos:end="101:16">-&gt;</operator><name pos:start="101:17" pos:end="101:20">data</name></name></expr></argument>, <argument pos:start="101:23" pos:end="101:52"><expr pos:start="101:23" pos:end="101:52"><name pos:start="101:23" pos:end="101:52"><name pos:start="101:23" pos:end="101:33">lock_params</name><operator pos:start="101:34" pos:end="101:34">.</operator><name pos:start="101:35" pos:end="101:52">bitstreamBufferPtr</name></name></expr></argument>, <argument pos:start="101:55" pos:end="101:86"><expr pos:start="101:55" pos:end="101:86"><name pos:start="101:55" pos:end="101:86"><name pos:start="101:55" pos:end="101:65">lock_params</name><operator pos:start="101:66" pos:end="101:66">.</operator><name pos:start="101:67" pos:end="101:86">bitstreamSizeInBytes</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="105:5" pos:end="105:90"><expr pos:start="105:5" pos:end="105:89"><name pos:start="105:5" pos:end="105:13">nv_status</name> <operator pos:start="105:15" pos:end="105:15">=</operator> <call pos:start="105:17" pos:end="105:89"><name pos:start="105:17" pos:end="105:45"><name pos:start="105:17" pos:end="105:23">p_nvenc</name><operator pos:start="105:24" pos:end="105:25">-&gt;</operator><name pos:start="105:26" pos:end="105:45">nvEncUnlockBitstream</name></name><argument_list pos:start="105:46" pos:end="105:89">(<argument pos:start="105:47" pos:end="105:60"><expr pos:start="105:47" pos:end="105:60"><name pos:start="105:47" pos:end="105:60"><name pos:start="105:47" pos:end="105:49">ctx</name><operator pos:start="105:50" pos:end="105:51">-&gt;</operator><name pos:start="105:52" pos:end="105:60">nvencoder</name></name></expr></argument>, <argument pos:start="105:63" pos:end="105:88"><expr pos:start="105:63" pos:end="105:88"><name pos:start="105:63" pos:end="105:88"><name pos:start="105:63" pos:end="105:72">tmpoutsurf</name><operator pos:start="105:73" pos:end="105:74">-&gt;</operator><name pos:start="105:75" pos:end="105:88">output_surface</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="107:5" pos:end="109:117"><if pos:start="107:5" pos:end="109:117">if <condition pos:start="107:8" pos:end="107:36">(<expr pos:start="107:9" pos:end="107:35"><name pos:start="107:9" pos:end="107:17">nv_status</name> <operator pos:start="107:19" pos:end="107:20">!=</operator> <name pos:start="107:22" pos:end="107:35">NV_ENC_SUCCESS</name></expr>)</condition><block type="pseudo" pos:start="109:9" pos:end="109:117"><block_content pos:start="109:9" pos:end="109:117">
+
+        <expr_stmt pos:start="109:9" pos:end="109:117"><expr pos:start="109:9" pos:end="109:116"><call pos:start="109:9" pos:end="109:116"><name pos:start="109:9" pos:end="109:25">nvenc_print_error</name><argument_list pos:start="109:26" pos:end="109:116">(<argument pos:start="109:27" pos:end="109:31"><expr pos:start="109:27" pos:end="109:31"><name pos:start="109:27" pos:end="109:31">avctx</name></expr></argument>, <argument pos:start="109:34" pos:end="109:42"><expr pos:start="109:34" pos:end="109:42"><name pos:start="109:34" pos:end="109:42">nv_status</name></expr></argument>, <argument pos:start="109:45" pos:end="109:115"><expr pos:start="109:45" pos:end="109:115"><literal type="string" pos:start="109:45" pos:end="109:115">"Failed unlocking bitstream buffer, expect the gates of mordor to open"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+
+
+
+
+    <if_stmt pos:start="115:5" pos:end="143:5"><if pos:start="115:5" pos:end="143:5">if <condition pos:start="115:8" pos:end="115:80">(<expr pos:start="115:9" pos:end="115:79"><name pos:start="115:9" pos:end="115:22"><name pos:start="115:9" pos:end="115:13">avctx</name><operator pos:start="115:14" pos:end="115:15">-&gt;</operator><name pos:start="115:16" pos:end="115:22">pix_fmt</name></name> <operator pos:start="115:24" pos:end="115:25">==</operator> <name pos:start="115:27" pos:end="115:41">AV_PIX_FMT_CUDA</name> <operator pos:start="115:43" pos:end="115:44">||</operator> <name pos:start="115:46" pos:end="115:59"><name pos:start="115:46" pos:end="115:50">avctx</name><operator pos:start="115:51" pos:end="115:52">-&gt;</operator><name pos:start="115:53" pos:end="115:59">pix_fmt</name></name> <operator pos:start="115:61" pos:end="115:62">==</operator> <name pos:start="115:64" pos:end="115:79">AV_PIX_FMT_D3D11</name></expr>)</condition> <block pos:start="115:82" pos:end="143:5">{<block_content pos:start="117:9" pos:end="141:41">
+
+        <expr_stmt pos:start="117:9" pos:end="117:64"><expr pos:start="117:9" pos:end="117:63"><name pos:start="117:9" pos:end="117:51"><name pos:start="117:9" pos:end="117:11">ctx</name><operator pos:start="117:12" pos:end="117:13">-&gt;</operator><name pos:start="117:14" pos:end="117:30">registered_frames</name><index pos:start="117:31" pos:end="117:51">[<expr pos:start="117:32" pos:end="117:50"><name pos:start="117:32" pos:end="117:50"><name pos:start="117:32" pos:end="117:41">tmpoutsurf</name><operator pos:start="117:42" pos:end="117:43">-&gt;</operator><name pos:start="117:44" pos:end="117:50">reg_idx</name></name></expr>]</index></name><operator pos:start="117:52" pos:end="117:52">.</operator><name pos:start="117:53" pos:end="117:58">mapped</name> <operator pos:start="117:60" pos:end="117:61">-=</operator> <literal type="number" pos:start="117:63" pos:end="117:63">1</literal></expr>;</expr_stmt>
+
+        <if_stmt pos:start="119:9" pos:end="133:9"><if pos:start="119:9" pos:end="127:9">if <condition pos:start="119:12" pos:end="119:68">(<expr pos:start="119:13" pos:end="119:67"><name pos:start="119:13" pos:end="119:55"><name pos:start="119:13" pos:end="119:15">ctx</name><operator pos:start="119:16" pos:end="119:17">-&gt;</operator><name pos:start="119:18" pos:end="119:34">registered_frames</name><index pos:start="119:35" pos:end="119:55">[<expr pos:start="119:36" pos:end="119:54"><name pos:start="119:36" pos:end="119:54"><name pos:start="119:36" pos:end="119:45">tmpoutsurf</name><operator pos:start="119:46" pos:end="119:47">-&gt;</operator><name pos:start="119:48" pos:end="119:54">reg_idx</name></name></expr>]</index></name><operator pos:start="119:56" pos:end="119:56">.</operator><name pos:start="119:57" pos:end="119:62">mapped</name> <operator pos:start="119:64" pos:end="119:65">==</operator> <literal type="number" pos:start="119:67" pos:end="119:67">0</literal></expr>)</condition> <block pos:start="119:70" pos:end="127:9">{<block_content pos:start="121:13" pos:end="125:70">
+
+            <expr_stmt pos:start="121:13" pos:end="121:128"><expr pos:start="121:13" pos:end="121:127"><call pos:start="121:13" pos:end="121:127"><name pos:start="121:13" pos:end="121:44"><name pos:start="121:13" pos:end="121:19">p_nvenc</name><operator pos:start="121:20" pos:end="121:21">-&gt;</operator><name pos:start="121:22" pos:end="121:44">nvEncUnmapInputResource</name></name><argument_list pos:start="121:45" pos:end="121:127">(<argument pos:start="121:46" pos:end="121:59"><expr pos:start="121:46" pos:end="121:59"><name pos:start="121:46" pos:end="121:59"><name pos:start="121:46" pos:end="121:48">ctx</name><operator pos:start="121:49" pos:end="121:50">-&gt;</operator><name pos:start="121:51" pos:end="121:59">nvencoder</name></name></expr></argument>, <argument pos:start="121:62" pos:end="121:126"><expr pos:start="121:62" pos:end="121:126"><name pos:start="121:62" pos:end="121:104"><name pos:start="121:62" pos:end="121:64">ctx</name><operator pos:start="121:65" pos:end="121:66">-&gt;</operator><name pos:start="121:67" pos:end="121:83">registered_frames</name><index pos:start="121:84" pos:end="121:104">[<expr pos:start="121:85" pos:end="121:103"><name pos:start="121:85" pos:end="121:103"><name pos:start="121:85" pos:end="121:94">tmpoutsurf</name><operator pos:start="121:95" pos:end="121:96">-&gt;</operator><name pos:start="121:97" pos:end="121:103">reg_idx</name></name></expr>]</index></name><operator pos:start="121:105" pos:end="121:105">.</operator><name pos:start="121:106" pos:end="121:126"><name pos:start="121:106" pos:end="121:111">in_map</name><operator pos:start="121:112" pos:end="121:112">.</operator><name pos:start="121:113" pos:end="121:126">mappedResource</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="123:13" pos:end="123:113"><expr pos:start="123:13" pos:end="123:112"><call pos:start="123:13" pos:end="123:112"><name pos:start="123:13" pos:end="123:44"><name pos:start="123:13" pos:end="123:19">p_nvenc</name><operator pos:start="123:20" pos:end="123:21">-&gt;</operator><name pos:start="123:22" pos:end="123:44">nvEncUnregisterResource</name></name><argument_list pos:start="123:45" pos:end="123:112">(<argument pos:start="123:46" pos:end="123:59"><expr pos:start="123:46" pos:end="123:59"><name pos:start="123:46" pos:end="123:59"><name pos:start="123:46" pos:end="123:48">ctx</name><operator pos:start="123:49" pos:end="123:50">-&gt;</operator><name pos:start="123:51" pos:end="123:59">nvencoder</name></name></expr></argument>, <argument pos:start="123:62" pos:end="123:111"><expr pos:start="123:62" pos:end="123:111"><name pos:start="123:62" pos:end="123:104"><name pos:start="123:62" pos:end="123:64">ctx</name><operator pos:start="123:65" pos:end="123:66">-&gt;</operator><name pos:start="123:67" pos:end="123:83">registered_frames</name><index pos:start="123:84" pos:end="123:104">[<expr pos:start="123:85" pos:end="123:103"><name pos:start="123:85" pos:end="123:103"><name pos:start="123:85" pos:end="123:94">tmpoutsurf</name><operator pos:start="123:95" pos:end="123:96">-&gt;</operator><name pos:start="123:97" pos:end="123:103">reg_idx</name></name></expr>]</index></name><operator pos:start="123:105" pos:end="123:105">.</operator><name pos:start="123:106" pos:end="123:111">regptr</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="125:13" pos:end="125:70"><expr pos:start="125:13" pos:end="125:69"><name pos:start="125:13" pos:end="125:55"><name pos:start="125:13" pos:end="125:15">ctx</name><operator pos:start="125:16" pos:end="125:17">-&gt;</operator><name pos:start="125:18" pos:end="125:34">registered_frames</name><index pos:start="125:35" pos:end="125:55">[<expr pos:start="125:36" pos:end="125:54"><name pos:start="125:36" pos:end="125:54"><name pos:start="125:36" pos:end="125:45">tmpoutsurf</name><operator pos:start="125:46" pos:end="125:47">-&gt;</operator><name pos:start="125:48" pos:end="125:54">reg_idx</name></name></expr>]</index></name><operator pos:start="125:56" pos:end="125:56">.</operator><name pos:start="125:57" pos:end="125:62">regptr</name> <operator pos:start="125:64" pos:end="125:64">=</operator> <name pos:start="125:66" pos:end="125:69">NULL</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <if type="elseif" pos:start="127:11" pos:end="133:9">else if <condition pos:start="127:19" pos:end="127:74">(<expr pos:start="127:20" pos:end="127:73"><name pos:start="127:20" pos:end="127:62"><name pos:start="127:20" pos:end="127:22">ctx</name><operator pos:start="127:23" pos:end="127:24">-&gt;</operator><name pos:start="127:25" pos:end="127:41">registered_frames</name><index pos:start="127:42" pos:end="127:62">[<expr pos:start="127:43" pos:end="127:61"><name pos:start="127:43" pos:end="127:61"><name pos:start="127:43" pos:end="127:52">tmpoutsurf</name><operator pos:start="127:53" pos:end="127:54">-&gt;</operator><name pos:start="127:55" pos:end="127:61">reg_idx</name></name></expr>]</index></name><operator pos:start="127:63" pos:end="127:63">.</operator><name pos:start="127:64" pos:end="127:69">mapped</name> <operator pos:start="127:71" pos:end="127:71">&lt;</operator> <literal type="number" pos:start="127:73" pos:end="127:73">0</literal></expr>)</condition> <block pos:start="127:76" pos:end="133:9">{<block_content pos:start="129:13" pos:end="131:23">
+
+            <expr_stmt pos:start="129:13" pos:end="129:30"><expr pos:start="129:13" pos:end="129:29"><name pos:start="129:13" pos:end="129:15">res</name> <operator pos:start="129:17" pos:end="129:17">=</operator> <name pos:start="129:19" pos:end="129:29">AVERROR_BUG</name></expr>;</expr_stmt>
+
+            <goto pos:start="131:13" pos:end="131:23">goto <name pos:start="131:18" pos:end="131:22">error</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="137:9" pos:end="137:43"><expr pos:start="137:9" pos:end="137:42"><call pos:start="137:9" pos:end="137:42"><name pos:start="137:9" pos:end="137:22">av_frame_unref</name><argument_list pos:start="137:23" pos:end="137:42">(<argument pos:start="137:24" pos:end="137:41"><expr pos:start="137:24" pos:end="137:41"><name pos:start="137:24" pos:end="137:41"><name pos:start="137:24" pos:end="137:33">tmpoutsurf</name><operator pos:start="137:34" pos:end="137:35">-&gt;</operator><name pos:start="137:36" pos:end="137:41">in_ref</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="141:9" pos:end="141:41"><expr pos:start="141:9" pos:end="141:40"><name pos:start="141:9" pos:end="141:33"><name pos:start="141:9" pos:end="141:18">tmpoutsurf</name><operator pos:start="141:19" pos:end="141:20">-&gt;</operator><name pos:start="141:21" pos:end="141:33">input_surface</name></name> <operator pos:start="141:35" pos:end="141:35">=</operator> <name pos:start="141:37" pos:end="141:40">NULL</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <switch pos:start="147:5" pos:end="192:0">switch <condition pos:start="147:12" pos:end="147:36">(<expr pos:start="147:13" pos:end="147:35"><name pos:start="147:13" pos:end="147:35"><name pos:start="147:13" pos:end="147:23">lock_params</name><operator pos:start="147:24" pos:end="147:24">.</operator><name pos:start="147:25" pos:end="147:35">pictureType</name></name></expr>)</condition> <block pos:start="147:38" pos:end="192:0">{<block_content pos:start="149:5" pos:end="185:19">
+
+    <case pos:start="149:5" pos:end="149:29">case <expr pos:start="149:10" pos:end="149:28"><name pos:start="149:10" pos:end="149:28">NV_ENC_PIC_TYPE_IDR</name></expr>:</case>
+
+        <expr_stmt pos:start="151:9" pos:end="151:38"><expr pos:start="151:9" pos:end="151:37"><name pos:start="151:9" pos:end="151:18"><name pos:start="151:9" pos:end="151:11">pkt</name><operator pos:start="151:12" pos:end="151:13">-&gt;</operator><name pos:start="151:14" pos:end="151:18">flags</name></name> <operator pos:start="151:20" pos:end="151:21">|=</operator> <name pos:start="151:23" pos:end="151:37">AV_PKT_FLAG_KEY</name></expr>;</expr_stmt>
+
+    <case pos:start="153:5" pos:end="153:27">case <expr pos:start="153:10" pos:end="153:26"><name pos:start="153:10" pos:end="153:26">NV_ENC_PIC_TYPE_I</name></expr>:</case>
+
+        <expr_stmt pos:start="155:9" pos:end="155:38"><expr pos:start="155:9" pos:end="155:37"><name pos:start="155:9" pos:end="155:17">pict_type</name> <operator pos:start="155:19" pos:end="155:19">=</operator> <name pos:start="155:21" pos:end="155:37">AV_PICTURE_TYPE_I</name></expr>;</expr_stmt>
+
+        <break pos:start="157:9" pos:end="157:14">break;</break>
+
+    <case pos:start="159:5" pos:end="159:27">case <expr pos:start="159:10" pos:end="159:26"><name pos:start="159:10" pos:end="159:26">NV_ENC_PIC_TYPE_P</name></expr>:</case>
+
+        <expr_stmt pos:start="161:9" pos:end="161:38"><expr pos:start="161:9" pos:end="161:37"><name pos:start="161:9" pos:end="161:17">pict_type</name> <operator pos:start="161:19" pos:end="161:19">=</operator> <name pos:start="161:21" pos:end="161:37">AV_PICTURE_TYPE_P</name></expr>;</expr_stmt>
+
+        <break pos:start="163:9" pos:end="163:14">break;</break>
+
+    <case pos:start="165:5" pos:end="165:27">case <expr pos:start="165:10" pos:end="165:26"><name pos:start="165:10" pos:end="165:26">NV_ENC_PIC_TYPE_B</name></expr>:</case>
+
+        <expr_stmt pos:start="167:9" pos:end="167:38"><expr pos:start="167:9" pos:end="167:37"><name pos:start="167:9" pos:end="167:17">pict_type</name> <operator pos:start="167:19" pos:end="167:19">=</operator> <name pos:start="167:21" pos:end="167:37">AV_PICTURE_TYPE_B</name></expr>;</expr_stmt>
+
+        <break pos:start="169:9" pos:end="169:14">break;</break>
+
+    <case pos:start="171:5" pos:end="171:28">case <expr pos:start="171:10" pos:end="171:27"><name pos:start="171:10" pos:end="171:27">NV_ENC_PIC_TYPE_BI</name></expr>:</case>
+
+        <expr_stmt pos:start="173:9" pos:end="173:39"><expr pos:start="173:9" pos:end="173:38"><name pos:start="173:9" pos:end="173:17">pict_type</name> <operator pos:start="173:19" pos:end="173:19">=</operator> <name pos:start="173:21" pos:end="173:38">AV_PICTURE_TYPE_BI</name></expr>;</expr_stmt>
+
+        <break pos:start="175:9" pos:end="175:14">break;</break>
+
+    <default pos:start="177:5" pos:end="177:12">default:</default>
+
+        <expr_stmt pos:start="179:9" pos:end="179:107"><expr pos:start="179:9" pos:end="179:106"><call pos:start="179:9" pos:end="179:106"><name pos:start="179:9" pos:end="179:14">av_log</name><argument_list pos:start="179:15" pos:end="179:106">(<argument pos:start="179:16" pos:end="179:20"><expr pos:start="179:16" pos:end="179:20"><name pos:start="179:16" pos:end="179:20">avctx</name></expr></argument>, <argument pos:start="179:23" pos:end="179:34"><expr pos:start="179:23" pos:end="179:34"><name pos:start="179:23" pos:end="179:34">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="179:37" pos:end="179:105"><expr pos:start="179:37" pos:end="179:105"><literal type="string" pos:start="179:37" pos:end="179:105">"Unknown picture type encountered, expect the output to be broken.\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="181:9" pos:end="181:134"><expr pos:start="181:9" pos:end="181:133"><call pos:start="181:9" pos:end="181:133"><name pos:start="181:9" pos:end="181:14">av_log</name><argument_list pos:start="181:15" pos:end="181:133">(<argument pos:start="181:16" pos:end="181:20"><expr pos:start="181:16" pos:end="181:20"><name pos:start="181:16" pos:end="181:20">avctx</name></expr></argument>, <argument pos:start="181:23" pos:end="181:34"><expr pos:start="181:23" pos:end="181:34"><name pos:start="181:23" pos:end="181:34">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="181:37" pos:end="181:132"><expr pos:start="181:37" pos:end="181:132"><literal type="string" pos:start="181:37" pos:end="181:132">"Please report this error and include as much information on how to reproduce it as possible.\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="183:9" pos:end="183:31"><expr pos:start="183:9" pos:end="183:30"><name pos:start="183:9" pos:end="183:11">res</name> <operator pos:start="183:13" pos:end="183:13">=</operator> <name pos:start="183:15" pos:end="183:30">AVERROR_EXTERNAL</name></expr>;</expr_stmt>
+
+        <goto pos:start="185:9" pos:end="185:19">goto <name pos:start="185:14" pos:end="185:18">error</name>;</goto>
+
+    </block_content>}</block></switch>
+
+
+
+<cpp:if pos:start="191:1" pos:end="191:22">#<cpp:directive pos:start="191:2" pos:end="191:3">if</cpp:directive> <expr pos:start="191:5" pos:end="191:22"><name pos:start="191:5" pos:end="191:22">FF_API_CODED_FRAME</name></expr></cpp:if>
+
+<decl_stmt pos:start="193:1" pos:end="195:46"><decl pos:start="193:1" pos:end="195:45"><type pos:start="193:1" pos:end="193:31"><name pos:start="193:1" pos:end="193:31">FF_DISABLE_DEPRECATION_WARNINGS</name></type>
+
+    <name pos:start="195:5" pos:end="195:33"><name pos:start="195:5" pos:end="195:9">avctx</name><operator pos:start="195:10" pos:end="195:11">-&gt;</operator><name pos:start="195:12" pos:end="195:22">coded_frame</name><operator pos:start="195:23" pos:end="195:24">-&gt;</operator><name pos:start="195:25" pos:end="195:33">pict_type</name></name> <init pos:start="195:35" pos:end="195:45">= <expr pos:start="195:37" pos:end="195:45"><name pos:start="195:37" pos:end="195:45">pict_type</name></expr></init></decl>;</decl_stmt>
+
+<decl_stmt pos:start="197:1" pos:end="205:73"><decl pos:start="197:1" pos:end="205:72"><type pos:start="197:1" pos:end="200:0"><name pos:start="197:1" pos:end="200:0">FF_ENABLE_DEPRECATION_WARNINGS</name></type>
+
+<cpp:endif pos:start="199:1" pos:end="199:6">#<cpp:directive pos:start="199:2" pos:end="199:6">endif</cpp:directive></cpp:endif>
+
+
+
+    <name pos:start="203:5" pos:end="203:34">ff_side_data_set_encoder_stats</name><argument_list pos:start="203:35" pos:end="205:72">(<argument pos:start="203:36" pos:end="203:38"><expr pos:start="203:36" pos:end="203:38"><name pos:start="203:36" pos:end="203:38">pkt</name></expr></argument>,
+
+        <argument pos:start="205:9" pos:end="205:51"><expr pos:start="205:9" pos:end="205:51"><operator pos:start="205:9" pos:end="205:9">(</operator><name pos:start="205:10" pos:end="205:31"><name pos:start="205:10" pos:end="205:20">lock_params</name><operator pos:start="205:21" pos:end="205:21">.</operator><name pos:start="205:22" pos:end="205:31">frameAvgQP</name></name> <operator pos:start="205:33" pos:end="205:33">-</operator> <literal type="number" pos:start="205:35" pos:end="205:35">1</literal><operator pos:start="205:36" pos:end="205:36">)</operator> <operator pos:start="205:38" pos:end="205:38">*</operator> <name pos:start="205:40" pos:end="205:51">FF_QP2LAMBDA</name></expr></argument>, <argument pos:start="205:54" pos:end="205:57"><expr pos:start="205:54" pos:end="205:57"><name pos:start="205:54" pos:end="205:57">NULL</name></expr></argument>, <argument pos:start="205:60" pos:end="205:60"><expr pos:start="205:60" pos:end="205:60"><literal type="number" pos:start="205:60" pos:end="205:60">0</literal></expr></argument>, <argument pos:start="205:63" pos:end="205:71"><expr pos:start="205:63" pos:end="205:71"><name pos:start="205:63" pos:end="205:71">pict_type</name></expr></argument>)</argument_list></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="209:5" pos:end="209:56"><expr pos:start="209:5" pos:end="209:55"><name pos:start="209:5" pos:end="209:7">res</name> <operator pos:start="209:9" pos:end="209:9">=</operator> <call pos:start="209:11" pos:end="209:55"><name pos:start="209:11" pos:end="209:29">nvenc_set_timestamp</name><argument_list pos:start="209:30" pos:end="209:55">(<argument pos:start="209:31" pos:end="209:35"><expr pos:start="209:31" pos:end="209:35"><name pos:start="209:31" pos:end="209:35">avctx</name></expr></argument>, <argument pos:start="209:38" pos:end="209:49"><expr pos:start="209:38" pos:end="209:49"><operator pos:start="209:38" pos:end="209:38">&amp;</operator><name pos:start="209:39" pos:end="209:49">lock_params</name></expr></argument>, <argument pos:start="209:52" pos:end="209:54"><expr pos:start="209:52" pos:end="209:54"><name pos:start="209:52" pos:end="209:54">pkt</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="211:5" pos:end="213:20"><if pos:start="211:5" pos:end="213:20">if <condition pos:start="211:8" pos:end="211:16">(<expr pos:start="211:9" pos:end="211:15"><name pos:start="211:9" pos:end="211:11">res</name> <operator pos:start="211:13" pos:end="211:13">&lt;</operator> <literal type="number" pos:start="211:15" pos:end="211:15">0</literal></expr>)</condition><block type="pseudo" pos:start="213:9" pos:end="213:20"><block_content pos:start="213:9" pos:end="213:20">
+
+        <goto pos:start="213:9" pos:end="213:20">goto <name pos:start="213:14" pos:end="213:19">error2</name>;</goto></block_content></block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="217:5" pos:end="217:27"><expr pos:start="217:5" pos:end="217:26"><call pos:start="217:5" pos:end="217:26"><name pos:start="217:5" pos:end="217:11">av_free</name><argument_list pos:start="217:12" pos:end="217:26">(<argument pos:start="217:13" pos:end="217:25"><expr pos:start="217:13" pos:end="217:25"><name pos:start="217:13" pos:end="217:25">slice_offsets</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <return pos:start="221:5" pos:end="221:13">return <expr pos:start="221:12" pos:end="221:12"><literal type="number" pos:start="221:12" pos:end="221:12">0</literal></expr>;</return>
+
+
+
+<label pos:start="225:1" pos:end="225:6"><name pos:start="225:1" pos:end="225:5">error</name>:</label>
+
+    <expr_stmt pos:start="227:5" pos:end="227:49"><expr pos:start="227:5" pos:end="227:48"><call pos:start="227:5" pos:end="227:48"><name pos:start="227:5" pos:end="227:27">timestamp_queue_dequeue</name><argument_list pos:start="227:28" pos:end="227:48">(<argument pos:start="227:29" pos:end="227:47"><expr pos:start="227:29" pos:end="227:47"><name pos:start="227:29" pos:end="227:47"><name pos:start="227:29" pos:end="227:31">ctx</name><operator pos:start="227:32" pos:end="227:33">-&gt;</operator><name pos:start="227:34" pos:end="227:47">timestamp_list</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+<label pos:start="231:1" pos:end="231:7"><name pos:start="231:1" pos:end="231:6">error2</name>:</label>
+
+    <expr_stmt pos:start="233:5" pos:end="233:27"><expr pos:start="233:5" pos:end="233:26"><call pos:start="233:5" pos:end="233:26"><name pos:start="233:5" pos:end="233:11">av_free</name><argument_list pos:start="233:12" pos:end="233:26">(<argument pos:start="233:13" pos:end="233:25"><expr pos:start="233:13" pos:end="233:25"><name pos:start="233:13" pos:end="233:25">slice_offsets</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <return pos:start="237:5" pos:end="237:15">return <expr pos:start="237:12" pos:end="237:14"><name pos:start="237:12" pos:end="237:14">res</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/20441.c" pos:tabs="8"><function pos:start="1:1" pos:end="51:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:38">usbredir_device_disconnect</name><parameter_list pos:start="1:39" pos:end="1:50">(<parameter pos:start="1:40" pos:end="1:49"><decl pos:start="1:40" pos:end="1:49"><type pos:start="1:40" pos:end="1:45"><name pos:start="1:40" pos:end="1:43">void</name> <modifier pos:start="1:45" pos:end="1:45">*</modifier></type><name pos:start="1:46" pos:end="1:49">priv</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="51:1">{<block_content pos:start="5:5" pos:end="49:44">
+
+    <decl_stmt pos:start="5:5" pos:end="5:31"><decl pos:start="5:5" pos:end="5:30"><type pos:start="5:5" pos:end="5:20"><name pos:start="5:5" pos:end="5:18">USBRedirDevice</name> <modifier pos:start="5:20" pos:end="5:20">*</modifier></type><name pos:start="5:21" pos:end="5:23">dev</name> <init pos:start="5:25" pos:end="5:30">= <expr pos:start="5:27" pos:end="5:30"><name pos:start="5:27" pos:end="5:30">priv</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:10"><decl pos:start="7:5" pos:end="7:9"><type pos:start="7:5" pos:end="7:7"><name pos:start="7:5" pos:end="7:7">int</name></type> <name pos:start="7:9" pos:end="7:9">i</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="11:5" pos:end="11:35">/* Stop any pending attaches */</comment>
+
+    <expr_stmt pos:start="13:5" pos:end="13:38"><expr pos:start="13:5" pos:end="13:37"><call pos:start="13:5" pos:end="13:37"><name pos:start="13:5" pos:end="13:18">qemu_del_timer</name><argument_list pos:start="13:19" pos:end="13:37">(<argument pos:start="13:20" pos:end="13:36"><expr pos:start="13:20" pos:end="13:36"><name pos:start="13:20" pos:end="13:36"><name pos:start="13:20" pos:end="13:22">dev</name><operator pos:start="13:23" pos:end="13:24">-&gt;</operator><name pos:start="13:25" pos:end="13:36">attach_timer</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="17:5" pos:end="31:5"><if pos:start="17:5" pos:end="31:5">if <condition pos:start="17:8" pos:end="17:26">(<expr pos:start="17:9" pos:end="17:25"><name pos:start="17:9" pos:end="17:25"><name pos:start="17:9" pos:end="17:11">dev</name><operator pos:start="17:12" pos:end="17:13">-&gt;</operator><name pos:start="17:14" pos:end="17:16">dev</name><operator pos:start="17:17" pos:end="17:17">.</operator><name pos:start="17:18" pos:end="17:25">attached</name></name></expr>)</condition> <block pos:start="17:28" pos:end="31:5">{<block_content pos:start="19:9" pos:end="29:66">
+
+        <expr_stmt pos:start="19:9" pos:end="19:37"><expr pos:start="19:9" pos:end="19:36"><call pos:start="19:9" pos:end="19:36"><name pos:start="19:9" pos:end="19:25">usb_device_detach</name><argument_list pos:start="19:26" pos:end="19:36">(<argument pos:start="19:27" pos:end="19:35"><expr pos:start="19:27" pos:end="19:35"><operator pos:start="19:27" pos:end="19:27">&amp;</operator><name pos:start="19:28" pos:end="19:35"><name pos:start="19:28" pos:end="19:30">dev</name><operator pos:start="19:31" pos:end="19:32">-&gt;</operator><name pos:start="19:33" pos:end="19:35">dev</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <comment type="block" pos:start="21:9" pos:end="27:11">/*
+
+         * Delay next usb device attach to give the guest a chance to see
+
+         * see the detach / attach in case of quick close / open succession
+
+         */</comment>
+
+        <expr_stmt pos:start="29:9" pos:end="29:66"><expr pos:start="29:9" pos:end="29:65"><name pos:start="29:9" pos:end="29:29"><name pos:start="29:9" pos:end="29:11">dev</name><operator pos:start="29:12" pos:end="29:13">-&gt;</operator><name pos:start="29:14" pos:end="29:29">next_attach_time</name></name> <operator pos:start="29:31" pos:end="29:31">=</operator> <call pos:start="29:33" pos:end="29:59"><name pos:start="29:33" pos:end="29:49">qemu_get_clock_ms</name><argument_list pos:start="29:50" pos:end="29:59">(<argument pos:start="29:51" pos:end="29:58"><expr pos:start="29:51" pos:end="29:58"><name pos:start="29:51" pos:end="29:58">vm_clock</name></expr></argument>)</argument_list></call> <operator pos:start="29:61" pos:end="29:61">+</operator> <literal type="number" pos:start="29:63" pos:end="29:65">200</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="35:5" pos:end="35:78">/* Reset state so that the next dev connected starts with a clean slate */</comment>
+
+    <expr_stmt pos:start="37:5" pos:end="37:40"><expr pos:start="37:5" pos:end="37:39"><call pos:start="37:5" pos:end="37:39"><name pos:start="37:5" pos:end="37:34">usbredir_cleanup_device_queues</name><argument_list pos:start="37:35" pos:end="37:39">(<argument pos:start="37:36" pos:end="37:38"><expr pos:start="37:36" pos:end="37:38"><name pos:start="37:36" pos:end="37:38">dev</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="39:5" pos:end="39:52"><expr pos:start="39:5" pos:end="39:51"><call pos:start="39:5" pos:end="39:51"><name pos:start="39:5" pos:end="39:10">memset</name><argument_list pos:start="39:11" pos:end="39:51">(<argument pos:start="39:12" pos:end="39:24"><expr pos:start="39:12" pos:end="39:24"><name pos:start="39:12" pos:end="39:24"><name pos:start="39:12" pos:end="39:14">dev</name><operator pos:start="39:15" pos:end="39:16">-&gt;</operator><name pos:start="39:17" pos:end="39:24">endpoint</name></name></expr></argument>, <argument pos:start="39:27" pos:end="39:27"><expr pos:start="39:27" pos:end="39:27"><literal type="number" pos:start="39:27" pos:end="39:27">0</literal></expr></argument>, <argument pos:start="39:30" pos:end="39:50"><expr pos:start="39:30" pos:end="39:50"><sizeof pos:start="39:30" pos:end="39:50">sizeof<argument_list pos:start="39:36" pos:end="39:50">(<argument pos:start="39:37" pos:end="39:49"><expr pos:start="39:37" pos:end="39:49"><name pos:start="39:37" pos:end="39:49"><name pos:start="39:37" pos:end="39:39">dev</name><operator pos:start="39:40" pos:end="39:41">-&gt;</operator><name pos:start="39:42" pos:end="39:49">endpoint</name></name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <for pos:start="41:5" pos:end="45:5">for <control pos:start="41:9" pos:end="41:39">(<init pos:start="41:10" pos:end="41:15"><expr pos:start="41:10" pos:end="41:14"><name pos:start="41:10" pos:end="41:10">i</name> <operator pos:start="41:12" pos:end="41:12">=</operator> <literal type="number" pos:start="41:14" pos:end="41:14">0</literal></expr>;</init> <condition pos:start="41:17" pos:end="41:34"><expr pos:start="41:17" pos:end="41:33"><name pos:start="41:17" pos:end="41:17">i</name> <operator pos:start="41:19" pos:end="41:19">&lt;</operator> <name pos:start="41:21" pos:end="41:33">MAX_ENDPOINTS</name></expr>;</condition> <incr pos:start="41:36" pos:end="41:38"><expr pos:start="41:36" pos:end="41:38"><name pos:start="41:36" pos:end="41:36">i</name><operator pos:start="41:37" pos:end="41:38">++</operator></expr></incr>)</control> <block pos:start="41:41" pos:end="45:5">{<block_content pos:start="43:9" pos:end="43:45">
+
+        <expr_stmt pos:start="43:9" pos:end="43:45"><expr pos:start="43:9" pos:end="43:44"><call pos:start="43:9" pos:end="43:44"><name pos:start="43:9" pos:end="43:19">QTAILQ_INIT</name><argument_list pos:start="43:20" pos:end="43:44">(<argument pos:start="43:21" pos:end="43:43"><expr pos:start="43:21" pos:end="43:43"><operator pos:start="43:21" pos:end="43:21">&amp;</operator><name pos:start="43:22" pos:end="43:37"><name pos:start="43:22" pos:end="43:24">dev</name><operator pos:start="43:25" pos:end="43:26">-&gt;</operator><name pos:start="43:27" pos:end="43:34">endpoint</name><index pos:start="43:35" pos:end="43:37">[<expr pos:start="43:36" pos:end="43:36"><name pos:start="43:36" pos:end="43:36">i</name></expr>]</index></name><operator pos:start="43:38" pos:end="43:38">.</operator><name pos:start="43:39" pos:end="43:43">bufpq</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></for>
+
+    <expr_stmt pos:start="47:5" pos:end="47:27"><expr pos:start="47:5" pos:end="47:26"><call pos:start="47:5" pos:end="47:26"><name pos:start="47:5" pos:end="47:15">usb_ep_init</name><argument_list pos:start="47:16" pos:end="47:26">(<argument pos:start="47:17" pos:end="47:25"><expr pos:start="47:17" pos:end="47:25"><operator pos:start="47:17" pos:end="47:17">&amp;</operator><name pos:start="47:18" pos:end="47:25"><name pos:start="47:18" pos:end="47:20">dev</name><operator pos:start="47:21" pos:end="47:22">-&gt;</operator><name pos:start="47:23" pos:end="47:25">dev</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="49:5" pos:end="49:44"><expr pos:start="49:5" pos:end="49:43"><name pos:start="49:5" pos:end="49:39"><name pos:start="49:5" pos:end="49:7">dev</name><operator pos:start="49:8" pos:end="49:9">-&gt;</operator><name pos:start="49:10" pos:end="49:23">interface_info</name><operator pos:start="49:24" pos:end="49:24">.</operator><name pos:start="49:25" pos:end="49:39">interface_count</name></name> <operator pos:start="49:41" pos:end="49:41">=</operator> <literal type="number" pos:start="49:43" pos:end="49:43">0</literal></expr>;</expr_stmt>
+
+</block_content>}</block></function>
+</unit>

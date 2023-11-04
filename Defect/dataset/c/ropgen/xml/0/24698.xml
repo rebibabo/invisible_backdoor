@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/24698.c" pos:tabs="8"><function pos:start="1:1" pos:end="179:1"><type pos:start="1:1" pos:end="1:4"><name pos:start="1:1" pos:end="1:4">bool</name></type> <name pos:start="1:6" pos:end="1:18">qemu_aio_wait</name><parameter_list pos:start="1:19" pos:end="1:24">(<parameter pos:start="1:20" pos:end="1:23"><decl pos:start="1:20" pos:end="1:23"><type pos:start="1:20" pos:end="1:23"><name pos:start="1:20" pos:end="1:23">void</name></type></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="179:1">{<block_content pos:start="5:5" pos:end="177:16">
+
+    <decl_stmt pos:start="5:5" pos:end="5:21"><decl pos:start="5:5" pos:end="5:20"><type pos:start="5:5" pos:end="5:16"><name pos:start="5:5" pos:end="5:14">AioHandler</name> <modifier pos:start="5:16" pos:end="5:16">*</modifier></type><name pos:start="5:17" pos:end="5:20">node</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:24"><decl pos:start="7:5" pos:end="7:16"><type pos:start="7:5" pos:end="7:10"><name pos:start="7:5" pos:end="7:10">fd_set</name></type> <name pos:start="7:12" pos:end="7:16">rdfds</name></decl>, <decl pos:start="7:19" pos:end="7:23"><type ref="prev" pos:start="7:5" pos:end="7:10"/><name pos:start="7:19" pos:end="7:23">wrfds</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:20"><decl pos:start="9:5" pos:end="9:19"><type pos:start="9:5" pos:end="9:7"><name pos:start="9:5" pos:end="9:7">int</name></type> <name pos:start="9:9" pos:end="9:14">max_fd</name> <init pos:start="9:16" pos:end="9:19">= <expr pos:start="9:18" pos:end="9:19"><operator pos:start="9:18" pos:end="9:18">-</operator><literal type="number" pos:start="9:19" pos:end="9:19">1</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:12"><decl pos:start="11:5" pos:end="11:11"><type pos:start="11:5" pos:end="11:7"><name pos:start="11:5" pos:end="11:7">int</name></type> <name pos:start="11:9" pos:end="11:11">ret</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:14"><decl pos:start="13:5" pos:end="13:13"><type pos:start="13:5" pos:end="13:8"><name pos:start="13:5" pos:end="13:8">bool</name></type> <name pos:start="13:10" pos:end="13:13">busy</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="17:5" pos:end="25:7">/*
+
+     * If there are callbacks left that have been queued, we need to call then.
+
+     * Do not call select in this case, because it is possible that the caller
+
+     * does not need a complete flush (as is the case for qemu_aio_wait loops).
+
+     */</comment>
+
+    <if_stmt pos:start="27:5" pos:end="31:5"><if pos:start="27:5" pos:end="31:5">if <condition pos:start="27:8" pos:end="27:23">(<expr pos:start="27:9" pos:end="27:22"><call pos:start="27:9" pos:end="27:22"><name pos:start="27:9" pos:end="27:20">qemu_bh_poll</name><argument_list pos:start="27:21" pos:end="27:22">()</argument_list></call></expr>)</condition> <block pos:start="27:25" pos:end="31:5">{<block_content pos:start="29:9" pos:end="29:20">
+
+        <return pos:start="29:9" pos:end="29:20">return <expr pos:start="29:16" pos:end="29:19"><name pos:start="29:16" pos:end="29:19">true</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="35:5" pos:end="35:23"><expr pos:start="35:5" pos:end="35:22"><name pos:start="35:5" pos:end="35:20">walking_handlers</name><operator pos:start="35:21" pos:end="35:22">++</operator></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="39:5" pos:end="39:20"><expr pos:start="39:5" pos:end="39:19"><call pos:start="39:5" pos:end="39:19"><name pos:start="39:5" pos:end="39:11">FD_ZERO</name><argument_list pos:start="39:12" pos:end="39:19">(<argument pos:start="39:13" pos:end="39:18"><expr pos:start="39:13" pos:end="39:18"><operator pos:start="39:13" pos:end="39:13">&amp;</operator><name pos:start="39:14" pos:end="39:18">rdfds</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="41:5" pos:end="41:20"><expr pos:start="41:5" pos:end="41:19"><call pos:start="41:5" pos:end="41:19"><name pos:start="41:5" pos:end="41:11">FD_ZERO</name><argument_list pos:start="41:12" pos:end="41:19">(<argument pos:start="41:13" pos:end="41:18"><expr pos:start="41:13" pos:end="41:18"><operator pos:start="41:13" pos:end="41:13">&amp;</operator><name pos:start="41:14" pos:end="41:18">wrfds</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="45:5" pos:end="45:22">/* fill fd sets */</comment>
+
+    <expr_stmt pos:start="47:5" pos:end="47:17"><expr pos:start="47:5" pos:end="47:16"><name pos:start="47:5" pos:end="47:8">busy</name> <operator pos:start="47:10" pos:end="47:10">=</operator> <name pos:start="47:12" pos:end="47:16">false</name></expr>;</expr_stmt>
+
+    <macro pos:start="49:5" pos:end="49:44"><name pos:start="49:5" pos:end="49:17">QLIST_FOREACH</name><argument_list pos:start="49:18" pos:end="49:44">(<argument pos:start="49:19" pos:end="49:22">node</argument>, <argument pos:start="49:25" pos:end="49:37">&amp;aio_handlers</argument>, <argument pos:start="49:40" pos:end="49:43">node</argument>)</argument_list></macro> <block pos:start="49:46" pos:end="87:5">{<block_content pos:start="59:9" pos:end="85:9">
+
+        <comment type="block" pos:start="51:9" pos:end="57:11">/* If there aren't pending AIO operations, don't invoke callbacks.
+
+         * Otherwise, if there are no AIO requests, qemu_aio_wait() would
+
+         * wait indefinitely.
+
+         */</comment>
+
+        <if_stmt pos:start="59:9" pos:end="69:9"><if pos:start="59:9" pos:end="69:9">if <condition pos:start="59:12" pos:end="59:27">(<expr pos:start="59:13" pos:end="59:26"><name pos:start="59:13" pos:end="59:26"><name pos:start="59:13" pos:end="59:16">node</name><operator pos:start="59:17" pos:end="59:18">-&gt;</operator><name pos:start="59:19" pos:end="59:26">io_flush</name></name></expr>)</condition> <block pos:start="59:29" pos:end="69:9">{<block_content pos:start="61:13" pos:end="67:24">
+
+            <if_stmt pos:start="61:13" pos:end="65:13"><if pos:start="61:13" pos:end="65:13">if <condition pos:start="61:16" pos:end="61:50">(<expr pos:start="61:17" pos:end="61:49"><call pos:start="61:17" pos:end="61:44"><name pos:start="61:17" pos:end="61:30"><name pos:start="61:17" pos:end="61:20">node</name><operator pos:start="61:21" pos:end="61:22">-&gt;</operator><name pos:start="61:23" pos:end="61:30">io_flush</name></name><argument_list pos:start="61:31" pos:end="61:44">(<argument pos:start="61:32" pos:end="61:43"><expr pos:start="61:32" pos:end="61:43"><name pos:start="61:32" pos:end="61:43"><name pos:start="61:32" pos:end="61:35">node</name><operator pos:start="61:36" pos:end="61:37">-&gt;</operator><name pos:start="61:38" pos:end="61:43">opaque</name></name></expr></argument>)</argument_list></call> <operator pos:start="61:46" pos:end="61:47">==</operator> <literal type="number" pos:start="61:49" pos:end="61:49">0</literal></expr>)</condition> <block pos:start="61:52" pos:end="65:13">{<block_content pos:start="63:17" pos:end="63:25">
+
+                <continue pos:start="63:17" pos:end="63:25">continue;</continue>
+
+            </block_content>}</block></if></if_stmt>
+
+            <expr_stmt pos:start="67:13" pos:end="67:24"><expr pos:start="67:13" pos:end="67:23"><name pos:start="67:13" pos:end="67:16">busy</name> <operator pos:start="67:18" pos:end="67:18">=</operator> <name pos:start="67:20" pos:end="67:23">true</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <if_stmt pos:start="71:9" pos:end="77:9"><if pos:start="71:9" pos:end="77:9">if <condition pos:start="71:12" pos:end="71:44">(<expr pos:start="71:13" pos:end="71:43"><operator pos:start="71:13" pos:end="71:13">!</operator><name pos:start="71:14" pos:end="71:26"><name pos:start="71:14" pos:end="71:17">node</name><operator pos:start="71:18" pos:end="71:19">-&gt;</operator><name pos:start="71:20" pos:end="71:26">deleted</name></name> <operator pos:start="71:28" pos:end="71:29">&amp;&amp;</operator> <name pos:start="71:31" pos:end="71:43"><name pos:start="71:31" pos:end="71:34">node</name><operator pos:start="71:35" pos:end="71:36">-&gt;</operator><name pos:start="71:37" pos:end="71:43">io_read</name></name></expr>)</condition> <block pos:start="71:46" pos:end="77:9">{<block_content pos:start="73:13" pos:end="75:47">
+
+            <expr_stmt pos:start="73:13" pos:end="73:37"><expr pos:start="73:13" pos:end="73:36"><call pos:start="73:13" pos:end="73:36"><name pos:start="73:13" pos:end="73:18">FD_SET</name><argument_list pos:start="73:19" pos:end="73:36">(<argument pos:start="73:20" pos:end="73:27"><expr pos:start="73:20" pos:end="73:27"><name pos:start="73:20" pos:end="73:27"><name pos:start="73:20" pos:end="73:23">node</name><operator pos:start="73:24" pos:end="73:25">-&gt;</operator><name pos:start="73:26" pos:end="73:27">fd</name></name></expr></argument>, <argument pos:start="73:30" pos:end="73:35"><expr pos:start="73:30" pos:end="73:35"><operator pos:start="73:30" pos:end="73:30">&amp;</operator><name pos:start="73:31" pos:end="73:35">rdfds</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="75:13" pos:end="75:47"><expr pos:start="75:13" pos:end="75:46"><name pos:start="75:13" pos:end="75:18">max_fd</name> <operator pos:start="75:20" pos:end="75:20">=</operator> <call pos:start="75:22" pos:end="75:46"><name pos:start="75:22" pos:end="75:24">MAX</name><argument_list pos:start="75:25" pos:end="75:46">(<argument pos:start="75:26" pos:end="75:31"><expr pos:start="75:26" pos:end="75:31"><name pos:start="75:26" pos:end="75:31">max_fd</name></expr></argument>, <argument pos:start="75:34" pos:end="75:45"><expr pos:start="75:34" pos:end="75:45"><name pos:start="75:34" pos:end="75:41"><name pos:start="75:34" pos:end="75:37">node</name><operator pos:start="75:38" pos:end="75:39">-&gt;</operator><name pos:start="75:40" pos:end="75:41">fd</name></name> <operator pos:start="75:43" pos:end="75:43">+</operator> <literal type="number" pos:start="75:45" pos:end="75:45">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <if_stmt pos:start="79:9" pos:end="85:9"><if pos:start="79:9" pos:end="85:9">if <condition pos:start="79:12" pos:end="79:45">(<expr pos:start="79:13" pos:end="79:44"><operator pos:start="79:13" pos:end="79:13">!</operator><name pos:start="79:14" pos:end="79:26"><name pos:start="79:14" pos:end="79:17">node</name><operator pos:start="79:18" pos:end="79:19">-&gt;</operator><name pos:start="79:20" pos:end="79:26">deleted</name></name> <operator pos:start="79:28" pos:end="79:29">&amp;&amp;</operator> <name pos:start="79:31" pos:end="79:44"><name pos:start="79:31" pos:end="79:34">node</name><operator pos:start="79:35" pos:end="79:36">-&gt;</operator><name pos:start="79:37" pos:end="79:44">io_write</name></name></expr>)</condition> <block pos:start="79:47" pos:end="85:9">{<block_content pos:start="81:13" pos:end="83:47">
+
+            <expr_stmt pos:start="81:13" pos:end="81:37"><expr pos:start="81:13" pos:end="81:36"><call pos:start="81:13" pos:end="81:36"><name pos:start="81:13" pos:end="81:18">FD_SET</name><argument_list pos:start="81:19" pos:end="81:36">(<argument pos:start="81:20" pos:end="81:27"><expr pos:start="81:20" pos:end="81:27"><name pos:start="81:20" pos:end="81:27"><name pos:start="81:20" pos:end="81:23">node</name><operator pos:start="81:24" pos:end="81:25">-&gt;</operator><name pos:start="81:26" pos:end="81:27">fd</name></name></expr></argument>, <argument pos:start="81:30" pos:end="81:35"><expr pos:start="81:30" pos:end="81:35"><operator pos:start="81:30" pos:end="81:30">&amp;</operator><name pos:start="81:31" pos:end="81:35">wrfds</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="83:13" pos:end="83:47"><expr pos:start="83:13" pos:end="83:46"><name pos:start="83:13" pos:end="83:18">max_fd</name> <operator pos:start="83:20" pos:end="83:20">=</operator> <call pos:start="83:22" pos:end="83:46"><name pos:start="83:22" pos:end="83:24">MAX</name><argument_list pos:start="83:25" pos:end="83:46">(<argument pos:start="83:26" pos:end="83:31"><expr pos:start="83:26" pos:end="83:31"><name pos:start="83:26" pos:end="83:31">max_fd</name></expr></argument>, <argument pos:start="83:34" pos:end="83:45"><expr pos:start="83:34" pos:end="83:45"><name pos:start="83:34" pos:end="83:41"><name pos:start="83:34" pos:end="83:37">node</name><operator pos:start="83:38" pos:end="83:39">-&gt;</operator><name pos:start="83:40" pos:end="83:41">fd</name></name> <operator pos:start="83:43" pos:end="83:43">+</operator> <literal type="number" pos:start="83:45" pos:end="83:45">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block>
+
+
+
+    <expr_stmt pos:start="91:5" pos:end="91:23"><expr pos:start="91:5" pos:end="91:22"><name pos:start="91:5" pos:end="91:20">walking_handlers</name><operator pos:start="91:21" pos:end="91:22">--</operator></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="95:5" pos:end="95:48">/* No AIO operations?  Get us out of here */</comment>
+
+    <if_stmt pos:start="97:5" pos:end="101:5"><if pos:start="97:5" pos:end="101:5">if <condition pos:start="97:8" pos:end="97:14">(<expr pos:start="97:9" pos:end="97:13"><operator pos:start="97:9" pos:end="97:9">!</operator><name pos:start="97:10" pos:end="97:13">busy</name></expr>)</condition> <block pos:start="97:16" pos:end="101:5">{<block_content pos:start="99:9" pos:end="99:21">
+
+        <return pos:start="99:9" pos:end="99:21">return <expr pos:start="99:16" pos:end="99:20"><name pos:start="99:16" pos:end="99:20">false</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="105:5" pos:end="105:31">/* wait until next event */</comment>
+
+    <expr_stmt pos:start="107:5" pos:end="107:53"><expr pos:start="107:5" pos:end="107:52"><name pos:start="107:5" pos:end="107:7">ret</name> <operator pos:start="107:9" pos:end="107:9">=</operator> <call pos:start="107:11" pos:end="107:52"><name pos:start="107:11" pos:end="107:16">select</name><argument_list pos:start="107:17" pos:end="107:52">(<argument pos:start="107:18" pos:end="107:23"><expr pos:start="107:18" pos:end="107:23"><name pos:start="107:18" pos:end="107:23">max_fd</name></expr></argument>, <argument pos:start="107:26" pos:end="107:31"><expr pos:start="107:26" pos:end="107:31"><operator pos:start="107:26" pos:end="107:26">&amp;</operator><name pos:start="107:27" pos:end="107:31">rdfds</name></expr></argument>, <argument pos:start="107:34" pos:end="107:39"><expr pos:start="107:34" pos:end="107:39"><operator pos:start="107:34" pos:end="107:34">&amp;</operator><name pos:start="107:35" pos:end="107:39">wrfds</name></expr></argument>, <argument pos:start="107:42" pos:end="107:45"><expr pos:start="107:42" pos:end="107:45"><name pos:start="107:42" pos:end="107:45">NULL</name></expr></argument>, <argument pos:start="107:48" pos:end="107:51"><expr pos:start="107:48" pos:end="107:51"><name pos:start="107:48" pos:end="107:51">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="111:5" pos:end="111:53">/* if we have any readable fds, dispatch event */</comment>
+
+    <if_stmt pos:start="113:5" pos:end="173:5"><if pos:start="113:5" pos:end="173:5">if <condition pos:start="113:8" pos:end="113:16">(<expr pos:start="113:9" pos:end="113:15"><name pos:start="113:9" pos:end="113:11">ret</name> <operator pos:start="113:13" pos:end="113:13">&gt;</operator> <literal type="number" pos:start="113:15" pos:end="113:15">0</literal></expr>)</condition> <block pos:start="113:18" pos:end="173:5">{<block_content pos:start="115:9" pos:end="171:27">
+
+        <expr_stmt pos:start="115:9" pos:end="115:27"><expr pos:start="115:9" pos:end="115:26"><name pos:start="115:9" pos:end="115:24">walking_handlers</name><operator pos:start="115:25" pos:end="115:26">++</operator></expr>;</expr_stmt>
+
+
+
+        <comment type="block" pos:start="119:9" pos:end="121:67">/* we have to walk very carefully in case
+
+         * qemu_aio_set_fd_handler is called while we're walking */</comment>
+
+        <expr_stmt pos:start="123:9" pos:end="123:42"><expr pos:start="123:9" pos:end="123:41"><name pos:start="123:9" pos:end="123:12">node</name> <operator pos:start="123:14" pos:end="123:14">=</operator> <call pos:start="123:16" pos:end="123:41"><name pos:start="123:16" pos:end="123:26">QLIST_FIRST</name><argument_list pos:start="123:27" pos:end="123:41">(<argument pos:start="123:28" pos:end="123:40"><expr pos:start="123:28" pos:end="123:40"><operator pos:start="123:28" pos:end="123:28">&amp;</operator><name pos:start="123:29" pos:end="123:40">aio_handlers</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <while pos:start="125:9" pos:end="167:9">while <condition pos:start="125:15" pos:end="125:20">(<expr pos:start="125:16" pos:end="125:19"><name pos:start="125:16" pos:end="125:19">node</name></expr>)</condition> <block pos:start="125:22" pos:end="167:9">{<block_content pos:start="127:13" pos:end="165:13">
+
+            <decl_stmt pos:start="127:13" pos:end="127:28"><decl pos:start="127:13" pos:end="127:27"><type pos:start="127:13" pos:end="127:24"><name pos:start="127:13" pos:end="127:22">AioHandler</name> <modifier pos:start="127:24" pos:end="127:24">*</modifier></type><name pos:start="127:25" pos:end="127:27">tmp</name></decl>;</decl_stmt>
+
+
+
+            <if_stmt pos:start="131:13" pos:end="139:13"><if pos:start="131:13" pos:end="139:13">if <condition pos:start="131:16" pos:end="135:30">(<expr pos:start="131:17" pos:end="135:29"><operator pos:start="131:17" pos:end="131:17">!</operator><name pos:start="131:18" pos:end="131:30"><name pos:start="131:18" pos:end="131:21">node</name><operator pos:start="131:22" pos:end="131:23">-&gt;</operator><name pos:start="131:24" pos:end="131:30">deleted</name></name> <operator pos:start="131:32" pos:end="131:33">&amp;&amp;</operator>
+
+                <call pos:start="133:17" pos:end="133:42"><name pos:start="133:17" pos:end="133:24">FD_ISSET</name><argument_list pos:start="133:25" pos:end="133:42">(<argument pos:start="133:26" pos:end="133:33"><expr pos:start="133:26" pos:end="133:33"><name pos:start="133:26" pos:end="133:33"><name pos:start="133:26" pos:end="133:29">node</name><operator pos:start="133:30" pos:end="133:31">-&gt;</operator><name pos:start="133:32" pos:end="133:33">fd</name></name></expr></argument>, <argument pos:start="133:36" pos:end="133:41"><expr pos:start="133:36" pos:end="133:41"><operator pos:start="133:36" pos:end="133:36">&amp;</operator><name pos:start="133:37" pos:end="133:41">rdfds</name></expr></argument>)</argument_list></call> <operator pos:start="133:44" pos:end="133:45">&amp;&amp;</operator>
+
+                <name pos:start="135:17" pos:end="135:29"><name pos:start="135:17" pos:end="135:20">node</name><operator pos:start="135:21" pos:end="135:22">-&gt;</operator><name pos:start="135:23" pos:end="135:29">io_read</name></name></expr>)</condition> <block pos:start="135:32" pos:end="139:13">{<block_content pos:start="137:17" pos:end="137:44">
+
+                <expr_stmt pos:start="137:17" pos:end="137:44"><expr pos:start="137:17" pos:end="137:43"><call pos:start="137:17" pos:end="137:43"><name pos:start="137:17" pos:end="137:29"><name pos:start="137:17" pos:end="137:20">node</name><operator pos:start="137:21" pos:end="137:22">-&gt;</operator><name pos:start="137:23" pos:end="137:29">io_read</name></name><argument_list pos:start="137:30" pos:end="137:43">(<argument pos:start="137:31" pos:end="137:42"><expr pos:start="137:31" pos:end="137:42"><name pos:start="137:31" pos:end="137:42"><name pos:start="137:31" pos:end="137:34">node</name><operator pos:start="137:35" pos:end="137:36">-&gt;</operator><name pos:start="137:37" pos:end="137:42">opaque</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <if_stmt pos:start="141:13" pos:end="149:13"><if pos:start="141:13" pos:end="149:13">if <condition pos:start="141:16" pos:end="145:31">(<expr pos:start="141:17" pos:end="145:30"><operator pos:start="141:17" pos:end="141:17">!</operator><name pos:start="141:18" pos:end="141:30"><name pos:start="141:18" pos:end="141:21">node</name><operator pos:start="141:22" pos:end="141:23">-&gt;</operator><name pos:start="141:24" pos:end="141:30">deleted</name></name> <operator pos:start="141:32" pos:end="141:33">&amp;&amp;</operator>
+
+                <call pos:start="143:17" pos:end="143:42"><name pos:start="143:17" pos:end="143:24">FD_ISSET</name><argument_list pos:start="143:25" pos:end="143:42">(<argument pos:start="143:26" pos:end="143:33"><expr pos:start="143:26" pos:end="143:33"><name pos:start="143:26" pos:end="143:33"><name pos:start="143:26" pos:end="143:29">node</name><operator pos:start="143:30" pos:end="143:31">-&gt;</operator><name pos:start="143:32" pos:end="143:33">fd</name></name></expr></argument>, <argument pos:start="143:36" pos:end="143:41"><expr pos:start="143:36" pos:end="143:41"><operator pos:start="143:36" pos:end="143:36">&amp;</operator><name pos:start="143:37" pos:end="143:41">wrfds</name></expr></argument>)</argument_list></call> <operator pos:start="143:44" pos:end="143:45">&amp;&amp;</operator>
+
+                <name pos:start="145:17" pos:end="145:30"><name pos:start="145:17" pos:end="145:20">node</name><operator pos:start="145:21" pos:end="145:22">-&gt;</operator><name pos:start="145:23" pos:end="145:30">io_write</name></name></expr>)</condition> <block pos:start="145:33" pos:end="149:13">{<block_content pos:start="147:17" pos:end="147:45">
+
+                <expr_stmt pos:start="147:17" pos:end="147:45"><expr pos:start="147:17" pos:end="147:44"><call pos:start="147:17" pos:end="147:44"><name pos:start="147:17" pos:end="147:30"><name pos:start="147:17" pos:end="147:20">node</name><operator pos:start="147:21" pos:end="147:22">-&gt;</operator><name pos:start="147:23" pos:end="147:30">io_write</name></name><argument_list pos:start="147:31" pos:end="147:44">(<argument pos:start="147:32" pos:end="147:43"><expr pos:start="147:32" pos:end="147:43"><name pos:start="147:32" pos:end="147:43"><name pos:start="147:32" pos:end="147:35">node</name><operator pos:start="147:36" pos:end="147:37">-&gt;</operator><name pos:start="147:38" pos:end="147:43">opaque</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+
+
+            <expr_stmt pos:start="153:13" pos:end="153:23"><expr pos:start="153:13" pos:end="153:22"><name pos:start="153:13" pos:end="153:15">tmp</name> <operator pos:start="153:17" pos:end="153:17">=</operator> <name pos:start="153:19" pos:end="153:22">node</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="155:13" pos:end="155:42"><expr pos:start="155:13" pos:end="155:41"><name pos:start="155:13" pos:end="155:16">node</name> <operator pos:start="155:18" pos:end="155:18">=</operator> <call pos:start="155:20" pos:end="155:41"><name pos:start="155:20" pos:end="155:29">QLIST_NEXT</name><argument_list pos:start="155:30" pos:end="155:41">(<argument pos:start="155:31" pos:end="155:34"><expr pos:start="155:31" pos:end="155:34"><name pos:start="155:31" pos:end="155:34">node</name></expr></argument>, <argument pos:start="155:37" pos:end="155:40"><expr pos:start="155:37" pos:end="155:40"><name pos:start="155:37" pos:end="155:40">node</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <if_stmt pos:start="159:13" pos:end="165:13"><if pos:start="159:13" pos:end="165:13">if <condition pos:start="159:16" pos:end="159:29">(<expr pos:start="159:17" pos:end="159:28"><name pos:start="159:17" pos:end="159:28"><name pos:start="159:17" pos:end="159:19">tmp</name><operator pos:start="159:20" pos:end="159:21">-&gt;</operator><name pos:start="159:22" pos:end="159:28">deleted</name></name></expr>)</condition> <block pos:start="159:31" pos:end="165:13">{<block_content pos:start="161:17" pos:end="163:28">
+
+                <expr_stmt pos:start="161:17" pos:end="161:40"><expr pos:start="161:17" pos:end="161:39"><call pos:start="161:17" pos:end="161:39"><name pos:start="161:17" pos:end="161:28">QLIST_REMOVE</name><argument_list pos:start="161:29" pos:end="161:39">(<argument pos:start="161:30" pos:end="161:32"><expr pos:start="161:30" pos:end="161:32"><name pos:start="161:30" pos:end="161:32">tmp</name></expr></argument>, <argument pos:start="161:35" pos:end="161:38"><expr pos:start="161:35" pos:end="161:38"><name pos:start="161:35" pos:end="161:38">node</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="163:17" pos:end="163:28"><expr pos:start="163:17" pos:end="163:27"><call pos:start="163:17" pos:end="163:27"><name pos:start="163:17" pos:end="163:22">g_free</name><argument_list pos:start="163:23" pos:end="163:27">(<argument pos:start="163:24" pos:end="163:26"><expr pos:start="163:24" pos:end="163:26"><name pos:start="163:24" pos:end="163:26">tmp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+        </block_content>}</block></while>
+
+
+
+        <expr_stmt pos:start="171:9" pos:end="171:27"><expr pos:start="171:9" pos:end="171:26"><name pos:start="171:9" pos:end="171:24">walking_handlers</name><operator pos:start="171:25" pos:end="171:26">--</operator></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <return pos:start="177:5" pos:end="177:16">return <expr pos:start="177:12" pos:end="177:15"><name pos:start="177:12" pos:end="177:15">true</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

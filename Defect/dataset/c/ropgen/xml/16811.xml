@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/16811.c" pos:tabs="8"><function pos:start="1:1" pos:end="95:1"><type pos:start="1:1" pos:end="1:15"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:15">uint32_t</name></type> <name pos:start="1:17" pos:end="1:35">drc_isolate_logical</name><parameter_list pos:start="1:36" pos:end="1:58">(<parameter pos:start="1:37" pos:end="1:57"><decl pos:start="1:37" pos:end="1:57"><type pos:start="1:37" pos:end="1:54"><name pos:start="1:37" pos:end="1:52">sPAPRDRConnector</name> <modifier pos:start="1:54" pos:end="1:54">*</modifier></type><name pos:start="1:55" pos:end="1:57">drc</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="95:1">{<block_content pos:start="15:5" pos:end="93:28">
+
+    <comment type="block" pos:start="5:5" pos:end="13:7">/* if the guest is configuring a device attached to this DRC, we
+
+     * should reset the configuration state at this point since it may
+
+     * no longer be reliable (guest released device and needs to start
+
+     * over, or unplug occurred so the FDT is no longer valid)
+
+     */</comment>
+
+    <expr_stmt pos:start="15:5" pos:end="15:21"><expr pos:start="15:5" pos:end="15:20"><call pos:start="15:5" pos:end="15:20"><name pos:start="15:5" pos:end="15:10">g_free</name><argument_list pos:start="15:11" pos:end="15:20">(<argument pos:start="15:12" pos:end="15:19"><expr pos:start="15:12" pos:end="15:19"><name pos:start="15:12" pos:end="15:19"><name pos:start="15:12" pos:end="15:14">drc</name><operator pos:start="15:15" pos:end="15:16">-&gt;</operator><name pos:start="15:17" pos:end="15:19">ccs</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="17:5" pos:end="17:20"><expr pos:start="17:5" pos:end="17:19"><name pos:start="17:5" pos:end="17:12"><name pos:start="17:5" pos:end="17:7">drc</name><operator pos:start="17:8" pos:end="17:9">-&gt;</operator><name pos:start="17:10" pos:end="17:12">ccs</name></name> <operator pos:start="17:14" pos:end="17:14">=</operator> <name pos:start="17:16" pos:end="17:19">NULL</name></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="21:5" pos:end="39:7">/*
+
+     * Fail any requests to ISOLATE the LMB DRC if this LMB doesn't
+
+     * belong to a DIMM device that is marked for removal.
+
+     *
+
+     * Currently the guest userspace tool drmgr that drives the memory
+
+     * hotplug/unplug will just try to remove a set of 'removable' LMBs
+
+     * in response to a hot unplug request that is based on drc-count.
+
+     * If the LMB being removed doesn't belong to a DIMM device that is
+
+     * actually being unplugged, fail the isolation request here.
+
+     */</comment>
+
+    <if_stmt pos:start="41:5" pos:end="47:5"><if pos:start="41:5" pos:end="47:5">if <condition pos:start="41:8" pos:end="43:34">(<expr pos:start="41:9" pos:end="43:33"><call pos:start="41:9" pos:end="41:27"><name pos:start="41:9" pos:end="41:22">spapr_drc_type</name><argument_list pos:start="41:23" pos:end="41:27">(<argument pos:start="41:24" pos:end="41:26"><expr pos:start="41:24" pos:end="41:26"><name pos:start="41:24" pos:end="41:26">drc</name></expr></argument>)</argument_list></call> <operator pos:start="41:29" pos:end="41:30">==</operator> <name pos:start="41:32" pos:end="41:58">SPAPR_DR_CONNECTOR_TYPE_LMB</name>
+
+        <operator pos:start="43:9" pos:end="43:10">&amp;&amp;</operator> <operator pos:start="43:12" pos:end="43:12">!</operator><name pos:start="43:13" pos:end="43:33"><name pos:start="43:13" pos:end="43:15">drc</name><operator pos:start="43:16" pos:end="43:17">-&gt;</operator><name pos:start="43:18" pos:end="43:33">unplug_requested</name></name></expr>)</condition> <block pos:start="43:36" pos:end="47:5">{<block_content pos:start="45:9" pos:end="45:33">
+
+        <return pos:start="45:9" pos:end="45:33">return <expr pos:start="45:16" pos:end="45:32"><name pos:start="45:16" pos:end="45:32">RTAS_OUT_HW_ERROR</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="51:5" pos:end="51:61"><expr pos:start="51:5" pos:end="51:60"><name pos:start="51:5" pos:end="51:24"><name pos:start="51:5" pos:end="51:7">drc</name><operator pos:start="51:8" pos:end="51:9">-&gt;</operator><name pos:start="51:10" pos:end="51:24">isolation_state</name></name> <operator pos:start="51:26" pos:end="51:26">=</operator> <name pos:start="51:28" pos:end="51:60">SPAPR_DR_ISOLATION_STATE_ISOLATED</name></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="55:5" pos:end="69:7">/* if we're awaiting release, but still in an unconfigured state,
+
+     * it's likely the guest is still in the process of configuring
+
+     * the device and is transitioning the devices to an ISOLATED
+
+     * state as a part of that process. so we only complete the
+
+     * removal when this transition happens for a device in a
+
+     * configured state, as suggested by the state diagram from PAPR+
+
+     * 2.7, 13.4
+
+     */</comment>
+
+    <if_stmt pos:start="71:5" pos:end="87:5"><if pos:start="71:5" pos:end="87:5">if <condition pos:start="71:8" pos:end="71:30">(<expr pos:start="71:9" pos:end="71:29"><name pos:start="71:9" pos:end="71:29"><name pos:start="71:9" pos:end="71:11">drc</name><operator pos:start="71:12" pos:end="71:13">-&gt;</operator><name pos:start="71:14" pos:end="71:29">unplug_requested</name></name></expr>)</condition> <block pos:start="71:32" pos:end="87:5">{<block_content pos:start="73:9" pos:end="85:9">
+
+        <decl_stmt pos:start="73:9" pos:end="73:50"><decl pos:start="73:9" pos:end="73:49"><type pos:start="73:9" pos:end="73:16"><name pos:start="73:9" pos:end="73:16">uint32_t</name></type> <name pos:start="73:18" pos:end="73:26">drc_index</name> <init pos:start="73:28" pos:end="73:49">= <expr pos:start="73:30" pos:end="73:49"><call pos:start="73:30" pos:end="73:49"><name pos:start="73:30" pos:end="73:44">spapr_drc_index</name><argument_list pos:start="73:45" pos:end="73:49">(<argument pos:start="73:46" pos:end="73:48"><expr pos:start="73:46" pos:end="73:48"><name pos:start="73:46" pos:end="73:48">drc</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <if_stmt pos:start="75:9" pos:end="85:9"><if pos:start="75:9" pos:end="81:9">if <condition pos:start="75:12" pos:end="75:28">(<expr pos:start="75:13" pos:end="75:27"><name pos:start="75:13" pos:end="75:27"><name pos:start="75:13" pos:end="75:15">drc</name><operator pos:start="75:16" pos:end="75:17">-&gt;</operator><name pos:start="75:18" pos:end="75:27">configured</name></name></expr>)</condition> <block pos:start="75:30" pos:end="81:9">{<block_content pos:start="77:13" pos:end="79:34">
+
+            <expr_stmt pos:start="77:13" pos:end="77:70"><expr pos:start="77:13" pos:end="77:69"><call pos:start="77:13" pos:end="77:69"><name pos:start="77:13" pos:end="77:58">trace_spapr_drc_set_isolation_state_finalizing</name><argument_list pos:start="77:59" pos:end="77:69">(<argument pos:start="77:60" pos:end="77:68"><expr pos:start="77:60" pos:end="77:68"><name pos:start="77:60" pos:end="77:68">drc_index</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="79:13" pos:end="79:34"><expr pos:start="79:13" pos:end="79:33"><call pos:start="79:13" pos:end="79:33"><name pos:start="79:13" pos:end="79:28">spapr_drc_detach</name><argument_list pos:start="79:29" pos:end="79:33">(<argument pos:start="79:30" pos:end="79:32"><expr pos:start="79:30" pos:end="79:32"><name pos:start="79:30" pos:end="79:32">drc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="81:11" pos:end="85:9">else <block pos:start="81:16" pos:end="85:9">{<block_content pos:start="83:13" pos:end="83:69">
+
+            <expr_stmt pos:start="83:13" pos:end="83:69"><expr pos:start="83:13" pos:end="83:68"><call pos:start="83:13" pos:end="83:68"><name pos:start="83:13" pos:end="83:57">trace_spapr_drc_set_isolation_state_deferring</name><argument_list pos:start="83:58" pos:end="83:68">(<argument pos:start="83:59" pos:end="83:67"><expr pos:start="83:59" pos:end="83:67"><name pos:start="83:59" pos:end="83:67">drc_index</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <expr_stmt pos:start="89:5" pos:end="89:28"><expr pos:start="89:5" pos:end="89:27"><name pos:start="89:5" pos:end="89:19"><name pos:start="89:5" pos:end="89:7">drc</name><operator pos:start="89:8" pos:end="89:9">-&gt;</operator><name pos:start="89:10" pos:end="89:19">configured</name></name> <operator pos:start="89:21" pos:end="89:21">=</operator> <name pos:start="89:23" pos:end="89:27">false</name></expr>;</expr_stmt>
+
+
+
+    <return pos:start="93:5" pos:end="93:28">return <expr pos:start="93:12" pos:end="93:27"><name pos:start="93:12" pos:end="93:27">RTAS_OUT_SUCCESS</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

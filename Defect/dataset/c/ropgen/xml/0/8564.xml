@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/8564.c" pos:tabs="8"><function pos:start="1:1" pos:end="165:1"><type pos:start="1:1" pos:end="1:11"><name pos:start="1:1" pos:end="1:4">void</name> <name pos:start="1:6" pos:end="1:11">HELPER</name></type>(<name pos:start="1:13" pos:end="1:18">dc_zva</name>)<parameter_list pos:start="1:20" pos:end="1:56">(<parameter pos:start="1:21" pos:end="1:36"><decl pos:start="1:21" pos:end="1:36"><type pos:start="1:21" pos:end="1:36"><name pos:start="1:21" pos:end="1:31">CPUARMState</name> <modifier pos:start="1:33" pos:end="1:33">*</modifier></type><name pos:start="1:34" pos:end="1:36">env</name></decl></parameter>, <parameter pos:start="1:39" pos:end="1:55"><decl pos:start="1:39" pos:end="1:55"><type pos:start="1:39" pos:end="1:55"><name pos:start="1:39" pos:end="1:46">uint64_t</name></type> <name pos:start="1:48" pos:end="1:55">vaddr_in</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="165:1">{<block_content pos:start="19:5" pos:end="164:0">
+
+    <comment type="block" pos:start="5:5" pos:end="15:7">/* Implement DC ZVA, which zeroes a fixed-length block of memory.
+
+     * Note that we do not implement the (architecturally mandated)
+
+     * alignment fault for attempts to use this on Device memory
+
+     * (which matches the usual QEMU behaviour of not implementing either
+
+     * alignment faults or any memory attribute handling).
+
+     */</comment>
+
+
+
+    <decl_stmt pos:start="19:5" pos:end="19:39"><decl pos:start="19:5" pos:end="19:38"><type pos:start="19:5" pos:end="19:12"><name pos:start="19:5" pos:end="19:10">ARMCPU</name> <modifier pos:start="19:12" pos:end="19:12">*</modifier></type><name pos:start="19:13" pos:end="19:15">cpu</name> <init pos:start="19:17" pos:end="19:38">= <expr pos:start="19:19" pos:end="19:38"><call pos:start="19:19" pos:end="19:38"><name pos:start="19:19" pos:end="19:33">arm_env_get_cpu</name><argument_list pos:start="19:34" pos:end="19:38">(<argument pos:start="19:35" pos:end="19:37"><expr pos:start="19:35" pos:end="19:37"><name pos:start="19:35" pos:end="19:37">env</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="21:5" pos:end="21:48"><decl pos:start="21:5" pos:end="21:47"><type pos:start="21:5" pos:end="21:12"><name pos:start="21:5" pos:end="21:12">uint64_t</name></type> <name pos:start="21:14" pos:end="21:21">blocklen</name> <init pos:start="21:23" pos:end="21:47">= <expr pos:start="21:25" pos:end="21:47"><literal type="number" pos:start="21:25" pos:end="21:25">4</literal> <operator pos:start="21:27" pos:end="21:28">&lt;&lt;</operator> <name pos:start="21:30" pos:end="21:47"><name pos:start="21:30" pos:end="21:32">cpu</name><operator pos:start="21:33" pos:end="21:34">-&gt;</operator><name pos:start="21:35" pos:end="21:47">dcz_blocksize</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="23:5" pos:end="28:0"><decl pos:start="23:5" pos:end="23:47"><type pos:start="23:5" pos:end="23:12"><name pos:start="23:5" pos:end="23:12">uint64_t</name></type> <name pos:start="23:14" pos:end="23:18">vaddr</name> <init pos:start="23:20" pos:end="23:47">= <expr pos:start="23:22" pos:end="23:47"><name pos:start="23:22" pos:end="23:29">vaddr_in</name> <operator pos:start="23:31" pos:end="23:31">&amp;</operator> <operator pos:start="23:33" pos:end="23:33">~</operator><operator pos:start="23:34" pos:end="23:34">(</operator><name pos:start="23:35" pos:end="23:42">blocklen</name> <operator pos:start="23:44" pos:end="23:44">-</operator> <literal type="number" pos:start="23:46" pos:end="23:46">1</literal><operator pos:start="23:47" pos:end="23:47">)</operator></expr></init></decl>;</decl_stmt>
+
+
+
+<cpp:ifndef pos:start="27:1" pos:end="27:24">#<cpp:directive pos:start="27:2" pos:end="27:7">ifndef</cpp:directive> <name pos:start="27:9" pos:end="27:24">CONFIG_USER_ONLY</name></cpp:ifndef>
+
+    <block pos:start="29:5" pos:end="160:0">{<block_content pos:start="45:9" pos:end="155:9">
+
+        <comment type="block" pos:start="31:9" pos:end="43:11">/* Slightly awkwardly, QEMU's TARGET_PAGE_SIZE may be less than
+
+         * the block size so we might have to do more than one TLB lookup.
+
+         * We know that in fact for any v8 CPU the page size is at least 4K
+
+         * and the block size must be 2K or less, but TARGET_PAGE_SIZE is only
+
+         * 1K as an artefact of legacy v5 subpage support being present in the
+
+         * same QEMU executable.
+
+         */</comment>
+
+        <decl_stmt pos:start="45:9" pos:end="45:62"><decl pos:start="45:9" pos:end="45:61"><type pos:start="45:9" pos:end="45:11"><name pos:start="45:9" pos:end="45:11">int</name></type> <name pos:start="45:13" pos:end="45:18">maxidx</name> <init pos:start="45:20" pos:end="45:61">= <expr pos:start="45:22" pos:end="45:61"><call pos:start="45:22" pos:end="45:61"><name pos:start="45:22" pos:end="45:33">DIV_ROUND_UP</name><argument_list pos:start="45:34" pos:end="45:61">(<argument pos:start="45:35" pos:end="45:42"><expr pos:start="45:35" pos:end="45:42"><name pos:start="45:35" pos:end="45:42">blocklen</name></expr></argument>, <argument pos:start="45:45" pos:end="45:60"><expr pos:start="45:45" pos:end="45:60"><name pos:start="45:45" pos:end="45:60">TARGET_PAGE_SIZE</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="47:9" pos:end="47:31"><decl pos:start="47:9" pos:end="47:30"><type pos:start="47:9" pos:end="47:14"><name pos:start="47:9" pos:end="47:12">void</name> <modifier pos:start="47:14" pos:end="47:14">*</modifier></type><name pos:start="47:15" pos:end="47:30"><name pos:start="47:15" pos:end="47:22">hostaddr</name><index pos:start="47:23" pos:end="47:30">[<expr pos:start="47:24" pos:end="47:29"><name pos:start="47:24" pos:end="47:29">maxidx</name></expr>]</index></name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="49:9" pos:end="49:19"><decl pos:start="49:9" pos:end="49:15"><type pos:start="49:9" pos:end="49:11"><name pos:start="49:9" pos:end="49:11">int</name></type> <name pos:start="49:13" pos:end="49:15">try</name></decl>, <decl pos:start="49:18" pos:end="49:18"><type ref="prev" pos:start="49:9" pos:end="49:11"/><name pos:start="49:18" pos:end="49:18">i</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="51:9" pos:end="51:53"><decl pos:start="51:9" pos:end="51:52"><type pos:start="51:9" pos:end="51:16"><name pos:start="51:9" pos:end="51:16">unsigned</name></type> <name pos:start="51:18" pos:end="51:24">mmu_idx</name> <init pos:start="51:26" pos:end="51:52">= <expr pos:start="51:28" pos:end="51:52"><call pos:start="51:28" pos:end="51:52"><name pos:start="51:28" pos:end="51:40">cpu_mmu_index</name><argument_list pos:start="51:41" pos:end="51:52">(<argument pos:start="51:42" pos:end="51:44"><expr pos:start="51:42" pos:end="51:44"><name pos:start="51:42" pos:end="51:44">env</name></expr></argument>, <argument pos:start="51:47" pos:end="51:51"><expr pos:start="51:47" pos:end="51:51"><name pos:start="51:47" pos:end="51:51">false</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="53:9" pos:end="53:56"><decl pos:start="53:9" pos:end="53:55"><type pos:start="53:9" pos:end="53:19"><name pos:start="53:9" pos:end="53:19">TCGMemOpIdx</name></type> <name pos:start="53:21" pos:end="53:22">oi</name> <init pos:start="53:24" pos:end="53:55">= <expr pos:start="53:26" pos:end="53:55"><call pos:start="53:26" pos:end="53:55"><name pos:start="53:26" pos:end="53:39">make_memop_idx</name><argument_list pos:start="53:40" pos:end="53:55">(<argument pos:start="53:41" pos:end="53:45"><expr pos:start="53:41" pos:end="53:45"><name pos:start="53:41" pos:end="53:45">MO_UB</name></expr></argument>, <argument pos:start="53:48" pos:end="53:54"><expr pos:start="53:48" pos:end="53:54"><name pos:start="53:48" pos:end="53:54">mmu_idx</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+
+
+        <for pos:start="57:9" pos:end="125:9">for <control pos:start="57:13" pos:end="57:37">(<init pos:start="57:14" pos:end="57:21"><expr pos:start="57:14" pos:end="57:20"><name pos:start="57:14" pos:end="57:16">try</name> <operator pos:start="57:18" pos:end="57:18">=</operator> <literal type="number" pos:start="57:20" pos:end="57:20">0</literal></expr>;</init> <condition pos:start="57:23" pos:end="57:30"><expr pos:start="57:23" pos:end="57:29"><name pos:start="57:23" pos:end="57:25">try</name> <operator pos:start="57:27" pos:end="57:27">&lt;</operator> <literal type="number" pos:start="57:29" pos:end="57:29">2</literal></expr>;</condition> <incr pos:start="57:32" pos:end="57:36"><expr pos:start="57:32" pos:end="57:36"><name pos:start="57:32" pos:end="57:34">try</name><operator pos:start="57:35" pos:end="57:36">++</operator></expr></incr>)</control> <block pos:start="57:39" pos:end="125:9">{<block_content pos:start="61:13" pos:end="123:13">
+
+
+
+            <for pos:start="61:13" pos:end="75:13">for <control pos:start="61:17" pos:end="61:40">(<init pos:start="61:18" pos:end="61:23"><expr pos:start="61:18" pos:end="61:22"><name pos:start="61:18" pos:end="61:18">i</name> <operator pos:start="61:20" pos:end="61:20">=</operator> <literal type="number" pos:start="61:22" pos:end="61:22">0</literal></expr>;</init> <condition pos:start="61:25" pos:end="61:35"><expr pos:start="61:25" pos:end="61:34"><name pos:start="61:25" pos:end="61:25">i</name> <operator pos:start="61:27" pos:end="61:27">&lt;</operator> <name pos:start="61:29" pos:end="61:34">maxidx</name></expr>;</condition> <incr pos:start="61:37" pos:end="61:39"><expr pos:start="61:37" pos:end="61:39"><name pos:start="61:37" pos:end="61:37">i</name><operator pos:start="61:38" pos:end="61:39">++</operator></expr></incr>)</control> <block pos:start="61:42" pos:end="75:13">{<block_content pos:start="63:17" pos:end="73:17">
+
+                <expr_stmt pos:start="63:17" pos:end="67:60"><expr pos:start="63:17" pos:end="67:59"><name pos:start="63:17" pos:end="63:27"><name pos:start="63:17" pos:end="63:24">hostaddr</name><index pos:start="63:25" pos:end="63:27">[<expr pos:start="63:26" pos:end="63:26"><name pos:start="63:26" pos:end="63:26">i</name></expr>]</index></name> <operator pos:start="63:29" pos:end="63:29">=</operator> <call pos:start="63:31" pos:end="67:59"><name pos:start="63:31" pos:end="63:47">tlb_vaddr_to_host</name><argument_list pos:start="63:48" pos:end="67:59">(<argument pos:start="63:49" pos:end="63:51"><expr pos:start="63:49" pos:end="63:51"><name pos:start="63:49" pos:end="63:51">env</name></expr></argument>,
+
+                                                <argument pos:start="65:49" pos:end="65:76"><expr pos:start="65:49" pos:end="65:76"><name pos:start="65:49" pos:end="65:53">vaddr</name> <operator pos:start="65:55" pos:end="65:55">+</operator> <name pos:start="65:57" pos:end="65:72">TARGET_PAGE_SIZE</name> <operator pos:start="65:74" pos:end="65:74">*</operator> <name pos:start="65:76" pos:end="65:76">i</name></expr></argument>,
+
+                                                <argument pos:start="67:49" pos:end="67:49"><expr pos:start="67:49" pos:end="67:49"><literal type="number" pos:start="67:49" pos:end="67:49">1</literal></expr></argument>, <argument pos:start="67:52" pos:end="67:58"><expr pos:start="67:52" pos:end="67:58"><name pos:start="67:52" pos:end="67:58">mmu_idx</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <if_stmt pos:start="69:17" pos:end="73:17"><if pos:start="69:17" pos:end="73:17">if <condition pos:start="69:20" pos:end="69:33">(<expr pos:start="69:21" pos:end="69:32"><operator pos:start="69:21" pos:end="69:21">!</operator><name pos:start="69:22" pos:end="69:32"><name pos:start="69:22" pos:end="69:29">hostaddr</name><index pos:start="69:30" pos:end="69:32">[<expr pos:start="69:31" pos:end="69:31"><name pos:start="69:31" pos:end="69:31">i</name></expr>]</index></name></expr>)</condition> <block pos:start="69:35" pos:end="73:17">{<block_content pos:start="71:21" pos:end="71:26">
+
+                    <break pos:start="71:21" pos:end="71:26">break;</break>
+
+                </block_content>}</block></if></if_stmt>
+
+            </block_content>}</block></for>
+
+            <if_stmt pos:start="77:13" pos:end="95:13"><if pos:start="77:13" pos:end="95:13">if <condition pos:start="77:16" pos:end="77:28">(<expr pos:start="77:17" pos:end="77:27"><name pos:start="77:17" pos:end="77:17">i</name> <operator pos:start="77:19" pos:end="77:20">==</operator> <name pos:start="77:22" pos:end="77:27">maxidx</name></expr>)</condition> <block pos:start="77:30" pos:end="95:13">{<block_content pos:start="85:17" pos:end="93:23">
+
+                <comment type="block" pos:start="79:17" pos:end="83:19">/* If it's all in the TLB it's fair game for just writing to;
+
+                 * we know we don't need to update dirty status, etc.
+
+                 */</comment>
+
+                <for pos:start="85:17" pos:end="89:17">for <control pos:start="85:21" pos:end="85:48">(<init pos:start="85:22" pos:end="85:27"><expr pos:start="85:22" pos:end="85:26"><name pos:start="85:22" pos:end="85:22">i</name> <operator pos:start="85:24" pos:end="85:24">=</operator> <literal type="number" pos:start="85:26" pos:end="85:26">0</literal></expr>;</init> <condition pos:start="85:29" pos:end="85:43"><expr pos:start="85:29" pos:end="85:42"><name pos:start="85:29" pos:end="85:29">i</name> <operator pos:start="85:31" pos:end="85:31">&lt;</operator> <name pos:start="85:33" pos:end="85:38">maxidx</name> <operator pos:start="85:40" pos:end="85:40">-</operator> <literal type="number" pos:start="85:42" pos:end="85:42">1</literal></expr>;</condition> <incr pos:start="85:45" pos:end="85:47"><expr pos:start="85:45" pos:end="85:47"><name pos:start="85:45" pos:end="85:45">i</name><operator pos:start="85:46" pos:end="85:47">++</operator></expr></incr>)</control> <block pos:start="85:50" pos:end="89:17">{<block_content pos:start="87:21" pos:end="87:61">
+
+                    <expr_stmt pos:start="87:21" pos:end="87:61"><expr pos:start="87:21" pos:end="87:60"><call pos:start="87:21" pos:end="87:60"><name pos:start="87:21" pos:end="87:26">memset</name><argument_list pos:start="87:27" pos:end="87:60">(<argument pos:start="87:28" pos:end="87:38"><expr pos:start="87:28" pos:end="87:38"><name pos:start="87:28" pos:end="87:38"><name pos:start="87:28" pos:end="87:35">hostaddr</name><index pos:start="87:36" pos:end="87:38">[<expr pos:start="87:37" pos:end="87:37"><name pos:start="87:37" pos:end="87:37">i</name></expr>]</index></name></expr></argument>, <argument pos:start="87:41" pos:end="87:41"><expr pos:start="87:41" pos:end="87:41"><literal type="number" pos:start="87:41" pos:end="87:41">0</literal></expr></argument>, <argument pos:start="87:44" pos:end="87:59"><expr pos:start="87:44" pos:end="87:59"><name pos:start="87:44" pos:end="87:59">TARGET_PAGE_SIZE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                </block_content>}</block></for>
+
+                <expr_stmt pos:start="91:17" pos:end="91:74"><expr pos:start="91:17" pos:end="91:73"><call pos:start="91:17" pos:end="91:73"><name pos:start="91:17" pos:end="91:22">memset</name><argument_list pos:start="91:23" pos:end="91:73">(<argument pos:start="91:24" pos:end="91:34"><expr pos:start="91:24" pos:end="91:34"><name pos:start="91:24" pos:end="91:34"><name pos:start="91:24" pos:end="91:31">hostaddr</name><index pos:start="91:32" pos:end="91:34">[<expr pos:start="91:33" pos:end="91:33"><name pos:start="91:33" pos:end="91:33">i</name></expr>]</index></name></expr></argument>, <argument pos:start="91:37" pos:end="91:37"><expr pos:start="91:37" pos:end="91:37"><literal type="number" pos:start="91:37" pos:end="91:37">0</literal></expr></argument>, <argument pos:start="91:40" pos:end="91:72"><expr pos:start="91:40" pos:end="91:72"><name pos:start="91:40" pos:end="91:47">blocklen</name> <operator pos:start="91:49" pos:end="91:49">-</operator> <operator pos:start="91:51" pos:end="91:51">(</operator><name pos:start="91:52" pos:end="91:52">i</name> <operator pos:start="91:54" pos:end="91:54">*</operator> <name pos:start="91:56" pos:end="91:71">TARGET_PAGE_SIZE</name><operator pos:start="91:72" pos:end="91:72">)</operator></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <return pos:start="93:17" pos:end="93:23">return;</return>
+
+            </block_content>}</block></if></if_stmt>
+
+            <comment type="block" pos:start="97:13" pos:end="107:15">/* OK, try a store and see if we can populate the tlb. This
+
+             * might cause an exception if the memory isn't writable,
+
+             * in which case we will longjmp out of here. We must for
+
+             * this purpose use the actual register value passed to us
+
+             * so that we get the fault address right.
+
+             */</comment>
+
+            <expr_stmt pos:start="109:13" pos:end="109:62"><expr pos:start="109:13" pos:end="109:61"><call pos:start="109:13" pos:end="109:61"><name pos:start="109:13" pos:end="109:30">helper_ret_stb_mmu</name><argument_list pos:start="109:31" pos:end="109:61">(<argument pos:start="109:32" pos:end="109:34"><expr pos:start="109:32" pos:end="109:34"><name pos:start="109:32" pos:end="109:34">env</name></expr></argument>, <argument pos:start="109:37" pos:end="109:44"><expr pos:start="109:37" pos:end="109:44"><name pos:start="109:37" pos:end="109:44">vaddr_in</name></expr></argument>, <argument pos:start="109:47" pos:end="109:47"><expr pos:start="109:47" pos:end="109:47"><literal type="number" pos:start="109:47" pos:end="109:47">0</literal></expr></argument>, <argument pos:start="109:50" pos:end="109:51"><expr pos:start="109:50" pos:end="109:51"><name pos:start="109:50" pos:end="109:51">oi</name></expr></argument>, <argument pos:start="109:54" pos:end="109:60"><expr pos:start="109:54" pos:end="109:60"><call pos:start="109:54" pos:end="109:60"><name pos:start="109:54" pos:end="109:58">GETRA</name><argument_list pos:start="109:59" pos:end="109:60">()</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <comment type="block" pos:start="111:13" pos:end="111:67">/* Now we can populate the other TLB entries, if any */</comment>
+
+            <for pos:start="113:13" pos:end="123:13">for <control pos:start="113:17" pos:end="113:40">(<init pos:start="113:18" pos:end="113:23"><expr pos:start="113:18" pos:end="113:22"><name pos:start="113:18" pos:end="113:18">i</name> <operator pos:start="113:20" pos:end="113:20">=</operator> <literal type="number" pos:start="113:22" pos:end="113:22">0</literal></expr>;</init> <condition pos:start="113:25" pos:end="113:35"><expr pos:start="113:25" pos:end="113:34"><name pos:start="113:25" pos:end="113:25">i</name> <operator pos:start="113:27" pos:end="113:27">&lt;</operator> <name pos:start="113:29" pos:end="113:34">maxidx</name></expr>;</condition> <incr pos:start="113:37" pos:end="113:39"><expr pos:start="113:37" pos:end="113:39"><name pos:start="113:37" pos:end="113:37">i</name><operator pos:start="113:38" pos:end="113:39">++</operator></expr></incr>)</control> <block pos:start="113:42" pos:end="123:13">{<block_content pos:start="115:17" pos:end="121:17">
+
+                <decl_stmt pos:start="115:17" pos:end="115:59"><decl pos:start="115:17" pos:end="115:58"><type pos:start="115:17" pos:end="115:24"><name pos:start="115:17" pos:end="115:24">uint64_t</name></type> <name pos:start="115:26" pos:end="115:27">va</name> <init pos:start="115:29" pos:end="115:58">= <expr pos:start="115:31" pos:end="115:58"><name pos:start="115:31" pos:end="115:35">vaddr</name> <operator pos:start="115:37" pos:end="115:37">+</operator> <name pos:start="115:39" pos:end="115:54">TARGET_PAGE_SIZE</name> <operator pos:start="115:56" pos:end="115:56">*</operator> <name pos:start="115:58" pos:end="115:58">i</name></expr></init></decl>;</decl_stmt>
+
+                <if_stmt pos:start="117:17" pos:end="121:17"><if pos:start="117:17" pos:end="121:17">if <condition pos:start="117:20" pos:end="117:56">(<expr pos:start="117:21" pos:end="117:55"><name pos:start="117:21" pos:end="117:22">va</name> <operator pos:start="117:24" pos:end="117:25">!=</operator> <operator pos:start="117:27" pos:end="117:27">(</operator><name pos:start="117:28" pos:end="117:35">vaddr_in</name> <operator pos:start="117:37" pos:end="117:37">&amp;</operator> <name pos:start="117:39" pos:end="117:54">TARGET_PAGE_MASK</name><operator pos:start="117:55" pos:end="117:55">)</operator></expr>)</condition> <block pos:start="117:58" pos:end="121:17">{<block_content pos:start="119:21" pos:end="119:64">
+
+                    <expr_stmt pos:start="119:21" pos:end="119:64"><expr pos:start="119:21" pos:end="119:63"><call pos:start="119:21" pos:end="119:63"><name pos:start="119:21" pos:end="119:38">helper_ret_stb_mmu</name><argument_list pos:start="119:39" pos:end="119:63">(<argument pos:start="119:40" pos:end="119:42"><expr pos:start="119:40" pos:end="119:42"><name pos:start="119:40" pos:end="119:42">env</name></expr></argument>, <argument pos:start="119:45" pos:end="119:46"><expr pos:start="119:45" pos:end="119:46"><name pos:start="119:45" pos:end="119:46">va</name></expr></argument>, <argument pos:start="119:49" pos:end="119:49"><expr pos:start="119:49" pos:end="119:49"><literal type="number" pos:start="119:49" pos:end="119:49">0</literal></expr></argument>, <argument pos:start="119:52" pos:end="119:53"><expr pos:start="119:52" pos:end="119:53"><name pos:start="119:52" pos:end="119:53">oi</name></expr></argument>, <argument pos:start="119:56" pos:end="119:62"><expr pos:start="119:56" pos:end="119:62"><call pos:start="119:56" pos:end="119:62"><name pos:start="119:56" pos:end="119:60">GETRA</name><argument_list pos:start="119:61" pos:end="119:62">()</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                </block_content>}</block></if></if_stmt>
+
+            </block_content>}</block></for>
+
+        </block_content>}</block></for>
+
+
+
+        <comment type="block" pos:start="129:9" pos:end="149:11">/* Slow path (probably attempt to do this to an I/O device or
+
+         * similar, or clearing of a block of code we have translations
+
+         * cached for). Just do a series of byte writes as the architecture
+
+         * demands. It's not worth trying to use a cpu_physical_memory_map(),
+
+         * memset(), unmap() sequence here because:
+
+         *  + we'd need to account for the blocksize being larger than a page
+
+         *  + the direct-RAM access case is almost always going to be dealt
+
+         *    with in the fastpath code above, so there's no speed benefit
+
+         *  + we would have to deal with the map returning NULL because the
+
+         *    bounce buffer was in use
+
+         */</comment>
+
+        <for pos:start="151:9" pos:end="155:9">for <control pos:start="151:13" pos:end="151:38">(<init pos:start="151:14" pos:end="151:19"><expr pos:start="151:14" pos:end="151:18"><name pos:start="151:14" pos:end="151:14">i</name> <operator pos:start="151:16" pos:end="151:16">=</operator> <literal type="number" pos:start="151:18" pos:end="151:18">0</literal></expr>;</init> <condition pos:start="151:21" pos:end="151:33"><expr pos:start="151:21" pos:end="151:32"><name pos:start="151:21" pos:end="151:21">i</name> <operator pos:start="151:23" pos:end="151:23">&lt;</operator> <name pos:start="151:25" pos:end="151:32">blocklen</name></expr>;</condition> <incr pos:start="151:35" pos:end="151:37"><expr pos:start="151:35" pos:end="151:37"><name pos:start="151:35" pos:end="151:35">i</name><operator pos:start="151:36" pos:end="151:37">++</operator></expr></incr>)</control> <block pos:start="151:40" pos:end="155:9">{<block_content pos:start="153:13" pos:end="153:63">
+
+            <expr_stmt pos:start="153:13" pos:end="153:63"><expr pos:start="153:13" pos:end="153:62"><call pos:start="153:13" pos:end="153:62"><name pos:start="153:13" pos:end="153:30">helper_ret_stb_mmu</name><argument_list pos:start="153:31" pos:end="153:62">(<argument pos:start="153:32" pos:end="153:34"><expr pos:start="153:32" pos:end="153:34"><name pos:start="153:32" pos:end="153:34">env</name></expr></argument>, <argument pos:start="153:37" pos:end="153:45"><expr pos:start="153:37" pos:end="153:45"><name pos:start="153:37" pos:end="153:41">vaddr</name> <operator pos:start="153:43" pos:end="153:43">+</operator> <name pos:start="153:45" pos:end="153:45">i</name></expr></argument>, <argument pos:start="153:48" pos:end="153:48"><expr pos:start="153:48" pos:end="153:48"><literal type="number" pos:start="153:48" pos:end="153:48">0</literal></expr></argument>, <argument pos:start="153:51" pos:end="153:52"><expr pos:start="153:51" pos:end="153:52"><name pos:start="153:51" pos:end="153:52">oi</name></expr></argument>, <argument pos:start="153:55" pos:end="153:61"><expr pos:start="153:55" pos:end="153:61"><call pos:start="153:55" pos:end="153:61"><name pos:start="153:55" pos:end="153:59">GETRA</name><argument_list pos:start="153:60" pos:end="153:61">()</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></for>
+
+    </block_content>}</block>
+
+<cpp:else pos:start="159:1" pos:end="159:5">#<cpp:directive pos:start="159:2" pos:end="159:5">else</cpp:directive></cpp:else>
+
+    <expr_stmt pos:start="161:5" pos:end="164:0"><expr pos:start="161:5" pos:end="161:35"><call pos:start="161:5" pos:end="161:35"><name pos:start="161:5" pos:end="161:10">memset</name><argument_list pos:start="161:11" pos:end="161:35">(<argument pos:start="161:12" pos:end="161:21"><expr pos:start="161:12" pos:end="161:21"><call pos:start="161:12" pos:end="161:21"><name pos:start="161:12" pos:end="161:14">g2h</name><argument_list pos:start="161:15" pos:end="161:21">(<argument pos:start="161:16" pos:end="161:20"><expr pos:start="161:16" pos:end="161:20"><name pos:start="161:16" pos:end="161:20">vaddr</name></expr></argument>)</argument_list></call></expr></argument>, <argument pos:start="161:24" pos:end="161:24"><expr pos:start="161:24" pos:end="161:24"><literal type="number" pos:start="161:24" pos:end="161:24">0</literal></expr></argument>, <argument pos:start="161:27" pos:end="161:34"><expr pos:start="161:27" pos:end="161:34"><name pos:start="161:27" pos:end="161:34">blocklen</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+<cpp:endif pos:start="163:1" pos:end="163:6">#<cpp:directive pos:start="163:2" pos:end="163:6">endif</cpp:directive></cpp:endif>
+
+</block_content>}</block></function>
+</unit>

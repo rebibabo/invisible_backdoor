@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/9224.c" pos:tabs="8"><function pos:start="1:1" pos:end="169:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:31">lag_read_prob_header</name><parameter_list pos:start="1:32" pos:end="1:64">(<parameter pos:start="1:33" pos:end="1:44"><decl pos:start="1:33" pos:end="1:44"><type pos:start="1:33" pos:end="1:44"><name pos:start="1:33" pos:end="1:39">lag_rac</name> <modifier pos:start="1:41" pos:end="1:41">*</modifier></type><name pos:start="1:42" pos:end="1:44">rac</name></decl></parameter>, <parameter pos:start="1:47" pos:end="1:63"><decl pos:start="1:47" pos:end="1:63"><type pos:start="1:47" pos:end="1:63"><name pos:start="1:47" pos:end="1:59">GetBitContext</name> <modifier pos:start="1:61" pos:end="1:61">*</modifier></type><name pos:start="1:62" pos:end="1:63">gb</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="169:1">{<block_content pos:start="5:5" pos:end="167:13">
+
+    <decl_stmt pos:start="5:5" pos:end="5:27"><decl pos:start="5:5" pos:end="5:9"><type pos:start="5:5" pos:end="5:7"><name pos:start="5:5" pos:end="5:7">int</name></type> <name pos:start="5:9" pos:end="5:9">i</name></decl>, <decl pos:start="5:12" pos:end="5:12"><type ref="prev" pos:start="5:5" pos:end="5:7"/><name pos:start="5:12" pos:end="5:12">j</name></decl>, <decl pos:start="5:15" pos:end="5:26"><type ref="prev" pos:start="5:5" pos:end="5:7"/><name pos:start="5:15" pos:end="5:26">scale_factor</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:37"><decl pos:start="7:5" pos:end="7:17"><type pos:start="7:5" pos:end="7:12"><name pos:start="7:5" pos:end="7:12">unsigned</name></type> <name pos:start="7:14" pos:end="7:17">prob</name></decl>, <decl pos:start="7:20" pos:end="7:36"><type ref="prev" pos:start="7:5" pos:end="7:12"/><name pos:start="7:20" pos:end="7:36">cumulative_target</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:28"><decl pos:start="9:5" pos:end="9:27"><type pos:start="9:5" pos:end="9:12"><name pos:start="9:5" pos:end="9:12">unsigned</name></type> <name pos:start="9:14" pos:end="9:23">cumul_prob</name> <init pos:start="9:25" pos:end="9:27">= <expr pos:start="9:27" pos:end="9:27"><literal type="number" pos:start="9:27" pos:end="9:27">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:35"><decl pos:start="11:5" pos:end="11:34"><type pos:start="11:5" pos:end="11:12"><name pos:start="11:5" pos:end="11:12">unsigned</name></type> <name pos:start="11:14" pos:end="11:30">scaled_cumul_prob</name> <init pos:start="11:32" pos:end="11:34">= <expr pos:start="11:34" pos:end="11:34"><literal type="number" pos:start="11:34" pos:end="11:34">0</literal></expr></init></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="15:5" pos:end="15:21"><expr pos:start="15:5" pos:end="15:20"><name pos:start="15:5" pos:end="15:16"><name pos:start="15:5" pos:end="15:7">rac</name><operator pos:start="15:8" pos:end="15:9">-&gt;</operator><name pos:start="15:10" pos:end="15:13">prob</name><index pos:start="15:14" pos:end="15:16">[<expr pos:start="15:15" pos:end="15:15"><literal type="number" pos:start="15:15" pos:end="15:15">0</literal></expr>]</index></name> <operator pos:start="15:18" pos:end="15:18">=</operator> <literal type="number" pos:start="15:20" pos:end="15:20">0</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="17:5" pos:end="17:30"><expr pos:start="17:5" pos:end="17:29"><name pos:start="17:5" pos:end="17:18"><name pos:start="17:5" pos:end="17:7">rac</name><operator pos:start="17:8" pos:end="17:9">-&gt;</operator><name pos:start="17:10" pos:end="17:13">prob</name><index pos:start="17:14" pos:end="17:18">[<expr pos:start="17:15" pos:end="17:17"><literal type="number" pos:start="17:15" pos:end="17:17">257</literal></expr>]</index></name> <operator pos:start="17:20" pos:end="17:20">=</operator> <name pos:start="17:22" pos:end="17:29">UINT_MAX</name></expr>;</expr_stmt>
+
+    <comment type="block" pos:start="19:5" pos:end="19:43">/* Read probabilities from bitstream */</comment>
+
+    <for pos:start="21:5" pos:end="61:5">for <control pos:start="21:9" pos:end="21:29">(<init pos:start="21:10" pos:end="21:15"><expr pos:start="21:10" pos:end="21:14"><name pos:start="21:10" pos:end="21:10">i</name> <operator pos:start="21:12" pos:end="21:12">=</operator> <literal type="number" pos:start="21:14" pos:end="21:14">1</literal></expr>;</init> <condition pos:start="21:17" pos:end="21:24"><expr pos:start="21:17" pos:end="21:23"><name pos:start="21:17" pos:end="21:17">i</name> <operator pos:start="21:19" pos:end="21:19">&lt;</operator> <literal type="number" pos:start="21:21" pos:end="21:23">257</literal></expr>;</condition> <incr pos:start="21:26" pos:end="21:28"><expr pos:start="21:26" pos:end="21:28"><name pos:start="21:26" pos:end="21:26">i</name><operator pos:start="21:27" pos:end="21:28">++</operator></expr></incr>)</control> <block pos:start="21:31" pos:end="61:5">{<block_content pos:start="23:9" pos:end="59:9">
+
+        <if_stmt pos:start="23:9" pos:end="29:9"><if pos:start="23:9" pos:end="29:9">if <condition pos:start="23:12" pos:end="23:51">(<expr pos:start="23:13" pos:end="23:50"><call pos:start="23:13" pos:end="23:46"><name pos:start="23:13" pos:end="23:27">lag_decode_prob</name><argument_list pos:start="23:28" pos:end="23:46">(<argument pos:start="23:29" pos:end="23:30"><expr pos:start="23:29" pos:end="23:30"><name pos:start="23:29" pos:end="23:30">gb</name></expr></argument>, <argument pos:start="23:33" pos:end="23:45"><expr pos:start="23:33" pos:end="23:45"><operator pos:start="23:33" pos:end="23:33">&amp;</operator><name pos:start="23:34" pos:end="23:45"><name pos:start="23:34" pos:end="23:36">rac</name><operator pos:start="23:37" pos:end="23:38">-&gt;</operator><name pos:start="23:39" pos:end="23:42">prob</name><index pos:start="23:43" pos:end="23:45">[<expr pos:start="23:44" pos:end="23:44"><name pos:start="23:44" pos:end="23:44">i</name></expr>]</index></name></expr></argument>)</argument_list></call> <operator pos:start="23:48" pos:end="23:48">&lt;</operator> <literal type="number" pos:start="23:50" pos:end="23:50">0</literal></expr>)</condition> <block pos:start="23:53" pos:end="29:9">{<block_content pos:start="25:13" pos:end="27:22">
+
+            <expr_stmt pos:start="25:13" pos:end="25:83"><expr pos:start="25:13" pos:end="25:82"><call pos:start="25:13" pos:end="25:82"><name pos:start="25:13" pos:end="25:18">av_log</name><argument_list pos:start="25:19" pos:end="25:82">(<argument pos:start="25:20" pos:end="25:29"><expr pos:start="25:20" pos:end="25:29"><name pos:start="25:20" pos:end="25:29"><name pos:start="25:20" pos:end="25:22">rac</name><operator pos:start="25:23" pos:end="25:24">-&gt;</operator><name pos:start="25:25" pos:end="25:29">avctx</name></name></expr></argument>, <argument pos:start="25:32" pos:end="25:43"><expr pos:start="25:32" pos:end="25:43"><name pos:start="25:32" pos:end="25:43">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="25:46" pos:end="25:81"><expr pos:start="25:46" pos:end="25:81"><literal type="string" pos:start="25:46" pos:end="25:81">"Invalid probability encountered.\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="27:13" pos:end="27:22">return <expr pos:start="27:20" pos:end="27:21"><operator pos:start="27:20" pos:end="27:20">-</operator><literal type="number" pos:start="27:21" pos:end="27:21">1</literal></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <if_stmt pos:start="31:9" pos:end="37:9"><if pos:start="31:9" pos:end="37:9">if <condition pos:start="31:12" pos:end="31:59">(<expr pos:start="31:13" pos:end="31:58"><operator pos:start="31:13" pos:end="31:13">(</operator><name pos:start="31:14" pos:end="31:21">uint64_t</name><operator pos:start="31:22" pos:end="31:22">)</operator><name pos:start="31:23" pos:end="31:32">cumul_prob</name> <operator pos:start="31:34" pos:end="31:34">+</operator> <name pos:start="31:36" pos:end="31:47"><name pos:start="31:36" pos:end="31:38">rac</name><operator pos:start="31:39" pos:end="31:40">-&gt;</operator><name pos:start="31:41" pos:end="31:44">prob</name><index pos:start="31:45" pos:end="31:47">[<expr pos:start="31:46" pos:end="31:46"><name pos:start="31:46" pos:end="31:46">i</name></expr>]</index></name> <operator pos:start="31:49" pos:end="31:49">&gt;</operator> <name pos:start="31:51" pos:end="31:58">UINT_MAX</name></expr>)</condition> <block pos:start="31:61" pos:end="37:9">{<block_content pos:start="33:13" pos:end="35:22">
+
+            <expr_stmt pos:start="33:13" pos:end="33:118"><expr pos:start="33:13" pos:end="33:117"><call pos:start="33:13" pos:end="33:117"><name pos:start="33:13" pos:end="33:18">av_log</name><argument_list pos:start="33:19" pos:end="33:117">(<argument pos:start="33:20" pos:end="33:29"><expr pos:start="33:20" pos:end="33:29"><name pos:start="33:20" pos:end="33:29"><name pos:start="33:20" pos:end="33:22">rac</name><operator pos:start="33:23" pos:end="33:24">-&gt;</operator><name pos:start="33:25" pos:end="33:29">avctx</name></name></expr></argument>, <argument pos:start="33:32" pos:end="33:43"><expr pos:start="33:32" pos:end="33:43"><name pos:start="33:32" pos:end="33:43">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="33:46" pos:end="33:116"><expr pos:start="33:46" pos:end="33:116"><literal type="string" pos:start="33:46" pos:end="33:116">"Integer overflow encountered in cumulative probability calculation.\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="35:13" pos:end="35:22">return <expr pos:start="35:20" pos:end="35:21"><operator pos:start="35:20" pos:end="35:20">-</operator><literal type="number" pos:start="35:21" pos:end="35:21">1</literal></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="39:9" pos:end="39:35"><expr pos:start="39:9" pos:end="39:34"><name pos:start="39:9" pos:end="39:18">cumul_prob</name> <operator pos:start="39:20" pos:end="39:21">+=</operator> <name pos:start="39:23" pos:end="39:34"><name pos:start="39:23" pos:end="39:25">rac</name><operator pos:start="39:26" pos:end="39:27">-&gt;</operator><name pos:start="39:28" pos:end="39:31">prob</name><index pos:start="39:32" pos:end="39:34">[<expr pos:start="39:33" pos:end="39:33"><name pos:start="39:33" pos:end="39:33">i</name></expr>]</index></name></expr>;</expr_stmt>
+
+        <if_stmt pos:start="41:9" pos:end="59:9"><if pos:start="41:9" pos:end="59:9">if <condition pos:start="41:12" pos:end="41:26">(<expr pos:start="41:13" pos:end="41:25"><operator pos:start="41:13" pos:end="41:13">!</operator><name pos:start="41:14" pos:end="41:25"><name pos:start="41:14" pos:end="41:16">rac</name><operator pos:start="41:17" pos:end="41:18">-&gt;</operator><name pos:start="41:19" pos:end="41:22">prob</name><index pos:start="41:23" pos:end="41:25">[<expr pos:start="41:24" pos:end="41:24"><name pos:start="41:24" pos:end="41:24">i</name></expr>]</index></name></expr>)</condition> <block pos:start="41:28" pos:end="59:9">{<block_content pos:start="43:13" pos:end="57:35">
+
+            <if_stmt pos:start="43:13" pos:end="49:13"><if pos:start="43:13" pos:end="49:13">if <condition pos:start="43:16" pos:end="43:43">(<expr pos:start="43:17" pos:end="43:42"><call pos:start="43:17" pos:end="43:42"><name pos:start="43:17" pos:end="43:31">lag_decode_prob</name><argument_list pos:start="43:32" pos:end="43:42">(<argument pos:start="43:33" pos:end="43:34"><expr pos:start="43:33" pos:end="43:34"><name pos:start="43:33" pos:end="43:34">gb</name></expr></argument>, <argument pos:start="43:37" pos:end="43:41"><expr pos:start="43:37" pos:end="43:41"><operator pos:start="43:37" pos:end="43:37">&amp;</operator><name pos:start="43:38" pos:end="43:41">prob</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="43:45" pos:end="49:13">{<block_content pos:start="45:17" pos:end="47:26">
+
+                <expr_stmt pos:start="45:17" pos:end="45:91"><expr pos:start="45:17" pos:end="45:90"><call pos:start="45:17" pos:end="45:90"><name pos:start="45:17" pos:end="45:22">av_log</name><argument_list pos:start="45:23" pos:end="45:90">(<argument pos:start="45:24" pos:end="45:33"><expr pos:start="45:24" pos:end="45:33"><name pos:start="45:24" pos:end="45:33"><name pos:start="45:24" pos:end="45:26">rac</name><operator pos:start="45:27" pos:end="45:28">-&gt;</operator><name pos:start="45:29" pos:end="45:33">avctx</name></name></expr></argument>, <argument pos:start="45:36" pos:end="45:47"><expr pos:start="45:36" pos:end="45:47"><name pos:start="45:36" pos:end="45:47">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="45:50" pos:end="45:89"><expr pos:start="45:50" pos:end="45:89"><literal type="string" pos:start="45:50" pos:end="45:89">"Invalid probability run encountered.\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <return pos:start="47:17" pos:end="47:26">return <expr pos:start="47:24" pos:end="47:25"><operator pos:start="47:24" pos:end="47:24">-</operator><literal type="number" pos:start="47:25" pos:end="47:25">1</literal></expr>;</return>
+
+            </block_content>}</block></if></if_stmt>
+
+            <if_stmt pos:start="51:13" pos:end="53:31"><if pos:start="51:13" pos:end="53:31">if <condition pos:start="51:16" pos:end="51:31">(<expr pos:start="51:17" pos:end="51:30"><name pos:start="51:17" pos:end="51:20">prob</name> <operator pos:start="51:22" pos:end="51:22">&gt;</operator> <literal type="number" pos:start="51:24" pos:end="51:28">257</literal> <operator pos:start="51:28" pos:end="51:28">-</operator> <name pos:start="51:30" pos:end="51:30">i</name></expr>)</condition><block type="pseudo" pos:start="53:17" pos:end="53:31"><block_content pos:start="53:17" pos:end="53:31">
+
+                <expr_stmt pos:start="53:17" pos:end="53:31"><expr pos:start="53:17" pos:end="53:30"><name pos:start="53:17" pos:end="53:20">prob</name> <operator pos:start="53:22" pos:end="53:22">=</operator> <literal type="number" pos:start="53:24" pos:end="53:28">257</literal> <operator pos:start="53:28" pos:end="53:28">-</operator> <name pos:start="53:30" pos:end="53:30">i</name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+            <for pos:start="55:13" pos:end="57:35">for <control pos:start="55:17" pos:end="55:38">(<init pos:start="55:18" pos:end="55:23"><expr pos:start="55:18" pos:end="55:22"><name pos:start="55:18" pos:end="55:18">j</name> <operator pos:start="55:20" pos:end="55:20">=</operator> <literal type="number" pos:start="55:22" pos:end="55:22">0</literal></expr>;</init> <condition pos:start="55:25" pos:end="55:33"><expr pos:start="55:25" pos:end="55:32"><name pos:start="55:25" pos:end="55:25">j</name> <operator pos:start="55:27" pos:end="55:27">&lt;</operator> <name pos:start="55:29" pos:end="55:32">prob</name></expr>;</condition> <incr pos:start="55:35" pos:end="55:37"><expr pos:start="55:35" pos:end="55:37"><name pos:start="55:35" pos:end="55:35">j</name><operator pos:start="55:36" pos:end="55:37">++</operator></expr></incr>)</control><block type="pseudo" pos:start="57:17" pos:end="57:35"><block_content pos:start="57:17" pos:end="57:35">
+
+                <expr_stmt pos:start="57:17" pos:end="57:35"><expr pos:start="57:17" pos:end="57:34"><name pos:start="57:17" pos:end="57:30"><name pos:start="57:17" pos:end="57:19">rac</name><operator pos:start="57:20" pos:end="57:21">-&gt;</operator><name pos:start="57:22" pos:end="57:25">prob</name><index pos:start="57:26" pos:end="57:30">[<expr pos:start="57:27" pos:end="57:29"><operator pos:start="57:27" pos:end="57:28">++</operator><name pos:start="57:29" pos:end="57:29">i</name></expr>]</index></name> <operator pos:start="57:32" pos:end="57:32">=</operator> <literal type="number" pos:start="57:34" pos:end="57:34">0</literal></expr>;</expr_stmt></block_content></block></for>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></for>
+
+
+
+    <if_stmt pos:start="65:5" pos:end="71:5"><if pos:start="65:5" pos:end="71:5">if <condition pos:start="65:8" pos:end="65:20">(<expr pos:start="65:9" pos:end="65:19"><operator pos:start="65:9" pos:end="65:9">!</operator><name pos:start="65:10" pos:end="65:19">cumul_prob</name></expr>)</condition> <block pos:start="65:22" pos:end="71:5">{<block_content pos:start="67:9" pos:end="69:18">
+
+        <expr_stmt pos:start="67:9" pos:end="67:71"><expr pos:start="67:9" pos:end="67:70"><call pos:start="67:9" pos:end="67:70"><name pos:start="67:9" pos:end="67:14">av_log</name><argument_list pos:start="67:15" pos:end="67:70">(<argument pos:start="67:16" pos:end="67:25"><expr pos:start="67:16" pos:end="67:25"><name pos:start="67:16" pos:end="67:25"><name pos:start="67:16" pos:end="67:18">rac</name><operator pos:start="67:19" pos:end="67:20">-&gt;</operator><name pos:start="67:21" pos:end="67:25">avctx</name></name></expr></argument>, <argument pos:start="67:28" pos:end="67:39"><expr pos:start="67:28" pos:end="67:39"><name pos:start="67:28" pos:end="67:39">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="67:42" pos:end="67:69"><expr pos:start="67:42" pos:end="67:69"><literal type="string" pos:start="67:42" pos:end="67:69">"All probabilities are 0!\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="69:9" pos:end="69:18">return <expr pos:start="69:16" pos:end="69:17"><operator pos:start="69:16" pos:end="69:16">-</operator><literal type="number" pos:start="69:17" pos:end="69:17">1</literal></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="75:5" pos:end="75:78">/* Scale probabilities so cumulative probability is an even power of 2. */</comment>
+
+    <expr_stmt pos:start="77:5" pos:end="77:39"><expr pos:start="77:5" pos:end="77:38"><name pos:start="77:5" pos:end="77:16">scale_factor</name> <operator pos:start="77:18" pos:end="77:18">=</operator> <call pos:start="77:20" pos:end="77:38"><name pos:start="77:20" pos:end="77:26">av_log2</name><argument_list pos:start="77:27" pos:end="77:38">(<argument pos:start="77:28" pos:end="77:37"><expr pos:start="77:28" pos:end="77:37"><name pos:start="77:28" pos:end="77:37">cumul_prob</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="81:5" pos:end="151:5"><if pos:start="81:5" pos:end="151:5">if <condition pos:start="81:8" pos:end="81:38">(<expr pos:start="81:9" pos:end="81:37"><name pos:start="81:9" pos:end="81:18">cumul_prob</name> <operator pos:start="81:20" pos:end="81:20">&amp;</operator> <operator pos:start="81:22" pos:end="81:22">(</operator><name pos:start="81:23" pos:end="81:32">cumul_prob</name> <operator pos:start="81:34" pos:end="81:34">-</operator> <literal type="number" pos:start="81:36" pos:end="81:36">1</literal><operator pos:start="81:37" pos:end="81:37">)</operator></expr>)</condition> <block pos:start="81:40" pos:end="151:5">{<block_content pos:start="83:9" pos:end="149:9">
+
+        <decl_stmt pos:start="83:9" pos:end="83:56"><decl pos:start="83:9" pos:end="83:55"><type pos:start="83:9" pos:end="83:16"><name pos:start="83:9" pos:end="83:16">uint64_t</name></type> <name pos:start="83:18" pos:end="83:20">mul</name> <init pos:start="83:22" pos:end="83:55">= <expr pos:start="83:24" pos:end="83:55"><call pos:start="83:24" pos:end="83:55"><name pos:start="83:24" pos:end="83:43">softfloat_reciprocal</name><argument_list pos:start="83:44" pos:end="83:55">(<argument pos:start="83:45" pos:end="83:54"><expr pos:start="83:45" pos:end="83:54"><name pos:start="83:45" pos:end="83:54">cumul_prob</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <for pos:start="85:9" pos:end="91:9">for <control pos:start="85:13" pos:end="85:33">(<init pos:start="85:14" pos:end="85:19"><expr pos:start="85:14" pos:end="85:18"><name pos:start="85:14" pos:end="85:14">i</name> <operator pos:start="85:16" pos:end="85:16">=</operator> <literal type="number" pos:start="85:18" pos:end="85:18">1</literal></expr>;</init> <condition pos:start="85:21" pos:end="85:28"><expr pos:start="85:21" pos:end="85:27"><name pos:start="85:21" pos:end="85:21">i</name> <operator pos:start="85:23" pos:end="85:23">&lt;</operator> <literal type="number" pos:start="85:25" pos:end="85:27">257</literal></expr>;</condition> <incr pos:start="85:30" pos:end="85:32"><expr pos:start="85:30" pos:end="85:32"><name pos:start="85:30" pos:end="85:30">i</name><operator pos:start="85:31" pos:end="85:32">++</operator></expr></incr>)</control> <block pos:start="85:35" pos:end="91:9">{<block_content pos:start="87:13" pos:end="89:46">
+
+            <expr_stmt pos:start="87:13" pos:end="87:60"><expr pos:start="87:13" pos:end="87:59"><name pos:start="87:13" pos:end="87:24"><name pos:start="87:13" pos:end="87:15">rac</name><operator pos:start="87:16" pos:end="87:17">-&gt;</operator><name pos:start="87:18" pos:end="87:21">prob</name><index pos:start="87:22" pos:end="87:24">[<expr pos:start="87:23" pos:end="87:23"><name pos:start="87:23" pos:end="87:23">i</name></expr>]</index></name> <operator pos:start="87:26" pos:end="87:26">=</operator> <call pos:start="87:28" pos:end="87:59"><name pos:start="87:28" pos:end="87:40">softfloat_mul</name><argument_list pos:start="87:41" pos:end="87:59">(<argument pos:start="87:42" pos:end="87:53"><expr pos:start="87:42" pos:end="87:53"><name pos:start="87:42" pos:end="87:53"><name pos:start="87:42" pos:end="87:44">rac</name><operator pos:start="87:45" pos:end="87:46">-&gt;</operator><name pos:start="87:47" pos:end="87:50">prob</name><index pos:start="87:51" pos:end="87:53">[<expr pos:start="87:52" pos:end="87:52"><name pos:start="87:52" pos:end="87:52">i</name></expr>]</index></name></expr></argument>, <argument pos:start="87:56" pos:end="87:58"><expr pos:start="87:56" pos:end="87:58"><name pos:start="87:56" pos:end="87:58">mul</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="89:13" pos:end="89:46"><expr pos:start="89:13" pos:end="89:45"><name pos:start="89:13" pos:end="89:29">scaled_cumul_prob</name> <operator pos:start="89:31" pos:end="89:32">+=</operator> <name pos:start="89:34" pos:end="89:45"><name pos:start="89:34" pos:end="89:36">rac</name><operator pos:start="89:37" pos:end="89:38">-&gt;</operator><name pos:start="89:39" pos:end="89:42">prob</name><index pos:start="89:43" pos:end="89:45">[<expr pos:start="89:44" pos:end="89:44"><name pos:start="89:44" pos:end="89:44">i</name></expr>]</index></name></expr>;</expr_stmt>
+
+        </block_content>}</block></for>
+
+
+
+        <expr_stmt pos:start="95:9" pos:end="95:23"><expr pos:start="95:9" pos:end="95:22"><name pos:start="95:9" pos:end="95:20">scale_factor</name><operator pos:start="95:21" pos:end="95:22">++</operator></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="97:9" pos:end="97:46"><expr pos:start="97:9" pos:end="97:45"><name pos:start="97:9" pos:end="97:25">cumulative_target</name> <operator pos:start="97:27" pos:end="97:27">=</operator> <literal type="number" pos:start="97:29" pos:end="97:29">1</literal> <operator pos:start="97:31" pos:end="97:32">&lt;&lt;</operator> <name pos:start="97:34" pos:end="97:45">scale_factor</name></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="101:9" pos:end="109:9"><if pos:start="101:9" pos:end="109:9">if <condition pos:start="101:12" pos:end="101:50">(<expr pos:start="101:13" pos:end="101:49"><name pos:start="101:13" pos:end="101:29">scaled_cumul_prob</name> <operator pos:start="101:31" pos:end="101:31">&gt;</operator> <name pos:start="101:33" pos:end="101:49">cumulative_target</name></expr>)</condition> <block pos:start="101:52" pos:end="109:9">{<block_content pos:start="103:13" pos:end="107:22">
+
+            <expr_stmt pos:start="103:13" pos:end="105:69"><expr pos:start="103:13" pos:end="105:68"><call pos:start="103:13" pos:end="105:68"><name pos:start="103:13" pos:end="103:18">av_log</name><argument_list pos:start="103:19" pos:end="105:68">(<argument pos:start="103:20" pos:end="103:29"><expr pos:start="103:20" pos:end="103:29"><name pos:start="103:20" pos:end="103:29"><name pos:start="103:20" pos:end="103:22">rac</name><operator pos:start="103:23" pos:end="103:24">-&gt;</operator><name pos:start="103:25" pos:end="103:29">avctx</name></name></expr></argument>, <argument pos:start="103:32" pos:end="103:43"><expr pos:start="103:32" pos:end="103:43"><name pos:start="103:32" pos:end="103:43">AV_LOG_ERROR</name></expr></argument>,
+
+                   <argument pos:start="105:20" pos:end="105:67"><expr pos:start="105:20" pos:end="105:67"><literal type="string" pos:start="105:20" pos:end="105:67">"Scaled probabilities are larger than target!\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="107:13" pos:end="107:22">return <expr pos:start="107:20" pos:end="107:21"><operator pos:start="107:20" pos:end="107:20">-</operator><literal type="number" pos:start="107:21" pos:end="107:21">1</literal></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="113:9" pos:end="113:66"><expr pos:start="113:9" pos:end="113:65"><name pos:start="113:9" pos:end="113:25">scaled_cumul_prob</name> <operator pos:start="113:27" pos:end="113:27">=</operator> <name pos:start="113:29" pos:end="113:45">cumulative_target</name> <operator pos:start="113:47" pos:end="113:47">-</operator> <name pos:start="113:49" pos:end="113:65">scaled_cumul_prob</name></expr>;</expr_stmt>
+
+
+
+        <for pos:start="117:9" pos:end="149:9">for <control pos:start="117:13" pos:end="117:58">(<init pos:start="117:14" pos:end="117:19"><expr pos:start="117:14" pos:end="117:18"><name pos:start="117:14" pos:end="117:14">i</name> <operator pos:start="117:16" pos:end="117:16">=</operator> <literal type="number" pos:start="117:18" pos:end="117:18">1</literal></expr>;</init> <condition pos:start="117:21" pos:end="117:38"><expr pos:start="117:21" pos:end="117:37"><name pos:start="117:21" pos:end="117:37">scaled_cumul_prob</name></expr>;</condition> <incr pos:start="117:40" pos:end="117:57"><expr pos:start="117:40" pos:end="117:57"><name pos:start="117:40" pos:end="117:40">i</name> <operator pos:start="117:42" pos:end="117:42">=</operator> <operator pos:start="117:44" pos:end="117:44">(</operator><name pos:start="117:45" pos:end="117:45">i</name> <operator pos:start="117:47" pos:end="117:47">&amp;</operator> <literal type="number" pos:start="117:49" pos:end="117:52">0x7f</literal><operator pos:start="117:53" pos:end="117:53">)</operator> <operator pos:start="117:55" pos:end="117:55">+</operator> <literal type="number" pos:start="117:57" pos:end="117:57">1</literal></expr></incr>)</control> <block pos:start="117:60" pos:end="149:9">{<block_content pos:start="119:13" pos:end="125:13">
+
+            <if_stmt pos:start="119:13" pos:end="125:13"><if pos:start="119:13" pos:end="125:13">if <condition pos:start="119:16" pos:end="119:29">(<expr pos:start="119:17" pos:end="119:28"><name pos:start="119:17" pos:end="119:28"><name pos:start="119:17" pos:end="119:19">rac</name><operator pos:start="119:20" pos:end="119:21">-&gt;</operator><name pos:start="119:22" pos:end="119:25">prob</name><index pos:start="119:26" pos:end="119:28">[<expr pos:start="119:27" pos:end="119:27"><name pos:start="119:27" pos:end="119:27">i</name></expr>]</index></name></expr>)</condition> <block pos:start="119:31" pos:end="125:13">{<block_content pos:start="121:17" pos:end="123:36">
+
+                <expr_stmt pos:start="121:17" pos:end="121:31"><expr pos:start="121:17" pos:end="121:30"><name pos:start="121:17" pos:end="121:28"><name pos:start="121:17" pos:end="121:19">rac</name><operator pos:start="121:20" pos:end="121:21">-&gt;</operator><name pos:start="121:22" pos:end="121:25">prob</name><index pos:start="121:26" pos:end="121:28">[<expr pos:start="121:27" pos:end="121:27"><name pos:start="121:27" pos:end="121:27">i</name></expr>]</index></name><operator pos:start="121:29" pos:end="121:30">++</operator></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="123:17" pos:end="123:36"><expr pos:start="123:17" pos:end="123:35"><name pos:start="123:17" pos:end="123:33">scaled_cumul_prob</name><operator pos:start="123:34" pos:end="123:35">--</operator></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <comment type="block" pos:start="127:13" pos:end="147:15">/* Comment from reference source:
+
+             * if (b &amp; 0x80 == 0) {     // order of operations is 'wrong'; it has been left this way
+
+             *                          // since the compression change is negligable and fixing it
+
+             *                          // breaks backwards compatibility
+
+             *      b =- (signed int)b;
+
+             *      b &amp;= 0xFF;
+
+             * } else {
+
+             *      b++;
+
+             *      b &amp;= 0x7f;
+
+             * }
+
+             */</comment>
+
+        </block_content>}</block></for>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="155:5" pos:end="155:30"><expr pos:start="155:5" pos:end="155:29"><name pos:start="155:5" pos:end="155:14"><name pos:start="155:5" pos:end="155:7">rac</name><operator pos:start="155:8" pos:end="155:9">-&gt;</operator><name pos:start="155:10" pos:end="155:14">scale</name></name> <operator pos:start="155:16" pos:end="155:16">=</operator> <name pos:start="155:18" pos:end="155:29">scale_factor</name></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="159:5" pos:end="159:77">/* Fill probability array with cumulative probability for each symbol. */</comment>
+
+    <for pos:start="161:5" pos:end="163:41">for <control pos:start="161:9" pos:end="161:29">(<init pos:start="161:10" pos:end="161:15"><expr pos:start="161:10" pos:end="161:14"><name pos:start="161:10" pos:end="161:10">i</name> <operator pos:start="161:12" pos:end="161:12">=</operator> <literal type="number" pos:start="161:14" pos:end="161:14">1</literal></expr>;</init> <condition pos:start="161:17" pos:end="161:24"><expr pos:start="161:17" pos:end="161:23"><name pos:start="161:17" pos:end="161:17">i</name> <operator pos:start="161:19" pos:end="161:19">&lt;</operator> <literal type="number" pos:start="161:21" pos:end="161:23">257</literal></expr>;</condition> <incr pos:start="161:26" pos:end="161:28"><expr pos:start="161:26" pos:end="161:28"><name pos:start="161:26" pos:end="161:26">i</name><operator pos:start="161:27" pos:end="161:28">++</operator></expr></incr>)</control><block type="pseudo" pos:start="163:9" pos:end="163:41"><block_content pos:start="163:9" pos:end="163:41">
+
+        <expr_stmt pos:start="163:9" pos:end="163:41"><expr pos:start="163:9" pos:end="163:40"><name pos:start="163:9" pos:end="163:20"><name pos:start="163:9" pos:end="163:11">rac</name><operator pos:start="163:12" pos:end="163:13">-&gt;</operator><name pos:start="163:14" pos:end="163:17">prob</name><index pos:start="163:18" pos:end="163:20">[<expr pos:start="163:19" pos:end="163:19"><name pos:start="163:19" pos:end="163:19">i</name></expr>]</index></name> <operator pos:start="163:22" pos:end="163:23">+=</operator> <name pos:start="163:25" pos:end="163:40"><name pos:start="163:25" pos:end="163:27">rac</name><operator pos:start="163:28" pos:end="163:29">-&gt;</operator><name pos:start="163:30" pos:end="163:33">prob</name><index pos:start="163:34" pos:end="163:40">[<expr pos:start="163:35" pos:end="163:39"><name pos:start="163:35" pos:end="163:35">i</name> <operator pos:start="163:37" pos:end="163:37">-</operator> <literal type="number" pos:start="163:39" pos:end="163:39">1</literal></expr>]</index></name></expr>;</expr_stmt></block_content></block></for>
+
+
+
+    <return pos:start="167:5" pos:end="167:13">return <expr pos:start="167:12" pos:end="167:12"><literal type="number" pos:start="167:12" pos:end="167:12">0</literal></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

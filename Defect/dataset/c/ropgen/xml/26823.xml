@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/26823.c" pos:tabs="8"><function pos:start="1:1" pos:end="38:1"><type pos:start="1:1" pos:end="1:4"><name pos:start="1:1" pos:end="1:4">void</name></type> <name pos:start="1:6" pos:end="1:21">cpu_ppc_set_papr</name><parameter_list pos:start="1:22" pos:end="1:38">(<parameter pos:start="1:23" pos:end="1:37"><decl pos:start="1:23" pos:end="1:37"><type pos:start="1:23" pos:end="1:34"><name pos:start="1:23" pos:end="1:32">PowerPCCPU</name> <modifier pos:start="1:34" pos:end="1:34">*</modifier></type><name pos:start="1:35" pos:end="1:37">cpu</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="38:1">{<block_content pos:start="5:5" pos:end="36:5">
+
+    <decl_stmt pos:start="5:5" pos:end="5:33"><decl pos:start="5:5" pos:end="5:32"><type pos:start="5:5" pos:end="5:17"><name pos:start="5:5" pos:end="5:15">CPUPPCState</name> <modifier pos:start="5:17" pos:end="5:17">*</modifier></type><name pos:start="5:18" pos:end="5:20">env</name> <init pos:start="5:22" pos:end="5:32">= <expr pos:start="5:24" pos:end="5:32"><operator pos:start="5:24" pos:end="5:24">&amp;</operator><name pos:start="5:25" pos:end="5:32"><name pos:start="5:25" pos:end="5:27">cpu</name><operator pos:start="5:28" pos:end="5:29">-&gt;</operator><name pos:start="5:30" pos:end="5:32">env</name></name></expr></init></decl>;</decl_stmt>
+
+
+
+
+    <comment type="block" pos:start="10:5" pos:end="18:7">/* PAPR always has exception vectors in RAM not ROM. To ensure this,
+
+     * MSR[IP] should never be set.
+
+     *
+
+     * We also disallow setting of MSR_HV
+
+     */</comment>
+
+    <expr_stmt pos:start="20:5" pos:end="20:51"><expr pos:start="20:5" pos:end="20:50"><name pos:start="20:5" pos:end="20:17"><name pos:start="20:5" pos:end="20:7">env</name><operator pos:start="20:8" pos:end="20:9">-&gt;</operator><name pos:start="20:10" pos:end="20:17">msr_mask</name></name> <operator pos:start="20:19" pos:end="20:20">&amp;=</operator> <operator pos:start="20:22" pos:end="20:22">~</operator><operator pos:start="20:23" pos:end="20:23">(</operator><operator pos:start="20:24" pos:end="20:24">(</operator><literal type="number" pos:start="20:25" pos:end="20:28">1ull</literal> <operator pos:start="20:30" pos:end="20:31">&lt;&lt;</operator> <name pos:start="20:33" pos:end="20:38">MSR_EP</name><operator pos:start="20:39" pos:end="20:39">)</operator> <operator pos:start="20:41" pos:end="20:41">|</operator> <name pos:start="20:43" pos:end="20:49">MSR_HVB</name><operator pos:start="20:50" pos:end="20:50">)</operator></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="24:5" pos:end="24:65">/* Set a full AMOR so guest can use the AMR as it sees fit */</comment>
+
+    <expr_stmt pos:start="26:5" pos:end="26:69"><expr pos:start="26:5" pos:end="26:68"><name pos:start="26:5" pos:end="26:22"><name pos:start="26:5" pos:end="26:7">env</name><operator pos:start="26:8" pos:end="26:9">-&gt;</operator><name pos:start="26:10" pos:end="26:12">spr</name><index pos:start="26:13" pos:end="26:22">[<expr pos:start="26:14" pos:end="26:21"><name pos:start="26:14" pos:end="26:21">SPR_AMOR</name></expr>]</index></name> <operator pos:start="26:24" pos:end="26:24">=</operator> <name pos:start="26:26" pos:end="26:44"><name pos:start="26:26" pos:end="26:29">amor</name><operator pos:start="26:30" pos:end="26:31">-&gt;</operator><name pos:start="26:32" pos:end="26:44">default_value</name></name> <operator pos:start="26:46" pos:end="26:46">=</operator> <literal type="number" pos:start="26:48" pos:end="26:68">0xffffffffffffffffull</literal></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="30:5" pos:end="30:42">/* Tell KVM that we're in PAPR mode */</comment>
+
+    <if_stmt pos:start="32:5" pos:end="36:5"><if pos:start="32:5" pos:end="36:5">if <condition pos:start="32:8" pos:end="32:22">(<expr pos:start="32:9" pos:end="32:21"><call pos:start="32:9" pos:end="32:21"><name pos:start="32:9" pos:end="32:19">kvm_enabled</name><argument_list pos:start="32:20" pos:end="32:21">()</argument_list></call></expr>)</condition> <block pos:start="32:24" pos:end="36:5">{<block_content pos:start="34:9" pos:end="34:29">
+
+        <expr_stmt pos:start="34:9" pos:end="34:29"><expr pos:start="34:9" pos:end="34:28"><call pos:start="34:9" pos:end="34:28"><name pos:start="34:9" pos:end="34:23">kvmppc_set_papr</name><argument_list pos:start="34:24" pos:end="34:28">(<argument pos:start="34:25" pos:end="34:27"><expr pos:start="34:25" pos:end="34:27"><name pos:start="34:25" pos:end="34:27">cpu</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+</block_content>}</block></function></unit>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/10872.c" pos:tabs="8"><function pos:start="1:1" pos:end="80:1"><type pos:start="1:1" pos:end="1:7"><name pos:start="1:1" pos:end="1:7">int64_t</name></type> <name pos:start="1:9" pos:end="1:29">throttle_compute_wait</name><parameter_list pos:start="1:30" pos:end="1:47">(<parameter pos:start="1:31" pos:end="1:46"><decl pos:start="1:31" pos:end="1:46"><type pos:start="1:31" pos:end="1:43"><name pos:start="1:31" pos:end="1:41">LeakyBucket</name> <modifier pos:start="1:43" pos:end="1:43">*</modifier></type><name pos:start="1:44" pos:end="1:46">bkt</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="80:1">{<block_content pos:start="5:5" pos:end="78:13">
+
+    <decl_stmt pos:start="5:5" pos:end="5:17"><decl pos:start="5:5" pos:end="5:16"><type pos:start="5:5" pos:end="5:10"><name pos:start="5:5" pos:end="5:10">double</name></type> <name pos:start="5:12" pos:end="5:16">extra</name></decl>;</decl_stmt> <comment type="block" pos:start="5:19" pos:end="5:65">/* the number of extra units blocking the io */</comment>
+
+    <decl_stmt pos:start="7:5" pos:end="7:23"><decl pos:start="7:5" pos:end="7:22"><type pos:start="7:5" pos:end="7:10"><name pos:start="7:5" pos:end="7:10">double</name></type> <name pos:start="7:12" pos:end="7:22">bucket_size</name></decl>;</decl_stmt>   <comment type="block" pos:start="7:27" pos:end="7:65">/* I/O before throttling to bkt-&gt;avg */</comment>
+
+    <decl_stmt pos:start="9:5" pos:end="9:29"><decl pos:start="9:5" pos:end="9:28"><type pos:start="9:5" pos:end="9:10"><name pos:start="9:5" pos:end="9:10">double</name></type> <name pos:start="9:12" pos:end="9:28">burst_bucket_size</name></decl>;</decl_stmt> <comment type="block" pos:start="9:31" pos:end="9:65">/* Before throttling to bkt-&gt;max */</comment>
+
+
+
+    <if_stmt pos:start="13:5" pos:end="17:5"><if pos:start="13:5" pos:end="17:5">if <condition pos:start="13:8" pos:end="13:18">(<expr pos:start="13:9" pos:end="13:17"><operator pos:start="13:9" pos:end="13:9">!</operator><name pos:start="13:10" pos:end="13:17"><name pos:start="13:10" pos:end="13:12">bkt</name><operator pos:start="13:13" pos:end="13:14">-&gt;</operator><name pos:start="13:15" pos:end="13:17">avg</name></name></expr>)</condition> <block pos:start="13:20" pos:end="17:5">{<block_content pos:start="15:9" pos:end="15:17">
+
+        <return pos:start="15:9" pos:end="15:17">return <expr pos:start="15:16" pos:end="15:16"><literal type="number" pos:start="15:16" pos:end="15:16">0</literal></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="21:5" pos:end="43:5"><if pos:start="21:5" pos:end="33:5">if <condition pos:start="21:8" pos:end="21:18">(<expr pos:start="21:9" pos:end="21:17"><operator pos:start="21:9" pos:end="21:9">!</operator><name pos:start="21:10" pos:end="21:17"><name pos:start="21:10" pos:end="21:12">bkt</name><operator pos:start="21:13" pos:end="21:14">-&gt;</operator><name pos:start="21:15" pos:end="21:17">max</name></name></expr>)</condition> <block pos:start="21:20" pos:end="33:5">{<block_content pos:start="29:9" pos:end="31:30">
+
+        <comment type="block" pos:start="23:9" pos:end="27:55">/* If bkt-&gt;max is 0 we still want to allow short bursts of I/O
+
+         * from the guest, otherwise every other request will be throttled
+
+         * and performance will suffer considerably. */</comment>
+
+        <expr_stmt pos:start="29:9" pos:end="29:45"><expr pos:start="29:9" pos:end="29:44"><name pos:start="29:9" pos:end="29:19">bucket_size</name> <operator pos:start="29:21" pos:end="29:21">=</operator> <operator pos:start="29:23" pos:end="29:23">(</operator><name pos:start="29:24" pos:end="29:29">double</name><operator pos:start="29:30" pos:end="29:30">)</operator> <name pos:start="29:32" pos:end="29:39"><name pos:start="29:32" pos:end="29:34">bkt</name><operator pos:start="29:35" pos:end="29:36">-&gt;</operator><name pos:start="29:37" pos:end="29:39">avg</name></name> <operator pos:start="29:41" pos:end="29:41">/</operator> <literal type="number" pos:start="29:43" pos:end="29:44">10</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="31:9" pos:end="31:30"><expr pos:start="31:9" pos:end="31:29"><name pos:start="31:9" pos:end="31:25">burst_bucket_size</name> <operator pos:start="31:27" pos:end="31:27">=</operator> <literal type="number" pos:start="31:29" pos:end="31:29">0</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="33:7" pos:end="43:5">else <block pos:start="33:12" pos:end="43:5">{<block_content pos:start="39:9" pos:end="41:51">
+
+        <comment type="block" pos:start="35:9" pos:end="37:70">/* If we have a burst limit then we have to wait until all I/O
+
+         * at burst rate has finished before throttling to bkt-&gt;avg */</comment>
+
+        <expr_stmt pos:start="39:9" pos:end="39:51"><expr pos:start="39:9" pos:end="39:50"><name pos:start="39:9" pos:end="39:19">bucket_size</name> <operator pos:start="39:21" pos:end="39:21">=</operator> <name pos:start="39:23" pos:end="39:30"><name pos:start="39:23" pos:end="39:25">bkt</name><operator pos:start="39:26" pos:end="39:27">-&gt;</operator><name pos:start="39:28" pos:end="39:30">max</name></name> <operator pos:start="39:32" pos:end="39:32">*</operator> <name pos:start="39:34" pos:end="39:50"><name pos:start="39:34" pos:end="39:36">bkt</name><operator pos:start="39:37" pos:end="39:38">-&gt;</operator><name pos:start="39:39" pos:end="39:50">burst_length</name></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="41:9" pos:end="41:51"><expr pos:start="41:9" pos:end="41:50"><name pos:start="41:9" pos:end="41:25">burst_bucket_size</name> <operator pos:start="41:27" pos:end="41:27">=</operator> <operator pos:start="41:29" pos:end="41:29">(</operator><name pos:start="41:30" pos:end="41:35">double</name><operator pos:start="41:36" pos:end="41:36">)</operator> <name pos:start="41:38" pos:end="41:45"><name pos:start="41:38" pos:end="41:40">bkt</name><operator pos:start="41:41" pos:end="41:42">-&gt;</operator><name pos:start="41:43" pos:end="41:45">max</name></name> <operator pos:start="41:47" pos:end="41:47">/</operator> <literal type="number" pos:start="41:49" pos:end="41:50">10</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <comment type="block" pos:start="47:5" pos:end="47:57">/* If the main bucket is full then we have to wait */</comment>
+
+    <expr_stmt pos:start="49:5" pos:end="49:37"><expr pos:start="49:5" pos:end="49:36"><name pos:start="49:5" pos:end="49:9">extra</name> <operator pos:start="49:11" pos:end="49:11">=</operator> <name pos:start="49:13" pos:end="49:22"><name pos:start="49:13" pos:end="49:15">bkt</name><operator pos:start="49:16" pos:end="49:17">-&gt;</operator><name pos:start="49:18" pos:end="49:22">level</name></name> <operator pos:start="49:24" pos:end="49:24">-</operator> <name pos:start="49:26" pos:end="49:36">bucket_size</name></expr>;</expr_stmt>
+
+    <if_stmt pos:start="51:5" pos:end="55:5"><if pos:start="51:5" pos:end="55:5">if <condition pos:start="51:8" pos:end="51:18">(<expr pos:start="51:9" pos:end="51:17"><name pos:start="51:9" pos:end="51:13">extra</name> <operator pos:start="51:15" pos:end="51:15">&gt;</operator> <literal type="number" pos:start="51:17" pos:end="51:17">0</literal></expr>)</condition> <block pos:start="51:20" pos:end="55:5">{<block_content pos:start="53:9" pos:end="53:57">
+
+        <return pos:start="53:9" pos:end="53:57">return <expr pos:start="53:16" pos:end="53:56"><call pos:start="53:16" pos:end="53:56"><name pos:start="53:16" pos:end="53:39">throttle_do_compute_wait</name><argument_list pos:start="53:40" pos:end="53:56">(<argument pos:start="53:41" pos:end="53:48"><expr pos:start="53:41" pos:end="53:48"><name pos:start="53:41" pos:end="53:48"><name pos:start="53:41" pos:end="53:43">bkt</name><operator pos:start="53:44" pos:end="53:45">-&gt;</operator><name pos:start="53:46" pos:end="53:48">avg</name></name></expr></argument>, <argument pos:start="53:51" pos:end="53:55"><expr pos:start="53:51" pos:end="53:55"><name pos:start="53:51" pos:end="53:55">extra</name></expr></argument>)</argument_list></call></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="59:5" pos:end="61:58">/* If the main bucket is not full yet we still have to check the
+
+     * burst bucket in order to enforce the burst limit */</comment>
+
+    <if_stmt pos:start="63:5" pos:end="74:5"><if pos:start="63:5" pos:end="74:5">if <condition pos:start="63:8" pos:end="63:30">(<expr pos:start="63:9" pos:end="63:29"><name pos:start="63:9" pos:end="63:25"><name pos:start="63:9" pos:end="63:11">bkt</name><operator pos:start="63:12" pos:end="63:13">-&gt;</operator><name pos:start="63:14" pos:end="63:25">burst_length</name></name> <operator pos:start="63:27" pos:end="63:27">&gt;</operator> <literal type="number" pos:start="63:29" pos:end="63:29">1</literal></expr>)</condition> <block pos:start="63:32" pos:end="74:5">{<block_content pos:start="66:9" pos:end="72:9">
+
+
+        <expr_stmt pos:start="66:9" pos:end="66:53"><expr pos:start="66:9" pos:end="66:52"><name pos:start="66:9" pos:end="66:13">extra</name> <operator pos:start="66:15" pos:end="66:15">=</operator> <name pos:start="66:17" pos:end="66:32"><name pos:start="66:17" pos:end="66:19">bkt</name><operator pos:start="66:20" pos:end="66:21">-&gt;</operator><name pos:start="66:22" pos:end="66:32">burst_level</name></name> <operator pos:start="66:34" pos:end="66:34">-</operator> <name pos:start="66:36" pos:end="66:52">burst_bucket_size</name></expr>;</expr_stmt>
+
+        <if_stmt pos:start="68:9" pos:end="72:9"><if pos:start="68:9" pos:end="72:9">if <condition pos:start="68:12" pos:end="68:22">(<expr pos:start="68:13" pos:end="68:21"><name pos:start="68:13" pos:end="68:17">extra</name> <operator pos:start="68:19" pos:end="68:19">&gt;</operator> <literal type="number" pos:start="68:21" pos:end="68:21">0</literal></expr>)</condition> <block pos:start="68:24" pos:end="72:9">{<block_content pos:start="70:13" pos:end="70:61">
+
+            <return pos:start="70:13" pos:end="70:61">return <expr pos:start="70:20" pos:end="70:60"><call pos:start="70:20" pos:end="70:60"><name pos:start="70:20" pos:end="70:43">throttle_do_compute_wait</name><argument_list pos:start="70:44" pos:end="70:60">(<argument pos:start="70:45" pos:end="70:52"><expr pos:start="70:45" pos:end="70:52"><name pos:start="70:45" pos:end="70:52"><name pos:start="70:45" pos:end="70:47">bkt</name><operator pos:start="70:48" pos:end="70:49">-&gt;</operator><name pos:start="70:50" pos:end="70:52">max</name></name></expr></argument>, <argument pos:start="70:55" pos:end="70:59"><expr pos:start="70:55" pos:end="70:59"><name pos:start="70:55" pos:end="70:59">extra</name></expr></argument>)</argument_list></call></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <return pos:start="78:5" pos:end="78:13">return <expr pos:start="78:12" pos:end="78:12"><literal type="number" pos:start="78:12" pos:end="78:12">0</literal></expr>;</return>
+
+</block_content>}</block></function></unit>

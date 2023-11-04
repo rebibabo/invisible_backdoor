@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/789.c" pos:tabs="8"><function pos:start="1:1" pos:end="219:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:24">gem_transmit</name><parameter_list pos:start="1:25" pos:end="1:37">(<parameter pos:start="1:26" pos:end="1:36"><decl pos:start="1:26" pos:end="1:36"><type pos:start="1:26" pos:end="1:35"><name pos:start="1:26" pos:end="1:33">GemState</name> <modifier pos:start="1:35" pos:end="1:35">*</modifier></type><name pos:start="1:36" pos:end="1:36">s</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="219:1">{<block_content pos:start="5:5" pos:end="217:5">
+
+    <decl_stmt pos:start="5:5" pos:end="5:24"><decl pos:start="5:5" pos:end="5:23"><type pos:start="5:5" pos:end="5:12"><name pos:start="5:5" pos:end="5:12">unsigned</name></type>    <name pos:start="5:17" pos:end="5:23"><name pos:start="5:17" pos:end="5:20">desc</name><index pos:start="5:21" pos:end="5:23">[<expr pos:start="5:22" pos:end="5:22"><literal type="number" pos:start="5:22" pos:end="5:22">2</literal></expr>]</index></name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:40"><decl pos:start="7:5" pos:end="7:39"><type pos:start="7:5" pos:end="7:22"><name pos:start="7:5" pos:end="7:22">target_phys_addr_t</name></type> <name pos:start="7:24" pos:end="7:39">packet_desc_addr</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:32"><decl pos:start="9:5" pos:end="9:31"><type pos:start="9:5" pos:end="9:11"><name pos:start="9:5" pos:end="9:11">uint8_t</name></type>     <name pos:start="9:17" pos:end="9:31"><name pos:start="9:17" pos:end="9:25">tx_packet</name><index pos:start="9:26" pos:end="9:31">[<expr pos:start="9:27" pos:end="9:30"><literal type="number" pos:start="9:27" pos:end="9:30">2048</literal></expr>]</index></name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:19"><decl pos:start="11:5" pos:end="11:18"><type pos:start="11:5" pos:end="11:17"><name pos:start="11:5" pos:end="11:11">uint8_t</name>     <modifier pos:start="11:17" pos:end="11:17">*</modifier></type><name pos:start="11:18" pos:end="11:18">p</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:28"><decl pos:start="13:5" pos:end="13:27"><type pos:start="13:5" pos:end="13:12"><name pos:start="13:5" pos:end="13:12">unsigned</name></type>    <name pos:start="13:17" pos:end="13:27">total_bytes</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="17:5" pos:end="17:48">/* Do nothing if transmit is not enabled. */</comment>
+
+    <if_stmt pos:start="19:5" pos:end="23:5"><if pos:start="19:5" pos:end="23:5">if <condition pos:start="19:8" pos:end="19:50">(<expr pos:start="19:9" pos:end="19:49"><operator pos:start="19:9" pos:end="19:9">!</operator><operator pos:start="19:10" pos:end="19:10">(</operator><name pos:start="19:11" pos:end="19:29"><name pos:start="19:11" pos:end="19:11">s</name><operator pos:start="19:12" pos:end="19:13">-&gt;</operator><name pos:start="19:14" pos:end="19:17">regs</name><index pos:start="19:18" pos:end="19:29">[<expr pos:start="19:19" pos:end="19:28"><name pos:start="19:19" pos:end="19:28">GEM_NWCTRL</name></expr>]</index></name> <operator pos:start="19:31" pos:end="19:31">&amp;</operator> <name pos:start="19:33" pos:end="19:48">GEM_NWCTRL_TXENA</name><operator pos:start="19:49" pos:end="19:49">)</operator></expr>)</condition> <block pos:start="19:52" pos:end="23:5">{<block_content pos:start="21:9" pos:end="21:15">
+
+        <return pos:start="21:9" pos:end="21:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="27:5" pos:end="27:19"><expr pos:start="27:5" pos:end="27:18"><call pos:start="27:5" pos:end="27:18"><name pos:start="27:5" pos:end="27:12">DB_PRINT</name><argument_list pos:start="27:13" pos:end="27:18">(<argument pos:start="27:14" pos:end="27:17"><expr pos:start="27:14" pos:end="27:17"><literal type="string" pos:start="27:14" pos:end="27:17">"\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="31:5" pos:end="37:7">/* The packet we will hand off to qemu.
+
+     * Packets scattered across multiple descriptors are gathered to this
+
+     * one contiguous buffer first.
+
+     */</comment>
+
+    <expr_stmt pos:start="39:5" pos:end="39:18"><expr pos:start="39:5" pos:end="39:17"><name pos:start="39:5" pos:end="39:5">p</name> <operator pos:start="39:7" pos:end="39:7">=</operator> <name pos:start="39:9" pos:end="39:17">tx_packet</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="41:5" pos:end="41:20"><expr pos:start="41:5" pos:end="41:19"><name pos:start="41:5" pos:end="41:15">total_bytes</name> <operator pos:start="41:17" pos:end="41:17">=</operator> <literal type="number" pos:start="41:19" pos:end="41:19">0</literal></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="45:5" pos:end="45:33">/* read current descriptor */</comment>
+
+    <expr_stmt pos:start="47:5" pos:end="47:39"><expr pos:start="47:5" pos:end="47:38"><name pos:start="47:5" pos:end="47:20">packet_desc_addr</name> <operator pos:start="47:22" pos:end="47:22">=</operator> <name pos:start="47:24" pos:end="47:38"><name pos:start="47:24" pos:end="47:24">s</name><operator pos:start="47:25" pos:end="47:26">-&gt;</operator><name pos:start="47:27" pos:end="47:38">tx_desc_addr</name></name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="49:5" pos:end="51:64"><expr pos:start="49:5" pos:end="51:63"><call pos:start="49:5" pos:end="51:63"><name pos:start="49:5" pos:end="49:28">cpu_physical_memory_read</name><argument_list pos:start="49:29" pos:end="51:63">(<argument pos:start="49:30" pos:end="49:45"><expr pos:start="49:30" pos:end="49:45"><name pos:start="49:30" pos:end="49:45">packet_desc_addr</name></expr></argument>,
+
+                             <argument pos:start="51:30" pos:end="51:48"><expr pos:start="51:30" pos:end="51:48"><operator pos:start="51:30" pos:end="51:30">(</operator><name pos:start="51:31" pos:end="51:37">uint8_t</name> <operator pos:start="51:39" pos:end="51:39">*</operator><operator pos:start="51:40" pos:end="51:40">)</operator><operator pos:start="51:41" pos:end="51:41">&amp;</operator><name pos:start="51:42" pos:end="51:48"><name pos:start="51:42" pos:end="51:45">desc</name><index pos:start="51:46" pos:end="51:48">[<expr pos:start="51:47" pos:end="51:47"><literal type="number" pos:start="51:47" pos:end="51:47">0</literal></expr>]</index></name></expr></argument>, <argument pos:start="51:51" pos:end="51:62"><expr pos:start="51:51" pos:end="51:62"><sizeof pos:start="51:51" pos:end="51:62">sizeof<argument_list pos:start="51:57" pos:end="51:62">(<argument pos:start="51:58" pos:end="51:61"><expr pos:start="51:58" pos:end="51:61"><name pos:start="51:58" pos:end="51:61">desc</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <comment type="block" pos:start="53:5" pos:end="53:50">/* Handle all descriptors owned by hardware */</comment>
+
+    <while pos:start="55:5" pos:end="207:5">while <condition pos:start="55:11" pos:end="55:39">(<expr pos:start="55:12" pos:end="55:38"><call pos:start="55:12" pos:end="55:33"><name pos:start="55:12" pos:end="55:27">tx_desc_get_used</name><argument_list pos:start="55:28" pos:end="55:33">(<argument pos:start="55:29" pos:end="55:32"><expr pos:start="55:29" pos:end="55:32"><name pos:start="55:29" pos:end="55:32">desc</name></expr></argument>)</argument_list></call> <operator pos:start="55:35" pos:end="55:36">==</operator> <literal type="number" pos:start="55:38" pos:end="55:38">0</literal></expr>)</condition> <block pos:start="55:41" pos:end="207:5">{<block_content pos:start="61:9" pos:end="205:68">
+
+
+
+        <comment type="block" pos:start="59:9" pos:end="59:52">/* Do nothing if transmit is not enabled. */</comment>
+
+        <if_stmt pos:start="61:9" pos:end="65:9"><if pos:start="61:9" pos:end="65:9">if <condition pos:start="61:12" pos:end="61:54">(<expr pos:start="61:13" pos:end="61:53"><operator pos:start="61:13" pos:end="61:13">!</operator><operator pos:start="61:14" pos:end="61:14">(</operator><name pos:start="61:15" pos:end="61:33"><name pos:start="61:15" pos:end="61:15">s</name><operator pos:start="61:16" pos:end="61:17">-&gt;</operator><name pos:start="61:18" pos:end="61:21">regs</name><index pos:start="61:22" pos:end="61:33">[<expr pos:start="61:23" pos:end="61:32"><name pos:start="61:23" pos:end="61:32">GEM_NWCTRL</name></expr>]</index></name> <operator pos:start="61:35" pos:end="61:35">&amp;</operator> <name pos:start="61:37" pos:end="61:52">GEM_NWCTRL_TXENA</name><operator pos:start="61:53" pos:end="61:53">)</operator></expr>)</condition> <block pos:start="61:56" pos:end="65:9">{<block_content pos:start="63:13" pos:end="63:19">
+
+            <return pos:start="63:13" pos:end="63:19">return;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="67:9" pos:end="67:32"><expr pos:start="67:9" pos:end="67:31"><call pos:start="67:9" pos:end="67:31"><name pos:start="67:9" pos:end="67:25">print_gem_tx_desc</name><argument_list pos:start="67:26" pos:end="67:31">(<argument pos:start="67:27" pos:end="67:30"><expr pos:start="67:27" pos:end="67:30"><name pos:start="67:27" pos:end="67:30">desc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <comment type="block" pos:start="71:9" pos:end="75:11">/* The real hardware would eat this (and possibly crash).
+
+         * For QEMU let's lend a helping hand.
+
+         */</comment>
+
+        <if_stmt pos:start="77:9" pos:end="85:9"><if pos:start="77:9" pos:end="85:9">if <condition pos:start="77:12" pos:end="79:44">(<expr pos:start="77:13" pos:end="79:43"><operator pos:start="77:13" pos:end="77:13">(</operator><call pos:start="77:14" pos:end="77:37"><name pos:start="77:14" pos:end="77:31">tx_desc_get_buffer</name><argument_list pos:start="77:32" pos:end="77:37">(<argument pos:start="77:33" pos:end="77:36"><expr pos:start="77:33" pos:end="77:36"><name pos:start="77:33" pos:end="77:36">desc</name></expr></argument>)</argument_list></call> <operator pos:start="77:39" pos:end="77:40">==</operator> <literal type="number" pos:start="77:42" pos:end="77:42">0</literal><operator pos:start="77:43" pos:end="77:43">)</operator> <operator pos:start="77:45" pos:end="77:46">||</operator>
+
+            <operator pos:start="79:13" pos:end="79:13">(</operator><call pos:start="79:14" pos:end="79:37"><name pos:start="79:14" pos:end="79:31">tx_desc_get_length</name><argument_list pos:start="79:32" pos:end="79:37">(<argument pos:start="79:33" pos:end="79:36"><expr pos:start="79:33" pos:end="79:36"><name pos:start="79:33" pos:end="79:36">desc</name></expr></argument>)</argument_list></call> <operator pos:start="79:39" pos:end="79:40">==</operator> <literal type="number" pos:start="79:42" pos:end="79:42">0</literal><operator pos:start="79:43" pos:end="79:43">)</operator></expr>)</condition> <block pos:start="79:46" pos:end="85:9">{<block_content pos:start="81:13" pos:end="83:18">
+
+            <expr_stmt pos:start="81:13" pos:end="81:73"><expr pos:start="81:13" pos:end="81:72"><call pos:start="81:13" pos:end="81:72"><name pos:start="81:13" pos:end="81:20">DB_PRINT</name><argument_list pos:start="81:21" pos:end="81:72">(<argument pos:start="81:22" pos:end="81:53"><expr pos:start="81:22" pos:end="81:53"><literal type="string" pos:start="81:22" pos:end="81:53">"Invalid TX descriptor @ 0x%x\n"</literal></expr></argument>, <argument pos:start="81:56" pos:end="81:71"><expr pos:start="81:56" pos:end="81:71"><name pos:start="81:56" pos:end="81:71">packet_desc_addr</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="83:13" pos:end="83:18">break;</break>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <comment type="block" pos:start="89:9" pos:end="93:11">/* Gather this fragment of the packet from "dma memory" to our contig.
+
+         * buffer.
+
+         */</comment>
+
+        <expr_stmt pos:start="95:9" pos:end="97:59"><expr pos:start="95:9" pos:end="97:58"><call pos:start="95:9" pos:end="97:58"><name pos:start="95:9" pos:end="95:32">cpu_physical_memory_read</name><argument_list pos:start="95:33" pos:end="97:58">(<argument pos:start="95:34" pos:end="95:57"><expr pos:start="95:34" pos:end="95:57"><call pos:start="95:34" pos:end="95:57"><name pos:start="95:34" pos:end="95:51">tx_desc_get_buffer</name><argument_list pos:start="95:52" pos:end="95:57">(<argument pos:start="95:53" pos:end="95:56"><expr pos:start="95:53" pos:end="95:56"><name pos:start="95:53" pos:end="95:56">desc</name></expr></argument>)</argument_list></call></expr></argument>, <argument pos:start="95:60" pos:end="95:60"><expr pos:start="95:60" pos:end="95:60"><name pos:start="95:60" pos:end="95:60">p</name></expr></argument>,
+
+                                 <argument pos:start="97:34" pos:end="97:57"><expr pos:start="97:34" pos:end="97:57"><call pos:start="97:34" pos:end="97:57"><name pos:start="97:34" pos:end="97:51">tx_desc_get_length</name><argument_list pos:start="97:52" pos:end="97:57">(<argument pos:start="97:53" pos:end="97:56"><expr pos:start="97:53" pos:end="97:56"><name pos:start="97:53" pos:end="97:56">desc</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="99:9" pos:end="99:38"><expr pos:start="99:9" pos:end="99:37"><name pos:start="99:9" pos:end="99:9">p</name> <operator pos:start="99:11" pos:end="99:12">+=</operator> <call pos:start="99:14" pos:end="99:37"><name pos:start="99:14" pos:end="99:31">tx_desc_get_length</name><argument_list pos:start="99:32" pos:end="99:37">(<argument pos:start="99:33" pos:end="99:36"><expr pos:start="99:33" pos:end="99:36"><name pos:start="99:33" pos:end="99:36">desc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="101:9" pos:end="101:48"><expr pos:start="101:9" pos:end="101:47"><name pos:start="101:9" pos:end="101:19">total_bytes</name> <operator pos:start="101:21" pos:end="101:22">+=</operator> <call pos:start="101:24" pos:end="101:47"><name pos:start="101:24" pos:end="101:41">tx_desc_get_length</name><argument_list pos:start="101:42" pos:end="101:47">(<argument pos:start="101:43" pos:end="101:46"><expr pos:start="101:43" pos:end="101:46"><name pos:start="101:43" pos:end="101:46">desc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <comment type="block" pos:start="105:9" pos:end="105:71">/* Last descriptor for this packet; hand the whole thing off */</comment>
+
+        <if_stmt pos:start="107:9" pos:end="187:9"><if pos:start="107:9" pos:end="187:9">if <condition pos:start="107:12" pos:end="107:35">(<expr pos:start="107:13" pos:end="107:34"><call pos:start="107:13" pos:end="107:34"><name pos:start="107:13" pos:end="107:28">tx_desc_get_last</name><argument_list pos:start="107:29" pos:end="107:34">(<argument pos:start="107:30" pos:end="107:33"><expr pos:start="107:30" pos:end="107:33"><name pos:start="107:30" pos:end="107:33">desc</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="107:37" pos:end="187:9">{<block_content pos:start="115:13" pos:end="185:28">
+
+            <comment type="block" pos:start="109:13" pos:end="113:15">/* Modify the 1st descriptor of this packet to be owned by
+
+             * the processor.
+
+             */</comment>
+
+            <expr_stmt pos:start="115:13" pos:end="117:72"><expr pos:start="115:13" pos:end="117:71"><call pos:start="115:13" pos:end="117:71"><name pos:start="115:13" pos:end="115:36">cpu_physical_memory_read</name><argument_list pos:start="115:37" pos:end="117:71">(<argument pos:start="115:38" pos:end="115:52"><expr pos:start="115:38" pos:end="115:52"><name pos:start="115:38" pos:end="115:52"><name pos:start="115:38" pos:end="115:38">s</name><operator pos:start="115:39" pos:end="115:40">-&gt;</operator><name pos:start="115:41" pos:end="115:52">tx_desc_addr</name></name></expr></argument>,
+
+                                     <argument pos:start="117:38" pos:end="117:56"><expr pos:start="117:38" pos:end="117:56"><operator pos:start="117:38" pos:end="117:38">(</operator><name pos:start="117:39" pos:end="117:45">uint8_t</name> <operator pos:start="117:47" pos:end="117:47">*</operator><operator pos:start="117:48" pos:end="117:48">)</operator><operator pos:start="117:49" pos:end="117:49">&amp;</operator><name pos:start="117:50" pos:end="117:56"><name pos:start="117:50" pos:end="117:53">desc</name><index pos:start="117:54" pos:end="117:56">[<expr pos:start="117:55" pos:end="117:55"><literal type="number" pos:start="117:55" pos:end="117:55">0</literal></expr>]</index></name></expr></argument>, <argument pos:start="117:59" pos:end="117:70"><expr pos:start="117:59" pos:end="117:70"><sizeof pos:start="117:59" pos:end="117:70">sizeof<argument_list pos:start="117:65" pos:end="117:70">(<argument pos:start="117:66" pos:end="117:69"><expr pos:start="117:66" pos:end="117:69"><name pos:start="117:66" pos:end="117:69">desc</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="119:13" pos:end="119:35"><expr pos:start="119:13" pos:end="119:34"><call pos:start="119:13" pos:end="119:34"><name pos:start="119:13" pos:end="119:28">tx_desc_set_used</name><argument_list pos:start="119:29" pos:end="119:34">(<argument pos:start="119:30" pos:end="119:33"><expr pos:start="119:30" pos:end="119:33"><name pos:start="119:30" pos:end="119:33">desc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="121:13" pos:end="123:73"><expr pos:start="121:13" pos:end="123:72"><call pos:start="121:13" pos:end="123:72"><name pos:start="121:13" pos:end="121:37">cpu_physical_memory_write</name><argument_list pos:start="121:38" pos:end="123:72">(<argument pos:start="121:39" pos:end="121:53"><expr pos:start="121:39" pos:end="121:53"><name pos:start="121:39" pos:end="121:53"><name pos:start="121:39" pos:end="121:39">s</name><operator pos:start="121:40" pos:end="121:41">-&gt;</operator><name pos:start="121:42" pos:end="121:53">tx_desc_addr</name></name></expr></argument>,
+
+                                      <argument pos:start="123:39" pos:end="123:57"><expr pos:start="123:39" pos:end="123:57"><operator pos:start="123:39" pos:end="123:39">(</operator><name pos:start="123:40" pos:end="123:46">uint8_t</name> <operator pos:start="123:48" pos:end="123:48">*</operator><operator pos:start="123:49" pos:end="123:49">)</operator><operator pos:start="123:50" pos:end="123:50">&amp;</operator><name pos:start="123:51" pos:end="123:57"><name pos:start="123:51" pos:end="123:54">desc</name><index pos:start="123:55" pos:end="123:57">[<expr pos:start="123:56" pos:end="123:56"><literal type="number" pos:start="123:56" pos:end="123:56">0</literal></expr>]</index></name></expr></argument>, <argument pos:start="123:60" pos:end="123:71"><expr pos:start="123:60" pos:end="123:71"><sizeof pos:start="123:60" pos:end="123:71">sizeof<argument_list pos:start="123:66" pos:end="123:71">(<argument pos:start="123:67" pos:end="123:70"><expr pos:start="123:67" pos:end="123:70"><name pos:start="123:67" pos:end="123:70">desc</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <comment type="block" pos:start="125:13" pos:end="125:73">/* Advance the hardare current descriptor past this packet */</comment>
+
+            <if_stmt pos:start="127:13" pos:end="135:13"><if pos:start="127:13" pos:end="131:13">if <condition pos:start="127:16" pos:end="127:39">(<expr pos:start="127:17" pos:end="127:38"><call pos:start="127:17" pos:end="127:38"><name pos:start="127:17" pos:end="127:32">tx_desc_get_wrap</name><argument_list pos:start="127:33" pos:end="127:38">(<argument pos:start="127:34" pos:end="127:37"><expr pos:start="127:34" pos:end="127:37"><name pos:start="127:34" pos:end="127:37">desc</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="127:41" pos:end="131:13">{<block_content pos:start="129:17" pos:end="129:55">
+
+                <expr_stmt pos:start="129:17" pos:end="129:55"><expr pos:start="129:17" pos:end="129:54"><name pos:start="129:17" pos:end="129:31"><name pos:start="129:17" pos:end="129:17">s</name><operator pos:start="129:18" pos:end="129:19">-&gt;</operator><name pos:start="129:20" pos:end="129:31">tx_desc_addr</name></name> <operator pos:start="129:33" pos:end="129:33">=</operator> <name pos:start="129:35" pos:end="129:54"><name pos:start="129:35" pos:end="129:35">s</name><operator pos:start="129:36" pos:end="129:37">-&gt;</operator><name pos:start="129:38" pos:end="129:41">regs</name><index pos:start="129:42" pos:end="129:54">[<expr pos:start="129:43" pos:end="129:53"><name pos:start="129:43" pos:end="129:53">GEM_TXQBASE</name></expr>]</index></name></expr>;</expr_stmt>
+
+            </block_content>}</block></if> <else pos:start="131:15" pos:end="135:13">else <block pos:start="131:20" pos:end="135:13">{<block_content pos:start="133:17" pos:end="133:55">
+
+                <expr_stmt pos:start="133:17" pos:end="133:55"><expr pos:start="133:17" pos:end="133:54"><name pos:start="133:17" pos:end="133:31"><name pos:start="133:17" pos:end="133:17">s</name><operator pos:start="133:18" pos:end="133:19">-&gt;</operator><name pos:start="133:20" pos:end="133:31">tx_desc_addr</name></name> <operator pos:start="133:33" pos:end="133:33">=</operator> <name pos:start="133:35" pos:end="133:50">packet_desc_addr</name> <operator pos:start="133:52" pos:end="133:52">+</operator> <literal type="number" pos:start="133:54" pos:end="133:54">8</literal></expr>;</expr_stmt>
+
+            </block_content>}</block></else></if_stmt>
+
+            <expr_stmt pos:start="137:13" pos:end="137:70"><expr pos:start="137:13" pos:end="137:69"><call pos:start="137:13" pos:end="137:69"><name pos:start="137:13" pos:end="137:20">DB_PRINT</name><argument_list pos:start="137:21" pos:end="137:69">(<argument pos:start="137:22" pos:end="137:51"><expr pos:start="137:22" pos:end="137:51"><literal type="string" pos:start="137:22" pos:end="137:51">"TX descriptor next: 0x%08x\n"</literal></expr></argument>, <argument pos:start="137:54" pos:end="137:68"><expr pos:start="137:54" pos:end="137:68"><name pos:start="137:54" pos:end="137:68"><name pos:start="137:54" pos:end="137:54">s</name><operator pos:start="137:55" pos:end="137:56">-&gt;</operator><name pos:start="137:57" pos:end="137:68">tx_desc_addr</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <expr_stmt pos:start="141:13" pos:end="141:57"><expr pos:start="141:13" pos:end="141:56"><name pos:start="141:13" pos:end="141:33"><name pos:start="141:13" pos:end="141:13">s</name><operator pos:start="141:14" pos:end="141:15">-&gt;</operator><name pos:start="141:16" pos:end="141:19">regs</name><index pos:start="141:20" pos:end="141:33">[<expr pos:start="141:21" pos:end="141:32"><name pos:start="141:21" pos:end="141:32">GEM_TXSTATUS</name></expr>]</index></name> <operator pos:start="141:35" pos:end="141:36">|=</operator> <name pos:start="141:38" pos:end="141:56">GEM_TXSTATUS_TXCMPL</name></expr>;</expr_stmt>
+
+
+
+            <comment type="block" pos:start="145:13" pos:end="145:47">/* Handle interrupt consequences */</comment>
+
+            <expr_stmt pos:start="147:13" pos:end="147:37"><expr pos:start="147:13" pos:end="147:36"><call pos:start="147:13" pos:end="147:36"><name pos:start="147:13" pos:end="147:33">gem_update_int_status</name><argument_list pos:start="147:34" pos:end="147:36">(<argument pos:start="147:35" pos:end="147:35"><expr pos:start="147:35" pos:end="147:35"><name pos:start="147:35" pos:end="147:35">s</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <comment type="block" pos:start="151:13" pos:end="151:46">/* Is checksum offload enabled? */</comment>
+
+            <if_stmt pos:start="153:13" pos:end="157:13"><if pos:start="153:13" pos:end="157:13">if <condition pos:start="153:16" pos:end="153:61">(<expr pos:start="153:17" pos:end="153:60"><name pos:start="153:17" pos:end="153:35"><name pos:start="153:17" pos:end="153:17">s</name><operator pos:start="153:18" pos:end="153:19">-&gt;</operator><name pos:start="153:20" pos:end="153:23">regs</name><index pos:start="153:24" pos:end="153:35">[<expr pos:start="153:25" pos:end="153:34"><name pos:start="153:25" pos:end="153:34">GEM_DMACFG</name></expr>]</index></name> <operator pos:start="153:37" pos:end="153:37">&amp;</operator> <name pos:start="153:39" pos:end="153:60">GEM_DMACFG_TXCSUM_OFFL</name></expr>)</condition> <block pos:start="153:63" pos:end="157:13">{<block_content pos:start="155:17" pos:end="155:63">
+
+                <expr_stmt pos:start="155:17" pos:end="155:63"><expr pos:start="155:17" pos:end="155:62"><call pos:start="155:17" pos:end="155:62"><name pos:start="155:17" pos:end="155:38">net_checksum_calculate</name><argument_list pos:start="155:39" pos:end="155:62">(<argument pos:start="155:40" pos:end="155:48"><expr pos:start="155:40" pos:end="155:48"><name pos:start="155:40" pos:end="155:48">tx_packet</name></expr></argument>, <argument pos:start="155:51" pos:end="155:61"><expr pos:start="155:51" pos:end="155:61"><name pos:start="155:51" pos:end="155:61">total_bytes</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+
+
+            <comment type="block" pos:start="161:13" pos:end="161:39">/* Update MAC statistics */</comment>
+
+            <expr_stmt pos:start="163:13" pos:end="163:64"><expr pos:start="163:13" pos:end="163:63"><call pos:start="163:13" pos:end="163:63"><name pos:start="163:13" pos:end="163:36">gem_transmit_updatestats</name><argument_list pos:start="163:37" pos:end="163:63">(<argument pos:start="163:38" pos:end="163:38"><expr pos:start="163:38" pos:end="163:38"><name pos:start="163:38" pos:end="163:38">s</name></expr></argument>, <argument pos:start="163:41" pos:end="163:49"><expr pos:start="163:41" pos:end="163:49"><name pos:start="163:41" pos:end="163:49">tx_packet</name></expr></argument>, <argument pos:start="163:52" pos:end="163:62"><expr pos:start="163:52" pos:end="163:62"><name pos:start="163:52" pos:end="163:62">total_bytes</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <comment type="block" pos:start="167:13" pos:end="167:43">/* Send the packet somewhere */</comment>
+
+            <if_stmt pos:start="169:13" pos:end="177:13"><if pos:start="169:13" pos:end="173:13">if <condition pos:start="169:16" pos:end="169:28">(<expr pos:start="169:17" pos:end="169:27"><name pos:start="169:17" pos:end="169:27"><name pos:start="169:17" pos:end="169:17">s</name><operator pos:start="169:18" pos:end="169:19">-&gt;</operator><name pos:start="169:20" pos:end="169:27">phy_loop</name></name></expr>)</condition> <block pos:start="169:30" pos:end="173:13">{<block_content pos:start="171:17" pos:end="171:65">
+
+                <expr_stmt pos:start="171:17" pos:end="171:65"><expr pos:start="171:17" pos:end="171:64"><call pos:start="171:17" pos:end="171:64"><name pos:start="171:17" pos:end="171:27">gem_receive</name><argument_list pos:start="171:28" pos:end="171:64">(<argument pos:start="171:29" pos:end="171:39"><expr pos:start="171:29" pos:end="171:39"><operator pos:start="171:29" pos:end="171:29">&amp;</operator><name pos:start="171:30" pos:end="171:39"><name pos:start="171:30" pos:end="171:30">s</name><operator pos:start="171:31" pos:end="171:32">-&gt;</operator><name pos:start="171:33" pos:end="171:35">nic</name><operator pos:start="171:36" pos:end="171:37">-&gt;</operator><name pos:start="171:38" pos:end="171:39">nc</name></name></expr></argument>, <argument pos:start="171:42" pos:end="171:50"><expr pos:start="171:42" pos:end="171:50"><name pos:start="171:42" pos:end="171:50">tx_packet</name></expr></argument>, <argument pos:start="171:53" pos:end="171:63"><expr pos:start="171:53" pos:end="171:63"><name pos:start="171:53" pos:end="171:63">total_bytes</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if> <else pos:start="173:15" pos:end="177:13">else <block pos:start="173:20" pos:end="177:13">{<block_content pos:start="175:17" pos:end="175:70">
+
+                <expr_stmt pos:start="175:17" pos:end="175:70"><expr pos:start="175:17" pos:end="175:69"><call pos:start="175:17" pos:end="175:69"><name pos:start="175:17" pos:end="175:32">qemu_send_packet</name><argument_list pos:start="175:33" pos:end="175:69">(<argument pos:start="175:34" pos:end="175:44"><expr pos:start="175:34" pos:end="175:44"><operator pos:start="175:34" pos:end="175:34">&amp;</operator><name pos:start="175:35" pos:end="175:44"><name pos:start="175:35" pos:end="175:35">s</name><operator pos:start="175:36" pos:end="175:37">-&gt;</operator><name pos:start="175:38" pos:end="175:40">nic</name><operator pos:start="175:41" pos:end="175:42">-&gt;</operator><name pos:start="175:43" pos:end="175:44">nc</name></name></expr></argument>, <argument pos:start="175:47" pos:end="175:55"><expr pos:start="175:47" pos:end="175:55"><name pos:start="175:47" pos:end="175:55">tx_packet</name></expr></argument>, <argument pos:start="175:58" pos:end="175:68"><expr pos:start="175:58" pos:end="175:68"><name pos:start="175:58" pos:end="175:68">total_bytes</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></else></if_stmt>
+
+
+
+            <comment type="block" pos:start="181:13" pos:end="181:41">/* Prepare for next packet */</comment>
+
+            <expr_stmt pos:start="183:13" pos:end="183:26"><expr pos:start="183:13" pos:end="183:25"><name pos:start="183:13" pos:end="183:13">p</name> <operator pos:start="183:15" pos:end="183:15">=</operator> <name pos:start="183:17" pos:end="183:25">tx_packet</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="185:13" pos:end="185:28"><expr pos:start="185:13" pos:end="185:27"><name pos:start="185:13" pos:end="185:23">total_bytes</name> <operator pos:start="185:25" pos:end="185:25">=</operator> <literal type="number" pos:start="185:27" pos:end="185:27">0</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <comment type="block" pos:start="191:9" pos:end="191:34">/* read next descriptor */</comment>
+
+        <if_stmt pos:start="193:9" pos:end="201:9"><if pos:start="193:9" pos:end="197:9">if <condition pos:start="193:12" pos:end="193:35">(<expr pos:start="193:13" pos:end="193:34"><call pos:start="193:13" pos:end="193:34"><name pos:start="193:13" pos:end="193:28">tx_desc_get_wrap</name><argument_list pos:start="193:29" pos:end="193:34">(<argument pos:start="193:30" pos:end="193:33"><expr pos:start="193:30" pos:end="193:33"><name pos:start="193:30" pos:end="193:33">desc</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="193:37" pos:end="197:9">{<block_content pos:start="195:13" pos:end="195:52">
+
+            <expr_stmt pos:start="195:13" pos:end="195:52"><expr pos:start="195:13" pos:end="195:51"><name pos:start="195:13" pos:end="195:28">packet_desc_addr</name> <operator pos:start="195:30" pos:end="195:30">=</operator> <name pos:start="195:32" pos:end="195:51"><name pos:start="195:32" pos:end="195:32">s</name><operator pos:start="195:33" pos:end="195:34">-&gt;</operator><name pos:start="195:35" pos:end="195:38">regs</name><index pos:start="195:39" pos:end="195:51">[<expr pos:start="195:40" pos:end="195:50"><name pos:start="195:40" pos:end="195:50">GEM_TXQBASE</name></expr>]</index></name></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="197:11" pos:end="201:9">else <block pos:start="197:16" pos:end="201:9">{<block_content pos:start="199:13" pos:end="199:34">
+
+            <expr_stmt pos:start="199:13" pos:end="199:34"><expr pos:start="199:13" pos:end="199:33"><name pos:start="199:13" pos:end="199:28">packet_desc_addr</name> <operator pos:start="199:30" pos:end="199:31">+=</operator> <literal type="number" pos:start="199:33" pos:end="199:33">8</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+        <expr_stmt pos:start="203:9" pos:end="205:68"><expr pos:start="203:9" pos:end="205:67"><call pos:start="203:9" pos:end="205:67"><name pos:start="203:9" pos:end="203:32">cpu_physical_memory_read</name><argument_list pos:start="203:33" pos:end="205:67">(<argument pos:start="203:34" pos:end="203:49"><expr pos:start="203:34" pos:end="203:49"><name pos:start="203:34" pos:end="203:49">packet_desc_addr</name></expr></argument>,
+
+                                 <argument pos:start="205:34" pos:end="205:52"><expr pos:start="205:34" pos:end="205:52"><operator pos:start="205:34" pos:end="205:34">(</operator><name pos:start="205:35" pos:end="205:41">uint8_t</name> <operator pos:start="205:43" pos:end="205:43">*</operator><operator pos:start="205:44" pos:end="205:44">)</operator><operator pos:start="205:45" pos:end="205:45">&amp;</operator><name pos:start="205:46" pos:end="205:52"><name pos:start="205:46" pos:end="205:49">desc</name><index pos:start="205:50" pos:end="205:52">[<expr pos:start="205:51" pos:end="205:51"><literal type="number" pos:start="205:51" pos:end="205:51">0</literal></expr>]</index></name></expr></argument>, <argument pos:start="205:55" pos:end="205:66"><expr pos:start="205:55" pos:end="205:66"><sizeof pos:start="205:55" pos:end="205:66">sizeof<argument_list pos:start="205:61" pos:end="205:66">(<argument pos:start="205:62" pos:end="205:65"><expr pos:start="205:62" pos:end="205:65"><name pos:start="205:62" pos:end="205:65">desc</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></while>
+
+
+
+    <if_stmt pos:start="211:5" pos:end="217:5"><if pos:start="211:5" pos:end="217:5">if <condition pos:start="211:8" pos:end="211:31">(<expr pos:start="211:9" pos:end="211:30"><call pos:start="211:9" pos:end="211:30"><name pos:start="211:9" pos:end="211:24">tx_desc_get_used</name><argument_list pos:start="211:25" pos:end="211:30">(<argument pos:start="211:26" pos:end="211:29"><expr pos:start="211:26" pos:end="211:29"><name pos:start="211:26" pos:end="211:29">desc</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="211:33" pos:end="217:5">{<block_content pos:start="213:9" pos:end="215:33">
+
+        <expr_stmt pos:start="213:9" pos:end="213:51"><expr pos:start="213:9" pos:end="213:50"><name pos:start="213:9" pos:end="213:29"><name pos:start="213:9" pos:end="213:9">s</name><operator pos:start="213:10" pos:end="213:11">-&gt;</operator><name pos:start="213:12" pos:end="213:15">regs</name><index pos:start="213:16" pos:end="213:29">[<expr pos:start="213:17" pos:end="213:28"><name pos:start="213:17" pos:end="213:28">GEM_TXSTATUS</name></expr>]</index></name> <operator pos:start="213:31" pos:end="213:32">|=</operator> <name pos:start="213:34" pos:end="213:50">GEM_TXSTATUS_USED</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="215:9" pos:end="215:33"><expr pos:start="215:9" pos:end="215:32"><call pos:start="215:9" pos:end="215:32"><name pos:start="215:9" pos:end="215:29">gem_update_int_status</name><argument_list pos:start="215:30" pos:end="215:32">(<argument pos:start="215:31" pos:end="215:31"><expr pos:start="215:31" pos:end="215:31"><name pos:start="215:31" pos:end="215:31">s</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+</block_content>}</block></function>
+</unit>

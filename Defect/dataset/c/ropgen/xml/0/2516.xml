@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/2516.c" pos:tabs="8"><function pos:start="1:1" pos:end="67:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:28">get_whole_cluster</name><parameter_list pos:start="1:29" pos:end="9:30">(<parameter pos:start="1:30" pos:end="1:49"><decl pos:start="1:30" pos:end="1:49"><type pos:start="1:30" pos:end="1:49"><name pos:start="1:30" pos:end="1:45">BlockDriverState</name> <modifier pos:start="1:47" pos:end="1:47">*</modifier></type><name pos:start="1:48" pos:end="1:49">bs</name></decl></parameter>,
+
+                <parameter pos:start="3:17" pos:end="3:34"><decl pos:start="3:17" pos:end="3:34"><type pos:start="3:17" pos:end="3:34"><name pos:start="3:17" pos:end="3:26">VmdkExtent</name> <modifier pos:start="3:28" pos:end="3:28">*</modifier></type><name pos:start="3:29" pos:end="3:34">extent</name></decl></parameter>,
+
+                <parameter pos:start="5:17" pos:end="5:39"><decl pos:start="5:17" pos:end="5:39"><type pos:start="5:17" pos:end="5:39"><name pos:start="5:17" pos:end="5:24">uint64_t</name></type> <name pos:start="5:26" pos:end="5:39">cluster_offset</name></decl></parameter>,
+
+                <parameter pos:start="7:17" pos:end="7:31"><decl pos:start="7:17" pos:end="7:31"><type pos:start="7:17" pos:end="7:31"><name pos:start="7:17" pos:end="7:24">uint64_t</name></type> <name pos:start="7:26" pos:end="7:31">offset</name></decl></parameter>,
+
+                <parameter pos:start="9:17" pos:end="9:29"><decl pos:start="9:17" pos:end="9:29"><type pos:start="9:17" pos:end="9:29"><name pos:start="9:17" pos:end="9:20">bool</name></type> <name pos:start="9:22" pos:end="9:29">allocate</name></decl></parameter>)</parameter_list>
+
+<block pos:start="11:1" pos:end="67:1">{<block_content pos:start="15:5" pos:end="65:13">
+
+    <comment type="block" pos:start="13:5" pos:end="13:56">/* 128 sectors * 512 bytes each = grain size 64KB */</comment>
+
+    <decl_stmt pos:start="15:5" pos:end="15:56"><decl pos:start="15:5" pos:end="15:55"><type pos:start="15:5" pos:end="15:11"><name pos:start="15:5" pos:end="15:11">uint8_t</name></type>  <name pos:start="15:14" pos:end="15:55"><name pos:start="15:14" pos:end="15:24">whole_grain</name><index pos:start="15:25" pos:end="15:55">[<expr pos:start="15:26" pos:end="15:54"><name pos:start="15:26" pos:end="15:48"><name pos:start="15:26" pos:end="15:31">extent</name><operator pos:start="15:32" pos:end="15:33">-&gt;</operator><name pos:start="15:34" pos:end="15:48">cluster_sectors</name></name> <operator pos:start="15:50" pos:end="15:50">*</operator> <literal type="number" pos:start="15:52" pos:end="15:54">512</literal></expr>]</index></name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="19:5" pos:end="21:49">/* we will be here if it's first write on non-exist grain(cluster).
+
+     * try to read from parent image, if exist */</comment>
+
+    <if_stmt pos:start="23:5" pos:end="63:5"><if pos:start="23:5" pos:end="63:5">if <condition pos:start="23:8" pos:end="23:23">(<expr pos:start="23:9" pos:end="23:22"><name pos:start="23:9" pos:end="23:22"><name pos:start="23:9" pos:end="23:10">bs</name><operator pos:start="23:11" pos:end="23:12">-&gt;</operator><name pos:start="23:13" pos:end="23:22">backing_hd</name></name></expr>)</condition> <block pos:start="23:25" pos:end="63:5">{<block_content pos:start="25:9" pos:end="61:9">
+
+        <decl_stmt pos:start="25:9" pos:end="25:16"><decl pos:start="25:9" pos:end="25:15"><type pos:start="25:9" pos:end="25:11"><name pos:start="25:9" pos:end="25:11">int</name></type> <name pos:start="25:13" pos:end="25:15">ret</name></decl>;</decl_stmt>
+
+
+
+        <if_stmt pos:start="29:9" pos:end="31:22"><if pos:start="29:9" pos:end="31:22">if <condition pos:start="29:12" pos:end="29:35">(<expr pos:start="29:13" pos:end="29:34"><operator pos:start="29:13" pos:end="29:13">!</operator><call pos:start="29:14" pos:end="29:34"><name pos:start="29:14" pos:end="29:30">vmdk_is_cid_valid</name><argument_list pos:start="29:31" pos:end="29:34">(<argument pos:start="29:32" pos:end="29:33"><expr pos:start="29:32" pos:end="29:33"><name pos:start="29:32" pos:end="29:33">bs</name></expr></argument>)</argument_list></call></expr>)</condition><block type="pseudo" pos:start="31:13" pos:end="31:22"><block_content pos:start="31:13" pos:end="31:22">
+
+            <return pos:start="31:13" pos:end="31:22">return <expr pos:start="31:20" pos:end="31:21"><operator pos:start="31:20" pos:end="31:20">-</operator><literal type="number" pos:start="31:21" pos:end="31:21">1</literal></expr>;</return></block_content></block></if></if_stmt>
+
+
+
+        <comment type="block" pos:start="35:9" pos:end="35:37">/* floor offset to cluster */</comment>
+
+        <expr_stmt pos:start="37:9" pos:end="37:59"><expr pos:start="37:9" pos:end="37:58"><name pos:start="37:9" pos:end="37:14">offset</name> <operator pos:start="37:16" pos:end="37:17">-=</operator> <name pos:start="37:19" pos:end="37:24">offset</name> <operator pos:start="37:26" pos:end="37:26">%</operator> <operator pos:start="37:28" pos:end="37:28">(</operator><name pos:start="37:29" pos:end="37:51"><name pos:start="37:29" pos:end="37:34">extent</name><operator pos:start="37:35" pos:end="37:36">-&gt;</operator><name pos:start="37:37" pos:end="37:51">cluster_sectors</name></name> <operator pos:start="37:53" pos:end="37:53">*</operator> <literal type="number" pos:start="37:55" pos:end="37:57">512</literal><operator pos:start="37:58" pos:end="37:58">)</operator></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="39:9" pos:end="41:41"><expr pos:start="39:9" pos:end="41:40"><name pos:start="39:9" pos:end="39:11">ret</name> <operator pos:start="39:13" pos:end="39:13">=</operator> <call pos:start="39:15" pos:end="41:40"><name pos:start="39:15" pos:end="39:23">bdrv_read</name><argument_list pos:start="39:24" pos:end="41:40">(<argument pos:start="39:25" pos:end="39:38"><expr pos:start="39:25" pos:end="39:38"><name pos:start="39:25" pos:end="39:38"><name pos:start="39:25" pos:end="39:26">bs</name><operator pos:start="39:27" pos:end="39:28">-&gt;</operator><name pos:start="39:29" pos:end="39:38">backing_hd</name></name></expr></argument>, <argument pos:start="39:41" pos:end="39:51"><expr pos:start="39:41" pos:end="39:51"><name pos:start="39:41" pos:end="39:46">offset</name> <operator pos:start="39:48" pos:end="39:49">&gt;&gt;</operator> <literal type="number" pos:start="39:51" pos:end="39:51">9</literal></expr></argument>, <argument pos:start="39:54" pos:end="39:64"><expr pos:start="39:54" pos:end="39:64"><name pos:start="39:54" pos:end="39:64">whole_grain</name></expr></argument>,
+
+                <argument pos:start="41:17" pos:end="41:39"><expr pos:start="41:17" pos:end="41:39"><name pos:start="41:17" pos:end="41:39"><name pos:start="41:17" pos:end="41:22">extent</name><operator pos:start="41:23" pos:end="41:24">-&gt;</operator><name pos:start="41:25" pos:end="41:39">cluster_sectors</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="43:9" pos:end="47:9"><if pos:start="43:9" pos:end="47:9">if <condition pos:start="43:12" pos:end="43:20">(<expr pos:start="43:13" pos:end="43:19"><name pos:start="43:13" pos:end="43:15">ret</name> <operator pos:start="43:17" pos:end="43:17">&lt;</operator> <literal type="number" pos:start="43:19" pos:end="43:19">0</literal></expr>)</condition> <block pos:start="43:22" pos:end="47:9">{<block_content pos:start="45:13" pos:end="45:22">
+
+            <return pos:start="45:13" pos:end="45:22">return <expr pos:start="45:20" pos:end="45:21"><operator pos:start="45:20" pos:end="45:20">-</operator><literal type="number" pos:start="45:21" pos:end="45:21">1</literal></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <comment type="block" pos:start="51:9" pos:end="51:52">/* Write grain only into the active image */</comment>
+
+        <expr_stmt pos:start="53:9" pos:end="55:41"><expr pos:start="53:9" pos:end="55:40"><name pos:start="53:9" pos:end="53:11">ret</name> <operator pos:start="53:13" pos:end="53:13">=</operator> <call pos:start="53:15" pos:end="55:40"><name pos:start="53:15" pos:end="53:24">bdrv_write</name><argument_list pos:start="53:25" pos:end="55:40">(<argument pos:start="53:26" pos:end="53:37"><expr pos:start="53:26" pos:end="53:37"><name pos:start="53:26" pos:end="53:37"><name pos:start="53:26" pos:end="53:31">extent</name><operator pos:start="53:32" pos:end="53:33">-&gt;</operator><name pos:start="53:34" pos:end="53:37">file</name></name></expr></argument>, <argument pos:start="53:40" pos:end="53:53"><expr pos:start="53:40" pos:end="53:53"><name pos:start="53:40" pos:end="53:53">cluster_offset</name></expr></argument>, <argument pos:start="53:56" pos:end="53:66"><expr pos:start="53:56" pos:end="53:66"><name pos:start="53:56" pos:end="53:66">whole_grain</name></expr></argument>,
+
+                <argument pos:start="55:17" pos:end="55:39"><expr pos:start="55:17" pos:end="55:39"><name pos:start="55:17" pos:end="55:39"><name pos:start="55:17" pos:end="55:22">extent</name><operator pos:start="55:23" pos:end="55:24">-&gt;</operator><name pos:start="55:25" pos:end="55:39">cluster_sectors</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="57:9" pos:end="61:9"><if pos:start="57:9" pos:end="61:9">if <condition pos:start="57:12" pos:end="57:20">(<expr pos:start="57:13" pos:end="57:19"><name pos:start="57:13" pos:end="57:15">ret</name> <operator pos:start="57:17" pos:end="57:17">&lt;</operator> <literal type="number" pos:start="57:19" pos:end="57:19">0</literal></expr>)</condition> <block pos:start="57:22" pos:end="61:9">{<block_content pos:start="59:13" pos:end="59:22">
+
+            <return pos:start="59:13" pos:end="59:22">return <expr pos:start="59:20" pos:end="59:21"><operator pos:start="59:20" pos:end="59:20">-</operator><literal type="number" pos:start="59:21" pos:end="59:21">1</literal></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <return pos:start="65:5" pos:end="65:13">return <expr pos:start="65:12" pos:end="65:12"><literal type="number" pos:start="65:12" pos:end="65:12">0</literal></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

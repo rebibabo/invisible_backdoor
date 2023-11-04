@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/3358.c" pos:tabs="8"><function pos:start="1:1" pos:end="65:1"><type pos:start="1:1" pos:end="1:4"><name pos:start="1:1" pos:end="1:4">void</name></type> <name pos:start="1:6" pos:end="1:15">host_cpuid</name><parameter_list pos:start="1:16" pos:end="3:75">(<parameter pos:start="1:17" pos:end="1:33"><decl pos:start="1:17" pos:end="1:33"><type pos:start="1:17" pos:end="1:33"><name pos:start="1:17" pos:end="1:24">uint32_t</name></type> <name pos:start="1:26" pos:end="1:33">function</name></decl></parameter>, <parameter pos:start="1:36" pos:end="1:49"><decl pos:start="1:36" pos:end="1:49"><type pos:start="1:36" pos:end="1:49"><name pos:start="1:36" pos:end="1:43">uint32_t</name></type> <name pos:start="1:45" pos:end="1:49">count</name></decl></parameter>,
+
+                <parameter pos:start="3:17" pos:end="3:29"><decl pos:start="3:17" pos:end="3:29"><type pos:start="3:17" pos:end="3:29"><name pos:start="3:17" pos:end="3:24">uint32_t</name> <modifier pos:start="3:26" pos:end="3:26">*</modifier></type><name pos:start="3:27" pos:end="3:29">eax</name></decl></parameter>, <parameter pos:start="3:32" pos:end="3:44"><decl pos:start="3:32" pos:end="3:44"><type pos:start="3:32" pos:end="3:44"><name pos:start="3:32" pos:end="3:39">uint32_t</name> <modifier pos:start="3:41" pos:end="3:41">*</modifier></type><name pos:start="3:42" pos:end="3:44">ebx</name></decl></parameter>, <parameter pos:start="3:47" pos:end="3:59"><decl pos:start="3:47" pos:end="3:59"><type pos:start="3:47" pos:end="3:59"><name pos:start="3:47" pos:end="3:54">uint32_t</name> <modifier pos:start="3:56" pos:end="3:56">*</modifier></type><name pos:start="3:57" pos:end="3:59">ecx</name></decl></parameter>, <parameter pos:start="3:62" pos:end="3:74"><decl pos:start="3:62" pos:end="3:74"><type pos:start="3:62" pos:end="3:74"><name pos:start="3:62" pos:end="3:69">uint32_t</name> <modifier pos:start="3:71" pos:end="3:71">*</modifier></type><name pos:start="3:72" pos:end="3:74">edx</name></decl></parameter>)</parameter_list>
+
+<block pos:start="5:1" pos:end="65:1">{<block_content pos:start="9:5" pos:end="64:0">
+
+<cpp:if pos:start="7:1" pos:end="7:23">#<cpp:directive pos:start="7:2" pos:end="7:3">if</cpp:directive> <expr pos:start="7:5" pos:end="7:23"><call pos:start="7:5" pos:end="7:23"><name pos:start="7:5" pos:end="7:11">defined</name><argument_list pos:start="7:12" pos:end="7:23">(<argument pos:start="7:13" pos:end="7:22"><expr pos:start="7:13" pos:end="7:22"><name pos:start="7:13" pos:end="7:22">CONFIG_KVM</name></expr></argument>)</argument_list></call></expr></cpp:if>
+
+    <decl_stmt pos:start="9:5" pos:end="14:0"><decl pos:start="9:5" pos:end="9:19"><type pos:start="9:5" pos:end="9:12"><name pos:start="9:5" pos:end="9:12">uint32_t</name></type> <name pos:start="9:14" pos:end="9:19"><name pos:start="9:14" pos:end="9:16">vec</name><index pos:start="9:17" pos:end="9:19">[<expr pos:start="9:18" pos:end="9:18"><literal type="number" pos:start="9:18" pos:end="9:18">4</literal></expr>]</index></name></decl>;</decl_stmt>
+
+
+
+<cpp:ifdef pos:start="13:1" pos:end="13:17">#<cpp:directive pos:start="13:2" pos:end="13:6">ifdef</cpp:directive> <name pos:start="13:8" pos:end="13:17">__x86_64__</name></cpp:ifdef>
+
+    <asm pos:start="15:5" pos:end="24:0">asm <specifier pos:start="15:9" pos:end="15:16">volatile</specifier>("cpuid"
+
+                 : "=a"(vec[0]), "=b"(vec[1]),
+
+                   "=c"(vec[2]), "=d"(vec[3])
+
+                 : "0"(function), "c"(count) : "cc");</asm>
+
+<cpp:else pos:start="23:1" pos:end="23:5">#<cpp:directive pos:start="23:2" pos:end="23:5">else</cpp:directive></cpp:else>
+
+    <asm pos:start="25:5" pos:end="44:0">asm <specifier pos:start="25:9" pos:end="25:16">volatile</specifier>("pusha \n\t"
+
+                 "cpuid \n\t"
+
+                 "mov %%eax, 0(%2) \n\t"
+
+                 "mov %%ebx, 4(%2) \n\t"
+
+                 "mov %%ecx, 8(%2) \n\t"
+
+                 "mov %%edx, 12(%2) \n\t"
+
+                 "popa"
+
+                 : : "a"(function), "c"(count), "S"(vec)
+
+                 : "memory", "cc");</asm>
+
+<cpp:endif pos:start="43:1" pos:end="43:6">#<cpp:directive pos:start="43:2" pos:end="43:6">endif</cpp:directive></cpp:endif>
+
+
+
+    <if_stmt pos:start="47:5" pos:end="49:22"><if pos:start="47:5" pos:end="49:22">if <condition pos:start="47:8" pos:end="47:12">(<expr pos:start="47:9" pos:end="47:11"><name pos:start="47:9" pos:end="47:11">eax</name></expr>)</condition><block type="pseudo" pos:start="49:9" pos:end="49:22"><block_content pos:start="49:9" pos:end="49:22">
+
+        <expr_stmt pos:start="49:9" pos:end="49:22"><expr pos:start="49:9" pos:end="49:21"><operator pos:start="49:9" pos:end="49:9">*</operator><name pos:start="49:10" pos:end="49:12">eax</name> <operator pos:start="49:14" pos:end="49:14">=</operator> <name pos:start="49:16" pos:end="49:21"><name pos:start="49:16" pos:end="49:18">vec</name><index pos:start="49:19" pos:end="49:21">[<expr pos:start="49:20" pos:end="49:20"><literal type="number" pos:start="49:20" pos:end="49:20">0</literal></expr>]</index></name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+    <if_stmt pos:start="51:5" pos:end="53:22"><if pos:start="51:5" pos:end="53:22">if <condition pos:start="51:8" pos:end="51:12">(<expr pos:start="51:9" pos:end="51:11"><name pos:start="51:9" pos:end="51:11">ebx</name></expr>)</condition><block type="pseudo" pos:start="53:9" pos:end="53:22"><block_content pos:start="53:9" pos:end="53:22">
+
+        <expr_stmt pos:start="53:9" pos:end="53:22"><expr pos:start="53:9" pos:end="53:21"><operator pos:start="53:9" pos:end="53:9">*</operator><name pos:start="53:10" pos:end="53:12">ebx</name> <operator pos:start="53:14" pos:end="53:14">=</operator> <name pos:start="53:16" pos:end="53:21"><name pos:start="53:16" pos:end="53:18">vec</name><index pos:start="53:19" pos:end="53:21">[<expr pos:start="53:20" pos:end="53:20"><literal type="number" pos:start="53:20" pos:end="53:20">1</literal></expr>]</index></name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+    <if_stmt pos:start="55:5" pos:end="57:22"><if pos:start="55:5" pos:end="57:22">if <condition pos:start="55:8" pos:end="55:12">(<expr pos:start="55:9" pos:end="55:11"><name pos:start="55:9" pos:end="55:11">ecx</name></expr>)</condition><block type="pseudo" pos:start="57:9" pos:end="57:22"><block_content pos:start="57:9" pos:end="57:22">
+
+        <expr_stmt pos:start="57:9" pos:end="57:22"><expr pos:start="57:9" pos:end="57:21"><operator pos:start="57:9" pos:end="57:9">*</operator><name pos:start="57:10" pos:end="57:12">ecx</name> <operator pos:start="57:14" pos:end="57:14">=</operator> <name pos:start="57:16" pos:end="57:21"><name pos:start="57:16" pos:end="57:18">vec</name><index pos:start="57:19" pos:end="57:21">[<expr pos:start="57:20" pos:end="57:20"><literal type="number" pos:start="57:20" pos:end="57:20">2</literal></expr>]</index></name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+    <if_stmt pos:start="59:5" pos:end="64:0"><if pos:start="59:5" pos:end="64:0">if <condition pos:start="59:8" pos:end="59:12">(<expr pos:start="59:9" pos:end="59:11"><name pos:start="59:9" pos:end="59:11">edx</name></expr>)</condition><block type="pseudo" pos:start="61:9" pos:end="64:0"><block_content pos:start="61:9" pos:end="64:0">
+
+        <expr_stmt pos:start="61:9" pos:end="64:0"><expr pos:start="61:9" pos:end="61:21"><operator pos:start="61:9" pos:end="61:9">*</operator><name pos:start="61:10" pos:end="61:12">edx</name> <operator pos:start="61:14" pos:end="61:14">=</operator> <name pos:start="61:16" pos:end="61:21"><name pos:start="61:16" pos:end="61:18">vec</name><index pos:start="61:19" pos:end="61:21">[<expr pos:start="61:20" pos:end="61:20"><literal type="number" pos:start="61:20" pos:end="61:20">3</literal></expr>]</index></name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+<cpp:endif pos:start="63:1" pos:end="63:6">#<cpp:directive pos:start="63:2" pos:end="63:6">endif</cpp:directive></cpp:endif>
+
+</block_content>}</block></function>
+</unit>

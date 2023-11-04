@@ -1,0 +1,517 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/14434.c" pos:tabs="8"><function pos:start="1:1" pos:end="515:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:31">alloc_refcount_block</name><parameter_list pos:start="1:32" pos:end="3:53">(<parameter pos:start="1:33" pos:end="1:52"><decl pos:start="1:33" pos:end="1:52"><type pos:start="1:33" pos:end="1:52"><name pos:start="1:33" pos:end="1:48">BlockDriverState</name> <modifier pos:start="1:50" pos:end="1:50">*</modifier></type><name pos:start="1:51" pos:end="1:52">bs</name></decl></parameter>,
+
+    <parameter pos:start="3:5" pos:end="3:25"><decl pos:start="3:5" pos:end="3:25"><type pos:start="3:5" pos:end="3:25"><name pos:start="3:5" pos:end="3:11">int64_t</name></type> <name pos:start="3:13" pos:end="3:25">cluster_index</name></decl></parameter>, <parameter pos:start="3:28" pos:end="3:52"><decl pos:start="3:28" pos:end="3:52"><type pos:start="3:28" pos:end="3:52"><name pos:start="3:28" pos:end="3:35">uint16_t</name> <modifier pos:start="3:37" pos:end="3:37">*</modifier><modifier pos:start="3:38" pos:end="3:38">*</modifier></type><name pos:start="3:39" pos:end="3:52">refcount_block</name></decl></parameter>)</parameter_list>
+
+<block pos:start="5:1" pos:end="515:1">{<block_content pos:start="7:5" pos:end="513:15">
+
+    <decl_stmt pos:start="7:5" pos:end="7:34"><decl pos:start="7:5" pos:end="7:33"><type pos:start="7:5" pos:end="7:19"><name pos:start="7:5" pos:end="7:17">BDRVQcowState</name> <modifier pos:start="7:19" pos:end="7:19">*</modifier></type><name pos:start="7:20" pos:end="7:20">s</name> <init pos:start="7:22" pos:end="7:33">= <expr pos:start="7:24" pos:end="7:33"><name pos:start="7:24" pos:end="7:33"><name pos:start="7:24" pos:end="7:25">bs</name><operator pos:start="7:26" pos:end="7:27">-&gt;</operator><name pos:start="7:28" pos:end="7:33">opaque</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:38"><decl pos:start="9:5" pos:end="9:37"><type pos:start="9:5" pos:end="9:16"><name pos:start="9:5" pos:end="9:12">unsigned</name> <name pos:start="9:14" pos:end="9:16">int</name></type> <name pos:start="9:18" pos:end="9:37">refcount_table_index</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:12"><decl pos:start="11:5" pos:end="11:11"><type pos:start="11:5" pos:end="11:7"><name pos:start="11:5" pos:end="11:7">int</name></type> <name pos:start="11:9" pos:end="11:11">ret</name></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="15:5" pos:end="15:50"><expr pos:start="15:5" pos:end="15:49"><call pos:start="15:5" pos:end="15:49"><name pos:start="15:5" pos:end="15:16">BLKDBG_EVENT</name><argument_list pos:start="15:17" pos:end="15:49">(<argument pos:start="15:18" pos:end="15:25"><expr pos:start="15:18" pos:end="15:25"><name pos:start="15:18" pos:end="15:25"><name pos:start="15:18" pos:end="15:19">bs</name><operator pos:start="15:20" pos:end="15:21">-&gt;</operator><name pos:start="15:22" pos:end="15:25">file</name></name></expr></argument>, <argument pos:start="15:28" pos:end="15:48"><expr pos:start="15:28" pos:end="15:48"><name pos:start="15:28" pos:end="15:48">BLKDBG_REFBLOCK_ALLOC</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="19:5" pos:end="19:55">/* Find the refcount block for the given cluster */</comment>
+
+    <expr_stmt pos:start="21:5" pos:end="21:79"><expr pos:start="21:5" pos:end="21:78"><name pos:start="21:5" pos:end="21:24">refcount_table_index</name> <operator pos:start="21:26" pos:end="21:26">=</operator> <name pos:start="21:28" pos:end="21:40">cluster_index</name> <operator pos:start="21:42" pos:end="21:43">&gt;&gt;</operator> <operator pos:start="21:45" pos:end="21:45">(</operator><name pos:start="21:46" pos:end="21:60"><name pos:start="21:46" pos:end="21:46">s</name><operator pos:start="21:47" pos:end="21:48">-&gt;</operator><name pos:start="21:49" pos:end="21:60">cluster_bits</name></name> <operator pos:start="21:62" pos:end="21:62">-</operator> <name pos:start="21:64" pos:end="21:77">REFCOUNT_SHIFT</name><operator pos:start="21:78" pos:end="21:78">)</operator></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="25:5" pos:end="45:5"><if pos:start="25:5" pos:end="45:5">if <condition pos:start="25:8" pos:end="25:54">(<expr pos:start="25:9" pos:end="25:53"><name pos:start="25:9" pos:end="25:28">refcount_table_index</name> <operator pos:start="25:30" pos:end="25:30">&lt;</operator> <name pos:start="25:32" pos:end="25:53"><name pos:start="25:32" pos:end="25:32">s</name><operator pos:start="25:33" pos:end="25:34">-&gt;</operator><name pos:start="25:35" pos:end="25:53">refcount_table_size</name></name></expr>)</condition> <block pos:start="25:56" pos:end="45:5">{<block_content pos:start="29:9" pos:end="43:9">
+
+
+
+        <decl_stmt pos:start="29:9" pos:end="31:52"><decl pos:start="29:9" pos:end="31:51"><type pos:start="29:9" pos:end="29:16"><name pos:start="29:9" pos:end="29:16">uint64_t</name></type> <name pos:start="29:18" pos:end="29:38">refcount_block_offset</name> <init pos:start="29:40" pos:end="31:51">=
+
+            <expr pos:start="31:13" pos:end="31:51"><name pos:start="31:13" pos:end="31:51"><name pos:start="31:13" pos:end="31:13">s</name><operator pos:start="31:14" pos:end="31:15">-&gt;</operator><name pos:start="31:16" pos:end="31:29">refcount_table</name><index pos:start="31:30" pos:end="31:51">[<expr pos:start="31:31" pos:end="31:50"><name pos:start="31:31" pos:end="31:50">refcount_table_index</name></expr>]</index></name></expr></init></decl>;</decl_stmt>
+
+
+
+        <comment type="block" pos:start="35:9" pos:end="35:47">/* If it's already there, we're done */</comment>
+
+        <if_stmt pos:start="37:9" pos:end="43:9"><if pos:start="37:9" pos:end="43:9">if <condition pos:start="37:12" pos:end="37:34">(<expr pos:start="37:13" pos:end="37:33"><name pos:start="37:13" pos:end="37:33">refcount_block_offset</name></expr>)</condition> <block pos:start="37:36" pos:end="43:9">{<block_content pos:start="39:14" pos:end="41:42">
+
+             <return pos:start="39:14" pos:end="41:42">return <expr pos:start="39:21" pos:end="41:41"><call pos:start="39:21" pos:end="41:41"><name pos:start="39:21" pos:end="39:39">load_refcount_block</name><argument_list pos:start="39:40" pos:end="41:41">(<argument pos:start="39:41" pos:end="39:42"><expr pos:start="39:41" pos:end="39:42"><name pos:start="39:41" pos:end="39:42">bs</name></expr></argument>, <argument pos:start="39:45" pos:end="39:65"><expr pos:start="39:45" pos:end="39:65"><name pos:start="39:45" pos:end="39:65">refcount_block_offset</name></expr></argument>,
+
+                 <argument pos:start="41:18" pos:end="41:40"><expr pos:start="41:18" pos:end="41:40"><operator pos:start="41:18" pos:end="41:18">(</operator><name pos:start="41:19" pos:end="41:22">void</name><operator pos:start="41:23" pos:end="41:23">*</operator><operator pos:start="41:24" pos:end="41:24">*</operator><operator pos:start="41:25" pos:end="41:25">)</operator> <name pos:start="41:27" pos:end="41:40">refcount_block</name></expr></argument>)</argument_list></call></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="49:5" pos:end="89:7">/*
+
+     * If we came here, we need to allocate something. Something is at least
+
+     * a cluster for the new refcount block. It may also include a new refcount
+
+     * table if the old refcount table is too small.
+
+     *
+
+     * Note that allocating clusters here needs some special care:
+
+     *
+
+     * - We can't use the normal qcow2_alloc_clusters(), it would try to
+
+     *   increase the refcount and very likely we would end up with an endless
+
+     *   recursion. Instead we must place the refcount blocks in a way that
+
+     *   they can describe them themselves.
+
+     *
+
+     * - We need to consider that at this point we are inside update_refcounts
+
+     *   and doing the initial refcount increase. This means that some clusters
+
+     *   have already been allocated by the caller, but their refcount isn't
+
+     *   accurate yet. free_cluster_index tells us where this allocation ends
+
+     *   as long as we don't overwrite it by freeing clusters.
+
+     *
+
+     * - alloc_clusters_noref and qcow2_free_clusters may load a different
+
+     *   refcount block into the cache
+
+     */</comment>
+
+
+
+    <expr_stmt pos:start="93:5" pos:end="93:27"><expr pos:start="93:5" pos:end="93:26"><operator pos:start="93:5" pos:end="93:5">*</operator><name pos:start="93:6" pos:end="93:19">refcount_block</name> <operator pos:start="93:21" pos:end="93:21">=</operator> <name pos:start="93:23" pos:end="93:26">NULL</name></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="97:5" pos:end="97:73">/* We write to the refcount table, so we might depend on L2 tables */</comment>
+
+    <expr_stmt pos:start="99:5" pos:end="99:45"><expr pos:start="99:5" pos:end="99:44"><call pos:start="99:5" pos:end="99:44"><name pos:start="99:5" pos:end="99:21">qcow2_cache_flush</name><argument_list pos:start="99:22" pos:end="99:44">(<argument pos:start="99:23" pos:end="99:24"><expr pos:start="99:23" pos:end="99:24"><name pos:start="99:23" pos:end="99:24">bs</name></expr></argument>, <argument pos:start="99:27" pos:end="99:43"><expr pos:start="99:27" pos:end="99:43"><name pos:start="99:27" pos:end="99:43"><name pos:start="99:27" pos:end="99:27">s</name><operator pos:start="99:28" pos:end="99:29">-&gt;</operator><name pos:start="99:30" pos:end="99:43">l2_table_cache</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="103:5" pos:end="103:64">/* Allocate the refcount block itself and mark it as used */</comment>
+
+    <decl_stmt pos:start="105:5" pos:end="105:66"><decl pos:start="105:5" pos:end="105:65"><type pos:start="105:5" pos:end="105:11"><name pos:start="105:5" pos:end="105:11">int64_t</name></type> <name pos:start="105:13" pos:end="105:21">new_block</name> <init pos:start="105:23" pos:end="105:65">= <expr pos:start="105:25" pos:end="105:65"><call pos:start="105:25" pos:end="105:65"><name pos:start="105:25" pos:end="105:44">alloc_clusters_noref</name><argument_list pos:start="105:45" pos:end="105:65">(<argument pos:start="105:46" pos:end="105:47"><expr pos:start="105:46" pos:end="105:47"><name pos:start="105:46" pos:end="105:47">bs</name></expr></argument>, <argument pos:start="105:50" pos:end="105:64"><expr pos:start="105:50" pos:end="105:64"><name pos:start="105:50" pos:end="105:64"><name pos:start="105:50" pos:end="105:50">s</name><operator pos:start="105:51" pos:end="105:52">-&gt;</operator><name pos:start="105:53" pos:end="105:64">cluster_size</name></name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <if_stmt pos:start="107:5" pos:end="116:0"><if pos:start="107:5" pos:end="116:0">if <condition pos:start="107:8" pos:end="107:22">(<expr pos:start="107:9" pos:end="107:21"><name pos:start="107:9" pos:end="107:17">new_block</name> <operator pos:start="107:19" pos:end="107:19">&lt;</operator> <literal type="number" pos:start="107:21" pos:end="107:21">0</literal></expr>)</condition> <block pos:start="107:24" pos:end="116:0">{<block_content pos:start="109:9" pos:end="109:25">
+
+        <return pos:start="109:9" pos:end="109:25">return <expr pos:start="109:16" pos:end="109:24"><name pos:start="109:16" pos:end="109:24">new_block</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+<cpp:ifdef pos:start="115:1" pos:end="115:19">#<cpp:directive pos:start="115:2" pos:end="115:6">ifdef</cpp:directive> <name pos:start="115:8" pos:end="115:19">DEBUG_ALLOC2</name></cpp:ifdef>
+
+    <expr_stmt pos:start="117:5" pos:end="124:0"><expr pos:start="117:5" pos:end="121:74"><call pos:start="117:5" pos:end="121:74"><name pos:start="117:5" pos:end="117:11">fprintf</name><argument_list pos:start="117:12" pos:end="121:74">(<argument pos:start="117:13" pos:end="117:18"><expr pos:start="117:13" pos:end="117:18"><name pos:start="117:13" pos:end="117:18">stderr</name></expr></argument>, <argument pos:start="117:21" pos:end="119:27"><expr pos:start="117:21" pos:end="119:27"><literal type="string" pos:start="117:21" pos:end="117:61">"qcow2: Allocate refcount block %d for %"</literal> <name pos:start="117:63" pos:end="117:68">PRIx64</name>
+
+        <literal type="string" pos:start="119:9" pos:end="119:15">" at %"</literal> <name pos:start="119:17" pos:end="119:22">PRIx64</name> <literal type="string" pos:start="119:24" pos:end="119:27">"\n"</literal></expr></argument>,
+
+        <argument pos:start="121:9" pos:end="121:28"><expr pos:start="121:9" pos:end="121:28"><name pos:start="121:9" pos:end="121:28">refcount_table_index</name></expr></argument>, <argument pos:start="121:31" pos:end="121:62"><expr pos:start="121:31" pos:end="121:62"><name pos:start="121:31" pos:end="121:43">cluster_index</name> <operator pos:start="121:45" pos:end="121:46">&lt;&lt;</operator> <name pos:start="121:48" pos:end="121:62"><name pos:start="121:48" pos:end="121:48">s</name><operator pos:start="121:49" pos:end="121:50">-&gt;</operator><name pos:start="121:51" pos:end="121:62">cluster_bits</name></name></expr></argument>, <argument pos:start="121:65" pos:end="121:73"><expr pos:start="121:65" pos:end="121:73"><name pos:start="121:65" pos:end="121:73">new_block</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+<cpp:endif pos:start="123:1" pos:end="123:6">#<cpp:directive pos:start="123:2" pos:end="123:6">endif</cpp:directive></cpp:endif>
+
+
+
+    <if_stmt pos:start="127:5" pos:end="193:5"><if pos:start="127:5" pos:end="155:5">if <condition pos:start="127:8" pos:end="127:79">(<expr pos:start="127:9" pos:end="127:78"><call pos:start="127:9" pos:end="127:78"><name pos:start="127:9" pos:end="127:30">in_same_refcount_block</name><argument_list pos:start="127:31" pos:end="127:78">(<argument pos:start="127:32" pos:end="127:32"><expr pos:start="127:32" pos:end="127:32"><name pos:start="127:32" pos:end="127:32">s</name></expr></argument>, <argument pos:start="127:35" pos:end="127:43"><expr pos:start="127:35" pos:end="127:43"><name pos:start="127:35" pos:end="127:43">new_block</name></expr></argument>, <argument pos:start="127:46" pos:end="127:77"><expr pos:start="127:46" pos:end="127:77"><name pos:start="127:46" pos:end="127:58">cluster_index</name> <operator pos:start="127:60" pos:end="127:61">&lt;&lt;</operator> <name pos:start="127:63" pos:end="127:77"><name pos:start="127:63" pos:end="127:63">s</name><operator pos:start="127:64" pos:end="127:65">-&gt;</operator><name pos:start="127:66" pos:end="127:77">cluster_bits</name></name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="127:81" pos:end="155:5">{<block_content pos:start="131:9" pos:end="153:56">
+
+        <comment type="block" pos:start="129:9" pos:end="129:60">/* Zero the new refcount block before updating it */</comment>
+
+        <expr_stmt pos:start="131:9" pos:end="133:37"><expr pos:start="131:9" pos:end="133:36"><name pos:start="131:9" pos:end="131:11">ret</name> <operator pos:start="131:13" pos:end="131:13">=</operator> <call pos:start="131:15" pos:end="133:36"><name pos:start="131:15" pos:end="131:35">qcow2_cache_get_empty</name><argument_list pos:start="131:36" pos:end="133:36">(<argument pos:start="131:37" pos:end="131:38"><expr pos:start="131:37" pos:end="131:38"><name pos:start="131:37" pos:end="131:38">bs</name></expr></argument>, <argument pos:start="131:41" pos:end="131:63"><expr pos:start="131:41" pos:end="131:63"><name pos:start="131:41" pos:end="131:63"><name pos:start="131:41" pos:end="131:41">s</name><operator pos:start="131:42" pos:end="131:43">-&gt;</operator><name pos:start="131:44" pos:end="131:63">refcount_block_cache</name></name></expr></argument>, <argument pos:start="131:66" pos:end="131:74"><expr pos:start="131:66" pos:end="131:74"><name pos:start="131:66" pos:end="131:74">new_block</name></expr></argument>,
+
+            <argument pos:start="133:13" pos:end="133:35"><expr pos:start="133:13" pos:end="133:35"><operator pos:start="133:13" pos:end="133:13">(</operator><name pos:start="133:14" pos:end="133:17">void</name><operator pos:start="133:18" pos:end="133:18">*</operator><operator pos:start="133:19" pos:end="133:19">*</operator><operator pos:start="133:20" pos:end="133:20">)</operator> <name pos:start="133:22" pos:end="133:35">refcount_block</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="135:9" pos:end="139:9"><if pos:start="135:9" pos:end="139:9">if <condition pos:start="135:12" pos:end="135:20">(<expr pos:start="135:13" pos:end="135:19"><name pos:start="135:13" pos:end="135:15">ret</name> <operator pos:start="135:17" pos:end="135:17">&lt;</operator> <literal type="number" pos:start="135:19" pos:end="135:19">0</literal></expr>)</condition> <block pos:start="135:22" pos:end="139:9">{<block_content pos:start="137:13" pos:end="137:28">
+
+            <goto pos:start="137:13" pos:end="137:28">goto <name pos:start="137:18" pos:end="137:27">fail_block</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="143:9" pos:end="143:52"><expr pos:start="143:9" pos:end="143:51"><call pos:start="143:9" pos:end="143:51"><name pos:start="143:9" pos:end="143:14">memset</name><argument_list pos:start="143:15" pos:end="143:51">(<argument pos:start="143:16" pos:end="143:30"><expr pos:start="143:16" pos:end="143:30"><operator pos:start="143:16" pos:end="143:16">*</operator><name pos:start="143:17" pos:end="143:30">refcount_block</name></expr></argument>, <argument pos:start="143:33" pos:end="143:33"><expr pos:start="143:33" pos:end="143:33"><literal type="number" pos:start="143:33" pos:end="143:33">0</literal></expr></argument>, <argument pos:start="143:36" pos:end="143:50"><expr pos:start="143:36" pos:end="143:50"><name pos:start="143:36" pos:end="143:50"><name pos:start="143:36" pos:end="143:36">s</name><operator pos:start="143:37" pos:end="143:38">-&gt;</operator><name pos:start="143:39" pos:end="143:50">cluster_size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <comment type="block" pos:start="147:9" pos:end="147:66">/* The block describes itself, need to update the cache */</comment>
+
+        <decl_stmt pos:start="149:9" pos:end="151:60"><decl pos:start="149:9" pos:end="151:59"><type pos:start="149:9" pos:end="149:11"><name pos:start="149:9" pos:end="149:11">int</name></type> <name pos:start="149:13" pos:end="149:23">block_index</name> <init pos:start="149:25" pos:end="151:59">= <expr pos:start="149:27" pos:end="151:59"><operator pos:start="149:27" pos:end="149:27">(</operator><name pos:start="149:28" pos:end="149:36">new_block</name> <operator pos:start="149:38" pos:end="149:39">&gt;&gt;</operator> <name pos:start="149:41" pos:end="149:55"><name pos:start="149:41" pos:end="149:41">s</name><operator pos:start="149:42" pos:end="149:43">-&gt;</operator><name pos:start="149:44" pos:end="149:55">cluster_bits</name></name><operator pos:start="149:56" pos:end="149:56">)</operator> <operator pos:start="149:58" pos:end="149:58">&amp;</operator>
+
+            <operator pos:start="151:13" pos:end="151:13">(</operator><operator pos:start="151:14" pos:end="151:14">(</operator><literal type="number" pos:start="151:15" pos:end="151:15">1</literal> <operator pos:start="151:17" pos:end="151:18">&lt;&lt;</operator> <operator pos:start="151:20" pos:end="151:20">(</operator><name pos:start="151:21" pos:end="151:35"><name pos:start="151:21" pos:end="151:21">s</name><operator pos:start="151:22" pos:end="151:23">-&gt;</operator><name pos:start="151:24" pos:end="151:35">cluster_bits</name></name> <operator pos:start="151:37" pos:end="151:37">-</operator> <name pos:start="151:39" pos:end="151:52">REFCOUNT_SHIFT</name><operator pos:start="151:53" pos:end="151:53">)</operator><operator pos:start="151:54" pos:end="151:54">)</operator> <operator pos:start="151:56" pos:end="151:56">-</operator> <literal type="number" pos:start="151:58" pos:end="151:58">1</literal><operator pos:start="151:59" pos:end="151:59">)</operator></expr></init></decl>;</decl_stmt>
+
+        <expr_stmt pos:start="153:9" pos:end="153:56"><expr pos:start="153:9" pos:end="153:55"><operator pos:start="153:9" pos:end="153:9">(</operator><operator pos:start="153:10" pos:end="153:10">*</operator><name pos:start="153:11" pos:end="153:24">refcount_block</name><operator pos:start="153:25" pos:end="153:25">)</operator><index pos:start="153:26" pos:end="153:38">[<expr pos:start="153:27" pos:end="153:37"><name pos:start="153:27" pos:end="153:37">block_index</name></expr>]</index> <operator pos:start="153:40" pos:end="153:40">=</operator> <call pos:start="153:42" pos:end="153:55"><name pos:start="153:42" pos:end="153:52">cpu_to_be16</name><argument_list pos:start="153:53" pos:end="153:55">(<argument pos:start="153:54" pos:end="153:54"><expr pos:start="153:54" pos:end="153:54"><literal type="number" pos:start="153:54" pos:end="153:54">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="155:7" pos:end="193:5">else <block pos:start="155:12" pos:end="193:5">{<block_content pos:start="161:9" pos:end="191:52">
+
+        <comment type="block" pos:start="157:9" pos:end="159:54">/* Described somewhere else. This can recurse at most twice before we
+
+         * arrive at a block that describes itself. */</comment>
+
+        <expr_stmt pos:start="161:9" pos:end="161:65"><expr pos:start="161:9" pos:end="161:64"><name pos:start="161:9" pos:end="161:11">ret</name> <operator pos:start="161:13" pos:end="161:13">=</operator> <call pos:start="161:15" pos:end="161:64"><name pos:start="161:15" pos:end="161:29">update_refcount</name><argument_list pos:start="161:30" pos:end="161:64">(<argument pos:start="161:31" pos:end="161:32"><expr pos:start="161:31" pos:end="161:32"><name pos:start="161:31" pos:end="161:32">bs</name></expr></argument>, <argument pos:start="161:35" pos:end="161:43"><expr pos:start="161:35" pos:end="161:43"><name pos:start="161:35" pos:end="161:43">new_block</name></expr></argument>, <argument pos:start="161:46" pos:end="161:60"><expr pos:start="161:46" pos:end="161:60"><name pos:start="161:46" pos:end="161:60"><name pos:start="161:46" pos:end="161:46">s</name><operator pos:start="161:47" pos:end="161:48">-&gt;</operator><name pos:start="161:49" pos:end="161:60">cluster_size</name></name></expr></argument>, <argument pos:start="161:63" pos:end="161:63"><expr pos:start="161:63" pos:end="161:63"><literal type="number" pos:start="161:63" pos:end="161:63">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="163:9" pos:end="167:9"><if pos:start="163:9" pos:end="167:9">if <condition pos:start="163:12" pos:end="163:20">(<expr pos:start="163:13" pos:end="163:19"><name pos:start="163:13" pos:end="163:15">ret</name> <operator pos:start="163:17" pos:end="163:17">&lt;</operator> <literal type="number" pos:start="163:19" pos:end="163:19">0</literal></expr>)</condition> <block pos:start="163:22" pos:end="167:9">{<block_content pos:start="165:13" pos:end="165:28">
+
+            <goto pos:start="165:13" pos:end="165:28">goto <name pos:start="165:18" pos:end="165:27">fail_block</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="171:9" pos:end="171:29"><expr pos:start="171:9" pos:end="171:28"><call pos:start="171:9" pos:end="171:28"><name pos:start="171:9" pos:end="171:18">bdrv_flush</name><argument_list pos:start="171:19" pos:end="171:28">(<argument pos:start="171:20" pos:end="171:27"><expr pos:start="171:20" pos:end="171:27"><name pos:start="171:20" pos:end="171:27"><name pos:start="171:20" pos:end="171:21">bs</name><operator pos:start="171:22" pos:end="171:23">-&gt;</operator><name pos:start="171:24" pos:end="171:27">file</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <comment type="block" pos:start="175:9" pos:end="177:60">/* Initialize the new refcount block only after updating its refcount,
+
+         * update_refcount uses the refcount cache itself */</comment>
+
+        <expr_stmt pos:start="179:9" pos:end="181:37"><expr pos:start="179:9" pos:end="181:36"><name pos:start="179:9" pos:end="179:11">ret</name> <operator pos:start="179:13" pos:end="179:13">=</operator> <call pos:start="179:15" pos:end="181:36"><name pos:start="179:15" pos:end="179:35">qcow2_cache_get_empty</name><argument_list pos:start="179:36" pos:end="181:36">(<argument pos:start="179:37" pos:end="179:38"><expr pos:start="179:37" pos:end="179:38"><name pos:start="179:37" pos:end="179:38">bs</name></expr></argument>, <argument pos:start="179:41" pos:end="179:63"><expr pos:start="179:41" pos:end="179:63"><name pos:start="179:41" pos:end="179:63"><name pos:start="179:41" pos:end="179:41">s</name><operator pos:start="179:42" pos:end="179:43">-&gt;</operator><name pos:start="179:44" pos:end="179:63">refcount_block_cache</name></name></expr></argument>, <argument pos:start="179:66" pos:end="179:74"><expr pos:start="179:66" pos:end="179:74"><name pos:start="179:66" pos:end="179:74">new_block</name></expr></argument>,
+
+            <argument pos:start="181:13" pos:end="181:35"><expr pos:start="181:13" pos:end="181:35"><operator pos:start="181:13" pos:end="181:13">(</operator><name pos:start="181:14" pos:end="181:17">void</name><operator pos:start="181:18" pos:end="181:18">*</operator><operator pos:start="181:19" pos:end="181:19">*</operator><operator pos:start="181:20" pos:end="181:20">)</operator> <name pos:start="181:22" pos:end="181:35">refcount_block</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="183:9" pos:end="187:9"><if pos:start="183:9" pos:end="187:9">if <condition pos:start="183:12" pos:end="183:20">(<expr pos:start="183:13" pos:end="183:19"><name pos:start="183:13" pos:end="183:15">ret</name> <operator pos:start="183:17" pos:end="183:17">&lt;</operator> <literal type="number" pos:start="183:19" pos:end="183:19">0</literal></expr>)</condition> <block pos:start="183:22" pos:end="187:9">{<block_content pos:start="185:13" pos:end="185:28">
+
+            <goto pos:start="185:13" pos:end="185:28">goto <name pos:start="185:18" pos:end="185:27">fail_block</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="191:9" pos:end="191:52"><expr pos:start="191:9" pos:end="191:51"><call pos:start="191:9" pos:end="191:51"><name pos:start="191:9" pos:end="191:14">memset</name><argument_list pos:start="191:15" pos:end="191:51">(<argument pos:start="191:16" pos:end="191:30"><expr pos:start="191:16" pos:end="191:30"><operator pos:start="191:16" pos:end="191:16">*</operator><name pos:start="191:17" pos:end="191:30">refcount_block</name></expr></argument>, <argument pos:start="191:33" pos:end="191:33"><expr pos:start="191:33" pos:end="191:33"><literal type="number" pos:start="191:33" pos:end="191:33">0</literal></expr></argument>, <argument pos:start="191:36" pos:end="191:50"><expr pos:start="191:36" pos:end="191:50"><name pos:start="191:36" pos:end="191:50"><name pos:start="191:36" pos:end="191:36">s</name><operator pos:start="191:37" pos:end="191:38">-&gt;</operator><name pos:start="191:39" pos:end="191:50">cluster_size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <comment type="block" pos:start="197:5" pos:end="197:64">/* Now the new refcount block needs to be written to disk */</comment>
+
+    <expr_stmt pos:start="199:5" pos:end="199:56"><expr pos:start="199:5" pos:end="199:55"><call pos:start="199:5" pos:end="199:55"><name pos:start="199:5" pos:end="199:16">BLKDBG_EVENT</name><argument_list pos:start="199:17" pos:end="199:55">(<argument pos:start="199:18" pos:end="199:25"><expr pos:start="199:18" pos:end="199:25"><name pos:start="199:18" pos:end="199:25"><name pos:start="199:18" pos:end="199:19">bs</name><operator pos:start="199:20" pos:end="199:21">-&gt;</operator><name pos:start="199:22" pos:end="199:25">file</name></name></expr></argument>, <argument pos:start="199:28" pos:end="199:54"><expr pos:start="199:28" pos:end="199:54"><name pos:start="199:28" pos:end="199:54">BLKDBG_REFBLOCK_ALLOC_WRITE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="201:5" pos:end="201:75"><expr pos:start="201:5" pos:end="201:74"><call pos:start="201:5" pos:end="201:74"><name pos:start="201:5" pos:end="201:32">qcow2_cache_entry_mark_dirty</name><argument_list pos:start="201:33" pos:end="201:74">(<argument pos:start="201:34" pos:end="201:56"><expr pos:start="201:34" pos:end="201:56"><name pos:start="201:34" pos:end="201:56"><name pos:start="201:34" pos:end="201:34">s</name><operator pos:start="201:35" pos:end="201:36">-&gt;</operator><name pos:start="201:37" pos:end="201:56">refcount_block_cache</name></name></expr></argument>, <argument pos:start="201:59" pos:end="201:73"><expr pos:start="201:59" pos:end="201:73"><operator pos:start="201:59" pos:end="201:59">*</operator><name pos:start="201:60" pos:end="201:73">refcount_block</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="203:5" pos:end="203:57"><expr pos:start="203:5" pos:end="203:56"><name pos:start="203:5" pos:end="203:7">ret</name> <operator pos:start="203:9" pos:end="203:9">=</operator> <call pos:start="203:11" pos:end="203:56"><name pos:start="203:11" pos:end="203:27">qcow2_cache_flush</name><argument_list pos:start="203:28" pos:end="203:56">(<argument pos:start="203:29" pos:end="203:30"><expr pos:start="203:29" pos:end="203:30"><name pos:start="203:29" pos:end="203:30">bs</name></expr></argument>, <argument pos:start="203:33" pos:end="203:55"><expr pos:start="203:33" pos:end="203:55"><name pos:start="203:33" pos:end="203:55"><name pos:start="203:33" pos:end="203:33">s</name><operator pos:start="203:34" pos:end="203:35">-&gt;</operator><name pos:start="203:36" pos:end="203:55">refcount_block_cache</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="205:5" pos:end="209:5"><if pos:start="205:5" pos:end="209:5">if <condition pos:start="205:8" pos:end="205:16">(<expr pos:start="205:9" pos:end="205:15"><name pos:start="205:9" pos:end="205:11">ret</name> <operator pos:start="205:13" pos:end="205:13">&lt;</operator> <literal type="number" pos:start="205:15" pos:end="205:15">0</literal></expr>)</condition> <block pos:start="205:18" pos:end="209:5">{<block_content pos:start="207:9" pos:end="207:24">
+
+        <goto pos:start="207:9" pos:end="207:24">goto <name pos:start="207:14" pos:end="207:23">fail_block</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="213:5" pos:end="213:75">/* If the refcount table is big enough, just hook the block up there */</comment>
+
+    <if_stmt pos:start="215:5" pos:end="239:5"><if pos:start="215:5" pos:end="239:5">if <condition pos:start="215:8" pos:end="215:54">(<expr pos:start="215:9" pos:end="215:53"><name pos:start="215:9" pos:end="215:28">refcount_table_index</name> <operator pos:start="215:30" pos:end="215:30">&lt;</operator> <name pos:start="215:32" pos:end="215:53"><name pos:start="215:32" pos:end="215:32">s</name><operator pos:start="215:33" pos:end="215:34">-&gt;</operator><name pos:start="215:35" pos:end="215:53">refcount_table_size</name></name></expr>)</condition> <block pos:start="215:56" pos:end="239:5">{<block_content pos:start="217:9" pos:end="237:17">
+
+        <decl_stmt pos:start="217:9" pos:end="217:49"><decl pos:start="217:9" pos:end="217:48"><type pos:start="217:9" pos:end="217:16"><name pos:start="217:9" pos:end="217:16">uint64_t</name></type> <name pos:start="217:18" pos:end="217:23">data64</name> <init pos:start="217:25" pos:end="217:48">= <expr pos:start="217:27" pos:end="217:48"><call pos:start="217:27" pos:end="217:48"><name pos:start="217:27" pos:end="217:37">cpu_to_be64</name><argument_list pos:start="217:38" pos:end="217:48">(<argument pos:start="217:39" pos:end="217:47"><expr pos:start="217:39" pos:end="217:47"><name pos:start="217:39" pos:end="217:47">new_block</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <expr_stmt pos:start="219:9" pos:end="219:61"><expr pos:start="219:9" pos:end="219:60"><call pos:start="219:9" pos:end="219:60"><name pos:start="219:9" pos:end="219:20">BLKDBG_EVENT</name><argument_list pos:start="219:21" pos:end="219:60">(<argument pos:start="219:22" pos:end="219:29"><expr pos:start="219:22" pos:end="219:29"><name pos:start="219:22" pos:end="219:29"><name pos:start="219:22" pos:end="219:23">bs</name><operator pos:start="219:24" pos:end="219:25">-&gt;</operator><name pos:start="219:26" pos:end="219:29">file</name></name></expr></argument>, <argument pos:start="219:32" pos:end="219:59"><expr pos:start="219:32" pos:end="219:59"><name pos:start="219:32" pos:end="219:59">BLKDBG_REFBLOCK_ALLOC_HOOKUP</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="221:9" pos:end="225:37"><expr pos:start="221:9" pos:end="225:36"><name pos:start="221:9" pos:end="221:11">ret</name> <operator pos:start="221:13" pos:end="221:13">=</operator> <call pos:start="221:15" pos:end="225:36"><name pos:start="221:15" pos:end="221:30">bdrv_pwrite_sync</name><argument_list pos:start="221:31" pos:end="225:36">(<argument pos:start="221:32" pos:end="221:39"><expr pos:start="221:32" pos:end="221:39"><name pos:start="221:32" pos:end="221:39"><name pos:start="221:32" pos:end="221:33">bs</name><operator pos:start="221:34" pos:end="221:35">-&gt;</operator><name pos:start="221:36" pos:end="221:39">file</name></name></expr></argument>,
+
+            <argument pos:start="223:13" pos:end="223:78"><expr pos:start="223:13" pos:end="223:78"><name pos:start="223:13" pos:end="223:36"><name pos:start="223:13" pos:end="223:13">s</name><operator pos:start="223:14" pos:end="223:15">-&gt;</operator><name pos:start="223:16" pos:end="223:36">refcount_table_offset</name></name> <operator pos:start="223:38" pos:end="223:38">+</operator> <name pos:start="223:40" pos:end="223:59">refcount_table_index</name> <operator pos:start="223:61" pos:end="223:61">*</operator> <sizeof pos:start="223:63" pos:end="223:78">sizeof<argument_list pos:start="223:69" pos:end="223:78">(<argument pos:start="223:70" pos:end="223:77"><expr pos:start="223:70" pos:end="223:77"><name pos:start="223:70" pos:end="223:77">uint64_t</name></expr></argument>)</argument_list></sizeof></expr></argument>,
+
+            <argument pos:start="225:13" pos:end="225:19"><expr pos:start="225:13" pos:end="225:19"><operator pos:start="225:13" pos:end="225:13">&amp;</operator><name pos:start="225:14" pos:end="225:19">data64</name></expr></argument>, <argument pos:start="225:22" pos:end="225:35"><expr pos:start="225:22" pos:end="225:35"><sizeof pos:start="225:22" pos:end="225:35">sizeof<argument_list pos:start="225:28" pos:end="225:35">(<argument pos:start="225:29" pos:end="225:34"><expr pos:start="225:29" pos:end="225:34"><name pos:start="225:29" pos:end="225:34">data64</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="227:9" pos:end="231:9"><if pos:start="227:9" pos:end="231:9">if <condition pos:start="227:12" pos:end="227:20">(<expr pos:start="227:13" pos:end="227:19"><name pos:start="227:13" pos:end="227:15">ret</name> <operator pos:start="227:17" pos:end="227:17">&lt;</operator> <literal type="number" pos:start="227:19" pos:end="227:19">0</literal></expr>)</condition> <block pos:start="227:22" pos:end="231:9">{<block_content pos:start="229:13" pos:end="229:28">
+
+            <goto pos:start="229:13" pos:end="229:28">goto <name pos:start="229:18" pos:end="229:27">fail_block</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="235:9" pos:end="235:60"><expr pos:start="235:9" pos:end="235:59"><name pos:start="235:9" pos:end="235:47"><name pos:start="235:9" pos:end="235:9">s</name><operator pos:start="235:10" pos:end="235:11">-&gt;</operator><name pos:start="235:12" pos:end="235:25">refcount_table</name><index pos:start="235:26" pos:end="235:47">[<expr pos:start="235:27" pos:end="235:46"><name pos:start="235:27" pos:end="235:46">refcount_table_index</name></expr>]</index></name> <operator pos:start="235:49" pos:end="235:49">=</operator> <name pos:start="235:51" pos:end="235:59">new_block</name></expr>;</expr_stmt>
+
+        <return pos:start="237:9" pos:end="237:17">return <expr pos:start="237:16" pos:end="237:16"><literal type="number" pos:start="237:16" pos:end="237:16">0</literal></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="243:5" pos:end="243:80"><expr pos:start="243:5" pos:end="243:79"><name pos:start="243:5" pos:end="243:7">ret</name> <operator pos:start="243:9" pos:end="243:9">=</operator> <call pos:start="243:11" pos:end="243:79"><name pos:start="243:11" pos:end="243:25">qcow2_cache_put</name><argument_list pos:start="243:26" pos:end="243:79">(<argument pos:start="243:27" pos:end="243:28"><expr pos:start="243:27" pos:end="243:28"><name pos:start="243:27" pos:end="243:28">bs</name></expr></argument>, <argument pos:start="243:31" pos:end="243:53"><expr pos:start="243:31" pos:end="243:53"><name pos:start="243:31" pos:end="243:53"><name pos:start="243:31" pos:end="243:31">s</name><operator pos:start="243:32" pos:end="243:33">-&gt;</operator><name pos:start="243:34" pos:end="243:53">refcount_block_cache</name></name></expr></argument>, <argument pos:start="243:56" pos:end="243:78"><expr pos:start="243:56" pos:end="243:78"><operator pos:start="243:56" pos:end="243:56">(</operator><name pos:start="243:57" pos:end="243:60">void</name><operator pos:start="243:61" pos:end="243:61">*</operator><operator pos:start="243:62" pos:end="243:62">*</operator><operator pos:start="243:63" pos:end="243:63">)</operator> <name pos:start="243:65" pos:end="243:78">refcount_block</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="245:5" pos:end="249:5"><if pos:start="245:5" pos:end="249:5">if <condition pos:start="245:8" pos:end="245:16">(<expr pos:start="245:9" pos:end="245:15"><name pos:start="245:9" pos:end="245:11">ret</name> <operator pos:start="245:13" pos:end="245:13">&lt;</operator> <literal type="number" pos:start="245:15" pos:end="245:15">0</literal></expr>)</condition> <block pos:start="245:18" pos:end="249:5">{<block_content pos:start="247:9" pos:end="247:24">
+
+        <goto pos:start="247:9" pos:end="247:24">goto <name pos:start="247:14" pos:end="247:23">fail_block</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="253:5" pos:end="273:7">/*
+
+     * If we come here, we need to grow the refcount table. Again, a new
+
+     * refcount table needs some space and we can't simply allocate to avoid
+
+     * endless recursion.
+
+     *
+
+     * Therefore let's grab new refcount blocks at the end of the image, which
+
+     * will describe themselves and the new refcount table. This way we can
+
+     * reference them only in the new table and do the switch to the new
+
+     * refcount table at once without producing an inconsistent state in
+
+     * between.
+
+     */</comment>
+
+    <expr_stmt pos:start="275:5" pos:end="275:49"><expr pos:start="275:5" pos:end="275:48"><call pos:start="275:5" pos:end="275:48"><name pos:start="275:5" pos:end="275:16">BLKDBG_EVENT</name><argument_list pos:start="275:17" pos:end="275:48">(<argument pos:start="275:18" pos:end="275:25"><expr pos:start="275:18" pos:end="275:25"><name pos:start="275:18" pos:end="275:25"><name pos:start="275:18" pos:end="275:19">bs</name><operator pos:start="275:20" pos:end="275:21">-&gt;</operator><name pos:start="275:22" pos:end="275:25">file</name></name></expr></argument>, <argument pos:start="275:28" pos:end="275:47"><expr pos:start="275:28" pos:end="275:47"><name pos:start="275:28" pos:end="275:47">BLKDBG_REFTABLE_GROW</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="279:5" pos:end="279:63">/* Calculate the number of refcount blocks needed so far */</comment>
+
+    <decl_stmt pos:start="281:5" pos:end="281:79"><decl pos:start="281:5" pos:end="281:78"><type pos:start="281:5" pos:end="281:12"><name pos:start="281:5" pos:end="281:12">uint64_t</name></type> <name pos:start="281:14" pos:end="281:36">refcount_block_clusters</name> <init pos:start="281:38" pos:end="281:78">= <expr pos:start="281:40" pos:end="281:78"><literal type="number" pos:start="281:40" pos:end="281:40">1</literal> <operator pos:start="281:42" pos:end="281:43">&lt;&lt;</operator> <operator pos:start="281:45" pos:end="281:45">(</operator><name pos:start="281:46" pos:end="281:60"><name pos:start="281:46" pos:end="281:46">s</name><operator pos:start="281:47" pos:end="281:48">-&gt;</operator><name pos:start="281:49" pos:end="281:60">cluster_bits</name></name> <operator pos:start="281:62" pos:end="281:62">-</operator> <name pos:start="281:64" pos:end="281:77">REFCOUNT_SHIFT</name><operator pos:start="281:78" pos:end="281:78">)</operator></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="283:5" pos:end="285:63"><decl pos:start="283:5" pos:end="285:62"><type pos:start="283:5" pos:end="283:12"><name pos:start="283:5" pos:end="283:12">uint64_t</name></type> <name pos:start="283:14" pos:end="283:24">blocks_used</name> <init pos:start="283:26" pos:end="285:62">= <expr pos:start="283:28" pos:end="285:62"><operator pos:start="283:28" pos:end="283:28">(</operator><name pos:start="283:29" pos:end="283:49"><name pos:start="283:29" pos:end="283:29">s</name><operator pos:start="283:30" pos:end="283:31">-&gt;</operator><name pos:start="283:32" pos:end="283:49">free_cluster_index</name></name> <operator pos:start="283:51" pos:end="283:51">+</operator>
+
+        <name pos:start="285:9" pos:end="285:31">refcount_block_clusters</name> <operator pos:start="285:33" pos:end="285:33">-</operator> <literal type="number" pos:start="285:35" pos:end="285:35">1</literal><operator pos:start="285:36" pos:end="285:36">)</operator> <operator pos:start="285:38" pos:end="285:38">/</operator> <name pos:start="285:40" pos:end="285:62">refcount_block_clusters</name></expr></init></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="289:5" pos:end="289:70">/* And now we need at least one block more for the new metadata */</comment>
+
+    <decl_stmt pos:start="291:5" pos:end="291:71"><decl pos:start="291:5" pos:end="291:70"><type pos:start="291:5" pos:end="291:12"><name pos:start="291:5" pos:end="291:12">uint64_t</name></type> <name pos:start="291:14" pos:end="291:23">table_size</name> <init pos:start="291:25" pos:end="291:70">= <expr pos:start="291:27" pos:end="291:70"><call pos:start="291:27" pos:end="291:70"><name pos:start="291:27" pos:end="291:50">next_refcount_table_size</name><argument_list pos:start="291:51" pos:end="291:70">(<argument pos:start="291:52" pos:end="291:52"><expr pos:start="291:52" pos:end="291:52"><name pos:start="291:52" pos:end="291:52">s</name></expr></argument>, <argument pos:start="291:55" pos:end="291:69"><expr pos:start="291:55" pos:end="291:69"><name pos:start="291:55" pos:end="291:65">blocks_used</name> <operator pos:start="291:67" pos:end="291:67">+</operator> <literal type="number" pos:start="291:69" pos:end="291:69">1</literal></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="293:5" pos:end="293:29"><decl pos:start="293:5" pos:end="293:28"><type pos:start="293:5" pos:end="293:12"><name pos:start="293:5" pos:end="293:12">uint64_t</name></type> <name pos:start="293:14" pos:end="293:28">last_table_size</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="295:5" pos:end="295:29"><decl pos:start="295:5" pos:end="295:28"><type pos:start="295:5" pos:end="295:12"><name pos:start="295:5" pos:end="295:12">uint64_t</name></type> <name pos:start="295:14" pos:end="295:28">blocks_clusters</name></decl>;</decl_stmt>
+
+    <do pos:start="297:5" pos:end="326:0">do <block pos:start="297:8" pos:end="321:5">{<block_content pos:start="299:9" pos:end="317:40">
+
+        <decl_stmt pos:start="299:9" pos:end="299:66"><decl pos:start="299:9" pos:end="299:65"><type pos:start="299:9" pos:end="299:16"><name pos:start="299:9" pos:end="299:16">uint64_t</name></type> <name pos:start="299:18" pos:end="299:31">table_clusters</name> <init pos:start="299:33" pos:end="299:65">= <expr pos:start="299:35" pos:end="299:65"><call pos:start="299:35" pos:end="299:65"><name pos:start="299:35" pos:end="299:50">size_to_clusters</name><argument_list pos:start="299:51" pos:end="299:65">(<argument pos:start="299:52" pos:end="299:52"><expr pos:start="299:52" pos:end="299:52"><name pos:start="299:52" pos:end="299:52">s</name></expr></argument>, <argument pos:start="299:55" pos:end="299:64"><expr pos:start="299:55" pos:end="299:64"><name pos:start="299:55" pos:end="299:64">table_size</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <expr_stmt pos:start="301:9" pos:end="305:39"><expr pos:start="301:9" pos:end="305:38"><name pos:start="301:9" pos:end="301:23">blocks_clusters</name> <operator pos:start="301:25" pos:end="301:25">=</operator> <literal type="number" pos:start="301:27" pos:end="301:29">1</literal> <operator pos:start="301:29" pos:end="301:29">+</operator>
+
+            <operator pos:start="303:13" pos:end="303:13">(</operator><operator pos:start="303:14" pos:end="303:14">(</operator><name pos:start="303:15" pos:end="303:28">table_clusters</name> <operator pos:start="303:30" pos:end="303:30">+</operator> <name pos:start="303:32" pos:end="303:54">refcount_block_clusters</name> <operator pos:start="303:56" pos:end="303:56">-</operator> <literal type="number" pos:start="303:58" pos:end="303:58">1</literal><operator pos:start="303:59" pos:end="303:59">)</operator>
+
+            <operator pos:start="305:13" pos:end="305:13">/</operator> <name pos:start="305:15" pos:end="305:37">refcount_block_clusters</name><operator pos:start="305:38" pos:end="305:38">)</operator></expr>;</expr_stmt>
+
+        <decl_stmt pos:start="307:9" pos:end="307:66"><decl pos:start="307:9" pos:end="307:65"><type pos:start="307:9" pos:end="307:16"><name pos:start="307:9" pos:end="307:16">uint64_t</name></type> <name pos:start="307:18" pos:end="307:30">meta_clusters</name> <init pos:start="307:32" pos:end="307:65">= <expr pos:start="307:34" pos:end="307:65"><name pos:start="307:34" pos:end="307:47">table_clusters</name> <operator pos:start="307:49" pos:end="307:49">+</operator> <name pos:start="307:51" pos:end="307:65">blocks_clusters</name></expr></init></decl>;</decl_stmt>
+
+
+
+        <expr_stmt pos:start="311:9" pos:end="311:37"><expr pos:start="311:9" pos:end="311:36"><name pos:start="311:9" pos:end="311:23">last_table_size</name> <operator pos:start="311:25" pos:end="311:25">=</operator> <name pos:start="311:27" pos:end="311:36">table_size</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="313:9" pos:end="317:40"><expr pos:start="313:9" pos:end="317:39"><name pos:start="313:9" pos:end="313:18">table_size</name> <operator pos:start="313:20" pos:end="313:20">=</operator> <call pos:start="313:22" pos:end="317:39"><name pos:start="313:22" pos:end="313:45">next_refcount_table_size</name><argument_list pos:start="313:46" pos:end="317:39">(<argument pos:start="313:47" pos:end="313:47"><expr pos:start="313:47" pos:end="313:47"><name pos:start="313:47" pos:end="313:47">s</name></expr></argument>, <argument pos:start="313:50" pos:end="317:38"><expr pos:start="313:50" pos:end="317:38"><name pos:start="313:50" pos:end="313:60">blocks_used</name> <operator pos:start="313:62" pos:end="313:62">+</operator>
+
+            <operator pos:start="315:13" pos:end="315:13">(</operator><operator pos:start="315:14" pos:end="315:14">(</operator><name pos:start="315:15" pos:end="315:27">meta_clusters</name> <operator pos:start="315:29" pos:end="315:29">+</operator> <name pos:start="315:31" pos:end="315:53">refcount_block_clusters</name> <operator pos:start="315:55" pos:end="315:55">-</operator> <literal type="number" pos:start="315:57" pos:end="315:57">1</literal><operator pos:start="315:58" pos:end="315:58">)</operator>
+
+            <operator pos:start="317:13" pos:end="317:13">/</operator> <name pos:start="317:15" pos:end="317:37">refcount_block_clusters</name><operator pos:start="317:38" pos:end="317:38">)</operator></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    </block_content>}</block> while <condition pos:start="321:13" pos:end="321:43">(<expr pos:start="321:14" pos:end="321:42"><name pos:start="321:14" pos:end="321:28">last_table_size</name> <operator pos:start="321:30" pos:end="321:31">!=</operator> <name pos:start="321:33" pos:end="321:42">table_size</name></expr>)</condition>;</do>
+
+
+
+<cpp:ifdef pos:start="325:1" pos:end="325:19">#<cpp:directive pos:start="325:2" pos:end="325:6">ifdef</cpp:directive> <name pos:start="325:8" pos:end="325:19">DEBUG_ALLOC2</name></cpp:ifdef>
+
+    <expr_stmt pos:start="327:5" pos:end="332:0"><expr pos:start="327:5" pos:end="329:43"><call pos:start="327:5" pos:end="329:43"><name pos:start="327:5" pos:end="327:11">fprintf</name><argument_list pos:start="327:12" pos:end="329:43">(<argument pos:start="327:13" pos:end="327:18"><expr pos:start="327:13" pos:end="327:18"><name pos:start="327:13" pos:end="327:18">stderr</name></expr></argument>, <argument pos:start="327:21" pos:end="327:77"><expr pos:start="327:21" pos:end="327:77"><literal type="string" pos:start="327:21" pos:end="327:50">"qcow2: Grow refcount table %"</literal> <name pos:start="327:52" pos:end="327:57">PRId32</name> <literal type="string" pos:start="327:59" pos:end="327:65">" =&gt; %"</literal> <name pos:start="327:67" pos:end="327:72">PRId64</name> <literal type="string" pos:start="327:74" pos:end="327:77">"\n"</literal></expr></argument>,
+
+        <argument pos:start="329:9" pos:end="329:30"><expr pos:start="329:9" pos:end="329:30"><name pos:start="329:9" pos:end="329:30"><name pos:start="329:9" pos:end="329:9">s</name><operator pos:start="329:10" pos:end="329:11">-&gt;</operator><name pos:start="329:12" pos:end="329:30">refcount_table_size</name></name></expr></argument>, <argument pos:start="329:33" pos:end="329:42"><expr pos:start="329:33" pos:end="329:42"><name pos:start="329:33" pos:end="329:42">table_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+<cpp:endif pos:start="331:1" pos:end="331:6">#<cpp:directive pos:start="331:2" pos:end="331:6">endif</cpp:directive></cpp:endif>
+
+
+
+    <comment type="block" pos:start="335:5" pos:end="335:50">/* Create the new refcount table and blocks */</comment>
+
+    <decl_stmt pos:start="337:5" pos:end="339:24"><decl pos:start="337:5" pos:end="339:23"><type pos:start="337:5" pos:end="337:12"><name pos:start="337:5" pos:end="337:12">uint64_t</name></type> <name pos:start="337:14" pos:end="337:24">meta_offset</name> <init pos:start="337:26" pos:end="339:23">= <expr pos:start="337:28" pos:end="339:23"><operator pos:start="337:28" pos:end="337:28">(</operator><name pos:start="337:29" pos:end="337:39">blocks_used</name> <operator pos:start="337:41" pos:end="337:41">*</operator> <name pos:start="337:43" pos:end="337:65">refcount_block_clusters</name><operator pos:start="337:66" pos:end="337:66">)</operator> <operator pos:start="337:68" pos:end="337:68">*</operator>
+
+        <name pos:start="339:9" pos:end="339:23"><name pos:start="339:9" pos:end="339:9">s</name><operator pos:start="339:10" pos:end="339:11">-&gt;</operator><name pos:start="339:12" pos:end="339:23">cluster_size</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="341:5" pos:end="341:76"><decl pos:start="341:5" pos:end="341:75"><type pos:start="341:5" pos:end="341:12"><name pos:start="341:5" pos:end="341:12">uint64_t</name></type> <name pos:start="341:14" pos:end="341:25">table_offset</name> <init pos:start="341:27" pos:end="341:75">= <expr pos:start="341:29" pos:end="341:75"><name pos:start="341:29" pos:end="341:39">meta_offset</name> <operator pos:start="341:41" pos:end="341:41">+</operator> <name pos:start="341:43" pos:end="341:57">blocks_clusters</name> <operator pos:start="341:59" pos:end="341:59">*</operator> <name pos:start="341:61" pos:end="341:75"><name pos:start="341:61" pos:end="341:61">s</name><operator pos:start="341:62" pos:end="341:63">-&gt;</operator><name pos:start="341:64" pos:end="341:75">cluster_size</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="343:5" pos:end="343:72"><decl pos:start="343:5" pos:end="343:71"><type pos:start="343:5" pos:end="343:14"><name pos:start="343:5" pos:end="343:12">uint16_t</name> <modifier pos:start="343:14" pos:end="343:14">*</modifier></type><name pos:start="343:15" pos:end="343:24">new_blocks</name> <init pos:start="343:26" pos:end="343:71">= <expr pos:start="343:28" pos:end="343:71"><call pos:start="343:28" pos:end="343:71"><name pos:start="343:28" pos:end="343:36">g_malloc0</name><argument_list pos:start="343:37" pos:end="343:71">(<argument pos:start="343:38" pos:end="343:70"><expr pos:start="343:38" pos:end="343:70"><name pos:start="343:38" pos:end="343:52">blocks_clusters</name> <operator pos:start="343:54" pos:end="343:54">*</operator> <name pos:start="343:56" pos:end="343:70"><name pos:start="343:56" pos:end="343:56">s</name><operator pos:start="343:57" pos:end="343:58">-&gt;</operator><name pos:start="343:59" pos:end="343:70">cluster_size</name></name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="345:5" pos:end="345:67"><decl pos:start="345:5" pos:end="345:66"><type pos:start="345:5" pos:end="345:14"><name pos:start="345:5" pos:end="345:12">uint64_t</name> <modifier pos:start="345:14" pos:end="345:14">*</modifier></type><name pos:start="345:15" pos:end="345:23">new_table</name> <init pos:start="345:25" pos:end="345:66">= <expr pos:start="345:27" pos:end="345:66"><call pos:start="345:27" pos:end="345:66"><name pos:start="345:27" pos:end="345:35">g_malloc0</name><argument_list pos:start="345:36" pos:end="345:66">(<argument pos:start="345:37" pos:end="345:65"><expr pos:start="345:37" pos:end="345:65"><name pos:start="345:37" pos:end="345:46">table_size</name> <operator pos:start="345:48" pos:end="345:48">*</operator> <sizeof pos:start="345:50" pos:end="345:65">sizeof<argument_list pos:start="345:56" pos:end="345:65">(<argument pos:start="345:57" pos:end="345:64"><expr pos:start="345:57" pos:end="345:64"><name pos:start="345:57" pos:end="345:64">uint64_t</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="349:5" pos:end="349:69"><expr pos:start="349:5" pos:end="349:68"><call pos:start="349:5" pos:end="349:68"><name pos:start="349:5" pos:end="349:10">assert</name><argument_list pos:start="349:11" pos:end="349:68">(<argument pos:start="349:12" pos:end="349:67"><expr pos:start="349:12" pos:end="349:67"><name pos:start="349:12" pos:end="349:22">meta_offset</name> <operator pos:start="349:24" pos:end="349:25">&gt;=</operator> <operator pos:start="349:27" pos:end="349:27">(</operator><name pos:start="349:28" pos:end="349:48"><name pos:start="349:28" pos:end="349:28">s</name><operator pos:start="349:29" pos:end="349:30">-&gt;</operator><name pos:start="349:31" pos:end="349:48">free_cluster_index</name></name> <operator pos:start="349:50" pos:end="349:50">*</operator> <name pos:start="349:52" pos:end="349:66"><name pos:start="349:52" pos:end="349:52">s</name><operator pos:start="349:53" pos:end="349:54">-&gt;</operator><name pos:start="349:55" pos:end="349:66">cluster_size</name></name><operator pos:start="349:67" pos:end="349:67">)</operator></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="353:5" pos:end="353:37">/* Fill the new refcount table */</comment>
+
+    <expr_stmt pos:start="355:5" pos:end="357:51"><expr pos:start="355:5" pos:end="357:50"><call pos:start="355:5" pos:end="357:50"><name pos:start="355:5" pos:end="355:10">memcpy</name><argument_list pos:start="355:11" pos:end="357:50">(<argument pos:start="355:12" pos:end="355:20"><expr pos:start="355:12" pos:end="355:20"><name pos:start="355:12" pos:end="355:20">new_table</name></expr></argument>, <argument pos:start="355:23" pos:end="355:39"><expr pos:start="355:23" pos:end="355:39"><name pos:start="355:23" pos:end="355:39"><name pos:start="355:23" pos:end="355:23">s</name><operator pos:start="355:24" pos:end="355:25">-&gt;</operator><name pos:start="355:26" pos:end="355:39">refcount_table</name></name></expr></argument>,
+
+        <argument pos:start="357:9" pos:end="357:49"><expr pos:start="357:9" pos:end="357:49"><name pos:start="357:9" pos:end="357:30"><name pos:start="357:9" pos:end="357:9">s</name><operator pos:start="357:10" pos:end="357:11">-&gt;</operator><name pos:start="357:12" pos:end="357:30">refcount_table_size</name></name> <operator pos:start="357:32" pos:end="357:32">*</operator> <sizeof pos:start="357:34" pos:end="357:49">sizeof<argument_list pos:start="357:40" pos:end="357:49">(<argument pos:start="357:41" pos:end="357:48"><expr pos:start="357:41" pos:end="357:48"><name pos:start="357:41" pos:end="357:48">uint64_t</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="359:5" pos:end="359:48"><expr pos:start="359:5" pos:end="359:47"><name pos:start="359:5" pos:end="359:35"><name pos:start="359:5" pos:end="359:13">new_table</name><index pos:start="359:14" pos:end="359:35">[<expr pos:start="359:15" pos:end="359:34"><name pos:start="359:15" pos:end="359:34">refcount_table_index</name></expr>]</index></name> <operator pos:start="359:37" pos:end="359:37">=</operator> <name pos:start="359:39" pos:end="359:47">new_block</name></expr>;</expr_stmt>
+
+
+
+    <decl_stmt pos:start="363:5" pos:end="363:10"><decl pos:start="363:5" pos:end="363:9"><type pos:start="363:5" pos:end="363:7"><name pos:start="363:5" pos:end="363:7">int</name></type> <name pos:start="363:9" pos:end="363:9">i</name></decl>;</decl_stmt>
+
+    <for pos:start="365:5" pos:end="369:5">for <control pos:start="365:9" pos:end="365:41">(<init pos:start="365:10" pos:end="365:15"><expr pos:start="365:10" pos:end="365:14"><name pos:start="365:10" pos:end="365:10">i</name> <operator pos:start="365:12" pos:end="365:12">=</operator> <literal type="number" pos:start="365:14" pos:end="365:14">0</literal></expr>;</init> <condition pos:start="365:17" pos:end="365:36"><expr pos:start="365:17" pos:end="365:35"><name pos:start="365:17" pos:end="365:17">i</name> <operator pos:start="365:19" pos:end="365:19">&lt;</operator> <name pos:start="365:21" pos:end="365:35">blocks_clusters</name></expr>;</condition> <incr pos:start="365:38" pos:end="365:40"><expr pos:start="365:38" pos:end="365:40"><name pos:start="365:38" pos:end="365:38">i</name><operator pos:start="365:39" pos:end="365:40">++</operator></expr></incr>)</control> <block pos:start="365:43" pos:end="369:5">{<block_content pos:start="367:9" pos:end="367:73">
+
+        <expr_stmt pos:start="367:9" pos:end="367:73"><expr pos:start="367:9" pos:end="367:72"><name pos:start="367:9" pos:end="367:34"><name pos:start="367:9" pos:end="367:17">new_table</name><index pos:start="367:18" pos:end="367:34">[<expr pos:start="367:19" pos:end="367:33"><name pos:start="367:19" pos:end="367:29">blocks_used</name> <operator pos:start="367:31" pos:end="367:31">+</operator> <name pos:start="367:33" pos:end="367:33">i</name></expr>]</index></name> <operator pos:start="367:36" pos:end="367:36">=</operator> <name pos:start="367:38" pos:end="367:48">meta_offset</name> <operator pos:start="367:50" pos:end="367:50">+</operator> <operator pos:start="367:52" pos:end="367:52">(</operator><name pos:start="367:53" pos:end="367:53">i</name> <operator pos:start="367:55" pos:end="367:55">*</operator> <name pos:start="367:57" pos:end="367:71"><name pos:start="367:57" pos:end="367:57">s</name><operator pos:start="367:58" pos:end="367:59">-&gt;</operator><name pos:start="367:60" pos:end="367:71">cluster_size</name></name><operator pos:start="367:72" pos:end="367:72">)</operator></expr>;</expr_stmt>
+
+    </block_content>}</block></for>
+
+
+
+    <comment type="block" pos:start="373:5" pos:end="373:34">/* Fill the refcount blocks */</comment>
+
+    <decl_stmt pos:start="375:5" pos:end="375:81"><decl pos:start="375:5" pos:end="375:80"><type pos:start="375:5" pos:end="375:12"><name pos:start="375:5" pos:end="375:12">uint64_t</name></type> <name pos:start="375:14" pos:end="375:27">table_clusters</name> <init pos:start="375:29" pos:end="375:80">= <expr pos:start="375:31" pos:end="375:80"><call pos:start="375:31" pos:end="375:80"><name pos:start="375:31" pos:end="375:46">size_to_clusters</name><argument_list pos:start="375:47" pos:end="375:80">(<argument pos:start="375:48" pos:end="375:48"><expr pos:start="375:48" pos:end="375:48"><name pos:start="375:48" pos:end="375:48">s</name></expr></argument>, <argument pos:start="375:51" pos:end="375:79"><expr pos:start="375:51" pos:end="375:79"><name pos:start="375:51" pos:end="375:60">table_size</name> <operator pos:start="375:62" pos:end="375:62">*</operator> <sizeof pos:start="375:64" pos:end="375:79">sizeof<argument_list pos:start="375:70" pos:end="375:79">(<argument pos:start="375:71" pos:end="375:78"><expr pos:start="375:71" pos:end="375:78"><name pos:start="375:71" pos:end="375:78">uint64_t</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="377:5" pos:end="377:18"><decl pos:start="377:5" pos:end="377:17"><type pos:start="377:5" pos:end="377:7"><name pos:start="377:5" pos:end="377:7">int</name></type> <name pos:start="377:9" pos:end="377:13">block</name> <init pos:start="377:15" pos:end="377:17">= <expr pos:start="377:17" pos:end="377:17"><literal type="number" pos:start="377:17" pos:end="377:17">0</literal></expr></init></decl>;</decl_stmt>
+
+    <for pos:start="379:5" pos:end="383:5">for <control pos:start="379:9" pos:end="379:58">(<init pos:start="379:10" pos:end="379:15"><expr pos:start="379:10" pos:end="379:14"><name pos:start="379:10" pos:end="379:10">i</name> <operator pos:start="379:12" pos:end="379:12">=</operator> <literal type="number" pos:start="379:14" pos:end="379:14">0</literal></expr>;</init> <condition pos:start="379:17" pos:end="379:53"><expr pos:start="379:17" pos:end="379:52"><name pos:start="379:17" pos:end="379:17">i</name> <operator pos:start="379:19" pos:end="379:19">&lt;</operator> <name pos:start="379:21" pos:end="379:34">table_clusters</name> <operator pos:start="379:36" pos:end="379:36">+</operator> <name pos:start="379:38" pos:end="379:52">blocks_clusters</name></expr>;</condition> <incr pos:start="379:55" pos:end="379:57"><expr pos:start="379:55" pos:end="379:57"><name pos:start="379:55" pos:end="379:55">i</name><operator pos:start="379:56" pos:end="379:57">++</operator></expr></incr>)</control> <block pos:start="379:60" pos:end="383:5">{<block_content pos:start="381:9" pos:end="381:45">
+
+        <expr_stmt pos:start="381:9" pos:end="381:45"><expr pos:start="381:9" pos:end="381:44"><name pos:start="381:9" pos:end="381:27"><name pos:start="381:9" pos:end="381:18">new_blocks</name><index pos:start="381:19" pos:end="381:27">[<expr pos:start="381:20" pos:end="381:26"><name pos:start="381:20" pos:end="381:24">block</name><operator pos:start="381:25" pos:end="381:26">++</operator></expr>]</index></name> <operator pos:start="381:29" pos:end="381:29">=</operator> <call pos:start="381:31" pos:end="381:44"><name pos:start="381:31" pos:end="381:41">cpu_to_be16</name><argument_list pos:start="381:42" pos:end="381:44">(<argument pos:start="381:43" pos:end="381:43"><expr pos:start="381:43" pos:end="381:43"><literal type="number" pos:start="381:43" pos:end="381:43">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></for>
+
+
+
+    <comment type="block" pos:start="387:5" pos:end="387:39">/* Write refcount blocks to disk */</comment>
+
+    <expr_stmt pos:start="389:5" pos:end="389:63"><expr pos:start="389:5" pos:end="389:62"><call pos:start="389:5" pos:end="389:62"><name pos:start="389:5" pos:end="389:16">BLKDBG_EVENT</name><argument_list pos:start="389:17" pos:end="389:62">(<argument pos:start="389:18" pos:end="389:25"><expr pos:start="389:18" pos:end="389:25"><name pos:start="389:18" pos:end="389:25"><name pos:start="389:18" pos:end="389:19">bs</name><operator pos:start="389:20" pos:end="389:21">-&gt;</operator><name pos:start="389:22" pos:end="389:25">file</name></name></expr></argument>, <argument pos:start="389:28" pos:end="389:61"><expr pos:start="389:28" pos:end="389:61"><name pos:start="389:28" pos:end="389:61">BLKDBG_REFBLOCK_ALLOC_WRITE_BLOCKS</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="391:5" pos:end="393:43"><expr pos:start="391:5" pos:end="393:42"><name pos:start="391:5" pos:end="391:7">ret</name> <operator pos:start="391:9" pos:end="391:9">=</operator> <call pos:start="391:11" pos:end="393:42"><name pos:start="391:11" pos:end="391:26">bdrv_pwrite_sync</name><argument_list pos:start="391:27" pos:end="393:42">(<argument pos:start="391:28" pos:end="391:35"><expr pos:start="391:28" pos:end="391:35"><name pos:start="391:28" pos:end="391:35"><name pos:start="391:28" pos:end="391:29">bs</name><operator pos:start="391:30" pos:end="391:31">-&gt;</operator><name pos:start="391:32" pos:end="391:35">file</name></name></expr></argument>, <argument pos:start="391:38" pos:end="391:48"><expr pos:start="391:38" pos:end="391:48"><name pos:start="391:38" pos:end="391:48">meta_offset</name></expr></argument>, <argument pos:start="391:51" pos:end="391:60"><expr pos:start="391:51" pos:end="391:60"><name pos:start="391:51" pos:end="391:60">new_blocks</name></expr></argument>,
+
+        <argument pos:start="393:9" pos:end="393:41"><expr pos:start="393:9" pos:end="393:41"><name pos:start="393:9" pos:end="393:23">blocks_clusters</name> <operator pos:start="393:25" pos:end="393:25">*</operator> <name pos:start="393:27" pos:end="393:41"><name pos:start="393:27" pos:end="393:27">s</name><operator pos:start="393:28" pos:end="393:29">-&gt;</operator><name pos:start="393:30" pos:end="393:41">cluster_size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="395:5" pos:end="395:23"><expr pos:start="395:5" pos:end="395:22"><call pos:start="395:5" pos:end="395:22"><name pos:start="395:5" pos:end="395:10">g_free</name><argument_list pos:start="395:11" pos:end="395:22">(<argument pos:start="395:12" pos:end="395:21"><expr pos:start="395:12" pos:end="395:21"><name pos:start="395:12" pos:end="395:21">new_blocks</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="397:5" pos:end="401:5"><if pos:start="397:5" pos:end="401:5">if <condition pos:start="397:8" pos:end="397:16">(<expr pos:start="397:9" pos:end="397:15"><name pos:start="397:9" pos:end="397:11">ret</name> <operator pos:start="397:13" pos:end="397:13">&lt;</operator> <literal type="number" pos:start="397:15" pos:end="397:15">0</literal></expr>)</condition> <block pos:start="397:18" pos:end="401:5">{<block_content pos:start="399:9" pos:end="399:24">
+
+        <goto pos:start="399:9" pos:end="399:24">goto <name pos:start="399:14" pos:end="399:23">fail_table</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="405:5" pos:end="405:38">/* Write refcount table to disk */</comment>
+
+    <for pos:start="407:5" pos:end="411:5">for<control pos:start="407:8" pos:end="407:35">(<init pos:start="407:9" pos:end="407:14"><expr pos:start="407:9" pos:end="407:13"><name pos:start="407:9" pos:end="407:9">i</name> <operator pos:start="407:11" pos:end="407:11">=</operator> <literal type="number" pos:start="407:13" pos:end="407:13">0</literal></expr>;</init> <condition pos:start="407:16" pos:end="407:30"><expr pos:start="407:16" pos:end="407:29"><name pos:start="407:16" pos:end="407:16">i</name> <operator pos:start="407:18" pos:end="407:18">&lt;</operator> <name pos:start="407:20" pos:end="407:29">table_size</name></expr>;</condition> <incr pos:start="407:32" pos:end="407:34"><expr pos:start="407:32" pos:end="407:34"><name pos:start="407:32" pos:end="407:32">i</name><operator pos:start="407:33" pos:end="407:34">++</operator></expr></incr>)</control> <block pos:start="407:37" pos:end="411:5">{<block_content pos:start="409:9" pos:end="409:36">
+
+        <expr_stmt pos:start="409:9" pos:end="409:36"><expr pos:start="409:9" pos:end="409:35"><call pos:start="409:9" pos:end="409:35"><name pos:start="409:9" pos:end="409:20">cpu_to_be64s</name><argument_list pos:start="409:21" pos:end="409:35">(<argument pos:start="409:22" pos:end="409:34"><expr pos:start="409:22" pos:end="409:34"><operator pos:start="409:22" pos:end="409:22">&amp;</operator><name pos:start="409:23" pos:end="409:34"><name pos:start="409:23" pos:end="409:31">new_table</name><index pos:start="409:32" pos:end="409:34">[<expr pos:start="409:33" pos:end="409:33"><name pos:start="409:33" pos:end="409:33">i</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></for>
+
+
+
+    <expr_stmt pos:start="415:5" pos:end="415:62"><expr pos:start="415:5" pos:end="415:61"><call pos:start="415:5" pos:end="415:61"><name pos:start="415:5" pos:end="415:16">BLKDBG_EVENT</name><argument_list pos:start="415:17" pos:end="415:61">(<argument pos:start="415:18" pos:end="415:25"><expr pos:start="415:18" pos:end="415:25"><name pos:start="415:18" pos:end="415:25"><name pos:start="415:18" pos:end="415:19">bs</name><operator pos:start="415:20" pos:end="415:21">-&gt;</operator><name pos:start="415:22" pos:end="415:25">file</name></name></expr></argument>, <argument pos:start="415:28" pos:end="415:60"><expr pos:start="415:28" pos:end="415:60"><name pos:start="415:28" pos:end="415:60">BLKDBG_REFBLOCK_ALLOC_WRITE_TABLE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="417:5" pos:end="419:39"><expr pos:start="417:5" pos:end="419:38"><name pos:start="417:5" pos:end="417:7">ret</name> <operator pos:start="417:9" pos:end="417:9">=</operator> <call pos:start="417:11" pos:end="419:38"><name pos:start="417:11" pos:end="417:26">bdrv_pwrite_sync</name><argument_list pos:start="417:27" pos:end="419:38">(<argument pos:start="417:28" pos:end="417:35"><expr pos:start="417:28" pos:end="417:35"><name pos:start="417:28" pos:end="417:35"><name pos:start="417:28" pos:end="417:29">bs</name><operator pos:start="417:30" pos:end="417:31">-&gt;</operator><name pos:start="417:32" pos:end="417:35">file</name></name></expr></argument>, <argument pos:start="417:38" pos:end="417:49"><expr pos:start="417:38" pos:end="417:49"><name pos:start="417:38" pos:end="417:49">table_offset</name></expr></argument>, <argument pos:start="417:52" pos:end="417:60"><expr pos:start="417:52" pos:end="417:60"><name pos:start="417:52" pos:end="417:60">new_table</name></expr></argument>,
+
+        <argument pos:start="419:9" pos:end="419:37"><expr pos:start="419:9" pos:end="419:37"><name pos:start="419:9" pos:end="419:18">table_size</name> <operator pos:start="419:20" pos:end="419:20">*</operator> <sizeof pos:start="419:22" pos:end="419:37">sizeof<argument_list pos:start="419:28" pos:end="419:37">(<argument pos:start="419:29" pos:end="419:36"><expr pos:start="419:29" pos:end="419:36"><name pos:start="419:29" pos:end="419:36">uint64_t</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="421:5" pos:end="425:5"><if pos:start="421:5" pos:end="425:5">if <condition pos:start="421:8" pos:end="421:16">(<expr pos:start="421:9" pos:end="421:15"><name pos:start="421:9" pos:end="421:11">ret</name> <operator pos:start="421:13" pos:end="421:13">&lt;</operator> <literal type="number" pos:start="421:15" pos:end="421:15">0</literal></expr>)</condition> <block pos:start="421:18" pos:end="425:5">{<block_content pos:start="423:9" pos:end="423:24">
+
+        <goto pos:start="423:9" pos:end="423:24">goto <name pos:start="423:14" pos:end="423:23">fail_table</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <for pos:start="429:5" pos:end="433:5">for<control pos:start="429:8" pos:end="429:35">(<init pos:start="429:9" pos:end="429:14"><expr pos:start="429:9" pos:end="429:13"><name pos:start="429:9" pos:end="429:9">i</name> <operator pos:start="429:11" pos:end="429:11">=</operator> <literal type="number" pos:start="429:13" pos:end="429:13">0</literal></expr>;</init> <condition pos:start="429:16" pos:end="429:30"><expr pos:start="429:16" pos:end="429:29"><name pos:start="429:16" pos:end="429:16">i</name> <operator pos:start="429:18" pos:end="429:18">&lt;</operator> <name pos:start="429:20" pos:end="429:29">table_size</name></expr>;</condition> <incr pos:start="429:32" pos:end="429:34"><expr pos:start="429:32" pos:end="429:34"><name pos:start="429:32" pos:end="429:32">i</name><operator pos:start="429:33" pos:end="429:34">++</operator></expr></incr>)</control> <block pos:start="429:37" pos:end="433:5">{<block_content pos:start="431:9" pos:end="431:36">
+
+        <expr_stmt pos:start="431:9" pos:end="431:36"><expr pos:start="431:9" pos:end="431:35"><call pos:start="431:9" pos:end="431:35"><name pos:start="431:9" pos:end="431:20">cpu_to_be64s</name><argument_list pos:start="431:21" pos:end="431:35">(<argument pos:start="431:22" pos:end="431:34"><expr pos:start="431:22" pos:end="431:34"><operator pos:start="431:22" pos:end="431:22">&amp;</operator><name pos:start="431:23" pos:end="431:34"><name pos:start="431:23" pos:end="431:31">new_table</name><index pos:start="431:32" pos:end="431:34">[<expr pos:start="431:33" pos:end="431:33"><name pos:start="431:33" pos:end="431:33">i</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></for>
+
+
+
+    <comment type="block" pos:start="437:5" pos:end="437:60">/* Hook up the new refcount table in the qcow2 header */</comment>
+
+    <decl_stmt pos:start="439:5" pos:end="439:21"><decl pos:start="439:5" pos:end="439:20"><type pos:start="439:5" pos:end="439:11"><name pos:start="439:5" pos:end="439:11">uint8_t</name></type> <name pos:start="439:13" pos:end="439:20"><name pos:start="439:13" pos:end="439:16">data</name><index pos:start="439:17" pos:end="439:20">[<expr pos:start="439:18" pos:end="439:19"><literal type="number" pos:start="439:18" pos:end="439:19">12</literal></expr>]</index></name></decl>;</decl_stmt>
+
+    <expr_stmt pos:start="441:5" pos:end="441:48"><expr pos:start="441:5" pos:end="441:47"><call pos:start="441:5" pos:end="441:47"><name pos:start="441:5" pos:end="441:16">cpu_to_be64w</name><argument_list pos:start="441:17" pos:end="441:47">(<argument pos:start="441:18" pos:end="441:32"><expr pos:start="441:18" pos:end="441:32"><operator pos:start="441:18" pos:end="441:18">(</operator><name pos:start="441:19" pos:end="441:26">uint64_t</name><operator pos:start="441:27" pos:end="441:27">*</operator><operator pos:start="441:28" pos:end="441:28">)</operator><name pos:start="441:29" pos:end="441:32">data</name></expr></argument>, <argument pos:start="441:35" pos:end="441:46"><expr pos:start="441:35" pos:end="441:46"><name pos:start="441:35" pos:end="441:46">table_offset</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="443:5" pos:end="443:56"><expr pos:start="443:5" pos:end="443:55"><call pos:start="443:5" pos:end="443:55"><name pos:start="443:5" pos:end="443:16">cpu_to_be32w</name><argument_list pos:start="443:17" pos:end="443:55">(<argument pos:start="443:18" pos:end="443:38"><expr pos:start="443:18" pos:end="443:38"><operator pos:start="443:18" pos:end="443:18">(</operator><name pos:start="443:19" pos:end="443:26">uint32_t</name><operator pos:start="443:27" pos:end="443:27">*</operator><operator pos:start="443:28" pos:end="443:28">)</operator><operator pos:start="443:29" pos:end="443:29">(</operator><name pos:start="443:30" pos:end="443:33">data</name> <operator pos:start="443:35" pos:end="443:35">+</operator> <literal type="number" pos:start="443:37" pos:end="443:37">8</literal><operator pos:start="443:38" pos:end="443:38">)</operator></expr></argument>, <argument pos:start="443:41" pos:end="443:54"><expr pos:start="443:41" pos:end="443:54"><name pos:start="443:41" pos:end="443:54">table_clusters</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="445:5" pos:end="445:63"><expr pos:start="445:5" pos:end="445:62"><call pos:start="445:5" pos:end="445:62"><name pos:start="445:5" pos:end="445:16">BLKDBG_EVENT</name><argument_list pos:start="445:17" pos:end="445:62">(<argument pos:start="445:18" pos:end="445:25"><expr pos:start="445:18" pos:end="445:25"><name pos:start="445:18" pos:end="445:25"><name pos:start="445:18" pos:end="445:19">bs</name><operator pos:start="445:20" pos:end="445:21">-&gt;</operator><name pos:start="445:22" pos:end="445:25">file</name></name></expr></argument>, <argument pos:start="445:28" pos:end="445:61"><expr pos:start="445:28" pos:end="445:61"><name pos:start="445:28" pos:end="445:61">BLKDBG_REFBLOCK_ALLOC_SWITCH_TABLE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="447:5" pos:end="449:28"><expr pos:start="447:5" pos:end="449:27"><name pos:start="447:5" pos:end="447:7">ret</name> <operator pos:start="447:9" pos:end="447:9">=</operator> <call pos:start="447:11" pos:end="449:27"><name pos:start="447:11" pos:end="447:26">bdrv_pwrite_sync</name><argument_list pos:start="447:27" pos:end="449:27">(<argument pos:start="447:28" pos:end="447:35"><expr pos:start="447:28" pos:end="447:35"><name pos:start="447:28" pos:end="447:35"><name pos:start="447:28" pos:end="447:29">bs</name><operator pos:start="447:30" pos:end="447:31">-&gt;</operator><name pos:start="447:32" pos:end="447:35">file</name></name></expr></argument>, <argument pos:start="447:38" pos:end="447:80"><expr pos:start="447:38" pos:end="447:80"><call pos:start="447:38" pos:end="447:80"><name pos:start="447:38" pos:end="447:45">offsetof</name><argument_list pos:start="447:46" pos:end="447:80">(<argument pos:start="447:47" pos:end="447:56"><expr pos:start="447:47" pos:end="447:56"><name pos:start="447:47" pos:end="447:56">QCowHeader</name></expr></argument>, <argument pos:start="447:59" pos:end="447:79"><expr pos:start="447:59" pos:end="447:79"><name pos:start="447:59" pos:end="447:79">refcount_table_offset</name></expr></argument>)</argument_list></call></expr></argument>,
+
+        <argument pos:start="449:9" pos:end="449:12"><expr pos:start="449:9" pos:end="449:12"><name pos:start="449:9" pos:end="449:12">data</name></expr></argument>, <argument pos:start="449:15" pos:end="449:26"><expr pos:start="449:15" pos:end="449:26"><sizeof pos:start="449:15" pos:end="449:26">sizeof<argument_list pos:start="449:21" pos:end="449:26">(<argument pos:start="449:22" pos:end="449:25"><expr pos:start="449:22" pos:end="449:25"><name pos:start="449:22" pos:end="449:25">data</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="451:5" pos:end="455:5"><if pos:start="451:5" pos:end="455:5">if <condition pos:start="451:8" pos:end="451:16">(<expr pos:start="451:9" pos:end="451:15"><name pos:start="451:9" pos:end="451:11">ret</name> <operator pos:start="451:13" pos:end="451:13">&lt;</operator> <literal type="number" pos:start="451:15" pos:end="451:15">0</literal></expr>)</condition> <block pos:start="451:18" pos:end="455:5">{<block_content pos:start="453:9" pos:end="453:24">
+
+        <goto pos:start="453:9" pos:end="453:24">goto <name pos:start="453:14" pos:end="453:23">fail_table</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="459:5" pos:end="459:33">/* And switch it in memory */</comment>
+
+    <decl_stmt pos:start="461:5" pos:end="461:57"><decl pos:start="461:5" pos:end="461:56"><type pos:start="461:5" pos:end="461:12"><name pos:start="461:5" pos:end="461:12">uint64_t</name></type> <name pos:start="461:14" pos:end="461:29">old_table_offset</name> <init pos:start="461:31" pos:end="461:56">= <expr pos:start="461:33" pos:end="461:56"><name pos:start="461:33" pos:end="461:56"><name pos:start="461:33" pos:end="461:33">s</name><operator pos:start="461:34" pos:end="461:35">-&gt;</operator><name pos:start="461:36" pos:end="461:56">refcount_table_offset</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="463:5" pos:end="463:53"><decl pos:start="463:5" pos:end="463:52"><type pos:start="463:5" pos:end="463:12"><name pos:start="463:5" pos:end="463:12">uint64_t</name></type> <name pos:start="463:14" pos:end="463:27">old_table_size</name> <init pos:start="463:29" pos:end="463:52">= <expr pos:start="463:31" pos:end="463:52"><name pos:start="463:31" pos:end="463:52"><name pos:start="463:31" pos:end="463:31">s</name><operator pos:start="463:32" pos:end="463:33">-&gt;</operator><name pos:start="463:34" pos:end="463:52">refcount_table_size</name></name></expr></init></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="467:5" pos:end="467:30"><expr pos:start="467:5" pos:end="467:29"><call pos:start="467:5" pos:end="467:29"><name pos:start="467:5" pos:end="467:10">g_free</name><argument_list pos:start="467:11" pos:end="467:29">(<argument pos:start="467:12" pos:end="467:28"><expr pos:start="467:12" pos:end="467:28"><name pos:start="467:12" pos:end="467:28"><name pos:start="467:12" pos:end="467:12">s</name><operator pos:start="467:13" pos:end="467:14">-&gt;</operator><name pos:start="467:15" pos:end="467:28">refcount_table</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="469:5" pos:end="469:34"><expr pos:start="469:5" pos:end="469:33"><name pos:start="469:5" pos:end="469:21"><name pos:start="469:5" pos:end="469:5">s</name><operator pos:start="469:6" pos:end="469:7">-&gt;</operator><name pos:start="469:8" pos:end="469:21">refcount_table</name></name> <operator pos:start="469:23" pos:end="469:23">=</operator> <name pos:start="469:25" pos:end="469:33">new_table</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="471:5" pos:end="471:40"><expr pos:start="471:5" pos:end="471:39"><name pos:start="471:5" pos:end="471:26"><name pos:start="471:5" pos:end="471:5">s</name><operator pos:start="471:6" pos:end="471:7">-&gt;</operator><name pos:start="471:8" pos:end="471:26">refcount_table_size</name></name> <operator pos:start="471:28" pos:end="471:28">=</operator> <name pos:start="471:30" pos:end="471:39">table_size</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="473:5" pos:end="473:44"><expr pos:start="473:5" pos:end="473:43"><name pos:start="473:5" pos:end="473:28"><name pos:start="473:5" pos:end="473:5">s</name><operator pos:start="473:6" pos:end="473:7">-&gt;</operator><name pos:start="473:8" pos:end="473:28">refcount_table_offset</name></name> <operator pos:start="473:30" pos:end="473:30">=</operator> <name pos:start="473:32" pos:end="473:43">table_offset</name></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="477:5" pos:end="477:73">/* Free old table. Remember, we must not change free_cluster_index */</comment>
+
+    <decl_stmt pos:start="479:5" pos:end="479:60"><decl pos:start="479:5" pos:end="479:59"><type pos:start="479:5" pos:end="479:12"><name pos:start="479:5" pos:end="479:12">uint64_t</name></type> <name pos:start="479:14" pos:end="479:35">old_free_cluster_index</name> <init pos:start="479:37" pos:end="479:59">= <expr pos:start="479:39" pos:end="479:59"><name pos:start="479:39" pos:end="479:59"><name pos:start="479:39" pos:end="479:39">s</name><operator pos:start="479:40" pos:end="479:41">-&gt;</operator><name pos:start="479:42" pos:end="479:59">free_cluster_index</name></name></expr></init></decl>;</decl_stmt>
+
+    <expr_stmt pos:start="481:5" pos:end="481:81"><expr pos:start="481:5" pos:end="481:80"><call pos:start="481:5" pos:end="481:80"><name pos:start="481:5" pos:end="481:23">qcow2_free_clusters</name><argument_list pos:start="481:24" pos:end="481:80">(<argument pos:start="481:25" pos:end="481:26"><expr pos:start="481:25" pos:end="481:26"><name pos:start="481:25" pos:end="481:26">bs</name></expr></argument>, <argument pos:start="481:29" pos:end="481:44"><expr pos:start="481:29" pos:end="481:44"><name pos:start="481:29" pos:end="481:44">old_table_offset</name></expr></argument>, <argument pos:start="481:47" pos:end="481:79"><expr pos:start="481:47" pos:end="481:79"><name pos:start="481:47" pos:end="481:60">old_table_size</name> <operator pos:start="481:62" pos:end="481:62">*</operator> <sizeof pos:start="481:64" pos:end="481:79">sizeof<argument_list pos:start="481:70" pos:end="481:79">(<argument pos:start="481:71" pos:end="481:78"><expr pos:start="481:71" pos:end="481:78"><name pos:start="481:71" pos:end="481:78">uint64_t</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="483:5" pos:end="483:51"><expr pos:start="483:5" pos:end="483:50"><name pos:start="483:5" pos:end="483:25"><name pos:start="483:5" pos:end="483:5">s</name><operator pos:start="483:6" pos:end="483:7">-&gt;</operator><name pos:start="483:8" pos:end="483:25">free_cluster_index</name></name> <operator pos:start="483:27" pos:end="483:27">=</operator> <name pos:start="483:29" pos:end="483:50">old_free_cluster_index</name></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="487:5" pos:end="487:70"><expr pos:start="487:5" pos:end="487:69"><name pos:start="487:5" pos:end="487:7">ret</name> <operator pos:start="487:9" pos:end="487:9">=</operator> <call pos:start="487:11" pos:end="487:69"><name pos:start="487:11" pos:end="487:29">load_refcount_block</name><argument_list pos:start="487:30" pos:end="487:69">(<argument pos:start="487:31" pos:end="487:32"><expr pos:start="487:31" pos:end="487:32"><name pos:start="487:31" pos:end="487:32">bs</name></expr></argument>, <argument pos:start="487:35" pos:end="487:43"><expr pos:start="487:35" pos:end="487:43"><name pos:start="487:35" pos:end="487:43">new_block</name></expr></argument>, <argument pos:start="487:46" pos:end="487:68"><expr pos:start="487:46" pos:end="487:68"><operator pos:start="487:46" pos:end="487:46">(</operator><name pos:start="487:47" pos:end="487:50">void</name><operator pos:start="487:51" pos:end="487:51">*</operator><operator pos:start="487:52" pos:end="487:52">*</operator><operator pos:start="487:53" pos:end="487:53">)</operator> <name pos:start="487:55" pos:end="487:68">refcount_block</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="489:5" pos:end="493:5"><if pos:start="489:5" pos:end="493:5">if <condition pos:start="489:8" pos:end="489:16">(<expr pos:start="489:9" pos:end="489:15"><name pos:start="489:9" pos:end="489:11">ret</name> <operator pos:start="489:13" pos:end="489:13">&lt;</operator> <literal type="number" pos:start="489:15" pos:end="489:15">0</literal></expr>)</condition> <block pos:start="489:18" pos:end="493:5">{<block_content pos:start="491:9" pos:end="491:19">
+
+        <return pos:start="491:9" pos:end="491:19">return <expr pos:start="491:16" pos:end="491:18"><name pos:start="491:16" pos:end="491:18">ret</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <return pos:start="497:5" pos:end="497:21">return <expr pos:start="497:12" pos:end="497:20"><name pos:start="497:12" pos:end="497:20">new_block</name></expr>;</return>
+
+
+
+<label pos:start="501:1" pos:end="501:11"><name pos:start="501:1" pos:end="501:10">fail_table</name>:</label>
+
+    <expr_stmt pos:start="503:5" pos:end="503:22"><expr pos:start="503:5" pos:end="503:21"><call pos:start="503:5" pos:end="503:21"><name pos:start="503:5" pos:end="503:10">g_free</name><argument_list pos:start="503:11" pos:end="503:21">(<argument pos:start="503:12" pos:end="503:20"><expr pos:start="503:12" pos:end="503:20"><name pos:start="503:12" pos:end="503:20">new_table</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+<label pos:start="505:1" pos:end="505:11"><name pos:start="505:1" pos:end="505:10">fail_block</name>:</label>
+
+    <if_stmt pos:start="507:5" pos:end="511:5"><if pos:start="507:5" pos:end="511:5">if <condition pos:start="507:8" pos:end="507:32">(<expr pos:start="507:9" pos:end="507:31"><operator pos:start="507:9" pos:end="507:9">*</operator><name pos:start="507:10" pos:end="507:23">refcount_block</name> <operator pos:start="507:25" pos:end="507:26">!=</operator> <name pos:start="507:28" pos:end="507:31">NULL</name></expr>)</condition> <block pos:start="507:34" pos:end="511:5">{<block_content pos:start="509:9" pos:end="509:78">
+
+        <expr_stmt pos:start="509:9" pos:end="509:78"><expr pos:start="509:9" pos:end="509:77"><call pos:start="509:9" pos:end="509:77"><name pos:start="509:9" pos:end="509:23">qcow2_cache_put</name><argument_list pos:start="509:24" pos:end="509:77">(<argument pos:start="509:25" pos:end="509:26"><expr pos:start="509:25" pos:end="509:26"><name pos:start="509:25" pos:end="509:26">bs</name></expr></argument>, <argument pos:start="509:29" pos:end="509:51"><expr pos:start="509:29" pos:end="509:51"><name pos:start="509:29" pos:end="509:51"><name pos:start="509:29" pos:end="509:29">s</name><operator pos:start="509:30" pos:end="509:31">-&gt;</operator><name pos:start="509:32" pos:end="509:51">refcount_block_cache</name></name></expr></argument>, <argument pos:start="509:54" pos:end="509:76"><expr pos:start="509:54" pos:end="509:76"><operator pos:start="509:54" pos:end="509:54">(</operator><name pos:start="509:55" pos:end="509:58">void</name><operator pos:start="509:59" pos:end="509:59">*</operator><operator pos:start="509:60" pos:end="509:60">*</operator><operator pos:start="509:61" pos:end="509:61">)</operator> <name pos:start="509:63" pos:end="509:76">refcount_block</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <return pos:start="513:5" pos:end="513:15">return <expr pos:start="513:12" pos:end="513:14"><name pos:start="513:12" pos:end="513:14">ret</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

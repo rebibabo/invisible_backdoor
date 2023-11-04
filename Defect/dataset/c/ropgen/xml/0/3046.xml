@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/3046.c" pos:tabs="8"><function pos:start="1:1" pos:end="45:1"><type pos:start="1:1" pos:end="1:3"><name pos:start="1:1" pos:end="1:3">int</name></type> <name pos:start="1:5" pos:end="1:16">bdrv_discard</name><parameter_list pos:start="1:17" pos:end="1:74">(<parameter pos:start="1:18" pos:end="1:37"><decl pos:start="1:18" pos:end="1:37"><type pos:start="1:18" pos:end="1:37"><name pos:start="1:18" pos:end="1:33">BlockDriverState</name> <modifier pos:start="1:35" pos:end="1:35">*</modifier></type><name pos:start="1:36" pos:end="1:37">bs</name></decl></parameter>, <parameter pos:start="1:40" pos:end="1:57"><decl pos:start="1:40" pos:end="1:57"><type pos:start="1:40" pos:end="1:57"><name pos:start="1:40" pos:end="1:46">int64_t</name></type> <name pos:start="1:48" pos:end="1:57">sector_num</name></decl></parameter>, <parameter pos:start="1:60" pos:end="1:73"><decl pos:start="1:60" pos:end="1:73"><type pos:start="1:60" pos:end="1:73"><name pos:start="1:60" pos:end="1:62">int</name></type> <name pos:start="1:64" pos:end="1:73">nb_sectors</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="45:1">{<block_content pos:start="5:5" pos:end="43:20">
+
+    <decl_stmt pos:start="5:5" pos:end="5:18"><decl pos:start="5:5" pos:end="5:17"><type pos:start="5:5" pos:end="5:15"><name pos:start="5:5" pos:end="5:13">Coroutine</name> <modifier pos:start="5:15" pos:end="5:15">*</modifier></type><name pos:start="5:16" pos:end="5:17">co</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="17:6"><decl pos:start="7:5" pos:end="17:5"><type pos:start="7:5" pos:end="7:13"><name pos:start="7:5" pos:end="7:13">DiscardCo</name></type> <name pos:start="7:15" pos:end="7:18">rwco</name> <init pos:start="7:20" pos:end="17:5">= <expr pos:start="7:22" pos:end="17:5"><block pos:start="7:22" pos:end="17:5">{
+
+        <expr pos:start="9:9" pos:end="9:16"><operator pos:start="9:9" pos:end="9:9">.</operator><name pos:start="9:10" pos:end="9:11">bs</name> <operator pos:start="9:13" pos:end="9:13">=</operator> <name pos:start="9:15" pos:end="9:16">bs</name></expr>,
+
+        <expr pos:start="11:9" pos:end="11:32"><operator pos:start="11:9" pos:end="11:9">.</operator><name pos:start="11:10" pos:end="11:19">sector_num</name> <operator pos:start="11:21" pos:end="11:21">=</operator> <name pos:start="11:23" pos:end="11:32">sector_num</name></expr>,
+
+        <expr pos:start="13:9" pos:end="13:32"><operator pos:start="13:9" pos:end="13:9">.</operator><name pos:start="13:10" pos:end="13:19">nb_sectors</name> <operator pos:start="13:21" pos:end="13:21">=</operator> <name pos:start="13:23" pos:end="13:32">nb_sectors</name></expr>,
+
+        <expr pos:start="15:9" pos:end="15:23"><operator pos:start="15:9" pos:end="15:9">.</operator><name pos:start="15:10" pos:end="15:12">ret</name> <operator pos:start="15:14" pos:end="15:14">=</operator> <name pos:start="15:16" pos:end="15:23">NOT_DONE</name></expr>,
+
+    }</block></expr></init></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="21:5" pos:end="39:5"><if pos:start="21:5" pos:end="27:5">if <condition pos:start="21:8" pos:end="21:28">(<expr pos:start="21:9" pos:end="21:27"><call pos:start="21:9" pos:end="21:27"><name pos:start="21:9" pos:end="21:25">qemu_in_coroutine</name><argument_list pos:start="21:26" pos:end="21:27">()</argument_list></call></expr>)</condition> <block pos:start="21:30" pos:end="27:5">{<block_content pos:start="25:9" pos:end="25:37">
+
+        <comment type="block" pos:start="23:9" pos:end="23:55">/* Fast-path if already in coroutine context */</comment>
+
+        <expr_stmt pos:start="25:9" pos:end="25:37"><expr pos:start="25:9" pos:end="25:36"><call pos:start="25:9" pos:end="25:36"><name pos:start="25:9" pos:end="25:29">bdrv_discard_co_entry</name><argument_list pos:start="25:30" pos:end="25:36">(<argument pos:start="25:31" pos:end="25:35"><expr pos:start="25:31" pos:end="25:35"><operator pos:start="25:31" pos:end="25:31">&amp;</operator><name pos:start="25:32" pos:end="25:35">rwco</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="27:7" pos:end="39:5">else <block pos:start="27:12" pos:end="39:5">{<block_content pos:start="29:9" pos:end="37:9">
+
+        <expr_stmt pos:start="29:9" pos:end="29:58"><expr pos:start="29:9" pos:end="29:57"><name pos:start="29:9" pos:end="29:10">co</name> <operator pos:start="29:12" pos:end="29:12">=</operator> <call pos:start="29:14" pos:end="29:57"><name pos:start="29:14" pos:end="29:34">qemu_coroutine_create</name><argument_list pos:start="29:35" pos:end="29:57">(<argument pos:start="29:36" pos:end="29:56"><expr pos:start="29:36" pos:end="29:56"><name pos:start="29:36" pos:end="29:56">bdrv_discard_co_entry</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="31:9" pos:end="31:40"><expr pos:start="31:9" pos:end="31:39"><call pos:start="31:9" pos:end="31:39"><name pos:start="31:9" pos:end="31:28">qemu_coroutine_enter</name><argument_list pos:start="31:29" pos:end="31:39">(<argument pos:start="31:30" pos:end="31:31"><expr pos:start="31:30" pos:end="31:31"><name pos:start="31:30" pos:end="31:31">co</name></expr></argument>, <argument pos:start="31:34" pos:end="31:38"><expr pos:start="31:34" pos:end="31:38"><operator pos:start="31:34" pos:end="31:34">&amp;</operator><name pos:start="31:35" pos:end="31:38">rwco</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <while pos:start="33:9" pos:end="37:9">while <condition pos:start="33:15" pos:end="33:36">(<expr pos:start="33:16" pos:end="33:35"><name pos:start="33:16" pos:end="33:23"><name pos:start="33:16" pos:end="33:19">rwco</name><operator pos:start="33:20" pos:end="33:20">.</operator><name pos:start="33:21" pos:end="33:23">ret</name></name> <operator pos:start="33:25" pos:end="33:26">==</operator> <name pos:start="33:28" pos:end="33:35">NOT_DONE</name></expr>)</condition> <block pos:start="33:38" pos:end="37:9">{<block_content pos:start="35:13" pos:end="35:28">
+
+            <expr_stmt pos:start="35:13" pos:end="35:28"><expr pos:start="35:13" pos:end="35:27"><call pos:start="35:13" pos:end="35:27"><name pos:start="35:13" pos:end="35:25">qemu_aio_wait</name><argument_list pos:start="35:26" pos:end="35:27">()</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></while>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <return pos:start="43:5" pos:end="43:20">return <expr pos:start="43:12" pos:end="43:19"><name pos:start="43:12" pos:end="43:19"><name pos:start="43:12" pos:end="43:15">rwco</name><operator pos:start="43:16" pos:end="43:16">.</operator><name pos:start="43:17" pos:end="43:19">ret</name></name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

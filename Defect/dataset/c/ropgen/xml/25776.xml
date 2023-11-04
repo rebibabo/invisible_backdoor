@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/25776.c" pos:tabs="8"><function pos:start="1:1" pos:end="435:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:32">nbd_negotiate_options</name><parameter_list pos:start="1:33" pos:end="3:46">(<parameter pos:start="1:34" pos:end="1:50"><decl pos:start="1:34" pos:end="1:50"><type pos:start="1:34" pos:end="1:50"><name pos:start="1:34" pos:end="1:42">NBDClient</name> <modifier pos:start="1:44" pos:end="1:44">*</modifier></type><name pos:start="1:45" pos:end="1:50">client</name></decl></parameter>, <parameter pos:start="1:53" pos:end="1:68"><decl pos:start="1:53" pos:end="1:68"><type pos:start="1:53" pos:end="1:68"><name pos:start="1:53" pos:end="1:60">uint16_t</name></type> <name pos:start="1:62" pos:end="1:68">myflags</name></decl></parameter>,
+
+                                 <parameter pos:start="3:34" pos:end="3:45"><decl pos:start="3:34" pos:end="3:45"><type pos:start="3:34" pos:end="3:45"><name pos:start="3:34" pos:end="3:38">Error</name> <modifier pos:start="3:40" pos:end="3:40">*</modifier><modifier pos:start="3:41" pos:end="3:41">*</modifier></type><name pos:start="3:42" pos:end="3:45">errp</name></decl></parameter>)</parameter_list>
+
+<block pos:start="5:1" pos:end="435:1">{<block_content pos:start="7:5" pos:end="433:5">
+
+    <decl_stmt pos:start="7:5" pos:end="7:19"><decl pos:start="7:5" pos:end="7:18"><type pos:start="7:5" pos:end="7:12"><name pos:start="7:5" pos:end="7:12">uint32_t</name></type> <name pos:start="7:14" pos:end="7:18">flags</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:31"><decl pos:start="9:5" pos:end="9:30"><type pos:start="9:5" pos:end="9:8"><name pos:start="9:5" pos:end="9:8">bool</name></type> <name pos:start="9:10" pos:end="9:22">fixedNewstyle</name> <init pos:start="9:24" pos:end="9:30">= <expr pos:start="9:26" pos:end="9:30"><name pos:start="9:26" pos:end="9:30">false</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:27"><decl pos:start="11:5" pos:end="11:26"><type pos:start="11:5" pos:end="11:8"><name pos:start="11:5" pos:end="11:8">bool</name></type> <name pos:start="11:10" pos:end="11:18">no_zeroes</name> <init pos:start="11:20" pos:end="11:26">= <expr pos:start="11:22" pos:end="11:26"><name pos:start="11:22" pos:end="11:26">false</name></expr></init></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="15:5" pos:end="41:6">/* Client sends:
+
+        [ 0 ..   3]   client flags
+
+
+
+       Then we loop until NBD_OPT_EXPORT_NAME or NBD_OPT_GO:
+
+        [ 0 ..   7]   NBD_OPTS_MAGIC
+
+        [ 8 ..  11]   NBD option
+
+        [12 ..  15]   Data length
+
+        ...           Rest of request
+
+
+
+        [ 0 ..   7]   NBD_OPTS_MAGIC
+
+        [ 8 ..  11]   Second NBD option
+
+        [12 ..  15]   Data length
+
+        ...           Rest of request
+
+    */</comment>
+
+
+
+    <if_stmt pos:start="45:5" pos:end="51:5"><if pos:start="45:5" pos:end="51:5">if <condition pos:start="45:8" pos:end="45:63">(<expr pos:start="45:9" pos:end="45:62"><call pos:start="45:9" pos:end="45:58"><name pos:start="45:9" pos:end="45:16">nbd_read</name><argument_list pos:start="45:17" pos:end="45:58">(<argument pos:start="45:18" pos:end="45:28"><expr pos:start="45:18" pos:end="45:28"><name pos:start="45:18" pos:end="45:28"><name pos:start="45:18" pos:end="45:23">client</name><operator pos:start="45:24" pos:end="45:25">-&gt;</operator><name pos:start="45:26" pos:end="45:28">ioc</name></name></expr></argument>, <argument pos:start="45:31" pos:end="45:36"><expr pos:start="45:31" pos:end="45:36"><operator pos:start="45:31" pos:end="45:31">&amp;</operator><name pos:start="45:32" pos:end="45:36">flags</name></expr></argument>, <argument pos:start="45:39" pos:end="45:51"><expr pos:start="45:39" pos:end="45:51"><sizeof pos:start="45:39" pos:end="45:51">sizeof<argument_list pos:start="45:45" pos:end="45:51">(<argument pos:start="45:46" pos:end="45:50"><expr pos:start="45:46" pos:end="45:50"><name pos:start="45:46" pos:end="45:50">flags</name></expr></argument>)</argument_list></sizeof></expr></argument>, <argument pos:start="45:54" pos:end="45:57"><expr pos:start="45:54" pos:end="45:57"><name pos:start="45:54" pos:end="45:57">errp</name></expr></argument>)</argument_list></call> <operator pos:start="45:60" pos:end="45:60">&lt;</operator> <literal type="number" pos:start="45:62" pos:end="45:62">0</literal></expr>)</condition> <block pos:start="45:65" pos:end="51:5">{<block_content pos:start="47:9" pos:end="49:20">
+
+        <expr_stmt pos:start="47:9" pos:end="47:45"><expr pos:start="47:9" pos:end="47:44"><call pos:start="47:9" pos:end="47:44"><name pos:start="47:9" pos:end="47:21">error_prepend</name><argument_list pos:start="47:22" pos:end="47:44">(<argument pos:start="47:23" pos:end="47:26"><expr pos:start="47:23" pos:end="47:26"><name pos:start="47:23" pos:end="47:26">errp</name></expr></argument>, <argument pos:start="47:29" pos:end="47:43"><expr pos:start="47:29" pos:end="47:43"><literal type="string" pos:start="47:29" pos:end="47:43">"read failed: "</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="49:9" pos:end="49:20">return <expr pos:start="49:16" pos:end="49:19"><operator pos:start="49:16" pos:end="49:16">-</operator><name pos:start="49:17" pos:end="49:19">EIO</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+    <expr_stmt pos:start="53:5" pos:end="53:25"><expr pos:start="53:5" pos:end="53:24"><call pos:start="53:5" pos:end="53:24"><name pos:start="53:5" pos:end="53:16">be32_to_cpus</name><argument_list pos:start="53:17" pos:end="53:24">(<argument pos:start="53:18" pos:end="53:23"><expr pos:start="53:18" pos:end="53:23"><operator pos:start="53:18" pos:end="53:18">&amp;</operator><name pos:start="53:19" pos:end="53:23">flags</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="55:5" pos:end="55:45"><expr pos:start="55:5" pos:end="55:44"><call pos:start="55:5" pos:end="55:44"><name pos:start="55:5" pos:end="55:37">trace_nbd_negotiate_options_flags</name><argument_list pos:start="55:38" pos:end="55:44">(<argument pos:start="55:39" pos:end="55:43"><expr pos:start="55:39" pos:end="55:43"><name pos:start="55:39" pos:end="55:43">flags</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="57:5" pos:end="63:5"><if pos:start="57:5" pos:end="63:5">if <condition pos:start="57:8" pos:end="57:42">(<expr pos:start="57:9" pos:end="57:41"><name pos:start="57:9" pos:end="57:13">flags</name> <operator pos:start="57:15" pos:end="57:15">&amp;</operator> <name pos:start="57:17" pos:end="57:41">NBD_FLAG_C_FIXED_NEWSTYLE</name></expr>)</condition> <block pos:start="57:44" pos:end="63:5">{<block_content pos:start="59:9" pos:end="61:44">
+
+        <expr_stmt pos:start="59:9" pos:end="59:29"><expr pos:start="59:9" pos:end="59:28"><name pos:start="59:9" pos:end="59:21">fixedNewstyle</name> <operator pos:start="59:23" pos:end="59:23">=</operator> <name pos:start="59:25" pos:end="59:28">true</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="61:9" pos:end="61:44"><expr pos:start="61:9" pos:end="61:43"><name pos:start="61:9" pos:end="61:13">flags</name> <operator pos:start="61:15" pos:end="61:16">&amp;=</operator> <operator pos:start="61:18" pos:end="61:18">~</operator><name pos:start="61:19" pos:end="61:43">NBD_FLAG_C_FIXED_NEWSTYLE</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <if_stmt pos:start="65:5" pos:end="71:5"><if pos:start="65:5" pos:end="71:5">if <condition pos:start="65:8" pos:end="65:37">(<expr pos:start="65:9" pos:end="65:36"><name pos:start="65:9" pos:end="65:13">flags</name> <operator pos:start="65:15" pos:end="65:15">&amp;</operator> <name pos:start="65:17" pos:end="65:36">NBD_FLAG_C_NO_ZEROES</name></expr>)</condition> <block pos:start="65:39" pos:end="71:5">{<block_content pos:start="67:9" pos:end="69:39">
+
+        <expr_stmt pos:start="67:9" pos:end="67:25"><expr pos:start="67:9" pos:end="67:24"><name pos:start="67:9" pos:end="67:17">no_zeroes</name> <operator pos:start="67:19" pos:end="67:19">=</operator> <name pos:start="67:21" pos:end="67:24">true</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="69:9" pos:end="69:39"><expr pos:start="69:9" pos:end="69:38"><name pos:start="69:9" pos:end="69:13">flags</name> <operator pos:start="69:15" pos:end="69:16">&amp;=</operator> <operator pos:start="69:18" pos:end="69:18">~</operator><name pos:start="69:19" pos:end="69:38">NBD_FLAG_C_NO_ZEROES</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <if_stmt pos:start="73:5" pos:end="79:5"><if pos:start="73:5" pos:end="79:5">if <condition pos:start="73:8" pos:end="73:19">(<expr pos:start="73:9" pos:end="73:18"><name pos:start="73:9" pos:end="73:13">flags</name> <operator pos:start="73:15" pos:end="73:16">!=</operator> <literal type="number" pos:start="73:18" pos:end="73:18">0</literal></expr>)</condition> <block pos:start="73:21" pos:end="79:5">{<block_content pos:start="75:9" pos:end="77:23">
+
+        <expr_stmt pos:start="75:9" pos:end="75:79"><expr pos:start="75:9" pos:end="75:78"><call pos:start="75:9" pos:end="75:78"><name pos:start="75:9" pos:end="75:18">error_setg</name><argument_list pos:start="75:19" pos:end="75:78">(<argument pos:start="75:20" pos:end="75:23"><expr pos:start="75:20" pos:end="75:23"><name pos:start="75:20" pos:end="75:23">errp</name></expr></argument>, <argument pos:start="75:26" pos:end="75:70"><expr pos:start="75:26" pos:end="75:70"><literal type="string" pos:start="75:26" pos:end="75:51">"Unknown client flags 0x%"</literal> <name pos:start="75:53" pos:end="75:58">PRIx32</name> <literal type="string" pos:start="75:60" pos:end="75:70">" received"</literal></expr></argument>, <argument pos:start="75:73" pos:end="75:77"><expr pos:start="75:73" pos:end="75:77"><name pos:start="75:73" pos:end="75:77">flags</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="77:9" pos:end="77:23">return <expr pos:start="77:16" pos:end="77:22"><operator pos:start="77:16" pos:end="77:16">-</operator><name pos:start="77:17" pos:end="77:22">EINVAL</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <while pos:start="83:5" pos:end="433:5">while <condition pos:start="83:11" pos:end="83:13">(<expr pos:start="83:12" pos:end="83:12"><literal type="number" pos:start="83:12" pos:end="83:12">1</literal></expr>)</condition> <block pos:start="83:15" pos:end="433:5">{<block_content pos:start="85:9" pos:end="431:9">
+
+        <decl_stmt pos:start="85:9" pos:end="85:16"><decl pos:start="85:9" pos:end="85:15"><type pos:start="85:9" pos:end="85:11"><name pos:start="85:9" pos:end="85:11">int</name></type> <name pos:start="85:13" pos:end="85:15">ret</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="87:9" pos:end="87:32"><decl pos:start="87:9" pos:end="87:23"><type pos:start="87:9" pos:end="87:16"><name pos:start="87:9" pos:end="87:16">uint32_t</name></type> <name pos:start="87:18" pos:end="87:23">option</name></decl>, <decl pos:start="87:26" pos:end="87:31"><type ref="prev" pos:start="87:9" pos:end="87:16"/><name pos:start="87:26" pos:end="87:31">length</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="89:9" pos:end="89:23"><decl pos:start="89:9" pos:end="89:22"><type pos:start="89:9" pos:end="89:16"><name pos:start="89:9" pos:end="89:16">uint64_t</name></type> <name pos:start="89:18" pos:end="89:22">magic</name></decl>;</decl_stmt>
+
+
+
+        <if_stmt pos:start="93:9" pos:end="99:9"><if pos:start="93:9" pos:end="99:9">if <condition pos:start="93:12" pos:end="93:67">(<expr pos:start="93:13" pos:end="93:66"><call pos:start="93:13" pos:end="93:62"><name pos:start="93:13" pos:end="93:20">nbd_read</name><argument_list pos:start="93:21" pos:end="93:62">(<argument pos:start="93:22" pos:end="93:32"><expr pos:start="93:22" pos:end="93:32"><name pos:start="93:22" pos:end="93:32"><name pos:start="93:22" pos:end="93:27">client</name><operator pos:start="93:28" pos:end="93:29">-&gt;</operator><name pos:start="93:30" pos:end="93:32">ioc</name></name></expr></argument>, <argument pos:start="93:35" pos:end="93:40"><expr pos:start="93:35" pos:end="93:40"><operator pos:start="93:35" pos:end="93:35">&amp;</operator><name pos:start="93:36" pos:end="93:40">magic</name></expr></argument>, <argument pos:start="93:43" pos:end="93:55"><expr pos:start="93:43" pos:end="93:55"><sizeof pos:start="93:43" pos:end="93:55">sizeof<argument_list pos:start="93:49" pos:end="93:55">(<argument pos:start="93:50" pos:end="93:54"><expr pos:start="93:50" pos:end="93:54"><name pos:start="93:50" pos:end="93:54">magic</name></expr></argument>)</argument_list></sizeof></expr></argument>, <argument pos:start="93:58" pos:end="93:61"><expr pos:start="93:58" pos:end="93:61"><name pos:start="93:58" pos:end="93:61">errp</name></expr></argument>)</argument_list></call> <operator pos:start="93:64" pos:end="93:64">&lt;</operator> <literal type="number" pos:start="93:66" pos:end="93:66">0</literal></expr>)</condition> <block pos:start="93:69" pos:end="99:9">{<block_content pos:start="95:13" pos:end="97:27">
+
+            <expr_stmt pos:start="95:13" pos:end="95:49"><expr pos:start="95:13" pos:end="95:48"><call pos:start="95:13" pos:end="95:48"><name pos:start="95:13" pos:end="95:25">error_prepend</name><argument_list pos:start="95:26" pos:end="95:48">(<argument pos:start="95:27" pos:end="95:30"><expr pos:start="95:27" pos:end="95:30"><name pos:start="95:27" pos:end="95:30">errp</name></expr></argument>, <argument pos:start="95:33" pos:end="95:47"><expr pos:start="95:33" pos:end="95:47"><literal type="string" pos:start="95:33" pos:end="95:47">"read failed: "</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="97:13" pos:end="97:27">return <expr pos:start="97:20" pos:end="97:26"><operator pos:start="97:20" pos:end="97:20">-</operator><name pos:start="97:21" pos:end="97:26">EINVAL</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="101:9" pos:end="101:35"><expr pos:start="101:9" pos:end="101:34"><name pos:start="101:9" pos:end="101:13">magic</name> <operator pos:start="101:15" pos:end="101:15">=</operator> <call pos:start="101:17" pos:end="101:34"><name pos:start="101:17" pos:end="101:27">be64_to_cpu</name><argument_list pos:start="101:28" pos:end="101:34">(<argument pos:start="101:29" pos:end="101:33"><expr pos:start="101:29" pos:end="101:33"><name pos:start="101:29" pos:end="101:33">magic</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="103:9" pos:end="103:55"><expr pos:start="103:9" pos:end="103:54"><call pos:start="103:9" pos:end="103:54"><name pos:start="103:9" pos:end="103:47">trace_nbd_negotiate_options_check_magic</name><argument_list pos:start="103:48" pos:end="103:54">(<argument pos:start="103:49" pos:end="103:53"><expr pos:start="103:49" pos:end="103:53"><name pos:start="103:49" pos:end="103:53">magic</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="105:9" pos:end="111:9"><if pos:start="105:9" pos:end="111:9">if <condition pos:start="105:12" pos:end="105:36">(<expr pos:start="105:13" pos:end="105:35"><name pos:start="105:13" pos:end="105:17">magic</name> <operator pos:start="105:19" pos:end="105:20">!=</operator> <name pos:start="105:22" pos:end="105:35">NBD_OPTS_MAGIC</name></expr>)</condition> <block pos:start="105:38" pos:end="111:9">{<block_content pos:start="107:13" pos:end="109:27">
+
+            <expr_stmt pos:start="107:13" pos:end="107:51"><expr pos:start="107:13" pos:end="107:50"><call pos:start="107:13" pos:end="107:50"><name pos:start="107:13" pos:end="107:22">error_setg</name><argument_list pos:start="107:23" pos:end="107:50">(<argument pos:start="107:24" pos:end="107:27"><expr pos:start="107:24" pos:end="107:27"><name pos:start="107:24" pos:end="107:27">errp</name></expr></argument>, <argument pos:start="107:30" pos:end="107:49"><expr pos:start="107:30" pos:end="107:49"><literal type="string" pos:start="107:30" pos:end="107:49">"Bad magic received"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="109:13" pos:end="109:27">return <expr pos:start="109:20" pos:end="109:26"><operator pos:start="109:20" pos:end="109:20">-</operator><name pos:start="109:21" pos:end="109:26">EINVAL</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <if_stmt pos:start="115:9" pos:end="123:9"><if pos:start="115:9" pos:end="123:9">if <condition pos:start="115:12" pos:end="117:47">(<expr pos:start="115:13" pos:end="117:46"><call pos:start="115:13" pos:end="117:42"><name pos:start="115:13" pos:end="115:20">nbd_read</name><argument_list pos:start="115:21" pos:end="117:42">(<argument pos:start="115:22" pos:end="115:32"><expr pos:start="115:22" pos:end="115:32"><name pos:start="115:22" pos:end="115:32"><name pos:start="115:22" pos:end="115:27">client</name><operator pos:start="115:28" pos:end="115:29">-&gt;</operator><name pos:start="115:30" pos:end="115:32">ioc</name></name></expr></argument>, <argument pos:start="115:35" pos:end="115:41"><expr pos:start="115:35" pos:end="115:41"><operator pos:start="115:35" pos:end="115:35">&amp;</operator><name pos:start="115:36" pos:end="115:41">option</name></expr></argument>,
+
+                     <argument pos:start="117:22" pos:end="117:35"><expr pos:start="117:22" pos:end="117:35"><sizeof pos:start="117:22" pos:end="117:35">sizeof<argument_list pos:start="117:28" pos:end="117:35">(<argument pos:start="117:29" pos:end="117:34"><expr pos:start="117:29" pos:end="117:34"><name pos:start="117:29" pos:end="117:34">option</name></expr></argument>)</argument_list></sizeof></expr></argument>, <argument pos:start="117:38" pos:end="117:41"><expr pos:start="117:38" pos:end="117:41"><name pos:start="117:38" pos:end="117:41">errp</name></expr></argument>)</argument_list></call> <operator pos:start="117:44" pos:end="117:44">&lt;</operator> <literal type="number" pos:start="117:46" pos:end="117:46">0</literal></expr>)</condition> <block pos:start="117:49" pos:end="123:9">{<block_content pos:start="119:13" pos:end="121:27">
+
+            <expr_stmt pos:start="119:13" pos:end="119:49"><expr pos:start="119:13" pos:end="119:48"><call pos:start="119:13" pos:end="119:48"><name pos:start="119:13" pos:end="119:25">error_prepend</name><argument_list pos:start="119:26" pos:end="119:48">(<argument pos:start="119:27" pos:end="119:30"><expr pos:start="119:27" pos:end="119:30"><name pos:start="119:27" pos:end="119:30">errp</name></expr></argument>, <argument pos:start="119:33" pos:end="119:47"><expr pos:start="119:33" pos:end="119:47"><literal type="string" pos:start="119:33" pos:end="119:47">"read failed: "</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="121:13" pos:end="121:27">return <expr pos:start="121:20" pos:end="121:26"><operator pos:start="121:20" pos:end="121:20">-</operator><name pos:start="121:21" pos:end="121:26">EINVAL</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="125:9" pos:end="125:37"><expr pos:start="125:9" pos:end="125:36"><name pos:start="125:9" pos:end="125:14">option</name> <operator pos:start="125:16" pos:end="125:16">=</operator> <call pos:start="125:18" pos:end="125:36"><name pos:start="125:18" pos:end="125:28">be32_to_cpu</name><argument_list pos:start="125:29" pos:end="125:36">(<argument pos:start="125:30" pos:end="125:35"><expr pos:start="125:30" pos:end="125:35"><name pos:start="125:30" pos:end="125:35">option</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="127:9" pos:end="127:29"><expr pos:start="127:9" pos:end="127:28"><name pos:start="127:9" pos:end="127:19"><name pos:start="127:9" pos:end="127:14">client</name><operator pos:start="127:15" pos:end="127:16">-&gt;</operator><name pos:start="127:17" pos:end="127:19">opt</name></name> <operator pos:start="127:21" pos:end="127:21">=</operator> <name pos:start="127:23" pos:end="127:28">option</name></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="131:9" pos:end="137:9"><if pos:start="131:9" pos:end="137:9">if <condition pos:start="131:12" pos:end="131:69">(<expr pos:start="131:13" pos:end="131:68"><call pos:start="131:13" pos:end="131:64"><name pos:start="131:13" pos:end="131:20">nbd_read</name><argument_list pos:start="131:21" pos:end="131:64">(<argument pos:start="131:22" pos:end="131:32"><expr pos:start="131:22" pos:end="131:32"><name pos:start="131:22" pos:end="131:32"><name pos:start="131:22" pos:end="131:27">client</name><operator pos:start="131:28" pos:end="131:29">-&gt;</operator><name pos:start="131:30" pos:end="131:32">ioc</name></name></expr></argument>, <argument pos:start="131:35" pos:end="131:41"><expr pos:start="131:35" pos:end="131:41"><operator pos:start="131:35" pos:end="131:35">&amp;</operator><name pos:start="131:36" pos:end="131:41">length</name></expr></argument>, <argument pos:start="131:44" pos:end="131:57"><expr pos:start="131:44" pos:end="131:57"><sizeof pos:start="131:44" pos:end="131:57">sizeof<argument_list pos:start="131:50" pos:end="131:57">(<argument pos:start="131:51" pos:end="131:56"><expr pos:start="131:51" pos:end="131:56"><name pos:start="131:51" pos:end="131:56">length</name></expr></argument>)</argument_list></sizeof></expr></argument>, <argument pos:start="131:60" pos:end="131:63"><expr pos:start="131:60" pos:end="131:63"><name pos:start="131:60" pos:end="131:63">errp</name></expr></argument>)</argument_list></call> <operator pos:start="131:66" pos:end="131:66">&lt;</operator> <literal type="number" pos:start="131:68" pos:end="131:68">0</literal></expr>)</condition> <block pos:start="131:71" pos:end="137:9">{<block_content pos:start="133:13" pos:end="135:27">
+
+            <expr_stmt pos:start="133:13" pos:end="133:49"><expr pos:start="133:13" pos:end="133:48"><call pos:start="133:13" pos:end="133:48"><name pos:start="133:13" pos:end="133:25">error_prepend</name><argument_list pos:start="133:26" pos:end="133:48">(<argument pos:start="133:27" pos:end="133:30"><expr pos:start="133:27" pos:end="133:30"><name pos:start="133:27" pos:end="133:30">errp</name></expr></argument>, <argument pos:start="133:33" pos:end="133:47"><expr pos:start="133:33" pos:end="133:47"><literal type="string" pos:start="133:33" pos:end="133:47">"read failed: "</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="135:13" pos:end="135:27">return <expr pos:start="135:20" pos:end="135:26"><operator pos:start="135:20" pos:end="135:20">-</operator><name pos:start="135:21" pos:end="135:26">EINVAL</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="139:9" pos:end="139:37"><expr pos:start="139:9" pos:end="139:36"><name pos:start="139:9" pos:end="139:14">length</name> <operator pos:start="139:16" pos:end="139:16">=</operator> <call pos:start="139:18" pos:end="139:36"><name pos:start="139:18" pos:end="139:28">be32_to_cpu</name><argument_list pos:start="139:29" pos:end="139:36">(<argument pos:start="139:30" pos:end="139:35"><expr pos:start="139:30" pos:end="139:35"><name pos:start="139:30" pos:end="139:35">length</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="141:9" pos:end="141:32"><expr pos:start="141:9" pos:end="141:31"><name pos:start="141:9" pos:end="141:22"><name pos:start="141:9" pos:end="141:14">client</name><operator pos:start="141:15" pos:end="141:16">-&gt;</operator><name pos:start="141:17" pos:end="141:22">optlen</name></name> <operator pos:start="141:24" pos:end="141:24">=</operator> <name pos:start="141:26" pos:end="141:31">length</name></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="145:9" pos:end="153:9"><if pos:start="145:9" pos:end="153:9">if <condition pos:start="145:12" pos:end="145:41">(<expr pos:start="145:13" pos:end="145:40"><name pos:start="145:13" pos:end="145:18">length</name> <operator pos:start="145:20" pos:end="145:20">&gt;</operator> <name pos:start="145:22" pos:end="145:40">NBD_MAX_BUFFER_SIZE</name></expr>)</condition> <block pos:start="145:43" pos:end="153:9">{<block_content pos:start="147:13" pos:end="151:27">
+
+            <expr_stmt pos:start="147:13" pos:end="149:52"><expr pos:start="147:13" pos:end="149:51"><call pos:start="147:13" pos:end="149:51"><name pos:start="147:13" pos:end="147:22">error_setg</name><argument_list pos:start="147:23" pos:end="149:51">(<argument pos:start="147:24" pos:end="147:27"><expr pos:start="147:24" pos:end="147:27"><name pos:start="147:24" pos:end="147:27">errp</name></expr></argument>, <argument pos:start="147:30" pos:end="147:76"><expr pos:start="147:30" pos:end="147:76"><literal type="string" pos:start="147:30" pos:end="147:37">"len (%"</literal> <name pos:start="147:39" pos:end="147:44">PRIu32</name><literal type="string" pos:start="147:45" pos:end="147:76">" ) is larger than max len (%u)"</literal></expr></argument>,
+
+                       <argument pos:start="149:24" pos:end="149:29"><expr pos:start="149:24" pos:end="149:29"><name pos:start="149:24" pos:end="149:29">length</name></expr></argument>, <argument pos:start="149:32" pos:end="149:50"><expr pos:start="149:32" pos:end="149:50"><name pos:start="149:32" pos:end="149:50">NBD_MAX_BUFFER_SIZE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="151:13" pos:end="151:27">return <expr pos:start="151:20" pos:end="151:26"><operator pos:start="151:20" pos:end="151:20">-</operator><name pos:start="151:21" pos:end="151:26">EINVAL</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="157:9" pos:end="159:73"><expr pos:start="157:9" pos:end="159:72"><call pos:start="157:9" pos:end="159:72"><name pos:start="157:9" pos:end="157:48">trace_nbd_negotiate_options_check_option</name><argument_list pos:start="157:49" pos:end="159:72">(<argument pos:start="157:50" pos:end="157:55"><expr pos:start="157:50" pos:end="157:55"><name pos:start="157:50" pos:end="157:55">option</name></expr></argument>,
+
+                                                 <argument pos:start="159:50" pos:end="159:71"><expr pos:start="159:50" pos:end="159:71"><call pos:start="159:50" pos:end="159:71"><name pos:start="159:50" pos:end="159:63">nbd_opt_lookup</name><argument_list pos:start="159:64" pos:end="159:71">(<argument pos:start="159:65" pos:end="159:70"><expr pos:start="159:65" pos:end="159:70"><name pos:start="159:65" pos:end="159:70">option</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="161:9" pos:end="425:9"><if pos:start="161:9" pos:end="253:9">if <condition pos:start="161:12" pos:end="163:54">(<expr pos:start="161:13" pos:end="163:53"><name pos:start="161:13" pos:end="161:28"><name pos:start="161:13" pos:end="161:18">client</name><operator pos:start="161:19" pos:end="161:20">-&gt;</operator><name pos:start="161:21" pos:end="161:28">tlscreds</name></name> <operator pos:start="161:30" pos:end="161:31">&amp;&amp;</operator>
+
+            <name pos:start="163:13" pos:end="163:23"><name pos:start="163:13" pos:end="163:18">client</name><operator pos:start="163:19" pos:end="163:20">-&gt;</operator><name pos:start="163:21" pos:end="163:23">ioc</name></name> <operator pos:start="163:25" pos:end="163:26">==</operator> <operator pos:start="163:28" pos:end="163:28">(</operator><name pos:start="163:29" pos:end="163:38">QIOChannel</name> <operator pos:start="163:40" pos:end="163:40">*</operator><operator pos:start="163:41" pos:end="163:41">)</operator><name pos:start="163:42" pos:end="163:53"><name pos:start="163:42" pos:end="163:47">client</name><operator pos:start="163:48" pos:end="163:49">-&gt;</operator><name pos:start="163:50" pos:end="163:53">sioc</name></name></expr>)</condition> <block pos:start="163:56" pos:end="253:9">{<block_content pos:start="165:13" pos:end="251:13">
+
+            <decl_stmt pos:start="165:13" pos:end="165:29"><decl pos:start="165:13" pos:end="165:28"><type pos:start="165:13" pos:end="165:24"><name pos:start="165:13" pos:end="165:22">QIOChannel</name> <modifier pos:start="165:24" pos:end="165:24">*</modifier></type><name pos:start="165:25" pos:end="165:28">tioc</name></decl>;</decl_stmt>
+
+            <if_stmt pos:start="167:13" pos:end="173:13"><if pos:start="167:13" pos:end="173:13">if <condition pos:start="167:16" pos:end="167:31">(<expr pos:start="167:17" pos:end="167:30"><operator pos:start="167:17" pos:end="167:17">!</operator><name pos:start="167:18" pos:end="167:30">fixedNewstyle</name></expr>)</condition> <block pos:start="167:33" pos:end="173:13">{<block_content pos:start="169:17" pos:end="171:31">
+
+                <expr_stmt pos:start="169:17" pos:end="169:74"><expr pos:start="169:17" pos:end="169:73"><call pos:start="169:17" pos:end="169:73"><name pos:start="169:17" pos:end="169:26">error_setg</name><argument_list pos:start="169:27" pos:end="169:73">(<argument pos:start="169:28" pos:end="169:31"><expr pos:start="169:28" pos:end="169:31"><name pos:start="169:28" pos:end="169:31">errp</name></expr></argument>, <argument pos:start="169:34" pos:end="169:64"><expr pos:start="169:34" pos:end="169:64"><literal type="string" pos:start="169:34" pos:end="169:57">"Unsupported option 0x%"</literal> <name pos:start="169:59" pos:end="169:64">PRIx32</name></expr></argument>, <argument pos:start="169:67" pos:end="169:72"><expr pos:start="169:67" pos:end="169:72"><name pos:start="169:67" pos:end="169:72">option</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <return pos:start="171:17" pos:end="171:31">return <expr pos:start="171:24" pos:end="171:30"><operator pos:start="171:24" pos:end="171:24">-</operator><name pos:start="171:25" pos:end="171:30">EINVAL</name></expr>;</return>
+
+            </block_content>}</block></if></if_stmt>
+
+            <switch pos:start="175:13" pos:end="251:13">switch <condition pos:start="175:20" pos:end="175:27">(<expr pos:start="175:21" pos:end="175:26"><name pos:start="175:21" pos:end="175:26">option</name></expr>)</condition> <block pos:start="175:29" pos:end="251:13">{<block_content pos:start="177:13" pos:end="249:22">
+
+            <case pos:start="177:13" pos:end="177:34">case <expr pos:start="177:18" pos:end="177:33"><name pos:start="177:18" pos:end="177:33">NBD_OPT_STARTTLS</name></expr>:</case>
+
+                <if_stmt pos:start="179:17" pos:end="187:17"><if pos:start="179:17" pos:end="187:17">if <condition pos:start="179:20" pos:end="179:27">(<expr pos:start="179:21" pos:end="179:26"><name pos:start="179:21" pos:end="179:26">length</name></expr>)</condition> <block pos:start="179:29" pos:end="187:17">{<block_content pos:start="185:21" pos:end="185:65">
+
+                    <comment type="block" pos:start="181:21" pos:end="183:65">/* Unconditionally drop the connection if the client
+
+                     * can't start a TLS negotiation correctly */</comment>
+
+                    <return pos:start="185:21" pos:end="185:65">return <expr pos:start="185:28" pos:end="185:64"><call pos:start="185:28" pos:end="185:64"><name pos:start="185:28" pos:end="185:44">nbd_reject_length</name><argument_list pos:start="185:45" pos:end="185:64">(<argument pos:start="185:46" pos:end="185:51"><expr pos:start="185:46" pos:end="185:51"><name pos:start="185:46" pos:end="185:51">client</name></expr></argument>, <argument pos:start="185:54" pos:end="185:57"><expr pos:start="185:54" pos:end="185:57"><name pos:start="185:54" pos:end="185:57">true</name></expr></argument>, <argument pos:start="185:60" pos:end="185:63"><expr pos:start="185:60" pos:end="185:63"><name pos:start="185:60" pos:end="185:63">errp</name></expr></argument>)</argument_list></call></expr>;</return>
+
+                </block_content>}</block></if></if_stmt>
+
+                <expr_stmt pos:start="189:17" pos:end="189:67"><expr pos:start="189:17" pos:end="189:66"><name pos:start="189:17" pos:end="189:20">tioc</name> <operator pos:start="189:22" pos:end="189:22">=</operator> <call pos:start="189:24" pos:end="189:66"><name pos:start="189:24" pos:end="189:52">nbd_negotiate_handle_starttls</name><argument_list pos:start="189:53" pos:end="189:66">(<argument pos:start="189:54" pos:end="189:59"><expr pos:start="189:54" pos:end="189:59"><name pos:start="189:54" pos:end="189:59">client</name></expr></argument>, <argument pos:start="189:62" pos:end="189:65"><expr pos:start="189:62" pos:end="189:65"><name pos:start="189:62" pos:end="189:65">errp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <if_stmt pos:start="191:17" pos:end="195:17"><if pos:start="191:17" pos:end="195:17">if <condition pos:start="191:20" pos:end="191:26">(<expr pos:start="191:21" pos:end="191:25"><operator pos:start="191:21" pos:end="191:21">!</operator><name pos:start="191:22" pos:end="191:25">tioc</name></expr>)</condition> <block pos:start="191:28" pos:end="195:17">{<block_content pos:start="193:21" pos:end="193:32">
+
+                    <return pos:start="193:21" pos:end="193:32">return <expr pos:start="193:28" pos:end="193:31"><operator pos:start="193:28" pos:end="193:28">-</operator><name pos:start="193:29" pos:end="193:31">EIO</name></expr>;</return>
+
+                </block_content>}</block></if></if_stmt>
+
+                <expr_stmt pos:start="197:17" pos:end="197:24"><expr pos:start="197:17" pos:end="197:23"><name pos:start="197:17" pos:end="197:19">ret</name> <operator pos:start="197:21" pos:end="197:21">=</operator> <literal type="number" pos:start="197:23" pos:end="197:23">0</literal></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="199:17" pos:end="199:50"><expr pos:start="199:17" pos:end="199:49"><call pos:start="199:17" pos:end="199:49"><name pos:start="199:17" pos:end="199:28">object_unref</name><argument_list pos:start="199:29" pos:end="199:49">(<argument pos:start="199:30" pos:end="199:48"><expr pos:start="199:30" pos:end="199:48"><call pos:start="199:30" pos:end="199:48"><name pos:start="199:30" pos:end="199:35">OBJECT</name><argument_list pos:start="199:36" pos:end="199:48">(<argument pos:start="199:37" pos:end="199:47"><expr pos:start="199:37" pos:end="199:47"><name pos:start="199:37" pos:end="199:47"><name pos:start="199:37" pos:end="199:42">client</name><operator pos:start="199:43" pos:end="199:44">-&gt;</operator><name pos:start="199:45" pos:end="199:47">ioc</name></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="201:17" pos:end="201:48"><expr pos:start="201:17" pos:end="201:47"><name pos:start="201:17" pos:end="201:27"><name pos:start="201:17" pos:end="201:22">client</name><operator pos:start="201:23" pos:end="201:24">-&gt;</operator><name pos:start="201:25" pos:end="201:27">ioc</name></name> <operator pos:start="201:29" pos:end="201:29">=</operator> <call pos:start="201:31" pos:end="201:47"><name pos:start="201:31" pos:end="201:41">QIO_CHANNEL</name><argument_list pos:start="201:42" pos:end="201:47">(<argument pos:start="201:43" pos:end="201:46"><expr pos:start="201:43" pos:end="201:46"><name pos:start="201:43" pos:end="201:46">tioc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <break pos:start="203:17" pos:end="203:22">break;</break>
+
+
+
+            <case pos:start="207:13" pos:end="207:37">case <expr pos:start="207:18" pos:end="207:36"><name pos:start="207:18" pos:end="207:36">NBD_OPT_EXPORT_NAME</name></expr>:</case>
+
+                <comment type="block" pos:start="209:17" pos:end="209:77">/* No way to return an error to client, so drop connection */</comment>
+
+                <expr_stmt pos:start="211:17" pos:end="213:35"><expr pos:start="211:17" pos:end="213:34"><call pos:start="211:17" pos:end="213:34"><name pos:start="211:17" pos:end="211:26">error_setg</name><argument_list pos:start="211:27" pos:end="213:34">(<argument pos:start="211:28" pos:end="211:31"><expr pos:start="211:28" pos:end="211:31"><name pos:start="211:28" pos:end="211:31">errp</name></expr></argument>, <argument pos:start="211:34" pos:end="211:71"><expr pos:start="211:34" pos:end="211:71"><literal type="string" pos:start="211:34" pos:end="211:71">"Option 0x%x not permitted before TLS"</literal></expr></argument>,
+
+                           <argument pos:start="213:28" pos:end="213:33"><expr pos:start="213:28" pos:end="213:33"><name pos:start="213:28" pos:end="213:33">option</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <return pos:start="215:17" pos:end="215:31">return <expr pos:start="215:24" pos:end="215:30"><operator pos:start="215:24" pos:end="215:24">-</operator><name pos:start="215:25" pos:end="215:30">EINVAL</name></expr>;</return>
+
+
+
+            <default pos:start="219:13" pos:end="219:20">default:</default>
+
+                <if_stmt pos:start="221:17" pos:end="225:17"><if pos:start="221:17" pos:end="225:17">if <condition pos:start="221:20" pos:end="221:60">(<expr pos:start="221:21" pos:end="221:59"><call pos:start="221:21" pos:end="221:55"><name pos:start="221:21" pos:end="221:28">nbd_drop</name><argument_list pos:start="221:29" pos:end="221:55">(<argument pos:start="221:30" pos:end="221:40"><expr pos:start="221:30" pos:end="221:40"><name pos:start="221:30" pos:end="221:40"><name pos:start="221:30" pos:end="221:35">client</name><operator pos:start="221:36" pos:end="221:37">-&gt;</operator><name pos:start="221:38" pos:end="221:40">ioc</name></name></expr></argument>, <argument pos:start="221:43" pos:end="221:48"><expr pos:start="221:43" pos:end="221:48"><name pos:start="221:43" pos:end="221:48">length</name></expr></argument>, <argument pos:start="221:51" pos:end="221:54"><expr pos:start="221:51" pos:end="221:54"><name pos:start="221:51" pos:end="221:54">errp</name></expr></argument>)</argument_list></call> <operator pos:start="221:57" pos:end="221:57">&lt;</operator> <literal type="number" pos:start="221:59" pos:end="221:59">0</literal></expr>)</condition> <block pos:start="221:62" pos:end="225:17">{<block_content pos:start="223:21" pos:end="223:32">
+
+                    <return pos:start="223:21" pos:end="223:32">return <expr pos:start="223:28" pos:end="223:31"><operator pos:start="223:28" pos:end="223:28">-</operator><name pos:start="223:29" pos:end="223:31">EIO</name></expr>;</return>
+
+                </block_content>}</block></if></if_stmt>
+
+                <expr_stmt pos:start="227:17" pos:end="235:57"><expr pos:start="227:17" pos:end="235:56"><name pos:start="227:17" pos:end="227:19">ret</name> <operator pos:start="227:21" pos:end="227:21">=</operator> <call pos:start="227:23" pos:end="235:56"><name pos:start="227:23" pos:end="227:48">nbd_negotiate_send_rep_err</name><argument_list pos:start="227:49" pos:end="235:56">(<argument pos:start="227:50" pos:end="227:55"><expr pos:start="227:50" pos:end="227:55"><name pos:start="227:50" pos:end="227:55">client</name></expr></argument>,
+
+                                                 <argument pos:start="229:50" pos:end="229:69"><expr pos:start="229:50" pos:end="229:69"><name pos:start="229:50" pos:end="229:69">NBD_REP_ERR_TLS_REQD</name></expr></argument>, <argument pos:start="229:72" pos:end="229:75"><expr pos:start="229:72" pos:end="229:75"><name pos:start="229:72" pos:end="229:75">errp</name></expr></argument>,
+
+                                                 <argument pos:start="231:50" pos:end="233:75"><expr pos:start="231:50" pos:end="233:75"><literal type="string" pos:start="231:50" pos:end="231:61">"Option 0x%"</literal> <name pos:start="231:63" pos:end="231:68">PRIx32</name>
+
+                                                 <literal type="string" pos:start="233:50" pos:end="233:75">"not permitted before TLS"</literal></expr></argument>,
+
+                                                 <argument pos:start="235:50" pos:end="235:55"><expr pos:start="235:50" pos:end="235:55"><name pos:start="235:50" pos:end="235:55">option</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <comment type="block" pos:start="237:17" pos:end="241:46">/* Let the client keep trying, unless they asked to
+
+                 * quit. In this mode, we've already sent an error, so
+
+                 * we can't ack the abort.  */</comment>
+
+                <if_stmt pos:start="243:17" pos:end="247:17"><if pos:start="243:17" pos:end="247:17">if <condition pos:start="243:20" pos:end="243:44">(<expr pos:start="243:21" pos:end="243:43"><name pos:start="243:21" pos:end="243:26">option</name> <operator pos:start="243:28" pos:end="243:29">==</operator> <name pos:start="243:31" pos:end="243:43">NBD_OPT_ABORT</name></expr>)</condition> <block pos:start="243:46" pos:end="247:17">{<block_content pos:start="245:21" pos:end="245:29">
+
+                    <return pos:start="245:21" pos:end="245:29">return <expr pos:start="245:28" pos:end="245:28"><literal type="number" pos:start="245:28" pos:end="245:28">1</literal></expr>;</return>
+
+                </block_content>}</block></if></if_stmt>
+
+                <break pos:start="249:17" pos:end="249:22">break;</break>
+
+            </block_content>}</block></switch>
+
+        </block_content>}</block></if> <if type="elseif" pos:start="253:11" pos:end="393:9">else if <condition pos:start="253:19" pos:end="253:33">(<expr pos:start="253:20" pos:end="253:32"><name pos:start="253:20" pos:end="253:32">fixedNewstyle</name></expr>)</condition> <block pos:start="253:35" pos:end="393:9">{<block_content pos:start="255:13" pos:end="391:13">
+
+            <switch pos:start="255:13" pos:end="391:13">switch <condition pos:start="255:20" pos:end="255:27">(<expr pos:start="255:21" pos:end="255:26"><name pos:start="255:21" pos:end="255:26">option</name></expr>)</condition> <block pos:start="255:29" pos:end="391:13">{<block_content pos:start="257:13" pos:end="389:22">
+
+            <case pos:start="257:13" pos:end="257:30">case <expr pos:start="257:18" pos:end="257:29"><name pos:start="257:18" pos:end="257:29">NBD_OPT_LIST</name></expr>:</case>
+
+                <if_stmt pos:start="259:17" pos:end="267:17"><if pos:start="259:17" pos:end="263:17">if <condition pos:start="259:20" pos:end="259:27">(<expr pos:start="259:21" pos:end="259:26"><name pos:start="259:21" pos:end="259:26">length</name></expr>)</condition> <block pos:start="259:29" pos:end="263:17">{<block_content pos:start="261:21" pos:end="261:65">
+
+                    <expr_stmt pos:start="261:21" pos:end="261:65"><expr pos:start="261:21" pos:end="261:64"><name pos:start="261:21" pos:end="261:23">ret</name> <operator pos:start="261:25" pos:end="261:25">=</operator> <call pos:start="261:27" pos:end="261:64"><name pos:start="261:27" pos:end="261:43">nbd_reject_length</name><argument_list pos:start="261:44" pos:end="261:64">(<argument pos:start="261:45" pos:end="261:50"><expr pos:start="261:45" pos:end="261:50"><name pos:start="261:45" pos:end="261:50">client</name></expr></argument>, <argument pos:start="261:53" pos:end="261:57"><expr pos:start="261:53" pos:end="261:57"><name pos:start="261:53" pos:end="261:57">false</name></expr></argument>, <argument pos:start="261:60" pos:end="261:63"><expr pos:start="261:60" pos:end="261:63"><name pos:start="261:60" pos:end="261:63">errp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                </block_content>}</block></if> <else pos:start="263:19" pos:end="267:17">else <block pos:start="263:24" pos:end="267:17">{<block_content pos:start="265:21" pos:end="265:66">
+
+                    <expr_stmt pos:start="265:21" pos:end="265:66"><expr pos:start="265:21" pos:end="265:65"><name pos:start="265:21" pos:end="265:23">ret</name> <operator pos:start="265:25" pos:end="265:25">=</operator> <call pos:start="265:27" pos:end="265:65"><name pos:start="265:27" pos:end="265:51">nbd_negotiate_handle_list</name><argument_list pos:start="265:52" pos:end="265:65">(<argument pos:start="265:53" pos:end="265:58"><expr pos:start="265:53" pos:end="265:58"><name pos:start="265:53" pos:end="265:58">client</name></expr></argument>, <argument pos:start="265:61" pos:end="265:64"><expr pos:start="265:61" pos:end="265:64"><name pos:start="265:61" pos:end="265:64">errp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                </block_content>}</block></else></if_stmt>
+
+                <break pos:start="269:17" pos:end="269:22">break;</break>
+
+
+
+            <case pos:start="273:13" pos:end="273:31">case <expr pos:start="273:18" pos:end="273:30"><name pos:start="273:18" pos:end="273:30">NBD_OPT_ABORT</name></expr>:</case>
+
+                <comment type="block" pos:start="275:17" pos:end="279:59">/* NBD spec says we must try to reply before
+
+                 * disconnecting, but that we must also tolerate
+
+                 * guests that don't wait for our reply. */</comment>
+
+                <expr_stmt pos:start="281:17" pos:end="281:66"><expr pos:start="281:17" pos:end="281:65"><call pos:start="281:17" pos:end="281:65"><name pos:start="281:17" pos:end="281:38">nbd_negotiate_send_rep</name><argument_list pos:start="281:39" pos:end="281:65">(<argument pos:start="281:40" pos:end="281:45"><expr pos:start="281:40" pos:end="281:45"><name pos:start="281:40" pos:end="281:45">client</name></expr></argument>, <argument pos:start="281:48" pos:end="281:58"><expr pos:start="281:48" pos:end="281:58"><name pos:start="281:48" pos:end="281:58">NBD_REP_ACK</name></expr></argument>, <argument pos:start="281:61" pos:end="281:64"><expr pos:start="281:61" pos:end="281:64"><name pos:start="281:61" pos:end="281:64">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <return pos:start="283:17" pos:end="283:25">return <expr pos:start="283:24" pos:end="283:24"><literal type="number" pos:start="283:24" pos:end="283:24">1</literal></expr>;</return>
+
+
+
+            <case pos:start="287:13" pos:end="287:37">case <expr pos:start="287:18" pos:end="287:36"><name pos:start="287:18" pos:end="287:36">NBD_OPT_EXPORT_NAME</name></expr>:</case>
+
+                <return pos:start="289:17" pos:end="293:62">return <expr pos:start="289:24" pos:end="293:61"><call pos:start="289:24" pos:end="293:61"><name pos:start="289:24" pos:end="289:55">nbd_negotiate_handle_export_name</name><argument_list pos:start="289:56" pos:end="293:61">(<argument pos:start="289:57" pos:end="289:62"><expr pos:start="289:57" pos:end="289:62"><name pos:start="289:57" pos:end="289:62">client</name></expr></argument>,
+
+                                                        <argument pos:start="291:57" pos:end="291:63"><expr pos:start="291:57" pos:end="291:63"><name pos:start="291:57" pos:end="291:63">myflags</name></expr></argument>, <argument pos:start="291:66" pos:end="291:74"><expr pos:start="291:66" pos:end="291:74"><name pos:start="291:66" pos:end="291:74">no_zeroes</name></expr></argument>,
+
+                                                        <argument pos:start="293:57" pos:end="293:60"><expr pos:start="293:57" pos:end="293:60"><name pos:start="293:57" pos:end="293:60">errp</name></expr></argument>)</argument_list></call></expr>;</return>
+
+
+
+            <case pos:start="297:13" pos:end="297:30">case <expr pos:start="297:18" pos:end="297:29"><name pos:start="297:18" pos:end="297:29">NBD_OPT_INFO</name></expr>:</case>
+
+            <case pos:start="299:13" pos:end="299:28">case <expr pos:start="299:18" pos:end="299:27"><name pos:start="299:18" pos:end="299:27">NBD_OPT_GO</name></expr>:</case>
+
+                <expr_stmt pos:start="301:17" pos:end="301:71"><expr pos:start="301:17" pos:end="301:70"><name pos:start="301:17" pos:end="301:19">ret</name> <operator pos:start="301:21" pos:end="301:21">=</operator> <call pos:start="301:23" pos:end="301:70"><name pos:start="301:23" pos:end="301:47">nbd_negotiate_handle_info</name><argument_list pos:start="301:48" pos:end="301:70">(<argument pos:start="301:49" pos:end="301:54"><expr pos:start="301:49" pos:end="301:54"><name pos:start="301:49" pos:end="301:54">client</name></expr></argument>, <argument pos:start="301:57" pos:end="301:63"><expr pos:start="301:57" pos:end="301:63"><name pos:start="301:57" pos:end="301:63">myflags</name></expr></argument>, <argument pos:start="301:66" pos:end="301:69"><expr pos:start="301:66" pos:end="301:69"><name pos:start="301:66" pos:end="301:69">errp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <if_stmt pos:start="303:17" pos:end="309:17"><if pos:start="303:17" pos:end="309:17">if <condition pos:start="303:20" pos:end="303:29">(<expr pos:start="303:21" pos:end="303:28"><name pos:start="303:21" pos:end="303:23">ret</name> <operator pos:start="303:25" pos:end="303:26">==</operator> <literal type="number" pos:start="303:28" pos:end="303:28">1</literal></expr>)</condition> <block pos:start="303:31" pos:end="309:17">{<block_content pos:start="305:21" pos:end="307:29">
+
+                    <expr_stmt pos:start="305:21" pos:end="305:49"><expr pos:start="305:21" pos:end="305:48"><call pos:start="305:21" pos:end="305:48"><name pos:start="305:21" pos:end="305:26">assert</name><argument_list pos:start="305:27" pos:end="305:48">(<argument pos:start="305:28" pos:end="305:47"><expr pos:start="305:28" pos:end="305:47"><name pos:start="305:28" pos:end="305:33">option</name> <operator pos:start="305:35" pos:end="305:36">==</operator> <name pos:start="305:38" pos:end="305:47">NBD_OPT_GO</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                    <return pos:start="307:21" pos:end="307:29">return <expr pos:start="307:28" pos:end="307:28"><literal type="number" pos:start="307:28" pos:end="307:28">0</literal></expr>;</return>
+
+                </block_content>}</block></if></if_stmt>
+
+                <break pos:start="311:17" pos:end="311:22">break;</break>
+
+
+
+            <case pos:start="315:13" pos:end="315:34">case <expr pos:start="315:18" pos:end="315:33"><name pos:start="315:18" pos:end="315:33">NBD_OPT_STARTTLS</name></expr>:</case>
+
+                <if_stmt pos:start="317:17" pos:end="337:17"><if pos:start="317:17" pos:end="321:17">if <condition pos:start="317:20" pos:end="317:27">(<expr pos:start="317:21" pos:end="317:26"><name pos:start="317:21" pos:end="317:26">length</name></expr>)</condition> <block pos:start="317:29" pos:end="321:17">{<block_content pos:start="319:21" pos:end="319:65">
+
+                    <expr_stmt pos:start="319:21" pos:end="319:65"><expr pos:start="319:21" pos:end="319:64"><name pos:start="319:21" pos:end="319:23">ret</name> <operator pos:start="319:25" pos:end="319:25">=</operator> <call pos:start="319:27" pos:end="319:64"><name pos:start="319:27" pos:end="319:43">nbd_reject_length</name><argument_list pos:start="319:44" pos:end="319:64">(<argument pos:start="319:45" pos:end="319:50"><expr pos:start="319:45" pos:end="319:50"><name pos:start="319:45" pos:end="319:50">client</name></expr></argument>, <argument pos:start="319:53" pos:end="319:57"><expr pos:start="319:53" pos:end="319:57"><name pos:start="319:53" pos:end="319:57">false</name></expr></argument>, <argument pos:start="319:60" pos:end="319:63"><expr pos:start="319:60" pos:end="319:63"><name pos:start="319:60" pos:end="319:63">errp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                </block_content>}</block></if> <if type="elseif" pos:start="321:19" pos:end="329:17">else if <condition pos:start="321:27" pos:end="321:44">(<expr pos:start="321:28" pos:end="321:43"><name pos:start="321:28" pos:end="321:43"><name pos:start="321:28" pos:end="321:33">client</name><operator pos:start="321:34" pos:end="321:35">-&gt;</operator><name pos:start="321:36" pos:end="321:43">tlscreds</name></name></expr>)</condition> <block pos:start="321:46" pos:end="329:17">{<block_content pos:start="323:21" pos:end="327:76">
+
+                    <expr_stmt pos:start="323:21" pos:end="327:76"><expr pos:start="323:21" pos:end="327:75"><name pos:start="323:21" pos:end="323:23">ret</name> <operator pos:start="323:25" pos:end="323:25">=</operator> <call pos:start="323:27" pos:end="327:75"><name pos:start="323:27" pos:end="323:52">nbd_negotiate_send_rep_err</name><argument_list pos:start="323:53" pos:end="327:75">(<argument pos:start="323:54" pos:end="323:59"><expr pos:start="323:54" pos:end="323:59"><name pos:start="323:54" pos:end="323:59">client</name></expr></argument>,
+
+                                                     <argument pos:start="325:54" pos:end="325:72"><expr pos:start="325:54" pos:end="325:72"><name pos:start="325:54" pos:end="325:72">NBD_REP_ERR_INVALID</name></expr></argument>, <argument pos:start="325:75" pos:end="325:78"><expr pos:start="325:75" pos:end="325:78"><name pos:start="325:75" pos:end="325:78">errp</name></expr></argument>,
+
+                                                     <argument pos:start="327:54" pos:end="327:74"><expr pos:start="327:54" pos:end="327:74"><literal type="string" pos:start="327:54" pos:end="327:74">"TLS already enabled"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                </block_content>}</block></if> <else pos:start="329:19" pos:end="337:17">else <block pos:start="329:24" pos:end="337:17">{<block_content pos:start="331:21" pos:end="335:75">
+
+                    <expr_stmt pos:start="331:21" pos:end="335:75"><expr pos:start="331:21" pos:end="335:74"><name pos:start="331:21" pos:end="331:23">ret</name> <operator pos:start="331:25" pos:end="331:25">=</operator> <call pos:start="331:27" pos:end="335:74"><name pos:start="331:27" pos:end="331:52">nbd_negotiate_send_rep_err</name><argument_list pos:start="331:53" pos:end="335:74">(<argument pos:start="331:54" pos:end="331:59"><expr pos:start="331:54" pos:end="331:59"><name pos:start="331:54" pos:end="331:59">client</name></expr></argument>,
+
+                                                     <argument pos:start="333:54" pos:end="333:71"><expr pos:start="333:54" pos:end="333:71"><name pos:start="333:54" pos:end="333:71">NBD_REP_ERR_POLICY</name></expr></argument>, <argument pos:start="333:74" pos:end="333:77"><expr pos:start="333:74" pos:end="333:77"><name pos:start="333:74" pos:end="333:77">errp</name></expr></argument>,
+
+                                                     <argument pos:start="335:54" pos:end="335:73"><expr pos:start="335:54" pos:end="335:73"><literal type="string" pos:start="335:54" pos:end="335:73">"TLS not configured"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                </block_content>}</block></else></if_stmt>
+
+                <break pos:start="339:17" pos:end="339:22">break;</break>
+
+
+
+            <case pos:start="343:13" pos:end="343:42">case <expr pos:start="343:18" pos:end="343:41"><name pos:start="343:18" pos:end="343:41">NBD_OPT_STRUCTURED_REPLY</name></expr>:</case>
+
+                <if_stmt pos:start="345:17" pos:end="365:17"><if pos:start="345:17" pos:end="349:17">if <condition pos:start="345:20" pos:end="345:27">(<expr pos:start="345:21" pos:end="345:26"><name pos:start="345:21" pos:end="345:26">length</name></expr>)</condition> <block pos:start="345:29" pos:end="349:17">{<block_content pos:start="347:21" pos:end="347:65">
+
+                    <expr_stmt pos:start="347:21" pos:end="347:65"><expr pos:start="347:21" pos:end="347:64"><name pos:start="347:21" pos:end="347:23">ret</name> <operator pos:start="347:25" pos:end="347:25">=</operator> <call pos:start="347:27" pos:end="347:64"><name pos:start="347:27" pos:end="347:43">nbd_reject_length</name><argument_list pos:start="347:44" pos:end="347:64">(<argument pos:start="347:45" pos:end="347:50"><expr pos:start="347:45" pos:end="347:50"><name pos:start="347:45" pos:end="347:50">client</name></expr></argument>, <argument pos:start="347:53" pos:end="347:57"><expr pos:start="347:53" pos:end="347:57"><name pos:start="347:53" pos:end="347:57">false</name></expr></argument>, <argument pos:start="347:60" pos:end="347:63"><expr pos:start="347:60" pos:end="347:63"><name pos:start="347:60" pos:end="347:63">errp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                </block_content>}</block></if> <if type="elseif" pos:start="349:19" pos:end="357:17">else if <condition pos:start="349:27" pos:end="349:52">(<expr pos:start="349:28" pos:end="349:51"><name pos:start="349:28" pos:end="349:51"><name pos:start="349:28" pos:end="349:33">client</name><operator pos:start="349:34" pos:end="349:35">-&gt;</operator><name pos:start="349:36" pos:end="349:51">structured_reply</name></name></expr>)</condition> <block pos:start="349:54" pos:end="357:17">{<block_content pos:start="351:21" pos:end="355:63">
+
+                    <expr_stmt pos:start="351:21" pos:end="355:63"><expr pos:start="351:21" pos:end="355:62"><name pos:start="351:21" pos:end="351:23">ret</name> <operator pos:start="351:25" pos:end="351:25">=</operator> <call pos:start="351:27" pos:end="355:62"><name pos:start="351:27" pos:end="351:52">nbd_negotiate_send_rep_err</name><argument_list pos:start="351:53" pos:end="355:62">(
+
+                        <argument pos:start="353:25" pos:end="353:30"><expr pos:start="353:25" pos:end="353:30"><name pos:start="353:25" pos:end="353:30">client</name></expr></argument>, <argument pos:start="353:33" pos:end="353:51"><expr pos:start="353:33" pos:end="353:51"><name pos:start="353:33" pos:end="353:51">NBD_REP_ERR_INVALID</name></expr></argument>, <argument pos:start="353:54" pos:end="353:57"><expr pos:start="353:54" pos:end="353:57"><name pos:start="353:54" pos:end="353:57">errp</name></expr></argument>,
+
+                        <argument pos:start="355:25" pos:end="355:61"><expr pos:start="355:25" pos:end="355:61"><literal type="string" pos:start="355:25" pos:end="355:61">"structured reply already negotiated"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                </block_content>}</block></if> <else pos:start="357:19" pos:end="365:17">else <block pos:start="357:24" pos:end="365:17">{<block_content pos:start="359:21" pos:end="363:48">
+
+                    <expr_stmt pos:start="359:21" pos:end="359:76"><expr pos:start="359:21" pos:end="359:75"><name pos:start="359:21" pos:end="359:23">ret</name> <operator pos:start="359:25" pos:end="359:25">=</operator> <call pos:start="359:27" pos:end="359:75"><name pos:start="359:27" pos:end="359:48">nbd_negotiate_send_rep</name><argument_list pos:start="359:49" pos:end="359:75">(<argument pos:start="359:50" pos:end="359:55"><expr pos:start="359:50" pos:end="359:55"><name pos:start="359:50" pos:end="359:55">client</name></expr></argument>, <argument pos:start="359:58" pos:end="359:68"><expr pos:start="359:58" pos:end="359:68"><name pos:start="359:58" pos:end="359:68">NBD_REP_ACK</name></expr></argument>, <argument pos:start="359:71" pos:end="359:74"><expr pos:start="359:71" pos:end="359:74"><name pos:start="359:71" pos:end="359:74">errp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="361:21" pos:end="361:52"><expr pos:start="361:21" pos:end="361:51"><name pos:start="361:21" pos:end="361:44"><name pos:start="361:21" pos:end="361:26">client</name><operator pos:start="361:27" pos:end="361:28">-&gt;</operator><name pos:start="361:29" pos:end="361:44">structured_reply</name></name> <operator pos:start="361:46" pos:end="361:46">=</operator> <name pos:start="361:48" pos:end="361:51">true</name></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="363:21" pos:end="363:48"><expr pos:start="363:21" pos:end="363:47"><name pos:start="363:21" pos:end="363:27">myflags</name> <operator pos:start="363:29" pos:end="363:30">|=</operator> <name pos:start="363:32" pos:end="363:47">NBD_FLAG_SEND_DF</name></expr>;</expr_stmt>
+
+                </block_content>}</block></else></if_stmt>
+
+                <break pos:start="367:17" pos:end="367:22">break;</break>
+
+
+
+            <default pos:start="371:13" pos:end="371:20">default:</default>
+
+                <if_stmt pos:start="373:17" pos:end="377:17"><if pos:start="373:17" pos:end="377:17">if <condition pos:start="373:20" pos:end="373:60">(<expr pos:start="373:21" pos:end="373:59"><call pos:start="373:21" pos:end="373:55"><name pos:start="373:21" pos:end="373:28">nbd_drop</name><argument_list pos:start="373:29" pos:end="373:55">(<argument pos:start="373:30" pos:end="373:40"><expr pos:start="373:30" pos:end="373:40"><name pos:start="373:30" pos:end="373:40"><name pos:start="373:30" pos:end="373:35">client</name><operator pos:start="373:36" pos:end="373:37">-&gt;</operator><name pos:start="373:38" pos:end="373:40">ioc</name></name></expr></argument>, <argument pos:start="373:43" pos:end="373:48"><expr pos:start="373:43" pos:end="373:48"><name pos:start="373:43" pos:end="373:48">length</name></expr></argument>, <argument pos:start="373:51" pos:end="373:54"><expr pos:start="373:51" pos:end="373:54"><name pos:start="373:51" pos:end="373:54">errp</name></expr></argument>)</argument_list></call> <operator pos:start="373:57" pos:end="373:57">&lt;</operator> <literal type="number" pos:start="373:59" pos:end="373:59">0</literal></expr>)</condition> <block pos:start="373:62" pos:end="377:17">{<block_content pos:start="375:21" pos:end="375:32">
+
+                    <return pos:start="375:21" pos:end="375:32">return <expr pos:start="375:28" pos:end="375:31"><operator pos:start="375:28" pos:end="375:28">-</operator><name pos:start="375:29" pos:end="375:31">EIO</name></expr>;</return>
+
+                </block_content>}</block></if></if_stmt>
+
+                <expr_stmt pos:start="379:17" pos:end="387:73"><expr pos:start="379:17" pos:end="387:72"><name pos:start="379:17" pos:end="379:19">ret</name> <operator pos:start="379:21" pos:end="379:21">=</operator> <call pos:start="379:23" pos:end="387:72"><name pos:start="379:23" pos:end="379:48">nbd_negotiate_send_rep_err</name><argument_list pos:start="379:49" pos:end="387:72">(<argument pos:start="379:50" pos:end="379:55"><expr pos:start="379:50" pos:end="379:55"><name pos:start="379:50" pos:end="379:55">client</name></expr></argument>,
+
+                                                 <argument pos:start="381:50" pos:end="381:66"><expr pos:start="381:50" pos:end="381:66"><name pos:start="381:50" pos:end="381:66">NBD_REP_ERR_UNSUP</name></expr></argument>, <argument pos:start="381:69" pos:end="381:72"><expr pos:start="381:69" pos:end="381:72"><name pos:start="381:69" pos:end="381:72">errp</name></expr></argument>,
+
+                                                 <argument pos:start="383:50" pos:end="385:63"><expr pos:start="383:50" pos:end="385:63"><literal type="string" pos:start="383:50" pos:end="383:73">"Unsupported option 0x%"</literal>
+
+                                                 <name pos:start="385:50" pos:end="385:55">PRIx32</name> <literal type="string" pos:start="385:57" pos:end="385:63">" (%s)"</literal></expr></argument>, <argument pos:start="385:66" pos:end="385:71"><expr pos:start="385:66" pos:end="385:71"><name pos:start="385:66" pos:end="385:71">option</name></expr></argument>,
+
+                                                 <argument pos:start="387:50" pos:end="387:71"><expr pos:start="387:50" pos:end="387:71"><call pos:start="387:50" pos:end="387:71"><name pos:start="387:50" pos:end="387:63">nbd_opt_lookup</name><argument_list pos:start="387:64" pos:end="387:71">(<argument pos:start="387:65" pos:end="387:70"><expr pos:start="387:65" pos:end="387:70"><name pos:start="387:65" pos:end="387:70">option</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <break pos:start="389:17" pos:end="389:22">break;</break>
+
+            </block_content>}</block></switch>
+
+        </block_content>}</block></if> <else pos:start="393:11" pos:end="425:9">else <block pos:start="393:16" pos:end="425:9">{<block_content pos:start="403:13" pos:end="423:13">
+
+            <comment type="block" pos:start="395:13" pos:end="401:15">/*
+
+             * If broken new-style we should drop the connection
+
+             * for anything except NBD_OPT_EXPORT_NAME
+
+             */</comment>
+
+            <switch pos:start="403:13" pos:end="423:13">switch <condition pos:start="403:20" pos:end="403:27">(<expr pos:start="403:21" pos:end="403:26"><name pos:start="403:21" pos:end="403:26">option</name></expr>)</condition> <block pos:start="403:29" pos:end="423:13">{<block_content pos:start="405:13" pos:end="421:31">
+
+            <case pos:start="405:13" pos:end="405:37">case <expr pos:start="405:18" pos:end="405:36"><name pos:start="405:18" pos:end="405:36">NBD_OPT_EXPORT_NAME</name></expr>:</case>
+
+                <return pos:start="407:17" pos:end="411:62">return <expr pos:start="407:24" pos:end="411:61"><call pos:start="407:24" pos:end="411:61"><name pos:start="407:24" pos:end="407:55">nbd_negotiate_handle_export_name</name><argument_list pos:start="407:56" pos:end="411:61">(<argument pos:start="407:57" pos:end="407:62"><expr pos:start="407:57" pos:end="407:62"><name pos:start="407:57" pos:end="407:62">client</name></expr></argument>,
+
+                                                        <argument pos:start="409:57" pos:end="409:63"><expr pos:start="409:57" pos:end="409:63"><name pos:start="409:57" pos:end="409:63">myflags</name></expr></argument>, <argument pos:start="409:66" pos:end="409:74"><expr pos:start="409:66" pos:end="409:74"><name pos:start="409:66" pos:end="409:74">no_zeroes</name></expr></argument>,
+
+                                                        <argument pos:start="411:57" pos:end="411:60"><expr pos:start="411:57" pos:end="411:60"><name pos:start="411:57" pos:end="411:60">errp</name></expr></argument>)</argument_list></call></expr>;</return>
+
+
+
+            <default pos:start="415:13" pos:end="415:20">default:</default>
+
+                <expr_stmt pos:start="417:17" pos:end="419:59"><expr pos:start="417:17" pos:end="419:58"><call pos:start="417:17" pos:end="419:58"><name pos:start="417:17" pos:end="417:26">error_setg</name><argument_list pos:start="417:27" pos:end="419:58">(<argument pos:start="417:28" pos:end="417:31"><expr pos:start="417:28" pos:end="417:31"><name pos:start="417:28" pos:end="417:31">errp</name></expr></argument>, <argument pos:start="417:34" pos:end="417:72"><expr pos:start="417:34" pos:end="417:72"><literal type="string" pos:start="417:34" pos:end="417:57">"Unsupported option 0x%"</literal> <name pos:start="417:59" pos:end="417:64">PRIx32</name> <literal type="string" pos:start="417:66" pos:end="417:72">" (%s)"</literal></expr></argument>,
+
+                           <argument pos:start="419:28" pos:end="419:33"><expr pos:start="419:28" pos:end="419:33"><name pos:start="419:28" pos:end="419:33">option</name></expr></argument>, <argument pos:start="419:36" pos:end="419:57"><expr pos:start="419:36" pos:end="419:57"><call pos:start="419:36" pos:end="419:57"><name pos:start="419:36" pos:end="419:49">nbd_opt_lookup</name><argument_list pos:start="419:50" pos:end="419:57">(<argument pos:start="419:51" pos:end="419:56"><expr pos:start="419:51" pos:end="419:56"><name pos:start="419:51" pos:end="419:56">option</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <return pos:start="421:17" pos:end="421:31">return <expr pos:start="421:24" pos:end="421:30"><operator pos:start="421:24" pos:end="421:24">-</operator><name pos:start="421:25" pos:end="421:30">EINVAL</name></expr>;</return>
+
+            </block_content>}</block></switch>
+
+        </block_content>}</block></else></if_stmt>
+
+        <if_stmt pos:start="427:9" pos:end="431:9"><if pos:start="427:9" pos:end="431:9">if <condition pos:start="427:12" pos:end="427:20">(<expr pos:start="427:13" pos:end="427:19"><name pos:start="427:13" pos:end="427:15">ret</name> <operator pos:start="427:17" pos:end="427:17">&lt;</operator> <literal type="number" pos:start="427:19" pos:end="427:19">0</literal></expr>)</condition> <block pos:start="427:22" pos:end="431:9">{<block_content pos:start="429:13" pos:end="429:23">
+
+            <return pos:start="429:13" pos:end="429:23">return <expr pos:start="429:20" pos:end="429:22"><name pos:start="429:20" pos:end="429:22">ret</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></while>
+
+</block_content>}</block></function>
+</unit>

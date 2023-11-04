@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/13003.c" pos:tabs="8"><function pos:start="1:1" pos:end="97:1"><type pos:start="1:1" pos:end="1:3"><name pos:start="1:1" pos:end="1:3">int</name></type> <name pos:start="1:5" pos:end="1:30">postcopy_ram_enable_notify</name><parameter_list pos:start="1:31" pos:end="1:59">(<parameter pos:start="1:32" pos:end="1:58"><decl pos:start="1:32" pos:end="1:58"><type pos:start="1:32" pos:end="1:55"><name pos:start="1:32" pos:end="1:53">MigrationIncomingState</name> <modifier pos:start="1:55" pos:end="1:55">*</modifier></type><name pos:start="1:56" pos:end="1:58">mis</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="97:1">{<block_content pos:start="7:5" pos:end="95:13">
+
+    <comment type="block" pos:start="5:5" pos:end="5:58">/* Open the fd for the kernel to give us userfaults */</comment>
+
+    <expr_stmt pos:start="7:5" pos:end="7:74"><expr pos:start="7:5" pos:end="7:73"><name pos:start="7:5" pos:end="7:21"><name pos:start="7:5" pos:end="7:7">mis</name><operator pos:start="7:8" pos:end="7:9">-&gt;</operator><name pos:start="7:10" pos:end="7:21">userfault_fd</name></name> <operator pos:start="7:23" pos:end="7:23">=</operator> <call pos:start="7:25" pos:end="7:73"><name pos:start="7:25" pos:end="7:31">syscall</name><argument_list pos:start="7:32" pos:end="7:73">(<argument pos:start="7:33" pos:end="7:48"><expr pos:start="7:33" pos:end="7:48"><name pos:start="7:33" pos:end="7:48">__NR_userfaultfd</name></expr></argument>, <argument pos:start="7:51" pos:end="7:72"><expr pos:start="7:51" pos:end="7:72"><name pos:start="7:51" pos:end="7:59">O_CLOEXEC</name> <operator pos:start="7:61" pos:end="7:61">|</operator> <name pos:start="7:63" pos:end="7:72">O_NONBLOCK</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="9:5" pos:end="17:5"><if pos:start="9:5" pos:end="17:5">if <condition pos:start="9:8" pos:end="9:32">(<expr pos:start="9:9" pos:end="9:31"><name pos:start="9:9" pos:end="9:25"><name pos:start="9:9" pos:end="9:11">mis</name><operator pos:start="9:12" pos:end="9:13">-&gt;</operator><name pos:start="9:14" pos:end="9:25">userfault_fd</name></name> <operator pos:start="9:27" pos:end="9:28">==</operator> <operator pos:start="9:30" pos:end="9:30">-</operator><literal type="number" pos:start="9:31" pos:end="9:31">1</literal></expr>)</condition> <block pos:start="9:34" pos:end="17:5">{<block_content pos:start="11:9" pos:end="15:18">
+
+        <expr_stmt pos:start="11:9" pos:end="13:38"><expr pos:start="11:9" pos:end="13:37"><call pos:start="11:9" pos:end="13:37"><name pos:start="11:9" pos:end="11:20">error_report</name><argument_list pos:start="11:21" pos:end="13:37">(<argument pos:start="11:22" pos:end="11:58"><expr pos:start="11:22" pos:end="11:58"><literal type="string" pos:start="11:22" pos:end="11:58">"%s: Failed to open userfault fd: %s"</literal></expr></argument>, <argument pos:start="11:61" pos:end="11:68"><expr pos:start="11:61" pos:end="11:68"><name pos:start="11:61" pos:end="11:68">__func__</name></expr></argument>,
+
+                     <argument pos:start="13:22" pos:end="13:36"><expr pos:start="13:22" pos:end="13:36"><call pos:start="13:22" pos:end="13:36"><name pos:start="13:22" pos:end="13:29">strerror</name><argument_list pos:start="13:30" pos:end="13:36">(<argument pos:start="13:31" pos:end="13:35"><expr pos:start="13:31" pos:end="13:35"><name pos:start="13:31" pos:end="13:35">errno</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="15:9" pos:end="15:18">return <expr pos:start="15:16" pos:end="15:17"><operator pos:start="15:16" pos:end="15:16">-</operator><literal type="number" pos:start="15:17" pos:end="15:17">1</literal></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="21:5" pos:end="27:7">/*
+
+     * Although the host check already tested the API, we need to
+
+     * do the check again as an ABI handshake on the new fd.
+
+     */</comment>
+
+    <if_stmt pos:start="29:5" pos:end="33:5"><if pos:start="29:5" pos:end="33:5">if <condition pos:start="29:8" pos:end="29:46">(<expr pos:start="29:9" pos:end="29:45"><operator pos:start="29:9" pos:end="29:9">!</operator><call pos:start="29:10" pos:end="29:45"><name pos:start="29:10" pos:end="29:26">ufd_version_check</name><argument_list pos:start="29:27" pos:end="29:45">(<argument pos:start="29:28" pos:end="29:44"><expr pos:start="29:28" pos:end="29:44"><name pos:start="29:28" pos:end="29:44"><name pos:start="29:28" pos:end="29:30">mis</name><operator pos:start="29:31" pos:end="29:32">-&gt;</operator><name pos:start="29:33" pos:end="29:44">userfault_fd</name></name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="29:48" pos:end="33:5">{<block_content pos:start="31:9" pos:end="31:18">
+
+        <return pos:start="31:9" pos:end="31:18">return <expr pos:start="31:16" pos:end="31:17"><operator pos:start="31:16" pos:end="31:16">-</operator><literal type="number" pos:start="31:17" pos:end="31:17">1</literal></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="37:5" pos:end="37:64">/* Now an eventfd we use to tell the fault-thread to quit */</comment>
+
+    <expr_stmt pos:start="39:5" pos:end="39:53"><expr pos:start="39:5" pos:end="39:52"><name pos:start="39:5" pos:end="39:26"><name pos:start="39:5" pos:end="39:7">mis</name><operator pos:start="39:8" pos:end="39:9">-&gt;</operator><name pos:start="39:10" pos:end="39:26">userfault_quit_fd</name></name> <operator pos:start="39:28" pos:end="39:28">=</operator> <call pos:start="39:30" pos:end="39:52"><name pos:start="39:30" pos:end="39:36">eventfd</name><argument_list pos:start="39:37" pos:end="39:52">(<argument pos:start="39:38" pos:end="39:38"><expr pos:start="39:38" pos:end="39:38"><literal type="number" pos:start="39:38" pos:end="39:38">0</literal></expr></argument>, <argument pos:start="39:41" pos:end="39:51"><expr pos:start="39:41" pos:end="39:51"><name pos:start="39:41" pos:end="39:51">EFD_CLOEXEC</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="41:5" pos:end="51:5"><if pos:start="41:5" pos:end="51:5">if <condition pos:start="41:8" pos:end="41:37">(<expr pos:start="41:9" pos:end="41:36"><name pos:start="41:9" pos:end="41:30"><name pos:start="41:9" pos:end="41:11">mis</name><operator pos:start="41:12" pos:end="41:13">-&gt;</operator><name pos:start="41:14" pos:end="41:30">userfault_quit_fd</name></name> <operator pos:start="41:32" pos:end="41:33">==</operator> <operator pos:start="41:35" pos:end="41:35">-</operator><literal type="number" pos:start="41:36" pos:end="41:36">1</literal></expr>)</condition> <block pos:start="41:39" pos:end="51:5">{<block_content pos:start="43:9" pos:end="49:18">
+
+        <expr_stmt pos:start="43:9" pos:end="45:38"><expr pos:start="43:9" pos:end="45:37"><call pos:start="43:9" pos:end="45:37"><name pos:start="43:9" pos:end="43:20">error_report</name><argument_list pos:start="43:21" pos:end="45:37">(<argument pos:start="43:22" pos:end="43:56"><expr pos:start="43:22" pos:end="43:56"><literal type="string" pos:start="43:22" pos:end="43:56">"%s: Opening userfault_quit_fd: %s"</literal></expr></argument>, <argument pos:start="43:59" pos:end="43:66"><expr pos:start="43:59" pos:end="43:66"><name pos:start="43:59" pos:end="43:66">__func__</name></expr></argument>,
+
+                     <argument pos:start="45:22" pos:end="45:36"><expr pos:start="45:22" pos:end="45:36"><call pos:start="45:22" pos:end="45:36"><name pos:start="45:22" pos:end="45:29">strerror</name><argument_list pos:start="45:30" pos:end="45:36">(<argument pos:start="45:31" pos:end="45:35"><expr pos:start="45:31" pos:end="45:35"><name pos:start="45:31" pos:end="45:35">errno</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="47:9" pos:end="47:33"><expr pos:start="47:9" pos:end="47:32"><call pos:start="47:9" pos:end="47:32"><name pos:start="47:9" pos:end="47:13">close</name><argument_list pos:start="47:14" pos:end="47:32">(<argument pos:start="47:15" pos:end="47:31"><expr pos:start="47:15" pos:end="47:31"><name pos:start="47:15" pos:end="47:31"><name pos:start="47:15" pos:end="47:17">mis</name><operator pos:start="47:18" pos:end="47:19">-&gt;</operator><name pos:start="47:20" pos:end="47:31">userfault_fd</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="49:9" pos:end="49:18">return <expr pos:start="49:16" pos:end="49:17"><operator pos:start="49:16" pos:end="49:16">-</operator><literal type="number" pos:start="49:17" pos:end="49:17">1</literal></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="55:5" pos:end="55:45"><expr pos:start="55:5" pos:end="55:44"><call pos:start="55:5" pos:end="55:44"><name pos:start="55:5" pos:end="55:17">qemu_sem_init</name><argument_list pos:start="55:18" pos:end="55:44">(<argument pos:start="55:19" pos:end="55:40"><expr pos:start="55:19" pos:end="55:40"><operator pos:start="55:19" pos:end="55:19">&amp;</operator><name pos:start="55:20" pos:end="55:40"><name pos:start="55:20" pos:end="55:22">mis</name><operator pos:start="55:23" pos:end="55:24">-&gt;</operator><name pos:start="55:25" pos:end="55:40">fault_thread_sem</name></name></expr></argument>, <argument pos:start="55:43" pos:end="55:43"><expr pos:start="55:43" pos:end="55:43"><literal type="number" pos:start="55:43" pos:end="55:43">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="57:5" pos:end="59:77"><expr pos:start="57:5" pos:end="59:76"><call pos:start="57:5" pos:end="59:76"><name pos:start="57:5" pos:end="57:22">qemu_thread_create</name><argument_list pos:start="57:23" pos:end="59:76">(<argument pos:start="57:24" pos:end="57:41"><expr pos:start="57:24" pos:end="57:41"><operator pos:start="57:24" pos:end="57:24">&amp;</operator><name pos:start="57:25" pos:end="57:41"><name pos:start="57:25" pos:end="57:27">mis</name><operator pos:start="57:28" pos:end="57:29">-&gt;</operator><name pos:start="57:30" pos:end="57:41">fault_thread</name></name></expr></argument>, <argument pos:start="57:44" pos:end="57:59"><expr pos:start="57:44" pos:end="57:59"><literal type="string" pos:start="57:44" pos:end="57:59">"postcopy/fault"</literal></expr></argument>,
+
+                       <argument pos:start="59:24" pos:end="59:48"><expr pos:start="59:24" pos:end="59:48"><name pos:start="59:24" pos:end="59:48">postcopy_ram_fault_thread</name></expr></argument>, <argument pos:start="59:51" pos:end="59:53"><expr pos:start="59:51" pos:end="59:53"><name pos:start="59:51" pos:end="59:53">mis</name></expr></argument>, <argument pos:start="59:56" pos:end="59:75"><expr pos:start="59:56" pos:end="59:75"><name pos:start="59:56" pos:end="59:75">QEMU_THREAD_JOINABLE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="61:5" pos:end="61:42"><expr pos:start="61:5" pos:end="61:41"><call pos:start="61:5" pos:end="61:41"><name pos:start="61:5" pos:end="61:17">qemu_sem_wait</name><argument_list pos:start="61:18" pos:end="61:41">(<argument pos:start="61:19" pos:end="61:40"><expr pos:start="61:19" pos:end="61:40"><operator pos:start="61:19" pos:end="61:19">&amp;</operator><name pos:start="61:20" pos:end="61:40"><name pos:start="61:20" pos:end="61:22">mis</name><operator pos:start="61:23" pos:end="61:24">-&gt;</operator><name pos:start="61:25" pos:end="61:40">fault_thread_sem</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="63:5" pos:end="63:45"><expr pos:start="63:5" pos:end="63:44"><call pos:start="63:5" pos:end="63:44"><name pos:start="63:5" pos:end="63:20">qemu_sem_destroy</name><argument_list pos:start="63:21" pos:end="63:44">(<argument pos:start="63:22" pos:end="63:43"><expr pos:start="63:22" pos:end="63:43"><operator pos:start="63:22" pos:end="63:22">&amp;</operator><name pos:start="63:23" pos:end="63:43"><name pos:start="63:23" pos:end="63:25">mis</name><operator pos:start="63:26" pos:end="63:27">-&gt;</operator><name pos:start="63:28" pos:end="63:43">fault_thread_sem</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="65:5" pos:end="65:34"><expr pos:start="65:5" pos:end="65:33"><name pos:start="65:5" pos:end="65:26"><name pos:start="65:5" pos:end="65:7">mis</name><operator pos:start="65:8" pos:end="65:9">-&gt;</operator><name pos:start="65:10" pos:end="65:26">have_fault_thread</name></name> <operator pos:start="65:28" pos:end="65:28">=</operator> <name pos:start="65:30" pos:end="65:33">true</name></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="69:5" pos:end="69:69">/* Mark so that we get notified of accesses to unwritten areas */</comment>
+
+    <if_stmt pos:start="71:5" pos:end="75:5"><if pos:start="71:5" pos:end="75:5">if <condition pos:start="71:8" pos:end="71:61">(<expr pos:start="71:9" pos:end="71:60"><call pos:start="71:9" pos:end="71:60"><name pos:start="71:9" pos:end="71:30">qemu_ram_foreach_block</name><argument_list pos:start="71:31" pos:end="71:60">(<argument pos:start="71:32" pos:end="71:54"><expr pos:start="71:32" pos:end="71:54"><name pos:start="71:32" pos:end="71:54">ram_block_enable_notify</name></expr></argument>, <argument pos:start="71:57" pos:end="71:59"><expr pos:start="71:57" pos:end="71:59"><name pos:start="71:57" pos:end="71:59">mis</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="71:63" pos:end="75:5">{<block_content pos:start="73:9" pos:end="73:18">
+
+        <return pos:start="73:9" pos:end="73:18">return <expr pos:start="73:16" pos:end="73:17"><operator pos:start="73:16" pos:end="73:16">-</operator><literal type="number" pos:start="73:17" pos:end="73:17">1</literal></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="79:5" pos:end="85:7">/*
+
+     * Ballooning can mark pages as absent while we're postcopying
+
+     * that would cause false userfaults.
+
+     */</comment>
+
+    <expr_stmt pos:start="87:5" pos:end="87:31"><expr pos:start="87:5" pos:end="87:30"><call pos:start="87:5" pos:end="87:30"><name pos:start="87:5" pos:end="87:24">qemu_balloon_inhibit</name><argument_list pos:start="87:25" pos:end="87:30">(<argument pos:start="87:26" pos:end="87:29"><expr pos:start="87:26" pos:end="87:29"><name pos:start="87:26" pos:end="87:29">true</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="91:5" pos:end="91:39"><expr pos:start="91:5" pos:end="91:38"><call pos:start="91:5" pos:end="91:38"><name pos:start="91:5" pos:end="91:36">trace_postcopy_ram_enable_notify</name><argument_list pos:start="91:37" pos:end="91:38">()</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <return pos:start="95:5" pos:end="95:13">return <expr pos:start="95:12" pos:end="95:12"><literal type="number" pos:start="95:12" pos:end="95:12">0</literal></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

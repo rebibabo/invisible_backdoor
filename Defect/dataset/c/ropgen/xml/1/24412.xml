@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/24412.c" pos:tabs="8"><function pos:start="1:1" pos:end="287:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:29">qtrle_encode_line</name><parameter_list pos:start="1:30" pos:end="1:86">(<parameter pos:start="1:31" pos:end="1:48"><decl pos:start="1:31" pos:end="1:48"><type pos:start="1:31" pos:end="1:48"><name pos:start="1:31" pos:end="1:45">QtrleEncContext</name> <modifier pos:start="1:47" pos:end="1:47">*</modifier></type><name pos:start="1:48" pos:end="1:48">s</name></decl></parameter>, <parameter pos:start="1:51" pos:end="1:60"><decl pos:start="1:51" pos:end="1:60"><type pos:start="1:51" pos:end="1:60"><name pos:start="1:51" pos:end="1:57">AVFrame</name> <modifier pos:start="1:59" pos:end="1:59">*</modifier></type><name pos:start="1:60" pos:end="1:60">p</name></decl></parameter>, <parameter pos:start="1:63" pos:end="1:70"><decl pos:start="1:63" pos:end="1:70"><type pos:start="1:63" pos:end="1:70"><name pos:start="1:63" pos:end="1:65">int</name></type> <name pos:start="1:67" pos:end="1:70">line</name></decl></parameter>, <parameter pos:start="1:73" pos:end="1:85"><decl pos:start="1:73" pos:end="1:85"><type pos:start="1:73" pos:end="1:85"><name pos:start="1:73" pos:end="1:79">uint8_t</name> <modifier pos:start="1:81" pos:end="1:81">*</modifier><modifier pos:start="1:82" pos:end="1:82">*</modifier></type><name pos:start="1:83" pos:end="1:85">buf</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="287:1">{<block_content pos:start="5:5" pos:end="285:33">
+
+    <decl_stmt pos:start="5:5" pos:end="5:31"><decl pos:start="5:5" pos:end="5:30"><type pos:start="5:5" pos:end="5:7"><name pos:start="5:5" pos:end="5:7">int</name></type> <name pos:start="5:9" pos:end="5:13">width</name><init pos:start="5:14" pos:end="5:30">=<expr pos:start="5:15" pos:end="5:30"><name pos:start="5:15" pos:end="5:30"><name pos:start="5:15" pos:end="5:15">s</name><operator pos:start="5:16" pos:end="5:17">-&gt;</operator><name pos:start="5:18" pos:end="5:30">logical_width</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:10"><decl pos:start="7:5" pos:end="7:9"><type pos:start="7:5" pos:end="7:7"><name pos:start="7:5" pos:end="7:7">int</name></type> <name pos:start="7:9" pos:end="7:9">i</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:24"><decl pos:start="9:5" pos:end="9:23"><type pos:start="9:5" pos:end="9:15"><name pos:start="9:5" pos:end="9:10">signed</name> <name pos:start="9:12" pos:end="9:15">char</name></type> <name pos:start="9:17" pos:end="9:23">rlecode</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="13:5" pos:end="13:63">/* We will use it to compute the best bulk copy sequence */</comment>
+
+    <decl_stmt pos:start="15:5" pos:end="15:27"><decl pos:start="15:5" pos:end="15:26"><type pos:start="15:5" pos:end="15:16"><name pos:start="15:5" pos:end="15:12">unsigned</name> <name pos:start="15:14" pos:end="15:16">int</name></type> <name pos:start="15:18" pos:end="15:26">bulkcount</name></decl>;</decl_stmt>
+
+    <comment type="block" pos:start="17:5" pos:end="19:37">/* This will be the number of pixels equal to the preivous frame one's
+
+     * starting from the ith pixel */</comment>
+
+    <decl_stmt pos:start="21:5" pos:end="21:27"><decl pos:start="21:5" pos:end="21:26"><type pos:start="21:5" pos:end="21:16"><name pos:start="21:5" pos:end="21:12">unsigned</name> <name pos:start="21:14" pos:end="21:16">int</name></type> <name pos:start="21:18" pos:end="21:26">skipcount</name></decl>;</decl_stmt>
+
+    <comment type="block" pos:start="23:5" pos:end="25:47">/* This will be the number of consecutive equal pixels in the current
+
+     * frame, starting from the ith one also */</comment>
+
+    <decl_stmt pos:start="27:5" pos:end="27:29"><decl pos:start="27:5" pos:end="27:28"><type pos:start="27:5" pos:end="27:16"><name pos:start="27:5" pos:end="27:12">unsigned</name> <name pos:start="27:14" pos:end="27:16">int</name></type> <name pos:start="27:18" pos:end="27:28">repeatcount</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="31:5" pos:end="31:55">/* The cost of the three different possibilities */</comment>
+
+    <decl_stmt pos:start="33:5" pos:end="33:24"><decl pos:start="33:5" pos:end="33:23"><type pos:start="33:5" pos:end="33:7"><name pos:start="33:5" pos:end="33:7">int</name></type> <name pos:start="33:9" pos:end="33:23">total_bulk_cost</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="35:5" pos:end="35:24"><decl pos:start="35:5" pos:end="35:23"><type pos:start="35:5" pos:end="35:7"><name pos:start="35:5" pos:end="35:7">int</name></type> <name pos:start="35:9" pos:end="35:23">total_skip_cost</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="37:5" pos:end="37:26"><decl pos:start="37:5" pos:end="37:25"><type pos:start="37:5" pos:end="37:7"><name pos:start="37:5" pos:end="37:7">int</name></type> <name pos:start="37:9" pos:end="37:25">total_repeat_cost</name></decl>;</decl_stmt>
+
+
+
+    <decl_stmt pos:start="41:5" pos:end="41:18"><decl pos:start="41:5" pos:end="41:17"><type pos:start="41:5" pos:end="41:7"><name pos:start="41:5" pos:end="41:7">int</name></type> <name pos:start="41:9" pos:end="41:17">temp_cost</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="43:5" pos:end="43:10"><decl pos:start="43:5" pos:end="43:9"><type pos:start="43:5" pos:end="43:7"><name pos:start="43:5" pos:end="43:7">int</name></type> <name pos:start="43:9" pos:end="43:9">j</name></decl>;</decl_stmt>
+
+
+
+    <decl_stmt pos:start="47:5" pos:end="49:34"><decl pos:start="47:5" pos:end="49:33"><type pos:start="47:5" pos:end="47:13"><name pos:start="47:5" pos:end="47:11">uint8_t</name> <modifier pos:start="47:13" pos:end="47:13">*</modifier></type><name pos:start="47:14" pos:end="47:22">this_line</name> <init pos:start="47:24" pos:end="49:33">= <expr pos:start="47:26" pos:end="49:33"><name pos:start="47:26" pos:end="47:50"><name pos:start="47:26" pos:end="47:26">p</name><operator pos:start="47:27" pos:end="47:28">-&gt;</operator>               <name pos:start="47:44" pos:end="47:47">data</name><index pos:start="47:48" pos:end="47:50">[<expr pos:start="47:49" pos:end="47:49"><literal type="number" pos:start="47:49" pos:end="47:49">0</literal></expr>]</index></name> <operator pos:start="47:52" pos:end="47:52">+</operator> <name pos:start="47:54" pos:end="47:57">line</name><operator pos:start="47:58" pos:end="47:58">*</operator><name pos:start="47:59" pos:end="47:87"><name pos:start="47:59" pos:end="47:59">p</name><operator pos:start="47:60" pos:end="47:61">-&gt;</operator>               <name pos:start="47:77" pos:end="47:84">linesize</name><index pos:start="47:85" pos:end="47:87">[<expr pos:start="47:86" pos:end="47:86"><literal type="number" pos:start="47:86" pos:end="47:86">0</literal></expr>]</index></name> <operator pos:start="47:89" pos:end="47:89">+</operator>
+
+        <operator pos:start="49:9" pos:end="49:9">(</operator><name pos:start="49:10" pos:end="49:14">width</name> <operator pos:start="49:16" pos:end="49:16">-</operator> <literal type="number" pos:start="49:18" pos:end="49:18">1</literal><operator pos:start="49:19" pos:end="49:19">)</operator><operator pos:start="49:20" pos:end="49:20">*</operator><name pos:start="49:21" pos:end="49:33"><name pos:start="49:21" pos:end="49:21">s</name><operator pos:start="49:22" pos:end="49:23">-&gt;</operator><name pos:start="49:24" pos:end="49:33">pixel_size</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="51:5" pos:end="53:34"><decl pos:start="51:5" pos:end="53:33"><type pos:start="51:5" pos:end="51:13"><name pos:start="51:5" pos:end="51:11">uint8_t</name> <modifier pos:start="51:13" pos:end="51:13">*</modifier></type><name pos:start="51:14" pos:end="51:22">prev_line</name> <init pos:start="51:24" pos:end="53:33">= <expr pos:start="51:26" pos:end="53:33"><name pos:start="51:26" pos:end="51:50"><name pos:start="51:26" pos:end="51:26">s</name><operator pos:start="51:27" pos:end="51:28">-&gt;</operator><name pos:start="51:29" pos:end="51:42">previous_frame</name><operator pos:start="51:43" pos:end="51:43">.</operator><name pos:start="51:44" pos:end="51:47">data</name><index pos:start="51:48" pos:end="51:50">[<expr pos:start="51:49" pos:end="51:49"><literal type="number" pos:start="51:49" pos:end="51:49">0</literal></expr>]</index></name> <operator pos:start="51:52" pos:end="51:52">+</operator> <name pos:start="51:54" pos:end="51:57">line</name><operator pos:start="51:58" pos:end="51:58">*</operator><name pos:start="51:59" pos:end="51:87"><name pos:start="51:59" pos:end="51:59">s</name><operator pos:start="51:60" pos:end="51:61">-&gt;</operator><name pos:start="51:62" pos:end="51:75">previous_frame</name><operator pos:start="51:76" pos:end="51:76">.</operator><name pos:start="51:77" pos:end="51:84">linesize</name><index pos:start="51:85" pos:end="51:87">[<expr pos:start="51:86" pos:end="51:86"><literal type="number" pos:start="51:86" pos:end="51:86">0</literal></expr>]</index></name> <operator pos:start="51:89" pos:end="51:89">+</operator>
+
+        <operator pos:start="53:9" pos:end="53:9">(</operator><name pos:start="53:10" pos:end="53:14">width</name> <operator pos:start="53:16" pos:end="53:16">-</operator> <literal type="number" pos:start="53:18" pos:end="53:18">1</literal><operator pos:start="53:19" pos:end="53:19">)</operator><operator pos:start="53:20" pos:end="53:20">*</operator><name pos:start="53:21" pos:end="53:33"><name pos:start="53:21" pos:end="53:21">s</name><operator pos:start="53:22" pos:end="53:23">-&gt;</operator><name pos:start="53:24" pos:end="53:33">pixel_size</name></name></expr></init></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="57:5" pos:end="57:31"><expr pos:start="57:5" pos:end="57:30"><name pos:start="57:5" pos:end="57:26"><name pos:start="57:5" pos:end="57:5">s</name><operator pos:start="57:6" pos:end="57:7">-&gt;</operator><name pos:start="57:8" pos:end="57:19">length_table</name><index pos:start="57:20" pos:end="57:26">[<expr pos:start="57:21" pos:end="57:25"><name pos:start="57:21" pos:end="57:25">width</name></expr>]</index></name> <operator pos:start="57:28" pos:end="57:28">=</operator> <literal type="number" pos:start="57:30" pos:end="57:30">0</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="59:5" pos:end="59:18"><expr pos:start="59:5" pos:end="59:17"><name pos:start="59:5" pos:end="59:13">skipcount</name> <operator pos:start="59:15" pos:end="59:15">=</operator> <literal type="number" pos:start="59:17" pos:end="59:17">0</literal></expr>;</expr_stmt>
+
+
+
+    <for pos:start="63:5" pos:end="181:5">for <control pos:start="63:9" pos:end="63:36">(<init pos:start="63:10" pos:end="63:23"><expr pos:start="63:10" pos:end="63:22"><name pos:start="63:10" pos:end="63:10">i</name> <operator pos:start="63:12" pos:end="63:12">=</operator> <name pos:start="63:14" pos:end="63:18">width</name> <operator pos:start="63:20" pos:end="63:20">-</operator> <literal type="number" pos:start="63:22" pos:end="63:22">1</literal></expr>;</init> <condition pos:start="63:25" pos:end="63:31"><expr pos:start="63:25" pos:end="63:30"><name pos:start="63:25" pos:end="63:25">i</name> <operator pos:start="63:27" pos:end="63:28">&gt;=</operator> <literal type="number" pos:start="63:30" pos:end="63:30">0</literal></expr>;</condition> <incr pos:start="63:33" pos:end="63:35"><expr pos:start="63:33" pos:end="63:35"><name pos:start="63:33" pos:end="63:33">i</name><operator pos:start="63:34" pos:end="63:35">--</operator></expr></incr>)</control> <block pos:start="63:38" pos:end="181:5">{<block_content pos:start="67:9" pos:end="179:35">
+
+
+
+        <if_stmt pos:start="67:9" pos:end="73:26"><if pos:start="67:9" pos:end="69:59">if <condition pos:start="67:12" pos:end="67:80">(<expr pos:start="67:13" pos:end="67:79"><operator pos:start="67:13" pos:end="67:13">!</operator><name pos:start="67:14" pos:end="67:31"><name pos:start="67:14" pos:end="67:14">s</name><operator pos:start="67:15" pos:end="67:16">-&gt;</operator><name pos:start="67:17" pos:end="67:21">frame</name><operator pos:start="67:22" pos:end="67:22">.</operator><name pos:start="67:23" pos:end="67:31">key_frame</name></name> <operator pos:start="67:33" pos:end="67:34">&amp;&amp;</operator> <operator pos:start="67:36" pos:end="67:36">!</operator><call pos:start="67:37" pos:end="67:79"><name pos:start="67:37" pos:end="67:42">memcmp</name><argument_list pos:start="67:43" pos:end="67:79">(<argument pos:start="67:44" pos:end="67:52"><expr pos:start="67:44" pos:end="67:52"><name pos:start="67:44" pos:end="67:52">this_line</name></expr></argument>, <argument pos:start="67:55" pos:end="67:63"><expr pos:start="67:55" pos:end="67:63"><name pos:start="67:55" pos:end="67:63">prev_line</name></expr></argument>, <argument pos:start="67:66" pos:end="67:78"><expr pos:start="67:66" pos:end="67:78"><name pos:start="67:66" pos:end="67:78"><name pos:start="67:66" pos:end="67:66">s</name><operator pos:start="67:67" pos:end="67:68">-&gt;</operator><name pos:start="67:69" pos:end="67:78">pixel_size</name></name></expr></argument>)</argument_list></call></expr>)</condition><block type="pseudo" pos:start="69:13" pos:end="69:59"><block_content pos:start="69:13" pos:end="69:59">
+
+            <expr_stmt pos:start="69:13" pos:end="69:59"><expr pos:start="69:13" pos:end="69:58"><name pos:start="69:13" pos:end="69:21">skipcount</name> <operator pos:start="69:23" pos:end="69:23">=</operator> <call pos:start="69:25" pos:end="69:58"><name pos:start="69:25" pos:end="69:29">FFMIN</name><argument_list pos:start="69:30" pos:end="69:58">(<argument pos:start="69:31" pos:end="69:43"><expr pos:start="69:31" pos:end="69:43"><name pos:start="69:31" pos:end="69:39">skipcount</name> <operator pos:start="69:41" pos:end="69:41">+</operator> <literal type="number" pos:start="69:43" pos:end="69:43">1</literal></expr></argument>, <argument pos:start="69:46" pos:end="69:57"><expr pos:start="69:46" pos:end="69:57"><name pos:start="69:46" pos:end="69:57">MAX_RLE_SKIP</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if>
+
+        <else pos:start="71:9" pos:end="73:26">else<block type="pseudo" pos:start="73:13" pos:end="73:26"><block_content pos:start="73:13" pos:end="73:26">
+
+            <expr_stmt pos:start="73:13" pos:end="73:26"><expr pos:start="73:13" pos:end="73:25"><name pos:start="73:13" pos:end="73:21">skipcount</name> <operator pos:start="73:23" pos:end="73:23">=</operator> <literal type="number" pos:start="73:25" pos:end="73:25">0</literal></expr>;</expr_stmt></block_content></block></else></if_stmt>
+
+
+
+        <expr_stmt pos:start="77:9" pos:end="77:62"><expr pos:start="77:9" pos:end="77:61"><name pos:start="77:9" pos:end="77:23">total_skip_cost</name>  <operator pos:start="77:26" pos:end="77:26">=</operator> <name pos:start="77:28" pos:end="77:57"><name pos:start="77:28" pos:end="77:28">s</name><operator pos:start="77:29" pos:end="77:30">-&gt;</operator><name pos:start="77:31" pos:end="77:42">length_table</name><index pos:start="77:43" pos:end="77:57">[<expr pos:start="77:44" pos:end="77:56"><name pos:start="77:44" pos:end="77:44">i</name> <operator pos:start="77:46" pos:end="77:46">+</operator> <name pos:start="77:48" pos:end="77:56">skipcount</name></expr>]</index></name> <operator pos:start="77:59" pos:end="77:59">+</operator> <literal type="number" pos:start="77:61" pos:end="77:61">2</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="79:9" pos:end="79:37"><expr pos:start="79:9" pos:end="79:36"><name pos:start="79:9" pos:end="79:24"><name pos:start="79:9" pos:end="79:9">s</name><operator pos:start="79:10" pos:end="79:11">-&gt;</operator><name pos:start="79:12" pos:end="79:21">skip_table</name><index pos:start="79:22" pos:end="79:24">[<expr pos:start="79:23" pos:end="79:23"><name pos:start="79:23" pos:end="79:23">i</name></expr>]</index></name> <operator pos:start="79:26" pos:end="79:26">=</operator> <name pos:start="79:28" pos:end="79:36">skipcount</name></expr>;</expr_stmt>
+
+
+
+
+
+        <if_stmt pos:start="85:9" pos:end="91:28"><if pos:start="85:9" pos:end="87:65">if <condition pos:start="85:12" pos:end="85:90">(<expr pos:start="85:13" pos:end="85:89"><name pos:start="85:13" pos:end="85:13">i</name> <operator pos:start="85:15" pos:end="85:15">&lt;</operator> <name pos:start="85:17" pos:end="85:21">width</name> <operator pos:start="85:23" pos:end="85:23">-</operator> <literal type="number" pos:start="85:25" pos:end="85:25">1</literal> <operator pos:start="85:27" pos:end="85:28">&amp;&amp;</operator> <operator pos:start="85:30" pos:end="85:30">!</operator><call pos:start="85:31" pos:end="85:89"><name pos:start="85:31" pos:end="85:36">memcmp</name><argument_list pos:start="85:37" pos:end="85:89">(<argument pos:start="85:38" pos:end="85:46"><expr pos:start="85:38" pos:end="85:46"><name pos:start="85:38" pos:end="85:46">this_line</name></expr></argument>, <argument pos:start="85:49" pos:end="85:73"><expr pos:start="85:49" pos:end="85:73"><name pos:start="85:49" pos:end="85:57">this_line</name> <operator pos:start="85:59" pos:end="85:59">+</operator> <name pos:start="85:61" pos:end="85:73"><name pos:start="85:61" pos:end="85:61">s</name><operator pos:start="85:62" pos:end="85:63">-&gt;</operator><name pos:start="85:64" pos:end="85:73">pixel_size</name></name></expr></argument>, <argument pos:start="85:76" pos:end="85:88"><expr pos:start="85:76" pos:end="85:88"><name pos:start="85:76" pos:end="85:88"><name pos:start="85:76" pos:end="85:76">s</name><operator pos:start="85:77" pos:end="85:78">-&gt;</operator><name pos:start="85:79" pos:end="85:88">pixel_size</name></name></expr></argument>)</argument_list></call></expr>)</condition><block type="pseudo" pos:start="87:13" pos:end="87:65"><block_content pos:start="87:13" pos:end="87:65">
+
+            <expr_stmt pos:start="87:13" pos:end="87:65"><expr pos:start="87:13" pos:end="87:64"><name pos:start="87:13" pos:end="87:23">repeatcount</name> <operator pos:start="87:25" pos:end="87:25">=</operator> <call pos:start="87:27" pos:end="87:64"><name pos:start="87:27" pos:end="87:31">FFMIN</name><argument_list pos:start="87:32" pos:end="87:64">(<argument pos:start="87:33" pos:end="87:47"><expr pos:start="87:33" pos:end="87:47"><name pos:start="87:33" pos:end="87:43">repeatcount</name> <operator pos:start="87:45" pos:end="87:45">+</operator> <literal type="number" pos:start="87:47" pos:end="87:47">1</literal></expr></argument>, <argument pos:start="87:50" pos:end="87:63"><expr pos:start="87:50" pos:end="87:63"><name pos:start="87:50" pos:end="87:63">MAX_RLE_REPEAT</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if>
+
+        <else pos:start="89:9" pos:end="91:28">else<block type="pseudo" pos:start="91:13" pos:end="91:28"><block_content pos:start="91:13" pos:end="91:28">
+
+            <expr_stmt pos:start="91:13" pos:end="91:28"><expr pos:start="91:13" pos:end="91:27"><name pos:start="91:13" pos:end="91:23">repeatcount</name> <operator pos:start="91:25" pos:end="91:25">=</operator> <literal type="number" pos:start="91:27" pos:end="91:27">1</literal></expr>;</expr_stmt></block_content></block></else></if_stmt>
+
+
+
+        <expr_stmt pos:start="95:9" pos:end="95:81"><expr pos:start="95:9" pos:end="95:80"><name pos:start="95:9" pos:end="95:25">total_repeat_cost</name> <operator pos:start="95:27" pos:end="95:27">=</operator> <name pos:start="95:29" pos:end="95:60"><name pos:start="95:29" pos:end="95:29">s</name><operator pos:start="95:30" pos:end="95:31">-&gt;</operator><name pos:start="95:32" pos:end="95:43">length_table</name><index pos:start="95:44" pos:end="95:60">[<expr pos:start="95:45" pos:end="95:59"><name pos:start="95:45" pos:end="95:45">i</name> <operator pos:start="95:47" pos:end="95:47">+</operator> <name pos:start="95:49" pos:end="95:59">repeatcount</name></expr>]</index></name> <operator pos:start="95:62" pos:end="95:62">+</operator> <literal type="number" pos:start="95:64" pos:end="95:66">1</literal> <operator pos:start="95:66" pos:end="95:66">+</operator> <name pos:start="95:68" pos:end="95:80"><name pos:start="95:68" pos:end="95:68">s</name><operator pos:start="95:69" pos:end="95:70">-&gt;</operator><name pos:start="95:71" pos:end="95:80">pixel_size</name></name></expr>;</expr_stmt>
+
+
+
+        <comment type="block" pos:start="99:9" pos:end="101:36">/* skip code is free for the first pixel, it costs one byte for repeat and bulk copy
+
+         * so let's make it aware */</comment>
+
+        <if_stmt pos:start="103:9" pos:end="109:9"><if pos:start="103:9" pos:end="109:9">if <condition pos:start="103:12" pos:end="103:19">(<expr pos:start="103:13" pos:end="103:18"><name pos:start="103:13" pos:end="103:13">i</name> <operator pos:start="103:15" pos:end="103:16">==</operator> <literal type="number" pos:start="103:18" pos:end="103:18">0</literal></expr>)</condition> <block pos:start="103:21" pos:end="109:9">{<block_content pos:start="105:13" pos:end="107:32">
+
+            <expr_stmt pos:start="105:13" pos:end="105:30"><expr pos:start="105:13" pos:end="105:29"><name pos:start="105:13" pos:end="105:27">total_skip_cost</name><operator pos:start="105:28" pos:end="105:29">--</operator></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="107:13" pos:end="107:32"><expr pos:start="107:13" pos:end="107:31"><name pos:start="107:13" pos:end="107:29">total_repeat_cost</name><operator pos:start="107:30" pos:end="107:31">++</operator></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <if_stmt pos:start="113:9" pos:end="173:9"><if pos:start="113:9" pos:end="121:9">if <condition pos:start="113:12" pos:end="113:87">(<expr pos:start="113:13" pos:end="113:86"><name pos:start="113:13" pos:end="113:23">repeatcount</name> <operator pos:start="113:25" pos:end="113:25">&gt;</operator> <literal type="number" pos:start="113:27" pos:end="113:27">1</literal> <operator pos:start="113:29" pos:end="113:30">&amp;&amp;</operator> <operator pos:start="113:32" pos:end="113:32">(</operator><name pos:start="113:33" pos:end="113:41">skipcount</name> <operator pos:start="113:43" pos:end="113:44">==</operator> <literal type="number" pos:start="113:46" pos:end="113:46">0</literal> <operator pos:start="113:48" pos:end="113:49">||</operator> <name pos:start="113:51" pos:end="113:67">total_repeat_cost</name> <operator pos:start="113:69" pos:end="113:69">&lt;</operator> <name pos:start="113:71" pos:end="113:85">total_skip_cost</name><operator pos:start="113:86" pos:end="113:86">)</operator></expr>)</condition> <block pos:start="113:89" pos:end="121:9">{<block_content pos:start="117:13" pos:end="119:47">
+
+            <comment type="block" pos:start="115:13" pos:end="115:36">/* repeat is the best */</comment>
+
+            <expr_stmt pos:start="117:13" pos:end="117:52"><expr pos:start="117:13" pos:end="117:51"><name pos:start="117:13" pos:end="117:30"><name pos:start="117:13" pos:end="117:13">s</name><operator pos:start="117:14" pos:end="117:15">-&gt;</operator><name pos:start="117:16" pos:end="117:27">length_table</name><index pos:start="117:28" pos:end="117:30">[<expr pos:start="117:29" pos:end="117:29"><name pos:start="117:29" pos:end="117:29">i</name></expr>]</index></name>  <operator pos:start="117:33" pos:end="117:33">=</operator> <name pos:start="117:35" pos:end="117:51">total_repeat_cost</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="119:13" pos:end="119:47"><expr pos:start="119:13" pos:end="119:46"><name pos:start="119:13" pos:end="119:31"><name pos:start="119:13" pos:end="119:13">s</name><operator pos:start="119:14" pos:end="119:15">-&gt;</operator><name pos:start="119:16" pos:end="119:28">rlecode_table</name><index pos:start="119:29" pos:end="119:31">[<expr pos:start="119:30" pos:end="119:30"><name pos:start="119:30" pos:end="119:30">i</name></expr>]</index></name> <operator pos:start="119:33" pos:end="119:33">=</operator> <operator pos:start="119:35" pos:end="119:35">-</operator><name pos:start="119:36" pos:end="119:46">repeatcount</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if>
+
+        <if type="elseif" pos:start="123:9" pos:end="131:9">else if <condition pos:start="123:17" pos:end="123:31">(<expr pos:start="123:18" pos:end="123:30"><name pos:start="123:18" pos:end="123:26">skipcount</name> <operator pos:start="123:28" pos:end="123:28">&gt;</operator> <literal type="number" pos:start="123:30" pos:end="123:30">0</literal></expr>)</condition> <block pos:start="123:33" pos:end="131:9">{<block_content pos:start="127:13" pos:end="129:36">
+
+            <comment type="block" pos:start="125:13" pos:end="125:46">/* skip is the best choice here */</comment>
+
+            <expr_stmt pos:start="127:13" pos:end="127:50"><expr pos:start="127:13" pos:end="127:49"><name pos:start="127:13" pos:end="127:30"><name pos:start="127:13" pos:end="127:13">s</name><operator pos:start="127:14" pos:end="127:15">-&gt;</operator><name pos:start="127:16" pos:end="127:27">length_table</name><index pos:start="127:28" pos:end="127:30">[<expr pos:start="127:29" pos:end="127:29"><name pos:start="127:29" pos:end="127:29">i</name></expr>]</index></name>  <operator pos:start="127:33" pos:end="127:33">=</operator> <name pos:start="127:35" pos:end="127:49">total_skip_cost</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="129:13" pos:end="129:36"><expr pos:start="129:13" pos:end="129:35"><name pos:start="129:13" pos:end="129:31"><name pos:start="129:13" pos:end="129:13">s</name><operator pos:start="129:14" pos:end="129:15">-&gt;</operator><name pos:start="129:16" pos:end="129:28">rlecode_table</name><index pos:start="129:29" pos:end="129:31">[<expr pos:start="129:30" pos:end="129:30"><name pos:start="129:30" pos:end="129:30">i</name></expr>]</index></name> <operator pos:start="129:33" pos:end="129:33">=</operator> <literal type="number" pos:start="129:35" pos:end="129:35">0</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if>
+
+        <else pos:start="133:9" pos:end="173:9">else <block pos:start="133:14" pos:end="173:9">{<block_content pos:start="141:13" pos:end="171:44">
+
+            <comment type="block" pos:start="135:13" pos:end="137:61">/* We cannot do neither skip nor repeat
+
+             * thus we search for the best bulk copy to do */</comment>
+
+
+
+            <decl_stmt pos:start="141:13" pos:end="141:55"><decl pos:start="141:13" pos:end="141:54"><type pos:start="141:13" pos:end="141:15"><name pos:start="141:13" pos:end="141:15">int</name></type> <name pos:start="141:17" pos:end="141:21">limit</name> <init pos:start="141:23" pos:end="141:54">= <expr pos:start="141:25" pos:end="141:54"><call pos:start="141:25" pos:end="141:54"><name pos:start="141:25" pos:end="141:29">FFMIN</name><argument_list pos:start="141:30" pos:end="141:54">(<argument pos:start="141:31" pos:end="141:39"><expr pos:start="141:31" pos:end="141:39"><name pos:start="141:31" pos:end="141:35">width</name> <operator pos:start="141:37" pos:end="141:37">-</operator> <name pos:start="141:39" pos:end="141:39">i</name></expr></argument>, <argument pos:start="141:42" pos:end="141:53"><expr pos:start="141:42" pos:end="141:53"><name pos:start="141:42" pos:end="141:53">MAX_RLE_BULK</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+
+
+            <expr_stmt pos:start="145:13" pos:end="145:47"><expr pos:start="145:13" pos:end="145:46"><name pos:start="145:13" pos:end="145:21">temp_cost</name> <operator pos:start="145:23" pos:end="145:23">=</operator> <literal type="number" pos:start="145:25" pos:end="145:27">1</literal> <operator pos:start="145:27" pos:end="145:27">+</operator> <name pos:start="145:29" pos:end="145:41"><name pos:start="145:29" pos:end="145:29">s</name><operator pos:start="145:30" pos:end="145:31">-&gt;</operator><name pos:start="145:32" pos:end="145:41">pixel_size</name></name> <operator pos:start="145:43" pos:end="145:43">+</operator> <operator pos:start="145:45" pos:end="145:45">!</operator><name pos:start="145:46" pos:end="145:46">i</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="147:13" pos:end="147:38"><expr pos:start="147:13" pos:end="147:37"><name pos:start="147:13" pos:end="147:27">total_bulk_cost</name> <operator pos:start="147:29" pos:end="147:29">=</operator> <name pos:start="147:31" pos:end="147:37">INT_MAX</name></expr>;</expr_stmt>
+
+
+
+            <for pos:start="151:13" pos:end="165:13">for <control pos:start="151:17" pos:end="151:40">(<init pos:start="151:18" pos:end="151:23"><expr pos:start="151:18" pos:end="151:22"><name pos:start="151:18" pos:end="151:18">j</name> <operator pos:start="151:20" pos:end="151:20">=</operator> <literal type="number" pos:start="151:22" pos:end="151:22">1</literal></expr>;</init> <condition pos:start="151:25" pos:end="151:35"><expr pos:start="151:25" pos:end="151:34"><name pos:start="151:25" pos:end="151:25">j</name> <operator pos:start="151:27" pos:end="151:28">&lt;=</operator> <name pos:start="151:30" pos:end="151:34">limit</name></expr>;</condition> <incr pos:start="151:37" pos:end="151:39"><expr pos:start="151:37" pos:end="151:39"><name pos:start="151:37" pos:end="151:37">j</name><operator pos:start="151:38" pos:end="151:39">++</operator></expr></incr>)</control> <block pos:start="151:42" pos:end="165:13">{<block_content pos:start="153:17" pos:end="163:43">
+
+                <if_stmt pos:start="153:17" pos:end="161:17"><if pos:start="153:17" pos:end="161:17">if <condition pos:start="153:20" pos:end="153:73">(<expr pos:start="153:21" pos:end="153:72"><name pos:start="153:21" pos:end="153:42"><name pos:start="153:21" pos:end="153:21">s</name><operator pos:start="153:22" pos:end="153:23">-&gt;</operator><name pos:start="153:24" pos:end="153:35">length_table</name><index pos:start="153:36" pos:end="153:42">[<expr pos:start="153:37" pos:end="153:41"><name pos:start="153:37" pos:end="153:37">i</name> <operator pos:start="153:39" pos:end="153:39">+</operator> <name pos:start="153:41" pos:end="153:41">j</name></expr>]</index></name> <operator pos:start="153:44" pos:end="153:44">+</operator> <name pos:start="153:46" pos:end="153:54">temp_cost</name> <operator pos:start="153:56" pos:end="153:56">&lt;</operator> <name pos:start="153:58" pos:end="153:72">total_bulk_cost</name></expr>)</condition> <block pos:start="153:75" pos:end="161:17">{<block_content pos:start="157:21" pos:end="159:34">
+
+                    <comment type="block" pos:start="155:21" pos:end="155:62">/* We have found a better bulk copy ... */</comment>
+
+                    <expr_stmt pos:start="157:21" pos:end="157:73"><expr pos:start="157:21" pos:end="157:72"><name pos:start="157:21" pos:end="157:35">total_bulk_cost</name> <operator pos:start="157:37" pos:end="157:37">=</operator> <name pos:start="157:39" pos:end="157:60"><name pos:start="157:39" pos:end="157:39">s</name><operator pos:start="157:40" pos:end="157:41">-&gt;</operator><name pos:start="157:42" pos:end="157:53">length_table</name><index pos:start="157:54" pos:end="157:60">[<expr pos:start="157:55" pos:end="157:59"><name pos:start="157:55" pos:end="157:55">i</name> <operator pos:start="157:57" pos:end="157:57">+</operator> <name pos:start="157:59" pos:end="157:59">j</name></expr>]</index></name> <operator pos:start="157:62" pos:end="157:62">+</operator> <name pos:start="157:64" pos:end="157:72">temp_cost</name></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="159:21" pos:end="159:34"><expr pos:start="159:21" pos:end="159:33"><name pos:start="159:21" pos:end="159:29">bulkcount</name> <operator pos:start="159:31" pos:end="159:31">=</operator> <name pos:start="159:33" pos:end="159:33">j</name></expr>;</expr_stmt>
+
+                </block_content>}</block></if></if_stmt>
+
+                <expr_stmt pos:start="163:17" pos:end="163:43"><expr pos:start="163:17" pos:end="163:42"><name pos:start="163:17" pos:end="163:25">temp_cost</name> <operator pos:start="163:27" pos:end="163:28">+=</operator> <name pos:start="163:30" pos:end="163:42"><name pos:start="163:30" pos:end="163:30">s</name><operator pos:start="163:31" pos:end="163:32">-&gt;</operator><name pos:start="163:33" pos:end="163:42">pixel_size</name></name></expr>;</expr_stmt>
+
+            </block_content>}</block></for>
+
+
+
+            <expr_stmt pos:start="169:13" pos:end="169:50"><expr pos:start="169:13" pos:end="169:49"><name pos:start="169:13" pos:end="169:30"><name pos:start="169:13" pos:end="169:13">s</name><operator pos:start="169:14" pos:end="169:15">-&gt;</operator><name pos:start="169:16" pos:end="169:27">length_table</name><index pos:start="169:28" pos:end="169:30">[<expr pos:start="169:29" pos:end="169:29"><name pos:start="169:29" pos:end="169:29">i</name></expr>]</index></name>  <operator pos:start="169:33" pos:end="169:33">=</operator> <name pos:start="169:35" pos:end="169:49">total_bulk_cost</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="171:13" pos:end="171:44"><expr pos:start="171:13" pos:end="171:43"><name pos:start="171:13" pos:end="171:31"><name pos:start="171:13" pos:end="171:13">s</name><operator pos:start="171:14" pos:end="171:15">-&gt;</operator><name pos:start="171:16" pos:end="171:28">rlecode_table</name><index pos:start="171:29" pos:end="171:31">[<expr pos:start="171:30" pos:end="171:30"><name pos:start="171:30" pos:end="171:30">i</name></expr>]</index></name> <operator pos:start="171:33" pos:end="171:33">=</operator> <name pos:start="171:35" pos:end="171:43">bulkcount</name></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+
+
+        <expr_stmt pos:start="177:9" pos:end="177:35"><expr pos:start="177:9" pos:end="177:34"><name pos:start="177:9" pos:end="177:17">this_line</name> <operator pos:start="177:19" pos:end="177:20">-=</operator> <name pos:start="177:22" pos:end="177:34"><name pos:start="177:22" pos:end="177:22">s</name><operator pos:start="177:23" pos:end="177:24">-&gt;</operator><name pos:start="177:25" pos:end="177:34">pixel_size</name></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="179:9" pos:end="179:35"><expr pos:start="179:9" pos:end="179:34"><name pos:start="179:9" pos:end="179:17">prev_line</name> <operator pos:start="179:19" pos:end="179:20">-=</operator> <name pos:start="179:22" pos:end="179:34"><name pos:start="179:22" pos:end="179:22">s</name><operator pos:start="179:23" pos:end="179:24">-&gt;</operator><name pos:start="179:25" pos:end="179:34">pixel_size</name></name></expr>;</expr_stmt>
+
+    </block_content>}</block></for>
+
+
+
+    <comment type="block" pos:start="185:5" pos:end="185:77">/* Good ! Now we have the best sequence for this line, let's output it */</comment>
+
+
+
+    <comment type="block" pos:start="189:5" pos:end="191:24">/* We do a special case for the first pixel so that we avoid testing it in
+
+     * the whole loop */</comment>
+
+
+
+    <expr_stmt pos:start="195:5" pos:end="195:8"><expr pos:start="195:5" pos:end="195:7"><name pos:start="195:5" pos:end="195:5">i</name><operator pos:start="195:6" pos:end="195:6">=</operator><literal type="number" pos:start="195:7" pos:end="195:7">0</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="197:5" pos:end="197:64"><expr pos:start="197:5" pos:end="197:63"><name pos:start="197:5" pos:end="197:13">this_line</name> <operator pos:start="197:15" pos:end="197:15">=</operator> <name pos:start="197:17" pos:end="197:41"><name pos:start="197:17" pos:end="197:17">p</name><operator pos:start="197:18" pos:end="197:19">-&gt;</operator>               <name pos:start="197:35" pos:end="197:38">data</name><index pos:start="197:39" pos:end="197:41">[<expr pos:start="197:40" pos:end="197:40"><literal type="number" pos:start="197:40" pos:end="197:40">0</literal></expr>]</index></name> <operator pos:start="197:43" pos:end="197:43">+</operator> <name pos:start="197:45" pos:end="197:48">line</name><operator pos:start="197:49" pos:end="197:49">*</operator><name pos:start="197:50" pos:end="197:63"><name pos:start="197:50" pos:end="197:50">p</name><operator pos:start="197:51" pos:end="197:52">-&gt;</operator><name pos:start="197:53" pos:end="197:60">linesize</name><index pos:start="197:61" pos:end="197:63">[<expr pos:start="197:62" pos:end="197:62"><literal type="number" pos:start="197:62" pos:end="197:62">0</literal></expr>]</index></name></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="201:5" pos:end="209:37"><if pos:start="201:5" pos:end="207:5">if <condition pos:start="201:8" pos:end="201:33">(<expr pos:start="201:9" pos:end="201:32"><name pos:start="201:9" pos:end="201:27"><name pos:start="201:9" pos:end="201:9">s</name><operator pos:start="201:10" pos:end="201:11">-&gt;</operator><name pos:start="201:12" pos:end="201:24">rlecode_table</name><index pos:start="201:25" pos:end="201:27">[<expr pos:start="201:26" pos:end="201:26"><literal type="number" pos:start="201:26" pos:end="201:26">0</literal></expr>]</index></name> <operator pos:start="201:29" pos:end="201:30">==</operator> <literal type="number" pos:start="201:32" pos:end="201:32">0</literal></expr>)</condition> <block pos:start="201:35" pos:end="207:5">{<block_content pos:start="203:9" pos:end="205:30">
+
+        <expr_stmt pos:start="203:9" pos:end="203:55"><expr pos:start="203:9" pos:end="203:54"><call pos:start="203:9" pos:end="203:54"><name pos:start="203:9" pos:end="203:27">bytestream_put_byte</name><argument_list pos:start="203:28" pos:end="203:54">(<argument pos:start="203:29" pos:end="203:31"><expr pos:start="203:29" pos:end="203:31"><name pos:start="203:29" pos:end="203:31">buf</name></expr></argument>, <argument pos:start="203:34" pos:end="203:53"><expr pos:start="203:34" pos:end="203:53"><name pos:start="203:34" pos:end="203:49"><name pos:start="203:34" pos:end="203:34">s</name><operator pos:start="203:35" pos:end="203:36">-&gt;</operator><name pos:start="203:37" pos:end="203:46">skip_table</name><index pos:start="203:47" pos:end="203:49">[<expr pos:start="203:48" pos:end="203:48"><literal type="number" pos:start="203:48" pos:end="203:48">0</literal></expr>]</index></name> <operator pos:start="203:51" pos:end="203:51">+</operator> <literal type="number" pos:start="203:53" pos:end="203:53">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="205:9" pos:end="205:30"><expr pos:start="205:9" pos:end="205:29"><name pos:start="205:9" pos:end="205:9">i</name> <operator pos:start="205:11" pos:end="205:12">+=</operator> <name pos:start="205:14" pos:end="205:29"><name pos:start="205:14" pos:end="205:14">s</name><operator pos:start="205:15" pos:end="205:16">-&gt;</operator><name pos:start="205:17" pos:end="205:26">skip_table</name><index pos:start="205:27" pos:end="205:29">[<expr pos:start="205:28" pos:end="205:28"><literal type="number" pos:start="205:28" pos:end="205:28">0</literal></expr>]</index></name></expr>;</expr_stmt>
+
+    </block_content>}</block></if>
+
+    <else pos:start="209:5" pos:end="209:37">else<block type="pseudo" pos:start="209:10" pos:end="209:37"><block_content pos:start="209:10" pos:end="209:37"> <expr_stmt pos:start="209:10" pos:end="209:37"><expr pos:start="209:10" pos:end="209:36"><call pos:start="209:10" pos:end="209:36"><name pos:start="209:10" pos:end="209:28">bytestream_put_byte</name><argument_list pos:start="209:29" pos:end="209:36">(<argument pos:start="209:30" pos:end="209:32"><expr pos:start="209:30" pos:end="209:32"><name pos:start="209:30" pos:end="209:32">buf</name></expr></argument>, <argument pos:start="209:35" pos:end="209:35"><expr pos:start="209:35" pos:end="209:35"><literal type="number" pos:start="209:35" pos:end="209:35">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></else></if_stmt>
+
+
+
+
+
+    <while pos:start="215:5" pos:end="283:5">while <condition pos:start="215:11" pos:end="215:21">(<expr pos:start="215:12" pos:end="215:20"><name pos:start="215:12" pos:end="215:12">i</name> <operator pos:start="215:14" pos:end="215:14">&lt;</operator> <name pos:start="215:16" pos:end="215:20">width</name></expr>)</condition> <block pos:start="215:23" pos:end="283:5">{<block_content pos:start="217:9" pos:end="281:9">
+
+        <expr_stmt pos:start="217:9" pos:end="217:38"><expr pos:start="217:9" pos:end="217:37"><name pos:start="217:9" pos:end="217:15">rlecode</name> <operator pos:start="217:17" pos:end="217:17">=</operator> <name pos:start="217:19" pos:end="217:37"><name pos:start="217:19" pos:end="217:19">s</name><operator pos:start="217:20" pos:end="217:21">-&gt;</operator><name pos:start="217:22" pos:end="217:34">rlecode_table</name><index pos:start="217:35" pos:end="217:37">[<expr pos:start="217:36" pos:end="217:36"><name pos:start="217:36" pos:end="217:36">i</name></expr>]</index></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="219:9" pos:end="219:42"><expr pos:start="219:9" pos:end="219:41"><call pos:start="219:9" pos:end="219:41"><name pos:start="219:9" pos:end="219:27">bytestream_put_byte</name><argument_list pos:start="219:28" pos:end="219:41">(<argument pos:start="219:29" pos:end="219:31"><expr pos:start="219:29" pos:end="219:31"><name pos:start="219:29" pos:end="219:31">buf</name></expr></argument>, <argument pos:start="219:34" pos:end="219:40"><expr pos:start="219:34" pos:end="219:40"><name pos:start="219:34" pos:end="219:40">rlecode</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="221:9" pos:end="281:9"><if pos:start="221:9" pos:end="229:9">if <condition pos:start="221:12" pos:end="221:25">(<expr pos:start="221:13" pos:end="221:24"><name pos:start="221:13" pos:end="221:19">rlecode</name> <operator pos:start="221:21" pos:end="221:22">==</operator> <literal type="number" pos:start="221:24" pos:end="221:24">0</literal></expr>)</condition> <block pos:start="221:27" pos:end="229:9">{<block_content pos:start="225:13" pos:end="227:34">
+
+            <comment type="block" pos:start="223:13" pos:end="223:39">/* Write a skip sequence */</comment>
+
+            <expr_stmt pos:start="225:13" pos:end="225:59"><expr pos:start="225:13" pos:end="225:58"><call pos:start="225:13" pos:end="225:58"><name pos:start="225:13" pos:end="225:31">bytestream_put_byte</name><argument_list pos:start="225:32" pos:end="225:58">(<argument pos:start="225:33" pos:end="225:35"><expr pos:start="225:33" pos:end="225:35"><name pos:start="225:33" pos:end="225:35">buf</name></expr></argument>, <argument pos:start="225:38" pos:end="225:57"><expr pos:start="225:38" pos:end="225:57"><name pos:start="225:38" pos:end="225:53"><name pos:start="225:38" pos:end="225:38">s</name><operator pos:start="225:39" pos:end="225:40">-&gt;</operator><name pos:start="225:41" pos:end="225:50">skip_table</name><index pos:start="225:51" pos:end="225:53">[<expr pos:start="225:52" pos:end="225:52"><name pos:start="225:52" pos:end="225:52">i</name></expr>]</index></name> <operator pos:start="225:55" pos:end="225:55">+</operator> <literal type="number" pos:start="225:57" pos:end="225:57">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="227:13" pos:end="227:34"><expr pos:start="227:13" pos:end="227:33"><name pos:start="227:13" pos:end="227:13">i</name> <operator pos:start="227:15" pos:end="227:16">+=</operator> <name pos:start="227:18" pos:end="227:33"><name pos:start="227:18" pos:end="227:18">s</name><operator pos:start="227:19" pos:end="227:20">-&gt;</operator><name pos:start="227:21" pos:end="227:30">skip_table</name><index pos:start="227:31" pos:end="227:33">[<expr pos:start="227:32" pos:end="227:32"><name pos:start="227:32" pos:end="227:32">i</name></expr>]</index></name></expr>;</expr_stmt>
+
+        </block_content>}</block></if>
+
+        <if type="elseif" pos:start="231:9" pos:end="257:9">else if <condition pos:start="231:17" pos:end="231:29">(<expr pos:start="231:18" pos:end="231:28"><name pos:start="231:18" pos:end="231:24">rlecode</name> <operator pos:start="231:26" pos:end="231:26">&gt;</operator> <literal type="number" pos:start="231:28" pos:end="231:28">0</literal></expr>)</condition> <block pos:start="231:31" pos:end="257:9">{<block_content pos:start="235:13" pos:end="255:25">
+
+            <comment type="block" pos:start="233:13" pos:end="233:27">/* bulk copy */</comment>
+
+            <if_stmt pos:start="235:13" pos:end="253:13"><if pos:start="235:13" pos:end="249:13">if <condition pos:start="235:16" pos:end="235:51">(<expr pos:start="235:17" pos:end="235:50"><name pos:start="235:17" pos:end="235:33"><name pos:start="235:17" pos:end="235:17">s</name><operator pos:start="235:18" pos:end="235:19">-&gt;</operator><name pos:start="235:20" pos:end="235:24">avctx</name><operator pos:start="235:25" pos:end="235:26">-&gt;</operator><name pos:start="235:27" pos:end="235:33">pix_fmt</name></name> <operator pos:start="235:35" pos:end="235:36">==</operator> <name pos:start="235:38" pos:end="235:50">PIX_FMT_GRAY8</name></expr>)</condition> <block pos:start="235:53" pos:end="249:13">{<block_content pos:start="237:17" pos:end="247:88">
+
+                <decl_stmt pos:start="237:17" pos:end="237:22"><decl pos:start="237:17" pos:end="237:21"><type pos:start="237:17" pos:end="237:19"><name pos:start="237:17" pos:end="237:19">int</name></type> <name pos:start="237:21" pos:end="237:21">j</name></decl>;</decl_stmt>
+
+                <comment type="line" pos:start="239:17" pos:end="239:77">// QT grayscale colorspace has 0=white and 255=black, we will</comment>
+
+                <comment type="line" pos:start="241:17" pos:end="241:77">// ignore the palette that is included in the AVFrame because</comment>
+
+                <comment type="line" pos:start="243:17" pos:end="243:58">// PIX_FMT_GRAY8 has defined color mapping</comment>
+
+                <for pos:start="245:17" pos:end="247:88">for <control pos:start="245:21" pos:end="245:59">(<init pos:start="245:22" pos:end="245:27"><expr pos:start="245:22" pos:end="245:26"><name pos:start="245:22" pos:end="245:22">j</name> <operator pos:start="245:24" pos:end="245:24">=</operator> <literal type="number" pos:start="245:26" pos:end="245:26">0</literal></expr>;</init> <condition pos:start="245:29" pos:end="245:54"><expr pos:start="245:29" pos:end="245:53"><name pos:start="245:29" pos:end="245:29">j</name> <operator pos:start="245:31" pos:end="245:31">&lt;</operator> <name pos:start="245:33" pos:end="245:39">rlecode</name><operator pos:start="245:40" pos:end="245:40">*</operator><name pos:start="245:41" pos:end="245:53"><name pos:start="245:41" pos:end="245:41">s</name><operator pos:start="245:42" pos:end="245:43">-&gt;</operator><name pos:start="245:44" pos:end="245:53">pixel_size</name></name></expr>;</condition> <incr pos:start="245:56" pos:end="245:58"><expr pos:start="245:56" pos:end="245:58"><operator pos:start="245:56" pos:end="245:57">++</operator><name pos:start="245:58" pos:end="245:58">j</name></expr></incr>)</control><block type="pseudo" pos:start="247:21" pos:end="247:88"><block_content pos:start="247:21" pos:end="247:88">
+
+                    <expr_stmt pos:start="247:21" pos:end="247:88"><expr pos:start="247:21" pos:end="247:87"><call pos:start="247:21" pos:end="247:87"><name pos:start="247:21" pos:end="247:39">bytestream_put_byte</name><argument_list pos:start="247:40" pos:end="247:87">(<argument pos:start="247:41" pos:end="247:43"><expr pos:start="247:41" pos:end="247:43"><name pos:start="247:41" pos:end="247:43">buf</name></expr></argument>, <argument pos:start="247:46" pos:end="247:86"><expr pos:start="247:46" pos:end="247:86"><operator pos:start="247:46" pos:end="247:46">*</operator><operator pos:start="247:47" pos:end="247:47">(</operator><name pos:start="247:48" pos:end="247:56">this_line</name> <operator pos:start="247:58" pos:end="247:58">+</operator> <name pos:start="247:60" pos:end="247:60">i</name><operator pos:start="247:61" pos:end="247:61">*</operator><name pos:start="247:62" pos:end="247:74"><name pos:start="247:62" pos:end="247:62">s</name><operator pos:start="247:63" pos:end="247:64">-&gt;</operator><name pos:start="247:65" pos:end="247:74">pixel_size</name></name> <operator pos:start="247:76" pos:end="247:76">+</operator> <name pos:start="247:78" pos:end="247:78">j</name><operator pos:start="247:79" pos:end="247:79">)</operator> <operator pos:start="247:81" pos:end="247:81">^</operator> <literal type="number" pos:start="247:83" pos:end="247:86">0xff</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></for>
+
+            </block_content>}</block></if> <else pos:start="249:15" pos:end="253:13">else <block pos:start="249:20" pos:end="253:13">{<block_content pos:start="251:17" pos:end="251:95">
+
+                <expr_stmt pos:start="251:17" pos:end="251:95"><expr pos:start="251:17" pos:end="251:94"><call pos:start="251:17" pos:end="251:94"><name pos:start="251:17" pos:end="251:37">bytestream_put_buffer</name><argument_list pos:start="251:38" pos:end="251:94">(<argument pos:start="251:39" pos:end="251:41"><expr pos:start="251:39" pos:end="251:41"><name pos:start="251:39" pos:end="251:41">buf</name></expr></argument>, <argument pos:start="251:44" pos:end="251:70"><expr pos:start="251:44" pos:end="251:70"><name pos:start="251:44" pos:end="251:52">this_line</name> <operator pos:start="251:54" pos:end="251:54">+</operator> <name pos:start="251:56" pos:end="251:56">i</name><operator pos:start="251:57" pos:end="251:57">*</operator><name pos:start="251:58" pos:end="251:70"><name pos:start="251:58" pos:end="251:58">s</name><operator pos:start="251:59" pos:end="251:60">-&gt;</operator><name pos:start="251:61" pos:end="251:70">pixel_size</name></name></expr></argument>, <argument pos:start="251:73" pos:end="251:93"><expr pos:start="251:73" pos:end="251:93"><name pos:start="251:73" pos:end="251:79">rlecode</name><operator pos:start="251:80" pos:end="251:80">*</operator><name pos:start="251:81" pos:end="251:93"><name pos:start="251:81" pos:end="251:81">s</name><operator pos:start="251:82" pos:end="251:83">-&gt;</operator><name pos:start="251:84" pos:end="251:93">pixel_size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></else></if_stmt>
+
+            <expr_stmt pos:start="255:13" pos:end="255:25"><expr pos:start="255:13" pos:end="255:24"><name pos:start="255:13" pos:end="255:13">i</name> <operator pos:start="255:15" pos:end="255:16">+=</operator> <name pos:start="255:18" pos:end="255:24">rlecode</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if>
+
+        <else pos:start="259:9" pos:end="281:9">else <block pos:start="259:14" pos:end="281:9">{<block_content pos:start="263:13" pos:end="279:25">
+
+            <comment type="block" pos:start="261:13" pos:end="261:33">/* repeat the bits */</comment>
+
+            <if_stmt pos:start="263:13" pos:end="277:13"><if pos:start="263:13" pos:end="273:13">if <condition pos:start="263:16" pos:end="263:51">(<expr pos:start="263:17" pos:end="263:50"><name pos:start="263:17" pos:end="263:33"><name pos:start="263:17" pos:end="263:17">s</name><operator pos:start="263:18" pos:end="263:19">-&gt;</operator><name pos:start="263:20" pos:end="263:24">avctx</name><operator pos:start="263:25" pos:end="263:26">-&gt;</operator><name pos:start="263:27" pos:end="263:33">pix_fmt</name></name> <operator pos:start="263:35" pos:end="263:36">==</operator> <name pos:start="263:38" pos:end="263:50">PIX_FMT_GRAY8</name></expr>)</condition> <block pos:start="263:53" pos:end="273:13">{<block_content pos:start="265:17" pos:end="271:88">
+
+                <decl_stmt pos:start="265:17" pos:end="265:22"><decl pos:start="265:17" pos:end="265:21"><type pos:start="265:17" pos:end="265:19"><name pos:start="265:17" pos:end="265:19">int</name></type> <name pos:start="265:21" pos:end="265:21">j</name></decl>;</decl_stmt>
+
+                <comment type="line" pos:start="267:17" pos:end="267:73">// QT grayscale colorspace has 0=white and 255=black, ...</comment>
+
+                <for pos:start="269:17" pos:end="271:88">for <control pos:start="269:21" pos:end="269:51">(<init pos:start="269:22" pos:end="269:27"><expr pos:start="269:22" pos:end="269:26"><name pos:start="269:22" pos:end="269:22">j</name> <operator pos:start="269:24" pos:end="269:24">=</operator> <literal type="number" pos:start="269:26" pos:end="269:26">0</literal></expr>;</init> <condition pos:start="269:29" pos:end="269:46"><expr pos:start="269:29" pos:end="269:45"><name pos:start="269:29" pos:end="269:29">j</name> <operator pos:start="269:31" pos:end="269:31">&lt;</operator> <name pos:start="269:33" pos:end="269:45"><name pos:start="269:33" pos:end="269:33">s</name><operator pos:start="269:34" pos:end="269:35">-&gt;</operator><name pos:start="269:36" pos:end="269:45">pixel_size</name></name></expr>;</condition> <incr pos:start="269:48" pos:end="269:50"><expr pos:start="269:48" pos:end="269:50"><operator pos:start="269:48" pos:end="269:49">++</operator><name pos:start="269:50" pos:end="269:50">j</name></expr></incr>)</control><block type="pseudo" pos:start="271:21" pos:end="271:88"><block_content pos:start="271:21" pos:end="271:88">
+
+                    <expr_stmt pos:start="271:21" pos:end="271:88"><expr pos:start="271:21" pos:end="271:87"><call pos:start="271:21" pos:end="271:87"><name pos:start="271:21" pos:end="271:39">bytestream_put_byte</name><argument_list pos:start="271:40" pos:end="271:87">(<argument pos:start="271:41" pos:end="271:43"><expr pos:start="271:41" pos:end="271:43"><name pos:start="271:41" pos:end="271:43">buf</name></expr></argument>, <argument pos:start="271:46" pos:end="271:86"><expr pos:start="271:46" pos:end="271:86"><operator pos:start="271:46" pos:end="271:46">*</operator><operator pos:start="271:47" pos:end="271:47">(</operator><name pos:start="271:48" pos:end="271:56">this_line</name> <operator pos:start="271:58" pos:end="271:58">+</operator> <name pos:start="271:60" pos:end="271:60">i</name><operator pos:start="271:61" pos:end="271:61">*</operator><name pos:start="271:62" pos:end="271:74"><name pos:start="271:62" pos:end="271:62">s</name><operator pos:start="271:63" pos:end="271:64">-&gt;</operator><name pos:start="271:65" pos:end="271:74">pixel_size</name></name> <operator pos:start="271:76" pos:end="271:76">+</operator> <name pos:start="271:78" pos:end="271:78">j</name><operator pos:start="271:79" pos:end="271:79">)</operator> <operator pos:start="271:81" pos:end="271:81">^</operator> <literal type="number" pos:start="271:83" pos:end="271:86">0xff</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></for>
+
+            </block_content>}</block></if> <else pos:start="273:15" pos:end="277:13">else <block pos:start="273:20" pos:end="277:13">{<block_content pos:start="275:17" pos:end="275:87">
+
+                <expr_stmt pos:start="275:17" pos:end="275:87"><expr pos:start="275:17" pos:end="275:86"><call pos:start="275:17" pos:end="275:86"><name pos:start="275:17" pos:end="275:37">bytestream_put_buffer</name><argument_list pos:start="275:38" pos:end="275:86">(<argument pos:start="275:39" pos:end="275:41"><expr pos:start="275:39" pos:end="275:41"><name pos:start="275:39" pos:end="275:41">buf</name></expr></argument>, <argument pos:start="275:44" pos:end="275:70"><expr pos:start="275:44" pos:end="275:70"><name pos:start="275:44" pos:end="275:52">this_line</name> <operator pos:start="275:54" pos:end="275:54">+</operator> <name pos:start="275:56" pos:end="275:56">i</name><operator pos:start="275:57" pos:end="275:57">*</operator><name pos:start="275:58" pos:end="275:70"><name pos:start="275:58" pos:end="275:58">s</name><operator pos:start="275:59" pos:end="275:60">-&gt;</operator><name pos:start="275:61" pos:end="275:70">pixel_size</name></name></expr></argument>, <argument pos:start="275:73" pos:end="275:85"><expr pos:start="275:73" pos:end="275:85"><name pos:start="275:73" pos:end="275:85"><name pos:start="275:73" pos:end="275:73">s</name><operator pos:start="275:74" pos:end="275:75">-&gt;</operator><name pos:start="275:76" pos:end="275:85">pixel_size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></else></if_stmt>
+
+            <expr_stmt pos:start="279:13" pos:end="279:25"><expr pos:start="279:13" pos:end="279:24"><name pos:start="279:13" pos:end="279:13">i</name> <operator pos:start="279:15" pos:end="279:16">-=</operator> <name pos:start="279:18" pos:end="279:24">rlecode</name></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+    </block_content>}</block></while>
+
+    <expr_stmt pos:start="285:5" pos:end="285:33"><expr pos:start="285:5" pos:end="285:32"><call pos:start="285:5" pos:end="285:32"><name pos:start="285:5" pos:end="285:23">bytestream_put_byte</name><argument_list pos:start="285:24" pos:end="285:32">(<argument pos:start="285:25" pos:end="285:27"><expr pos:start="285:25" pos:end="285:27"><name pos:start="285:25" pos:end="285:27">buf</name></expr></argument>, <argument pos:start="285:30" pos:end="285:31"><expr pos:start="285:30" pos:end="285:31"><operator pos:start="285:30" pos:end="285:30">-</operator><literal type="number" pos:start="285:31" pos:end="285:31">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line" pos:start="285:35" pos:end="285:49">// end RLE line</comment>
+
+</block_content>}</block></function>
+</unit>

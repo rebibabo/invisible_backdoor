@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/23475.c" pos:tabs="8"><function pos:start="1:1" pos:end="281:1"><type pos:start="1:1" pos:end="1:15"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:15">uint32_t</name></type> <name pos:start="1:17" pos:end="1:46">get_cluster_count_for_direntry</name><parameter_list pos:start="1:47" pos:end="3:47">(<parameter pos:start="1:48" pos:end="1:64"><decl pos:start="1:48" pos:end="1:64"><type pos:start="1:48" pos:end="1:64"><name pos:start="1:48" pos:end="1:61">BDRVVVFATState</name><modifier pos:start="1:62" pos:end="1:62">*</modifier></type> <name pos:start="1:64" pos:end="1:64">s</name></decl></parameter>,
+
+	<parameter pos:start="3:9" pos:end="3:28"><decl pos:start="3:9" pos:end="3:28"><type pos:start="3:9" pos:end="3:28"><name pos:start="3:9" pos:end="3:18">direntry_t</name><modifier pos:start="3:19" pos:end="3:19">*</modifier></type> <name pos:start="3:21" pos:end="3:28">direntry</name></decl></parameter>, <parameter pos:start="3:31" pos:end="3:46"><decl pos:start="3:31" pos:end="3:46"><type pos:start="3:31" pos:end="3:46"><specifier pos:start="3:31" pos:end="3:35">const</specifier> <name pos:start="3:37" pos:end="3:40">char</name><modifier pos:start="3:41" pos:end="3:41">*</modifier></type> <name pos:start="3:43" pos:end="3:46">path</name></decl></parameter>)</parameter_list>
+
+<block pos:start="5:1" pos:end="281:1">{<block_content pos:start="41:5" pos:end="279:5">
+
+    <comment type="block" pos:start="7:5" pos:end="39:7">/*
+
+     * This is a little bit tricky:
+
+     * IF the guest OS just inserts a cluster into the file chain,
+
+     * and leaves the rest alone, (i.e. the original file had clusters
+
+     * 15 -&gt; 16, but now has 15 -&gt; 32 -&gt; 16), then the following happens:
+
+     *
+
+     * - do_commit will write the cluster into the file at the given
+
+     *   offset, but
+
+     *
+
+     * - the cluster which is overwritten should be moved to a later
+
+     *   position in the file.
+
+     *
+
+     * I am not aware that any OS does something as braindead, but this
+
+     * situation could happen anyway when not committing for a long time.
+
+     * Just to be sure that this does not bite us, detect it, and copy the
+
+     * contents of the clusters to-be-overwritten into the qcow.
+
+     */</comment>
+
+    <decl_stmt pos:start="41:5" pos:end="41:20"><decl pos:start="41:5" pos:end="41:19"><type pos:start="41:5" pos:end="41:7"><name pos:start="41:5" pos:end="41:7">int</name></type> <name pos:start="41:9" pos:end="41:15">copy_it</name> <init pos:start="41:17" pos:end="41:19">= <expr pos:start="41:19" pos:end="41:19"><literal type="number" pos:start="41:19" pos:end="41:19">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="43:5" pos:end="43:25"><decl pos:start="43:5" pos:end="43:24"><type pos:start="43:5" pos:end="43:7"><name pos:start="43:5" pos:end="43:7">int</name></type> <name pos:start="43:9" pos:end="43:20">was_modified</name> <init pos:start="43:22" pos:end="43:24">= <expr pos:start="43:24" pos:end="43:24"><literal type="number" pos:start="43:24" pos:end="43:24">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="45:5" pos:end="45:20"><decl pos:start="45:5" pos:end="45:19"><type pos:start="45:5" pos:end="45:11"><name pos:start="45:5" pos:end="45:11">int32_t</name></type> <name pos:start="45:13" pos:end="45:15">ret</name> <init pos:start="45:17" pos:end="45:19">= <expr pos:start="45:19" pos:end="45:19"><literal type="number" pos:start="45:19" pos:end="45:19">0</literal></expr></init></decl>;</decl_stmt>
+
+
+
+    <decl_stmt pos:start="49:5" pos:end="49:55"><decl pos:start="49:5" pos:end="49:54"><type pos:start="49:5" pos:end="49:12"><name pos:start="49:5" pos:end="49:12">uint32_t</name></type> <name pos:start="49:14" pos:end="49:24">cluster_num</name> <init pos:start="49:26" pos:end="49:54">= <expr pos:start="49:28" pos:end="49:54"><call pos:start="49:28" pos:end="49:54"><name pos:start="49:28" pos:end="49:44">begin_of_direntry</name><argument_list pos:start="49:45" pos:end="49:54">(<argument pos:start="49:46" pos:end="49:53"><expr pos:start="49:46" pos:end="49:53"><name pos:start="49:46" pos:end="49:53">direntry</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="51:5" pos:end="51:24"><decl pos:start="51:5" pos:end="51:23"><type pos:start="51:5" pos:end="51:12"><name pos:start="51:5" pos:end="51:12">uint32_t</name></type> <name pos:start="51:14" pos:end="51:19">offset</name> <init pos:start="51:21" pos:end="51:23">= <expr pos:start="51:23" pos:end="51:23"><literal type="number" pos:start="51:23" pos:end="51:23">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="53:5" pos:end="53:33"><decl pos:start="53:5" pos:end="53:32"><type pos:start="53:5" pos:end="53:7"><name pos:start="53:5" pos:end="53:7">int</name></type> <name pos:start="53:9" pos:end="53:27">first_mapping_index</name> <init pos:start="53:29" pos:end="53:32">= <expr pos:start="53:31" pos:end="53:32"><operator pos:start="53:31" pos:end="53:31">-</operator><literal type="number" pos:start="53:32" pos:end="53:32">1</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="55:5" pos:end="55:30"><decl pos:start="55:5" pos:end="55:29"><type pos:start="55:5" pos:end="55:14"><name pos:start="55:5" pos:end="55:13">mapping_t</name><modifier pos:start="55:14" pos:end="55:14">*</modifier></type> <name pos:start="55:16" pos:end="55:22">mapping</name> <init pos:start="55:24" pos:end="55:29">= <expr pos:start="55:26" pos:end="55:29"><name pos:start="55:26" pos:end="55:29">NULL</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="57:5" pos:end="57:33"><decl pos:start="57:5" pos:end="57:32"><type pos:start="57:5" pos:end="57:15"><specifier pos:start="57:5" pos:end="57:9">const</specifier> <name pos:start="57:11" pos:end="57:14">char</name><modifier pos:start="57:15" pos:end="57:15">*</modifier></type> <name pos:start="57:17" pos:end="57:25">basename2</name> <init pos:start="57:27" pos:end="57:32">= <expr pos:start="57:29" pos:end="57:32"><name pos:start="57:29" pos:end="57:32">NULL</name></expr></init></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="61:5" pos:end="61:32"><expr pos:start="61:5" pos:end="61:31"><call pos:start="61:5" pos:end="61:31"><name pos:start="61:5" pos:end="61:28">vvfat_close_current_file</name><argument_list pos:start="61:29" pos:end="61:31">(<argument pos:start="61:30" pos:end="61:30"><expr pos:start="61:30" pos:end="61:30"><name pos:start="61:30" pos:end="61:30">s</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="65:5" pos:end="65:28">/* the root directory */</comment>
+
+    <if_stmt pos:start="67:5" pos:end="69:17"><if pos:start="67:5" pos:end="69:17">if <condition pos:start="67:8" pos:end="67:25">(<expr pos:start="67:9" pos:end="67:24"><name pos:start="67:9" pos:end="67:19">cluster_num</name> <operator pos:start="67:21" pos:end="67:22">==</operator> <literal type="number" pos:start="67:24" pos:end="67:24">0</literal></expr>)</condition><block type="pseudo" pos:start="69:9" pos:end="69:17"><block_content pos:start="69:9" pos:end="69:17">
+
+	<return pos:start="69:9" pos:end="69:17">return <expr pos:start="69:16" pos:end="69:16"><literal type="number" pos:start="69:16" pos:end="69:16">0</literal></expr>;</return></block_content></block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="73:5" pos:end="73:23">/* write support */</comment>
+
+    <if_stmt pos:start="75:5" pos:end="125:5"><if pos:start="75:5" pos:end="125:5">if <condition pos:start="75:8" pos:end="75:16">(<expr pos:start="75:9" pos:end="75:15"><name pos:start="75:9" pos:end="75:15"><name pos:start="75:9" pos:end="75:9">s</name><operator pos:start="75:10" pos:end="75:11">-&gt;</operator><name pos:start="75:12" pos:end="75:15">qcow</name></name></expr>)</condition> <block pos:start="75:18" pos:end="125:5">{<block_content pos:start="77:9" pos:end="123:9">
+
+	<expr_stmt pos:start="77:9" pos:end="77:39"><expr pos:start="77:9" pos:end="77:38"><name pos:start="77:9" pos:end="77:17">basename2</name> <operator pos:start="77:19" pos:end="77:19">=</operator> <call pos:start="77:21" pos:end="77:38"><name pos:start="77:21" pos:end="77:32">get_basename</name><argument_list pos:start="77:33" pos:end="77:38">(<argument pos:start="77:34" pos:end="77:37"><expr pos:start="77:34" pos:end="77:37"><name pos:start="77:34" pos:end="77:37">path</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+	<expr_stmt pos:start="81:9" pos:end="81:59"><expr pos:start="81:9" pos:end="81:58"><name pos:start="81:9" pos:end="81:15">mapping</name> <operator pos:start="81:17" pos:end="81:17">=</operator> <call pos:start="81:19" pos:end="81:58"><name pos:start="81:19" pos:end="81:42">find_mapping_for_cluster</name><argument_list pos:start="81:43" pos:end="81:58">(<argument pos:start="81:44" pos:end="81:44"><expr pos:start="81:44" pos:end="81:44"><name pos:start="81:44" pos:end="81:44">s</name></expr></argument>, <argument pos:start="81:47" pos:end="81:57"><expr pos:start="81:47" pos:end="81:57"><name pos:start="81:47" pos:end="81:57">cluster_num</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+	<if_stmt pos:start="85:9" pos:end="123:9"><if pos:start="85:9" pos:end="111:9">if <condition pos:start="85:12" pos:end="85:20">(<expr pos:start="85:13" pos:end="85:19"><name pos:start="85:13" pos:end="85:19">mapping</name></expr>)</condition> <block pos:start="85:22" pos:end="111:9">{<block_content pos:start="87:13" pos:end="109:62">
+
+	    <decl_stmt pos:start="87:13" pos:end="87:33"><decl pos:start="87:13" pos:end="87:32"><type pos:start="87:13" pos:end="87:23"><specifier pos:start="87:13" pos:end="87:17">const</specifier> <name pos:start="87:19" pos:end="87:22">char</name><modifier pos:start="87:23" pos:end="87:23">*</modifier></type> <name pos:start="87:25" pos:end="87:32">basename</name></decl>;</decl_stmt>
+
+
+
+	    <expr_stmt pos:start="91:13" pos:end="91:49"><expr pos:start="91:13" pos:end="91:48"><call pos:start="91:13" pos:end="91:48"><name pos:start="91:13" pos:end="91:18">assert</name><argument_list pos:start="91:19" pos:end="91:48">(<argument pos:start="91:20" pos:end="91:47"><expr pos:start="91:20" pos:end="91:47"><name pos:start="91:20" pos:end="91:32"><name pos:start="91:20" pos:end="91:26">mapping</name><operator pos:start="91:27" pos:end="91:28">-&gt;</operator><name pos:start="91:29" pos:end="91:32">mode</name></name> <operator pos:start="91:34" pos:end="91:34">&amp;</operator> <name pos:start="91:36" pos:end="91:47">MODE_DELETED</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+	    <expr_stmt pos:start="93:13" pos:end="93:43"><expr pos:start="93:13" pos:end="93:42"><name pos:start="93:13" pos:end="93:25"><name pos:start="93:13" pos:end="93:19">mapping</name><operator pos:start="93:20" pos:end="93:21">-&gt;</operator><name pos:start="93:22" pos:end="93:25">mode</name></name> <operator pos:start="93:27" pos:end="93:28">&amp;=</operator> <operator pos:start="93:30" pos:end="93:30">~</operator><name pos:start="93:31" pos:end="93:42">MODE_DELETED</name></expr>;</expr_stmt>
+
+
+
+	    <expr_stmt pos:start="97:13" pos:end="97:51"><expr pos:start="97:13" pos:end="97:50"><name pos:start="97:13" pos:end="97:20">basename</name> <operator pos:start="97:22" pos:end="97:22">=</operator> <call pos:start="97:24" pos:end="97:50"><name pos:start="97:24" pos:end="97:35">get_basename</name><argument_list pos:start="97:36" pos:end="97:50">(<argument pos:start="97:37" pos:end="97:49"><expr pos:start="97:37" pos:end="97:49"><name pos:start="97:37" pos:end="97:49"><name pos:start="97:37" pos:end="97:43">mapping</name><operator pos:start="97:44" pos:end="97:45">-&gt;</operator><name pos:start="97:46" pos:end="97:49">path</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+	    <expr_stmt pos:start="101:13" pos:end="101:48"><expr pos:start="101:13" pos:end="101:47"><call pos:start="101:13" pos:end="101:47"><name pos:start="101:13" pos:end="101:18">assert</name><argument_list pos:start="101:19" pos:end="101:47">(<argument pos:start="101:20" pos:end="101:46"><expr pos:start="101:20" pos:end="101:46"><name pos:start="101:20" pos:end="101:32"><name pos:start="101:20" pos:end="101:26">mapping</name><operator pos:start="101:27" pos:end="101:28">-&gt;</operator><name pos:start="101:29" pos:end="101:32">mode</name></name> <operator pos:start="101:34" pos:end="101:34">&amp;</operator> <name pos:start="101:36" pos:end="101:46">MODE_NORMAL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+	    <comment type="block" pos:start="105:13" pos:end="105:24">/* rename */</comment>
+
+	    <if_stmt pos:start="107:13" pos:end="109:62"><if pos:start="107:13" pos:end="109:62">if <condition pos:start="107:16" pos:end="107:44">(<expr pos:start="107:17" pos:end="107:43"><call pos:start="107:17" pos:end="107:43"><name pos:start="107:17" pos:end="107:22">strcmp</name><argument_list pos:start="107:23" pos:end="107:43">(<argument pos:start="107:24" pos:end="107:31"><expr pos:start="107:24" pos:end="107:31"><name pos:start="107:24" pos:end="107:31">basename</name></expr></argument>, <argument pos:start="107:34" pos:end="107:42"><expr pos:start="107:34" pos:end="107:42"><name pos:start="107:34" pos:end="107:42">basename2</name></expr></argument>)</argument_list></call></expr>)</condition><block type="pseudo" pos:start="109:17" pos:end="109:62"><block_content pos:start="109:17" pos:end="109:62">
+
+		<expr_stmt pos:start="109:17" pos:end="109:62"><expr pos:start="109:17" pos:end="109:61"><call pos:start="109:17" pos:end="109:61"><name pos:start="109:17" pos:end="109:31">schedule_rename</name><argument_list pos:start="109:32" pos:end="109:61">(<argument pos:start="109:33" pos:end="109:33"><expr pos:start="109:33" pos:end="109:33"><name pos:start="109:33" pos:end="109:33">s</name></expr></argument>, <argument pos:start="109:36" pos:end="109:46"><expr pos:start="109:36" pos:end="109:46"><name pos:start="109:36" pos:end="109:46">cluster_num</name></expr></argument>, <argument pos:start="109:49" pos:end="109:60"><expr pos:start="109:49" pos:end="109:60"><call pos:start="109:49" pos:end="109:60"><name pos:start="109:49" pos:end="109:54">strdup</name><argument_list pos:start="109:55" pos:end="109:60">(<argument pos:start="109:56" pos:end="109:59"><expr pos:start="109:56" pos:end="109:59"><name pos:start="109:56" pos:end="109:59">path</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+	</block_content>}</block></if> <if type="elseif" pos:start="111:11" pos:end="115:60">else if <condition pos:start="111:19" pos:end="111:37">(<expr pos:start="111:20" pos:end="111:36"><call pos:start="111:20" pos:end="111:36"><name pos:start="111:20" pos:end="111:26">is_file</name><argument_list pos:start="111:27" pos:end="111:36">(<argument pos:start="111:28" pos:end="111:35"><expr pos:start="111:28" pos:end="111:35"><name pos:start="111:28" pos:end="111:35">direntry</name></expr></argument>)</argument_list></call></expr>)</condition><block type="pseudo" pos:start="115:13" pos:end="115:60"><block_content pos:start="115:13" pos:end="115:60">
+
+	    <comment type="block" pos:start="113:13" pos:end="113:26">/* new file */</comment>
+
+	    <expr_stmt pos:start="115:13" pos:end="115:60"><expr pos:start="115:13" pos:end="115:59"><call pos:start="115:13" pos:end="115:59"><name pos:start="115:13" pos:end="115:29">schedule_new_file</name><argument_list pos:start="115:30" pos:end="115:59">(<argument pos:start="115:31" pos:end="115:31"><expr pos:start="115:31" pos:end="115:31"><name pos:start="115:31" pos:end="115:31">s</name></expr></argument>, <argument pos:start="115:34" pos:end="115:45"><expr pos:start="115:34" pos:end="115:45"><call pos:start="115:34" pos:end="115:45"><name pos:start="115:34" pos:end="115:39">strdup</name><argument_list pos:start="115:40" pos:end="115:45">(<argument pos:start="115:41" pos:end="115:44"><expr pos:start="115:41" pos:end="115:44"><name pos:start="115:41" pos:end="115:44">path</name></expr></argument>)</argument_list></call></expr></argument>, <argument pos:start="115:48" pos:end="115:58"><expr pos:start="115:48" pos:end="115:58"><name pos:start="115:48" pos:end="115:58">cluster_num</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if>
+
+	<else pos:start="117:9" pos:end="123:9">else <block pos:start="117:14" pos:end="123:9">{<block_content pos:start="119:13" pos:end="121:21">
+
+	    <expr_stmt pos:start="119:13" pos:end="119:22"><expr pos:start="119:13" pos:end="119:21"><call pos:start="119:13" pos:end="119:21"><name pos:start="119:13" pos:end="119:18">assert</name><argument_list pos:start="119:19" pos:end="119:21">(<argument pos:start="119:20" pos:end="119:20"><expr pos:start="119:20" pos:end="119:20"><literal type="number" pos:start="119:20" pos:end="119:20">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+	    <return pos:start="121:13" pos:end="121:21">return <expr pos:start="121:20" pos:end="121:20"><literal type="number" pos:start="121:20" pos:end="121:20">0</literal></expr>;</return>
+
+	</block_content>}</block></else></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <while pos:start="129:5" pos:end="279:5">while<condition pos:start="129:10" pos:end="129:12">(<expr pos:start="129:11" pos:end="129:11"><literal type="number" pos:start="129:11" pos:end="129:11">1</literal></expr>)</condition> <block pos:start="129:14" pos:end="279:5">{<block_content pos:start="131:9" pos:end="277:34">
+
+	<if_stmt pos:start="131:9" pos:end="249:9"><if pos:start="131:9" pos:end="249:9">if <condition pos:start="131:12" pos:end="131:20">(<expr pos:start="131:13" pos:end="131:19"><name pos:start="131:13" pos:end="131:19"><name pos:start="131:13" pos:end="131:13">s</name><operator pos:start="131:14" pos:end="131:15">-&gt;</operator><name pos:start="131:16" pos:end="131:19">qcow</name></name></expr>)</condition> <block pos:start="131:22" pos:end="249:9">{<block_content pos:start="133:13" pos:end="247:13">
+
+	    <if_stmt pos:start="133:13" pos:end="205:13"><if pos:start="133:13" pos:end="205:13">if <condition pos:start="133:16" pos:end="133:65">(<expr pos:start="133:17" pos:end="133:64"><operator pos:start="133:17" pos:end="133:17">!</operator><name pos:start="133:18" pos:end="133:24">copy_it</name> <operator pos:start="133:26" pos:end="133:27">&amp;&amp;</operator> <call pos:start="133:29" pos:end="133:64"><name pos:start="133:29" pos:end="133:48">cluster_was_modified</name><argument_list pos:start="133:49" pos:end="133:64">(<argument pos:start="133:50" pos:end="133:50"><expr pos:start="133:50" pos:end="133:50"><name pos:start="133:50" pos:end="133:50">s</name></expr></argument>, <argument pos:start="133:53" pos:end="133:63"><expr pos:start="133:53" pos:end="133:63"><name pos:start="133:53" pos:end="133:63">cluster_num</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="133:67" pos:end="205:13">{<block_content pos:start="135:17" pos:end="203:17">
+
+		<if_stmt pos:start="135:17" pos:end="141:67"><if pos:start="135:17" pos:end="141:67">if <condition pos:start="135:20" pos:end="139:52">(<expr pos:start="135:21" pos:end="139:51"><name pos:start="135:21" pos:end="135:27">mapping</name> <operator pos:start="135:29" pos:end="135:30">==</operator> <name pos:start="135:32" pos:end="135:35">NULL</name> <operator pos:start="135:37" pos:end="135:38">||</operator>
+
+			<name pos:start="137:25" pos:end="137:38"><name pos:start="137:25" pos:end="137:31">mapping</name><operator pos:start="137:32" pos:end="137:33">-&gt;</operator><name pos:start="137:34" pos:end="137:38">begin</name></name> <operator pos:start="137:40" pos:end="137:40">&gt;</operator> <name pos:start="137:42" pos:end="137:52">cluster_num</name> <operator pos:start="137:54" pos:end="137:55">||</operator>
+
+			<name pos:start="139:25" pos:end="139:36"><name pos:start="139:25" pos:end="139:31">mapping</name><operator pos:start="139:32" pos:end="139:33">-&gt;</operator><name pos:start="139:34" pos:end="139:36">end</name></name> <operator pos:start="139:38" pos:end="139:39">&lt;=</operator> <name pos:start="139:41" pos:end="139:51">cluster_num</name></expr>)</condition><block type="pseudo" pos:start="141:17" pos:end="141:67"><block_content pos:start="141:17" pos:end="141:67">
+
+		<expr_stmt pos:start="141:17" pos:end="141:67"><expr pos:start="141:17" pos:end="141:66"><name pos:start="141:17" pos:end="141:23">mapping</name> <operator pos:start="141:25" pos:end="141:25">=</operator> <call pos:start="141:27" pos:end="141:66"><name pos:start="141:27" pos:end="141:50">find_mapping_for_cluster</name><argument_list pos:start="141:51" pos:end="141:66">(<argument pos:start="141:52" pos:end="141:52"><expr pos:start="141:52" pos:end="141:52"><name pos:start="141:52" pos:end="141:52">s</name></expr></argument>, <argument pos:start="141:55" pos:end="141:65"><expr pos:start="141:55" pos:end="141:65"><name pos:start="141:55" pos:end="141:65">cluster_num</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+
+
+
+
+		<if_stmt pos:start="147:17" pos:end="203:17"><if pos:start="147:17" pos:end="203:17">if <condition pos:start="147:20" pos:end="149:62">(<expr pos:start="147:21" pos:end="149:61"><name pos:start="147:21" pos:end="147:27">mapping</name> <operator pos:start="147:29" pos:end="147:30">&amp;&amp;</operator>
+
+			<operator pos:start="149:25" pos:end="149:25">(</operator><name pos:start="149:26" pos:end="149:38"><name pos:start="149:26" pos:end="149:32">mapping</name><operator pos:start="149:33" pos:end="149:34">-&gt;</operator><name pos:start="149:35" pos:end="149:38">mode</name></name> <operator pos:start="149:40" pos:end="149:40">&amp;</operator> <name pos:start="149:42" pos:end="149:55">MODE_DIRECTORY</name><operator pos:start="149:56" pos:end="149:56">)</operator> <operator pos:start="149:58" pos:end="149:59">==</operator> <literal type="number" pos:start="149:61" pos:end="149:61">0</literal></expr>)</condition> <block pos:start="149:64" pos:end="203:17">{<block_content pos:start="155:21" pos:end="201:21">
+
+
+
+		    <comment type="block" pos:start="153:21" pos:end="153:46">/* was modified in qcow */</comment>
+
+		    <if_stmt pos:start="155:21" pos:end="177:21"><if pos:start="155:21" pos:end="165:21">if <condition pos:start="155:24" pos:end="157:61">(<expr pos:start="155:25" pos:end="157:60"><name pos:start="155:25" pos:end="155:30">offset</name> <operator pos:start="155:32" pos:end="155:33">!=</operator> <name pos:start="155:35" pos:end="155:59"><name pos:start="155:35" pos:end="155:41">mapping</name><operator pos:start="155:42" pos:end="155:43">-&gt;</operator><name pos:start="155:44" pos:end="155:47">info</name><operator pos:start="155:48" pos:end="155:48">.</operator><name pos:start="155:49" pos:end="155:52">file</name><operator pos:start="155:53" pos:end="155:53">.</operator><name pos:start="155:54" pos:end="155:59">offset</name></name> <operator pos:start="155:61" pos:end="155:61">+</operator> <name pos:start="155:63" pos:end="155:77"><name pos:start="155:63" pos:end="155:63">s</name><operator pos:start="155:64" pos:end="155:65">-&gt;</operator><name pos:start="155:66" pos:end="155:77">cluster_size</name></name>
+
+			    <operator pos:start="157:29" pos:end="157:29">*</operator> <operator pos:start="157:31" pos:end="157:31">(</operator><name pos:start="157:32" pos:end="157:42">cluster_num</name> <operator pos:start="157:44" pos:end="157:44">-</operator> <name pos:start="157:46" pos:end="157:59"><name pos:start="157:46" pos:end="157:52">mapping</name><operator pos:start="157:53" pos:end="157:54">-&gt;</operator><name pos:start="157:55" pos:end="157:59">begin</name></name><operator pos:start="157:60" pos:end="157:60">)</operator></expr>)</condition> <block pos:start="157:63" pos:end="165:21">{<block_content pos:start="161:25" pos:end="163:36">
+
+			<comment type="block" pos:start="159:25" pos:end="159:78">/* offset of this cluster in file chain has changed */</comment>
+
+			<expr_stmt pos:start="161:25" pos:end="161:34"><expr pos:start="161:25" pos:end="161:33"><call pos:start="161:25" pos:end="161:33"><name pos:start="161:25" pos:end="161:30">assert</name><argument_list pos:start="161:31" pos:end="161:33">(<argument pos:start="161:32" pos:end="161:32"><expr pos:start="161:32" pos:end="161:32"><literal type="number" pos:start="161:32" pos:end="161:32">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+			<expr_stmt pos:start="163:25" pos:end="163:36"><expr pos:start="163:25" pos:end="163:35"><name pos:start="163:25" pos:end="163:31">copy_it</name> <operator pos:start="163:33" pos:end="163:33">=</operator> <literal type="number" pos:start="163:35" pos:end="163:35">1</literal></expr>;</expr_stmt>
+
+		    </block_content>}</block></if> <if type="elseif" pos:start="165:23" pos:end="177:21">else if <condition pos:start="165:31" pos:end="165:43">(<expr pos:start="165:32" pos:end="165:42"><name pos:start="165:32" pos:end="165:37">offset</name> <operator pos:start="165:39" pos:end="165:40">==</operator> <literal type="number" pos:start="165:42" pos:end="165:42">0</literal></expr>)</condition> <block pos:start="165:45" pos:end="177:21">{<block_content pos:start="167:25" pos:end="175:82">
+
+			<decl_stmt pos:start="167:25" pos:end="167:75"><decl pos:start="167:25" pos:end="167:74"><type pos:start="167:25" pos:end="167:35"><specifier pos:start="167:25" pos:end="167:29">const</specifier> <name pos:start="167:31" pos:end="167:34">char</name><modifier pos:start="167:35" pos:end="167:35">*</modifier></type> <name pos:start="167:37" pos:end="167:44">basename</name> <init pos:start="167:46" pos:end="167:74">= <expr pos:start="167:48" pos:end="167:74"><call pos:start="167:48" pos:end="167:74"><name pos:start="167:48" pos:end="167:59">get_basename</name><argument_list pos:start="167:60" pos:end="167:74">(<argument pos:start="167:61" pos:end="167:73"><expr pos:start="167:61" pos:end="167:73"><name pos:start="167:61" pos:end="167:73"><name pos:start="167:61" pos:end="167:67">mapping</name><operator pos:start="167:68" pos:end="167:69">-&gt;</operator><name pos:start="167:70" pos:end="167:73">path</name></name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+
+
+			<if_stmt pos:start="171:25" pos:end="173:40"><if pos:start="171:25" pos:end="173:40">if <condition pos:start="171:28" pos:end="171:56">(<expr pos:start="171:29" pos:end="171:55"><call pos:start="171:29" pos:end="171:55"><name pos:start="171:29" pos:end="171:34">strcmp</name><argument_list pos:start="171:35" pos:end="171:55">(<argument pos:start="171:36" pos:end="171:43"><expr pos:start="171:36" pos:end="171:43"><name pos:start="171:36" pos:end="171:43">basename</name></expr></argument>, <argument pos:start="171:46" pos:end="171:54"><expr pos:start="171:46" pos:end="171:54"><name pos:start="171:46" pos:end="171:54">basename2</name></expr></argument>)</argument_list></call></expr>)</condition><block type="pseudo" pos:start="173:29" pos:end="173:40"><block_content pos:start="173:29" pos:end="173:40">
+
+			    <expr_stmt pos:start="173:29" pos:end="173:40"><expr pos:start="173:29" pos:end="173:39"><name pos:start="173:29" pos:end="173:35">copy_it</name> <operator pos:start="173:37" pos:end="173:37">=</operator> <literal type="number" pos:start="173:39" pos:end="173:39">1</literal></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+			<expr_stmt pos:start="175:25" pos:end="175:82"><expr pos:start="175:25" pos:end="175:81"><name pos:start="175:25" pos:end="175:43">first_mapping_index</name> <operator pos:start="175:45" pos:end="175:45">=</operator> <call pos:start="175:47" pos:end="175:81"><name pos:start="175:47" pos:end="175:57">array_index</name><argument_list pos:start="175:58" pos:end="175:81">(<argument pos:start="175:59" pos:end="175:71"><expr pos:start="175:59" pos:end="175:71"><operator pos:start="175:59" pos:end="175:59">&amp;</operator><operator pos:start="175:60" pos:end="175:60">(</operator><name pos:start="175:61" pos:end="175:70"><name pos:start="175:61" pos:end="175:61">s</name><operator pos:start="175:62" pos:end="175:63">-&gt;</operator><name pos:start="175:64" pos:end="175:70">mapping</name></name><operator pos:start="175:71" pos:end="175:71">)</operator></expr></argument>, <argument pos:start="175:74" pos:end="175:80"><expr pos:start="175:74" pos:end="175:80"><name pos:start="175:74" pos:end="175:80">mapping</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+		    </block_content>}</block></if></if_stmt>
+
+
+
+		    <if_stmt pos:start="181:21" pos:end="189:21"><if pos:start="181:21" pos:end="189:21">if <condition pos:start="181:24" pos:end="183:61">(<expr pos:start="181:25" pos:end="183:60"><name pos:start="181:25" pos:end="181:52"><name pos:start="181:25" pos:end="181:31">mapping</name><operator pos:start="181:32" pos:end="181:33">-&gt;</operator><name pos:start="181:34" pos:end="181:52">first_mapping_index</name></name> <operator pos:start="181:54" pos:end="181:55">!=</operator> <name pos:start="181:57" pos:end="181:75">first_mapping_index</name>
+
+			    <operator pos:start="183:29" pos:end="183:30">&amp;&amp;</operator> <name pos:start="183:32" pos:end="183:56"><name pos:start="183:32" pos:end="183:38">mapping</name><operator pos:start="183:39" pos:end="183:40">-&gt;</operator><name pos:start="183:41" pos:end="183:44">info</name><operator pos:start="183:45" pos:end="183:45">.</operator><name pos:start="183:46" pos:end="183:49">file</name><operator pos:start="183:50" pos:end="183:50">.</operator><name pos:start="183:51" pos:end="183:56">offset</name></name> <operator pos:start="183:58" pos:end="183:58">&gt;</operator> <literal type="number" pos:start="183:60" pos:end="183:60">0</literal></expr>)</condition> <block pos:start="183:63" pos:end="189:21">{<block_content pos:start="185:25" pos:end="187:36">
+
+			<expr_stmt pos:start="185:25" pos:end="185:34"><expr pos:start="185:25" pos:end="185:33"><call pos:start="185:25" pos:end="185:33"><name pos:start="185:25" pos:end="185:30">assert</name><argument_list pos:start="185:31" pos:end="185:33">(<argument pos:start="185:32" pos:end="185:32"><expr pos:start="185:32" pos:end="185:32"><literal type="number" pos:start="185:32" pos:end="185:32">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+			<expr_stmt pos:start="187:25" pos:end="187:36"><expr pos:start="187:25" pos:end="187:35"><name pos:start="187:25" pos:end="187:31">copy_it</name> <operator pos:start="187:33" pos:end="187:33">=</operator> <literal type="number" pos:start="187:35" pos:end="187:35">1</literal></expr>;</expr_stmt>
+
+		    </block_content>}</block></if></if_stmt>
+
+
+
+		    <comment type="block" pos:start="193:21" pos:end="193:44">/* need to write out? */</comment>
+
+		    <if_stmt pos:start="195:21" pos:end="201:21"><if pos:start="195:21" pos:end="201:21">if <condition pos:start="195:24" pos:end="195:59">(<expr pos:start="195:25" pos:end="195:58"><operator pos:start="195:25" pos:end="195:25">!</operator><name pos:start="195:26" pos:end="195:37">was_modified</name> <operator pos:start="195:39" pos:end="195:40">&amp;&amp;</operator> <call pos:start="195:42" pos:end="195:58"><name pos:start="195:42" pos:end="195:48">is_file</name><argument_list pos:start="195:49" pos:end="195:58">(<argument pos:start="195:50" pos:end="195:57"><expr pos:start="195:50" pos:end="195:57"><name pos:start="195:50" pos:end="195:57">direntry</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="195:61" pos:end="201:21">{<block_content pos:start="197:25" pos:end="199:73">
+
+			<expr_stmt pos:start="197:25" pos:end="197:41"><expr pos:start="197:25" pos:end="197:40"><name pos:start="197:25" pos:end="197:36">was_modified</name> <operator pos:start="197:38" pos:end="197:38">=</operator> <literal type="number" pos:start="197:40" pos:end="197:40">1</literal></expr>;</expr_stmt>
+
+			<expr_stmt pos:start="199:25" pos:end="199:73"><expr pos:start="199:25" pos:end="199:72"><call pos:start="199:25" pos:end="199:72"><name pos:start="199:25" pos:end="199:41">schedule_writeout</name><argument_list pos:start="199:42" pos:end="199:72">(<argument pos:start="199:43" pos:end="199:43"><expr pos:start="199:43" pos:end="199:43"><name pos:start="199:43" pos:end="199:43">s</name></expr></argument>, <argument pos:start="199:46" pos:end="199:63"><expr pos:start="199:46" pos:end="199:63"><name pos:start="199:46" pos:end="199:63"><name pos:start="199:46" pos:end="199:52">mapping</name><operator pos:start="199:53" pos:end="199:54">-&gt;</operator><name pos:start="199:55" pos:end="199:63">dir_index</name></name></expr></argument>, <argument pos:start="199:66" pos:end="199:71"><expr pos:start="199:66" pos:end="199:71"><name pos:start="199:66" pos:end="199:71">offset</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+		    </block_content>}</block></if></if_stmt>
+
+		</block_content>}</block></if></if_stmt>
+
+	    </block_content>}</block></if></if_stmt>
+
+
+
+	    <if_stmt pos:start="209:13" pos:end="247:13"><if pos:start="209:13" pos:end="247:13">if <condition pos:start="209:16" pos:end="209:24">(<expr pos:start="209:17" pos:end="209:23"><name pos:start="209:17" pos:end="209:23">copy_it</name></expr>)</condition> <block pos:start="209:26" pos:end="247:13">{<block_content pos:start="211:17" pos:end="245:21">
+
+		<decl_stmt pos:start="211:17" pos:end="211:29"><decl pos:start="211:17" pos:end="211:21"><type pos:start="211:17" pos:end="211:19"><name pos:start="211:17" pos:end="211:19">int</name></type> <name pos:start="211:21" pos:end="211:21">i</name></decl>, <decl pos:start="211:24" pos:end="211:28"><type ref="prev" pos:start="211:17" pos:end="211:19"/><name pos:start="211:24" pos:end="211:28">dummy</name></decl>;</decl_stmt>
+
+		<comment type="block" pos:start="213:17" pos:end="219:19">/*
+
+		 * This is horribly inefficient, but that is okay, since
+
+		 * it is rarely executed, if at all.
+
+		 */</comment>
+
+		<decl_stmt pos:start="221:17" pos:end="221:64"><decl pos:start="221:17" pos:end="221:63"><type pos:start="221:17" pos:end="221:23"><name pos:start="221:17" pos:end="221:23">int64_t</name></type> <name pos:start="221:25" pos:end="221:30">offset</name> <init pos:start="221:32" pos:end="221:63">= <expr pos:start="221:34" pos:end="221:63"><call pos:start="221:34" pos:end="221:63"><name pos:start="221:34" pos:end="221:47">cluster2sector</name><argument_list pos:start="221:48" pos:end="221:63">(<argument pos:start="221:49" pos:end="221:49"><expr pos:start="221:49" pos:end="221:49"><name pos:start="221:49" pos:end="221:49">s</name></expr></argument>, <argument pos:start="221:52" pos:end="221:62"><expr pos:start="221:52" pos:end="221:62"><name pos:start="221:52" pos:end="221:62">cluster_num</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+
+
+		<expr_stmt pos:start="225:17" pos:end="225:44"><expr pos:start="225:17" pos:end="225:43"><call pos:start="225:17" pos:end="225:43"><name pos:start="225:17" pos:end="225:40">vvfat_close_current_file</name><argument_list pos:start="225:41" pos:end="225:43">(<argument pos:start="225:42" pos:end="225:42"><expr pos:start="225:42" pos:end="225:42"><name pos:start="225:42" pos:end="225:42">s</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+		<for pos:start="227:17" pos:end="245:21">for <control pos:start="227:21" pos:end="227:60">(<init pos:start="227:22" pos:end="227:27"><expr pos:start="227:22" pos:end="227:26"><name pos:start="227:22" pos:end="227:22">i</name> <operator pos:start="227:24" pos:end="227:24">=</operator> <literal type="number" pos:start="227:26" pos:end="227:26">0</literal></expr>;</init> <condition pos:start="227:29" pos:end="227:55"><expr pos:start="227:29" pos:end="227:54"><name pos:start="227:29" pos:end="227:29">i</name> <operator pos:start="227:31" pos:end="227:31">&lt;</operator> <name pos:start="227:33" pos:end="227:54"><name pos:start="227:33" pos:end="227:33">s</name><operator pos:start="227:34" pos:end="227:35">-&gt;</operator><name pos:start="227:36" pos:end="227:54">sectors_per_cluster</name></name></expr>;</condition> <incr pos:start="227:57" pos:end="227:59"><expr pos:start="227:57" pos:end="227:59"><name pos:start="227:57" pos:end="227:57">i</name><operator pos:start="227:58" pos:end="227:59">++</operator></expr></incr>)</control><block type="pseudo" pos:start="229:21" pos:end="245:21"><block_content pos:start="229:21" pos:end="245:21">
+
+		    <if_stmt pos:start="229:21" pos:end="245:21"><if pos:start="229:21" pos:end="245:21">if <condition pos:start="229:24" pos:end="231:55">(<expr pos:start="229:25" pos:end="231:54"><operator pos:start="229:25" pos:end="229:25">!</operator><call pos:start="229:26" pos:end="231:54"><name pos:start="229:26" pos:end="229:56"><name pos:start="229:26" pos:end="229:26">s</name><operator pos:start="229:27" pos:end="229:28">-&gt;</operator><name pos:start="229:29" pos:end="229:32">qcow</name><operator pos:start="229:33" pos:end="229:34">-&gt;</operator><name pos:start="229:35" pos:end="229:37">drv</name><operator pos:start="229:38" pos:end="229:39">-&gt;</operator><name pos:start="229:40" pos:end="229:56">bdrv_is_allocated</name></name><argument_list pos:start="229:57" pos:end="231:54">(<argument pos:start="229:58" pos:end="229:64"><expr pos:start="229:58" pos:end="229:64"><name pos:start="229:58" pos:end="229:64"><name pos:start="229:58" pos:end="229:58">s</name><operator pos:start="229:59" pos:end="229:60">-&gt;</operator><name pos:start="229:61" pos:end="229:64">qcow</name></name></expr></argument>,
+
+				<argument pos:start="231:33" pos:end="231:42"><expr pos:start="231:33" pos:end="231:42"><name pos:start="231:33" pos:end="231:38">offset</name> <operator pos:start="231:40" pos:end="231:40">+</operator> <name pos:start="231:42" pos:end="231:42">i</name></expr></argument>, <argument pos:start="231:45" pos:end="231:45"><expr pos:start="231:45" pos:end="231:45"><literal type="number" pos:start="231:45" pos:end="231:45">1</literal></expr></argument>, <argument pos:start="231:48" pos:end="231:53"><expr pos:start="231:48" pos:end="231:53"><operator pos:start="231:48" pos:end="231:48">&amp;</operator><name pos:start="231:49" pos:end="231:53">dummy</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="231:57" pos:end="245:21">{<block_content pos:start="233:25" pos:end="243:38">
+
+			<if_stmt pos:start="233:25" pos:end="237:38"><if pos:start="233:25" pos:end="237:38">if <condition pos:start="233:28" pos:end="235:66">(<expr pos:start="233:29" pos:end="235:65"><call pos:start="233:29" pos:end="235:65"><name pos:start="233:29" pos:end="233:38">vvfat_read</name><argument_list pos:start="233:39" pos:end="235:65">(<argument pos:start="233:40" pos:end="233:44"><expr pos:start="233:40" pos:end="233:44"><name pos:start="233:40" pos:end="233:44"><name pos:start="233:40" pos:end="233:40">s</name><operator pos:start="233:41" pos:end="233:42">-&gt;</operator><name pos:start="233:43" pos:end="233:44">bs</name></name></expr></argument>,
+
+				    <argument pos:start="235:37" pos:end="235:42"><expr pos:start="235:37" pos:end="235:42"><name pos:start="235:37" pos:end="235:42">offset</name></expr></argument>, <argument pos:start="235:45" pos:end="235:61"><expr pos:start="235:45" pos:end="235:61"><name pos:start="235:45" pos:end="235:61"><name pos:start="235:45" pos:end="235:45">s</name><operator pos:start="235:46" pos:end="235:47">-&gt;</operator><name pos:start="235:48" pos:end="235:61">cluster_buffer</name></name></expr></argument>, <argument pos:start="235:64" pos:end="235:64"><expr pos:start="235:64" pos:end="235:64"><literal type="number" pos:start="235:64" pos:end="235:64">1</literal></expr></argument>)</argument_list></call></expr>)</condition><block type="pseudo" pos:start="237:29" pos:end="237:38"><block_content pos:start="237:29" pos:end="237:38">
+
+			    <return pos:start="237:29" pos:end="237:38">return <expr pos:start="237:36" pos:end="237:37"><operator pos:start="237:36" pos:end="237:36">-</operator><literal type="number" pos:start="237:37" pos:end="237:37">1</literal></expr>;</return></block_content></block></if></if_stmt>
+
+			<if_stmt pos:start="239:25" pos:end="243:38"><if pos:start="239:25" pos:end="243:38">if <condition pos:start="239:28" pos:end="241:66">(<expr pos:start="239:29" pos:end="241:65"><call pos:start="239:29" pos:end="241:65"><name pos:start="239:29" pos:end="239:52"><name pos:start="239:29" pos:end="239:29">s</name><operator pos:start="239:30" pos:end="239:31">-&gt;</operator><name pos:start="239:32" pos:end="239:35">qcow</name><operator pos:start="239:36" pos:end="239:37">-&gt;</operator><name pos:start="239:38" pos:end="239:40">drv</name><operator pos:start="239:41" pos:end="239:42">-&gt;</operator><name pos:start="239:43" pos:end="239:52">bdrv_write</name></name><argument_list pos:start="239:53" pos:end="241:65">(<argument pos:start="239:54" pos:end="239:60"><expr pos:start="239:54" pos:end="239:60"><name pos:start="239:54" pos:end="239:60"><name pos:start="239:54" pos:end="239:54">s</name><operator pos:start="239:55" pos:end="239:56">-&gt;</operator><name pos:start="239:57" pos:end="239:60">qcow</name></name></expr></argument>,
+
+				    <argument pos:start="241:37" pos:end="241:42"><expr pos:start="241:37" pos:end="241:42"><name pos:start="241:37" pos:end="241:42">offset</name></expr></argument>, <argument pos:start="241:45" pos:end="241:61"><expr pos:start="241:45" pos:end="241:61"><name pos:start="241:45" pos:end="241:61"><name pos:start="241:45" pos:end="241:45">s</name><operator pos:start="241:46" pos:end="241:47">-&gt;</operator><name pos:start="241:48" pos:end="241:61">cluster_buffer</name></name></expr></argument>, <argument pos:start="241:64" pos:end="241:64"><expr pos:start="241:64" pos:end="241:64"><literal type="number" pos:start="241:64" pos:end="241:64">1</literal></expr></argument>)</argument_list></call></expr>)</condition><block type="pseudo" pos:start="243:29" pos:end="243:38"><block_content pos:start="243:29" pos:end="243:38">
+
+			    <return pos:start="243:29" pos:end="243:38">return <expr pos:start="243:36" pos:end="243:37"><operator pos:start="243:36" pos:end="243:36">-</operator><literal type="number" pos:start="243:37" pos:end="243:37">2</literal></expr>;</return></block_content></block></if></if_stmt>
+
+		    </block_content>}</block></if></if_stmt></block_content></block></for>
+
+	    </block_content>}</block></if></if_stmt>
+
+	</block_content>}</block></if></if_stmt>
+
+
+
+	<expr_stmt pos:start="253:9" pos:end="253:14"><expr pos:start="253:9" pos:end="253:13"><name pos:start="253:9" pos:end="253:11">ret</name><operator pos:start="253:12" pos:end="253:13">++</operator></expr>;</expr_stmt>
+
+	<if_stmt pos:start="255:9" pos:end="257:21"><if pos:start="255:9" pos:end="257:21">if <condition pos:start="255:12" pos:end="255:53">(<expr pos:start="255:13" pos:end="255:52"><name pos:start="255:13" pos:end="255:41"><name pos:start="255:13" pos:end="255:13">s</name><operator pos:start="255:14" pos:end="255:15">-&gt;</operator><name pos:start="255:16" pos:end="255:28">used_clusters</name><index pos:start="255:29" pos:end="255:41">[<expr pos:start="255:30" pos:end="255:40"><name pos:start="255:30" pos:end="255:40">cluster_num</name></expr>]</index></name> <operator pos:start="255:43" pos:end="255:43">&amp;</operator> <name pos:start="255:45" pos:end="255:52">USED_ANY</name></expr>)</condition><block type="pseudo" pos:start="257:13" pos:end="257:21"><block_content pos:start="257:13" pos:end="257:21">
+
+	    <return pos:start="257:13" pos:end="257:21">return <expr pos:start="257:20" pos:end="257:20"><literal type="number" pos:start="257:20" pos:end="257:20">0</literal></expr>;</return></block_content></block></if></if_stmt>
+
+	<expr_stmt pos:start="259:9" pos:end="259:50"><expr pos:start="259:9" pos:end="259:49"><name pos:start="259:9" pos:end="259:37"><name pos:start="259:9" pos:end="259:9">s</name><operator pos:start="259:10" pos:end="259:11">-&gt;</operator><name pos:start="259:12" pos:end="259:24">used_clusters</name><index pos:start="259:25" pos:end="259:37">[<expr pos:start="259:26" pos:end="259:36"><name pos:start="259:26" pos:end="259:36">cluster_num</name></expr>]</index></name> <operator pos:start="259:39" pos:end="259:39">=</operator> <name pos:start="259:41" pos:end="259:49">USED_FILE</name></expr>;</expr_stmt>
+
+
+
+	<expr_stmt pos:start="263:9" pos:end="263:55"><expr pos:start="263:9" pos:end="263:54"><name pos:start="263:9" pos:end="263:19">cluster_num</name> <operator pos:start="263:21" pos:end="263:21">=</operator> <call pos:start="263:23" pos:end="263:54"><name pos:start="263:23" pos:end="263:38">modified_fat_get</name><argument_list pos:start="263:39" pos:end="263:54">(<argument pos:start="263:40" pos:end="263:40"><expr pos:start="263:40" pos:end="263:40"><name pos:start="263:40" pos:end="263:40">s</name></expr></argument>, <argument pos:start="263:43" pos:end="263:53"><expr pos:start="263:43" pos:end="263:53"><name pos:start="263:43" pos:end="263:53">cluster_num</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+	<if_stmt pos:start="267:9" pos:end="273:22"><if pos:start="267:9" pos:end="269:23">if <condition pos:start="267:12" pos:end="267:36">(<expr pos:start="267:13" pos:end="267:35"><call pos:start="267:13" pos:end="267:35"><name pos:start="267:13" pos:end="267:19">fat_eof</name><argument_list pos:start="267:20" pos:end="267:35">(<argument pos:start="267:21" pos:end="267:21"><expr pos:start="267:21" pos:end="267:21"><name pos:start="267:21" pos:end="267:21">s</name></expr></argument>, <argument pos:start="267:24" pos:end="267:34"><expr pos:start="267:24" pos:end="267:34"><name pos:start="267:24" pos:end="267:34">cluster_num</name></expr></argument>)</argument_list></call></expr>)</condition><block type="pseudo" pos:start="269:13" pos:end="269:23"><block_content pos:start="269:13" pos:end="269:23">
+
+	    <return pos:start="269:13" pos:end="269:23">return <expr pos:start="269:20" pos:end="269:22"><name pos:start="269:20" pos:end="269:22">ret</name></expr>;</return></block_content></block></if>
+
+	<if type="elseif" pos:start="271:9" pos:end="273:22">else if <condition pos:start="271:17" pos:end="271:72">(<expr pos:start="271:18" pos:end="271:71"><name pos:start="271:18" pos:end="271:49"><name pos:start="271:18" pos:end="271:28">cluster_num</name> <argument_list type="generic" pos:start="271:30" pos:end="271:49">&lt; <argument pos:start="271:32" pos:end="271:47"><expr pos:start="271:32" pos:end="271:47"><literal type="number" pos:start="271:32" pos:end="271:32">2</literal> <operator pos:start="271:34" pos:end="271:35">||</operator> <name pos:start="271:37" pos:end="271:47">cluster_num</name></expr></argument> &gt;</argument_list></name> <name pos:start="271:51" pos:end="271:66"><name pos:start="271:51" pos:end="271:51">s</name><operator pos:start="271:52" pos:end="271:53">-&gt;</operator><name pos:start="271:54" pos:end="271:66">max_fat_value</name></name> <operator pos:start="271:68" pos:end="271:68">-</operator> <literal type="number" pos:start="271:70" pos:end="271:71">16</literal></expr>)</condition><block type="pseudo" pos:start="273:13" pos:end="273:22"><block_content pos:start="273:13" pos:end="273:22">
+
+	    <return pos:start="273:13" pos:end="273:22">return <expr pos:start="273:20" pos:end="273:21"><operator pos:start="273:20" pos:end="273:20">-</operator><literal type="number" pos:start="273:21" pos:end="273:21">1</literal></expr>;</return></block_content></block></if></if_stmt>
+
+
+
+	<expr_stmt pos:start="277:9" pos:end="277:34"><expr pos:start="277:9" pos:end="277:33"><name pos:start="277:9" pos:end="277:14">offset</name> <operator pos:start="277:16" pos:end="277:17">+=</operator> <name pos:start="277:19" pos:end="277:33"><name pos:start="277:19" pos:end="277:19">s</name><operator pos:start="277:20" pos:end="277:21">-&gt;</operator><name pos:start="277:22" pos:end="277:33">cluster_size</name></name></expr>;</expr_stmt>
+
+    </block_content>}</block></while>
+
+</block_content>}</block></function>
+</unit>

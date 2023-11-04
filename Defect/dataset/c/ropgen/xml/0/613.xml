@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/613.c" pos:tabs="8"><function pos:start="1:1" pos:end="129:1"><type pos:start="1:1" pos:end="1:23"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name> <name pos:start="1:12" pos:end="1:23">coroutine_fn</name></type> <name pos:start="1:25" pos:end="1:49">v9fs_do_readdir_with_stat</name><parameter_list pos:start="1:50" pos:end="5:69">(<parameter pos:start="1:51" pos:end="1:62"><decl pos:start="1:51" pos:end="1:62"><type pos:start="1:51" pos:end="1:62"><name pos:start="1:51" pos:end="1:57">V9fsPDU</name> <modifier pos:start="1:59" pos:end="1:59">*</modifier></type><name pos:start="1:60" pos:end="1:62">pdu</name></decl></parameter>,
+
+                                                  <parameter pos:start="3:51" pos:end="3:68"><decl pos:start="3:51" pos:end="3:68"><type pos:start="3:51" pos:end="3:68"><name pos:start="3:51" pos:end="3:62">V9fsFidState</name> <modifier pos:start="3:64" pos:end="3:64">*</modifier></type><name pos:start="3:65" pos:end="3:68">fidp</name></decl></parameter>,
+
+                                                  <parameter pos:start="5:51" pos:end="5:68"><decl pos:start="5:51" pos:end="5:68"><type pos:start="5:51" pos:end="5:68"><name pos:start="5:51" pos:end="5:58">uint32_t</name></type> <name pos:start="5:60" pos:end="5:68">max_count</name></decl></parameter>)</parameter_list>
+
+<block pos:start="7:1" pos:end="129:1">{<block_content pos:start="9:5" pos:end="127:17">
+
+    <decl_stmt pos:start="9:5" pos:end="9:18"><decl pos:start="9:5" pos:end="9:17"><type pos:start="9:5" pos:end="9:12"><name pos:start="9:5" pos:end="9:12">V9fsPath</name></type> <name pos:start="9:14" pos:end="9:17">path</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:20"><decl pos:start="11:5" pos:end="11:19"><type pos:start="11:5" pos:end="11:12"><name pos:start="11:5" pos:end="11:12">V9fsStat</name></type> <name pos:start="11:14" pos:end="11:19">v9stat</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:21"><decl pos:start="13:5" pos:end="13:11"><type pos:start="13:5" pos:end="13:7"><name pos:start="13:5" pos:end="13:7">int</name></type> <name pos:start="13:9" pos:end="13:11">len</name></decl>, <decl pos:start="13:14" pos:end="13:20"><type ref="prev" pos:start="13:5" pos:end="13:7"/><name pos:start="13:14" pos:end="13:16">err</name> <init pos:start="13:18" pos:end="13:20">= <expr pos:start="13:20" pos:end="13:20"><literal type="number" pos:start="13:20" pos:end="13:20">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:22"><decl pos:start="15:5" pos:end="15:21"><type pos:start="15:5" pos:end="15:11"><name pos:start="15:5" pos:end="15:11">int32_t</name></type> <name pos:start="15:13" pos:end="15:17">count</name> <init pos:start="15:19" pos:end="15:21">= <expr pos:start="15:21" pos:end="15:21"><literal type="number" pos:start="15:21" pos:end="15:21">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="17:5" pos:end="17:22"><decl pos:start="17:5" pos:end="17:21"><type pos:start="17:5" pos:end="17:15"><name pos:start="17:5" pos:end="17:15"><name pos:start="17:5" pos:end="17:10">struct</name> <name pos:start="17:12" pos:end="17:15">stat</name></name></type> <name pos:start="17:17" pos:end="17:21">stbuf</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:24"><decl pos:start="19:5" pos:end="19:23"><type pos:start="19:5" pos:end="19:9"><name pos:start="19:5" pos:end="19:9">off_t</name></type> <name pos:start="19:11" pos:end="19:23">saved_dir_pos</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="21:5" pos:end="21:24"><decl pos:start="21:5" pos:end="21:23"><type pos:start="21:5" pos:end="21:19"><name pos:start="21:5" pos:end="21:17"><name pos:start="21:5" pos:end="21:10">struct</name> <name pos:start="21:12" pos:end="21:17">dirent</name></name> <modifier pos:start="21:19" pos:end="21:19">*</modifier></type><name pos:start="21:20" pos:end="21:23">dent</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="25:5" pos:end="25:37">/* save the directory position */</comment>
+
+    <expr_stmt pos:start="27:5" pos:end="27:47"><expr pos:start="27:5" pos:end="27:46"><name pos:start="27:5" pos:end="27:17">saved_dir_pos</name> <operator pos:start="27:19" pos:end="27:19">=</operator> <call pos:start="27:21" pos:end="27:46"><name pos:start="27:21" pos:end="27:35">v9fs_co_telldir</name><argument_list pos:start="27:36" pos:end="27:46">(<argument pos:start="27:37" pos:end="27:39"><expr pos:start="27:37" pos:end="27:39"><name pos:start="27:37" pos:end="27:39">pdu</name></expr></argument>, <argument pos:start="27:42" pos:end="27:45"><expr pos:start="27:42" pos:end="27:45"><name pos:start="27:42" pos:end="27:45">fidp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="29:5" pos:end="33:5"><if pos:start="29:5" pos:end="33:5">if <condition pos:start="29:8" pos:end="29:26">(<expr pos:start="29:9" pos:end="29:25"><name pos:start="29:9" pos:end="29:21">saved_dir_pos</name> <operator pos:start="29:23" pos:end="29:23">&lt;</operator> <literal type="number" pos:start="29:25" pos:end="29:25">0</literal></expr>)</condition> <block pos:start="29:28" pos:end="33:5">{<block_content pos:start="31:9" pos:end="31:29">
+
+        <return pos:start="31:9" pos:end="31:29">return <expr pos:start="31:16" pos:end="31:28"><name pos:start="31:16" pos:end="31:28">saved_dir_pos</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <while pos:start="37:5" pos:end="111:5">while <condition pos:start="37:11" pos:end="37:13">(<expr pos:start="37:12" pos:end="37:12"><literal type="number" pos:start="37:12" pos:end="37:12">1</literal></expr>)</condition> <block pos:start="37:15" pos:end="111:5">{<block_content pos:start="39:9" pos:end="109:36">
+
+        <expr_stmt pos:start="39:9" pos:end="39:30"><expr pos:start="39:9" pos:end="39:29"><call pos:start="39:9" pos:end="39:29"><name pos:start="39:9" pos:end="39:22">v9fs_path_init</name><argument_list pos:start="39:23" pos:end="39:29">(<argument pos:start="39:24" pos:end="39:28"><expr pos:start="39:24" pos:end="39:28"><operator pos:start="39:24" pos:end="39:24">&amp;</operator><name pos:start="39:25" pos:end="39:28">path</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="43:9" pos:end="43:41"><expr pos:start="43:9" pos:end="43:40"><call pos:start="43:9" pos:end="43:40"><name pos:start="43:9" pos:end="43:25">v9fs_readdir_lock</name><argument_list pos:start="43:26" pos:end="43:40">(<argument pos:start="43:27" pos:end="43:39"><expr pos:start="43:27" pos:end="43:39"><operator pos:start="43:27" pos:end="43:27">&amp;</operator><name pos:start="43:28" pos:end="43:39"><name pos:start="43:28" pos:end="43:31">fidp</name><operator pos:start="43:32" pos:end="43:33">-&gt;</operator><name pos:start="43:34" pos:end="43:35">fs</name><operator pos:start="43:36" pos:end="43:36">.</operator><name pos:start="43:37" pos:end="43:39">dir</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="47:9" pos:end="47:48"><expr pos:start="47:9" pos:end="47:47"><name pos:start="47:9" pos:end="47:11">err</name> <operator pos:start="47:13" pos:end="47:13">=</operator> <call pos:start="47:15" pos:end="47:47"><name pos:start="47:15" pos:end="47:29">v9fs_co_readdir</name><argument_list pos:start="47:30" pos:end="47:47">(<argument pos:start="47:31" pos:end="47:33"><expr pos:start="47:31" pos:end="47:33"><name pos:start="47:31" pos:end="47:33">pdu</name></expr></argument>, <argument pos:start="47:36" pos:end="47:39"><expr pos:start="47:36" pos:end="47:39"><name pos:start="47:36" pos:end="47:39">fidp</name></expr></argument>, <argument pos:start="47:42" pos:end="47:46"><expr pos:start="47:42" pos:end="47:46"><operator pos:start="47:42" pos:end="47:42">&amp;</operator><name pos:start="47:43" pos:end="47:46">dent</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="49:9" pos:end="53:9"><if pos:start="49:9" pos:end="53:9">if <condition pos:start="49:12" pos:end="49:25">(<expr pos:start="49:13" pos:end="49:24"><name pos:start="49:13" pos:end="49:15">err</name> <operator pos:start="49:17" pos:end="49:18">||</operator> <operator pos:start="49:20" pos:end="49:20">!</operator><name pos:start="49:21" pos:end="49:24">dent</name></expr>)</condition> <block pos:start="49:27" pos:end="53:9">{<block_content pos:start="51:13" pos:end="51:18">
+
+            <break pos:start="51:13" pos:end="51:18">break;</break>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="55:9" pos:end="55:74"><expr pos:start="55:9" pos:end="55:73"><name pos:start="55:9" pos:end="55:11">err</name> <operator pos:start="55:13" pos:end="55:13">=</operator> <call pos:start="55:15" pos:end="55:73"><name pos:start="55:15" pos:end="55:34">v9fs_co_name_to_path</name><argument_list pos:start="55:35" pos:end="55:73">(<argument pos:start="55:36" pos:end="55:38"><expr pos:start="55:36" pos:end="55:38"><name pos:start="55:36" pos:end="55:38">pdu</name></expr></argument>, <argument pos:start="55:41" pos:end="55:51"><expr pos:start="55:41" pos:end="55:51"><operator pos:start="55:41" pos:end="55:41">&amp;</operator><name pos:start="55:42" pos:end="55:51"><name pos:start="55:42" pos:end="55:45">fidp</name><operator pos:start="55:46" pos:end="55:47">-&gt;</operator><name pos:start="55:48" pos:end="55:51">path</name></name></expr></argument>, <argument pos:start="55:54" pos:end="55:65"><expr pos:start="55:54" pos:end="55:65"><name pos:start="55:54" pos:end="55:65"><name pos:start="55:54" pos:end="55:57">dent</name><operator pos:start="55:58" pos:end="55:59">-&gt;</operator><name pos:start="55:60" pos:end="55:65">d_name</name></name></expr></argument>, <argument pos:start="55:68" pos:end="55:72"><expr pos:start="55:68" pos:end="55:72"><operator pos:start="55:68" pos:end="55:68">&amp;</operator><name pos:start="55:69" pos:end="55:72">path</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="57:9" pos:end="61:9"><if pos:start="57:9" pos:end="61:9">if <condition pos:start="57:12" pos:end="57:20">(<expr pos:start="57:13" pos:end="57:19"><name pos:start="57:13" pos:end="57:15">err</name> <operator pos:start="57:17" pos:end="57:17">&lt;</operator> <literal type="number" pos:start="57:19" pos:end="57:19">0</literal></expr>)</condition> <block pos:start="57:22" pos:end="61:9">{<block_content pos:start="59:13" pos:end="59:18">
+
+            <break pos:start="59:13" pos:end="59:18">break;</break>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="63:9" pos:end="63:48"><expr pos:start="63:9" pos:end="63:47"><name pos:start="63:9" pos:end="63:11">err</name> <operator pos:start="63:13" pos:end="63:13">=</operator> <call pos:start="63:15" pos:end="63:47"><name pos:start="63:15" pos:end="63:27">v9fs_co_lstat</name><argument_list pos:start="63:28" pos:end="63:47">(<argument pos:start="63:29" pos:end="63:31"><expr pos:start="63:29" pos:end="63:31"><name pos:start="63:29" pos:end="63:31">pdu</name></expr></argument>, <argument pos:start="63:34" pos:end="63:38"><expr pos:start="63:34" pos:end="63:38"><operator pos:start="63:34" pos:end="63:34">&amp;</operator><name pos:start="63:35" pos:end="63:38">path</name></expr></argument>, <argument pos:start="63:41" pos:end="63:46"><expr pos:start="63:41" pos:end="63:46"><operator pos:start="63:41" pos:end="63:41">&amp;</operator><name pos:start="63:42" pos:end="63:46">stbuf</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="65:9" pos:end="69:9"><if pos:start="65:9" pos:end="69:9">if <condition pos:start="65:12" pos:end="65:20">(<expr pos:start="65:13" pos:end="65:19"><name pos:start="65:13" pos:end="65:15">err</name> <operator pos:start="65:17" pos:end="65:17">&lt;</operator> <literal type="number" pos:start="65:19" pos:end="65:19">0</literal></expr>)</condition> <block pos:start="65:22" pos:end="69:9">{<block_content pos:start="67:13" pos:end="67:18">
+
+            <break pos:start="67:13" pos:end="67:18">break;</break>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="71:9" pos:end="71:72"><expr pos:start="71:9" pos:end="71:71"><name pos:start="71:9" pos:end="71:11">err</name> <operator pos:start="71:13" pos:end="71:13">=</operator> <call pos:start="71:15" pos:end="71:71"><name pos:start="71:15" pos:end="71:28">stat_to_v9stat</name><argument_list pos:start="71:29" pos:end="71:71">(<argument pos:start="71:30" pos:end="71:32"><expr pos:start="71:30" pos:end="71:32"><name pos:start="71:30" pos:end="71:32">pdu</name></expr></argument>, <argument pos:start="71:35" pos:end="71:39"><expr pos:start="71:35" pos:end="71:39"><operator pos:start="71:35" pos:end="71:35">&amp;</operator><name pos:start="71:36" pos:end="71:39">path</name></expr></argument>, <argument pos:start="71:42" pos:end="71:53"><expr pos:start="71:42" pos:end="71:53"><name pos:start="71:42" pos:end="71:53"><name pos:start="71:42" pos:end="71:45">dent</name><operator pos:start="71:46" pos:end="71:47">-&gt;</operator><name pos:start="71:48" pos:end="71:53">d_name</name></name></expr></argument>, <argument pos:start="71:56" pos:end="71:61"><expr pos:start="71:56" pos:end="71:61"><operator pos:start="71:56" pos:end="71:56">&amp;</operator><name pos:start="71:57" pos:end="71:61">stbuf</name></expr></argument>, <argument pos:start="71:64" pos:end="71:70"><expr pos:start="71:64" pos:end="71:70"><operator pos:start="71:64" pos:end="71:64">&amp;</operator><name pos:start="71:65" pos:end="71:70">v9stat</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="73:9" pos:end="77:9"><if pos:start="73:9" pos:end="77:9">if <condition pos:start="73:12" pos:end="73:20">(<expr pos:start="73:13" pos:end="73:19"><name pos:start="73:13" pos:end="73:15">err</name> <operator pos:start="73:17" pos:end="73:17">&lt;</operator> <literal type="number" pos:start="73:19" pos:end="73:19">0</literal></expr>)</condition> <block pos:start="73:22" pos:end="77:9">{<block_content pos:start="75:13" pos:end="75:18">
+
+            <break pos:start="75:13" pos:end="75:18">break;</break>
+
+        </block_content>}</block></if></if_stmt>
+
+        <comment type="block" pos:start="79:9" pos:end="79:72">/* 11 = 7 + 4 (7 = start offset, 4 = space for storing count) */</comment>
+
+        <expr_stmt pos:start="81:9" pos:end="81:57"><expr pos:start="81:9" pos:end="81:56"><name pos:start="81:9" pos:end="81:11">len</name> <operator pos:start="81:13" pos:end="81:13">=</operator> <call pos:start="81:15" pos:end="81:56"><name pos:start="81:15" pos:end="81:25">pdu_marshal</name><argument_list pos:start="81:26" pos:end="81:56">(<argument pos:start="81:27" pos:end="81:29"><expr pos:start="81:27" pos:end="81:29"><name pos:start="81:27" pos:end="81:29">pdu</name></expr></argument>, <argument pos:start="81:32" pos:end="81:41"><expr pos:start="81:32" pos:end="81:41"><literal type="number" pos:start="81:32" pos:end="81:35">11</literal> <operator pos:start="81:35" pos:end="81:35">+</operator> <name pos:start="81:37" pos:end="81:41">count</name></expr></argument>, <argument pos:start="81:44" pos:end="81:46"><expr pos:start="81:44" pos:end="81:46"><literal type="string" pos:start="81:44" pos:end="81:46">"S"</literal></expr></argument>, <argument pos:start="81:49" pos:end="81:55"><expr pos:start="81:49" pos:end="81:55"><operator pos:start="81:49" pos:end="81:49">&amp;</operator><name pos:start="81:50" pos:end="81:55">v9stat</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="85:9" pos:end="85:43"><expr pos:start="85:9" pos:end="85:42"><call pos:start="85:9" pos:end="85:42"><name pos:start="85:9" pos:end="85:27">v9fs_readdir_unlock</name><argument_list pos:start="85:28" pos:end="85:42">(<argument pos:start="85:29" pos:end="85:41"><expr pos:start="85:29" pos:end="85:41"><operator pos:start="85:29" pos:end="85:29">&amp;</operator><name pos:start="85:30" pos:end="85:41"><name pos:start="85:30" pos:end="85:33">fidp</name><operator pos:start="85:34" pos:end="85:35">-&gt;</operator><name pos:start="85:36" pos:end="85:37">fs</name><operator pos:start="85:38" pos:end="85:38">.</operator><name pos:start="85:39" pos:end="85:41">dir</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="89:9" pos:end="101:9"><if pos:start="89:9" pos:end="101:9">if <condition pos:start="89:12" pos:end="89:70">(<expr pos:start="89:13" pos:end="89:69"><operator pos:start="89:13" pos:end="89:13">(</operator><name pos:start="89:14" pos:end="89:16">len</name> <operator pos:start="89:18" pos:end="89:19">!=</operator> <operator pos:start="89:21" pos:end="89:21">(</operator><name pos:start="89:22" pos:end="89:32"><name pos:start="89:22" pos:end="89:27">v9stat</name><operator pos:start="89:28" pos:end="89:28">.</operator><name pos:start="89:29" pos:end="89:32">size</name></name> <operator pos:start="89:34" pos:end="89:34">+</operator> <literal type="number" pos:start="89:36" pos:end="89:36">2</literal><operator pos:start="89:37" pos:end="89:37">)</operator><operator pos:start="89:38" pos:end="89:38">)</operator> <operator pos:start="89:40" pos:end="89:41">||</operator> <operator pos:start="89:43" pos:end="89:43">(</operator><operator pos:start="89:44" pos:end="89:44">(</operator><name pos:start="89:45" pos:end="89:49">count</name> <operator pos:start="89:51" pos:end="89:51">+</operator> <name pos:start="89:53" pos:end="89:55">len</name><operator pos:start="89:56" pos:end="89:56">)</operator> <operator pos:start="89:58" pos:end="89:58">&gt;</operator> <name pos:start="89:60" pos:end="89:68">max_count</name><operator pos:start="89:69" pos:end="89:69">)</operator></expr>)</condition> <block pos:start="89:72" pos:end="101:9">{<block_content pos:start="93:13" pos:end="99:25">
+
+            <comment type="block" pos:start="91:13" pos:end="91:76">/* Ran out of buffer. Set dir back to old position and return */</comment>
+
+            <expr_stmt pos:start="93:13" pos:end="93:54"><expr pos:start="93:13" pos:end="93:53"><call pos:start="93:13" pos:end="93:53"><name pos:start="93:13" pos:end="93:27">v9fs_co_seekdir</name><argument_list pos:start="93:28" pos:end="93:53">(<argument pos:start="93:29" pos:end="93:31"><expr pos:start="93:29" pos:end="93:31"><name pos:start="93:29" pos:end="93:31">pdu</name></expr></argument>, <argument pos:start="93:34" pos:end="93:37"><expr pos:start="93:34" pos:end="93:37"><name pos:start="93:34" pos:end="93:37">fidp</name></expr></argument>, <argument pos:start="93:40" pos:end="93:52"><expr pos:start="93:40" pos:end="93:52"><name pos:start="93:40" pos:end="93:52">saved_dir_pos</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="95:13" pos:end="95:36"><expr pos:start="95:13" pos:end="95:35"><call pos:start="95:13" pos:end="95:35"><name pos:start="95:13" pos:end="95:26">v9fs_stat_free</name><argument_list pos:start="95:27" pos:end="95:35">(<argument pos:start="95:28" pos:end="95:34"><expr pos:start="95:28" pos:end="95:34"><operator pos:start="95:28" pos:end="95:28">&amp;</operator><name pos:start="95:29" pos:end="95:34">v9stat</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="97:13" pos:end="97:34"><expr pos:start="97:13" pos:end="97:33"><call pos:start="97:13" pos:end="97:33"><name pos:start="97:13" pos:end="97:26">v9fs_path_free</name><argument_list pos:start="97:27" pos:end="97:33">(<argument pos:start="97:28" pos:end="97:32"><expr pos:start="97:28" pos:end="97:32"><operator pos:start="97:28" pos:end="97:28">&amp;</operator><name pos:start="97:29" pos:end="97:32">path</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="99:13" pos:end="99:25">return <expr pos:start="99:20" pos:end="99:24"><name pos:start="99:20" pos:end="99:24">count</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="103:9" pos:end="103:21"><expr pos:start="103:9" pos:end="103:20"><name pos:start="103:9" pos:end="103:13">count</name> <operator pos:start="103:15" pos:end="103:16">+=</operator> <name pos:start="103:18" pos:end="103:20">len</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="105:9" pos:end="105:32"><expr pos:start="105:9" pos:end="105:31"><call pos:start="105:9" pos:end="105:31"><name pos:start="105:9" pos:end="105:22">v9fs_stat_free</name><argument_list pos:start="105:23" pos:end="105:31">(<argument pos:start="105:24" pos:end="105:30"><expr pos:start="105:24" pos:end="105:30"><operator pos:start="105:24" pos:end="105:24">&amp;</operator><name pos:start="105:25" pos:end="105:30">v9stat</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="107:9" pos:end="107:30"><expr pos:start="107:9" pos:end="107:29"><call pos:start="107:9" pos:end="107:29"><name pos:start="107:9" pos:end="107:22">v9fs_path_free</name><argument_list pos:start="107:23" pos:end="107:29">(<argument pos:start="107:24" pos:end="107:28"><expr pos:start="107:24" pos:end="107:28"><operator pos:start="107:24" pos:end="107:24">&amp;</operator><name pos:start="107:25" pos:end="107:28">path</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="109:9" pos:end="109:36"><expr pos:start="109:9" pos:end="109:35"><name pos:start="109:9" pos:end="109:21">saved_dir_pos</name> <operator pos:start="109:23" pos:end="109:23">=</operator> <name pos:start="109:25" pos:end="109:35"><name pos:start="109:25" pos:end="109:28">dent</name><operator pos:start="109:29" pos:end="109:30">-&gt;</operator><name pos:start="109:31" pos:end="109:35">d_off</name></name></expr>;</expr_stmt>
+
+    </block_content>}</block></while>
+
+
+
+    <expr_stmt pos:start="115:5" pos:end="115:39"><expr pos:start="115:5" pos:end="115:38"><call pos:start="115:5" pos:end="115:38"><name pos:start="115:5" pos:end="115:23">v9fs_readdir_unlock</name><argument_list pos:start="115:24" pos:end="115:38">(<argument pos:start="115:25" pos:end="115:37"><expr pos:start="115:25" pos:end="115:37"><operator pos:start="115:25" pos:end="115:25">&amp;</operator><name pos:start="115:26" pos:end="115:37"><name pos:start="115:26" pos:end="115:29">fidp</name><operator pos:start="115:30" pos:end="115:31">-&gt;</operator><name pos:start="115:32" pos:end="115:33">fs</name><operator pos:start="115:34" pos:end="115:34">.</operator><name pos:start="115:35" pos:end="115:37">dir</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="119:5" pos:end="119:26"><expr pos:start="119:5" pos:end="119:25"><call pos:start="119:5" pos:end="119:25"><name pos:start="119:5" pos:end="119:18">v9fs_path_free</name><argument_list pos:start="119:19" pos:end="119:25">(<argument pos:start="119:20" pos:end="119:24"><expr pos:start="119:20" pos:end="119:24"><operator pos:start="119:20" pos:end="119:20">&amp;</operator><name pos:start="119:21" pos:end="119:24">path</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="121:5" pos:end="125:5"><if pos:start="121:5" pos:end="125:5">if <condition pos:start="121:8" pos:end="121:16">(<expr pos:start="121:9" pos:end="121:15"><name pos:start="121:9" pos:end="121:11">err</name> <operator pos:start="121:13" pos:end="121:13">&lt;</operator> <literal type="number" pos:start="121:15" pos:end="121:15">0</literal></expr>)</condition> <block pos:start="121:18" pos:end="125:5">{<block_content pos:start="123:9" pos:end="123:19">
+
+        <return pos:start="123:9" pos:end="123:19">return <expr pos:start="123:16" pos:end="123:18"><name pos:start="123:16" pos:end="123:18">err</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+    <return pos:start="127:5" pos:end="127:17">return <expr pos:start="127:12" pos:end="127:16"><name pos:start="127:12" pos:end="127:16">count</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

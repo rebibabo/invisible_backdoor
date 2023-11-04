@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/11520.c" pos:tabs="8"><function pos:start="1:1" pos:end="157:1"><type pos:start="1:1" pos:end="1:11"><name pos:start="1:1" pos:end="1:4">void</name> <name pos:start="1:6" pos:end="1:11">HELPER</name></type>(<name pos:start="1:13" pos:end="1:28">exception_return</name>)<parameter_list pos:start="1:30" pos:end="1:47">(<parameter pos:start="1:31" pos:end="1:46"><decl pos:start="1:31" pos:end="1:46"><type pos:start="1:31" pos:end="1:43"><name pos:start="1:31" pos:end="1:41">CPUARMState</name> <modifier pos:start="1:43" pos:end="1:43">*</modifier></type><name pos:start="1:44" pos:end="1:46">env</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="157:1">{<block_content pos:start="5:5" pos:end="155:5">
+
+    <decl_stmt pos:start="5:5" pos:end="5:37"><decl pos:start="5:5" pos:end="5:36"><type pos:start="5:5" pos:end="5:7"><name pos:start="5:5" pos:end="5:7">int</name></type> <name pos:start="5:9" pos:end="5:14">cur_el</name> <init pos:start="5:16" pos:end="5:36">= <expr pos:start="5:18" pos:end="5:36"><call pos:start="5:18" pos:end="5:36"><name pos:start="5:18" pos:end="5:31">arm_current_el</name><argument_list pos:start="5:32" pos:end="5:36">(<argument pos:start="5:33" pos:end="5:35"><expr pos:start="5:33" pos:end="5:35"><name pos:start="5:33" pos:end="5:35">env</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:62"><decl pos:start="7:5" pos:end="7:61"><type pos:start="7:5" pos:end="7:16"><name pos:start="7:5" pos:end="7:12">unsigned</name> <name pos:start="7:14" pos:end="7:16">int</name></type> <name pos:start="7:18" pos:end="7:25">spsr_idx</name> <init pos:start="7:27" pos:end="7:61">= <expr pos:start="7:29" pos:end="7:61"><call pos:start="7:29" pos:end="7:61"><name pos:start="7:29" pos:end="7:53">aarch64_banked_spsr_index</name><argument_list pos:start="7:54" pos:end="7:61">(<argument pos:start="7:55" pos:end="7:60"><expr pos:start="7:55" pos:end="7:60"><name pos:start="7:55" pos:end="7:60">cur_el</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:47"><decl pos:start="9:5" pos:end="9:46"><type pos:start="9:5" pos:end="9:12"><name pos:start="9:5" pos:end="9:12">uint32_t</name></type> <name pos:start="9:14" pos:end="9:17">spsr</name> <init pos:start="9:19" pos:end="9:46">= <expr pos:start="9:21" pos:end="9:46"><name pos:start="9:21" pos:end="9:46"><name pos:start="9:21" pos:end="9:23">env</name><operator pos:start="9:24" pos:end="9:25">-&gt;</operator><name pos:start="9:26" pos:end="9:36">banked_spsr</name><index pos:start="9:37" pos:end="9:46">[<expr pos:start="9:38" pos:end="9:45"><name pos:start="9:38" pos:end="9:45">spsr_idx</name></expr>]</index></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:15"><decl pos:start="11:5" pos:end="11:14"><type pos:start="11:5" pos:end="11:7"><name pos:start="11:5" pos:end="11:7">int</name></type> <name pos:start="11:9" pos:end="11:14">new_el</name></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="15:5" pos:end="15:33"><expr pos:start="15:5" pos:end="15:32"><call pos:start="15:5" pos:end="15:32"><name pos:start="15:5" pos:end="15:19">aarch64_save_sp</name><argument_list pos:start="15:20" pos:end="15:32">(<argument pos:start="15:21" pos:end="15:23"><expr pos:start="15:21" pos:end="15:23"><name pos:start="15:21" pos:end="15:23">env</name></expr></argument>, <argument pos:start="15:26" pos:end="15:31"><expr pos:start="15:26" pos:end="15:31"><name pos:start="15:26" pos:end="15:31">cur_el</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="19:5" pos:end="19:29"><expr pos:start="19:5" pos:end="19:28"><name pos:start="19:5" pos:end="19:23"><name pos:start="19:5" pos:end="19:7">env</name><operator pos:start="19:8" pos:end="19:9">-&gt;</operator><name pos:start="19:10" pos:end="19:23">exclusive_addr</name></name> <operator pos:start="19:25" pos:end="19:25">=</operator> <operator pos:start="19:27" pos:end="19:27">-</operator><literal type="number" pos:start="19:28" pos:end="19:28">1</literal></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="23:5" pos:end="35:7">/* We must squash the PSTATE.SS bit to zero unless both of the
+
+     * following hold:
+
+     *  1. debug exceptions are currently disabled
+
+     *  2. singlestep will be active in the EL we return to
+
+     * We check 1 here and 2 after we've done the pstate/cpsr write() to
+
+     * transition to the EL we're going to.
+
+     */</comment>
+
+    <if_stmt pos:start="37:5" pos:end="41:5"><if pos:start="37:5" pos:end="41:5">if <condition pos:start="37:8" pos:end="37:43">(<expr pos:start="37:9" pos:end="37:42"><call pos:start="37:9" pos:end="37:42"><name pos:start="37:9" pos:end="37:37">arm_generate_debug_exceptions</name><argument_list pos:start="37:38" pos:end="37:42">(<argument pos:start="37:39" pos:end="37:41"><expr pos:start="37:39" pos:end="37:41"><name pos:start="37:39" pos:end="37:41">env</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="37:45" pos:end="41:5">{<block_content pos:start="39:9" pos:end="39:27">
+
+        <expr_stmt pos:start="39:9" pos:end="39:27"><expr pos:start="39:9" pos:end="39:26"><name pos:start="39:9" pos:end="39:12">spsr</name> <operator pos:start="39:14" pos:end="39:15">&amp;=</operator> <operator pos:start="39:17" pos:end="39:17">~</operator><name pos:start="39:18" pos:end="39:26">PSTATE_SS</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="45:5" pos:end="117:5"><if pos:start="45:5" pos:end="69:5">if <condition pos:start="45:8" pos:end="45:26">(<expr pos:start="45:9" pos:end="45:25"><name pos:start="45:9" pos:end="45:12">spsr</name> <operator pos:start="45:14" pos:end="45:14">&amp;</operator> <name pos:start="45:16" pos:end="45:25">PSTATE_nRW</name></expr>)</condition> <block pos:start="45:28" pos:end="69:5">{<block_content pos:start="49:9" pos:end="67:46">
+
+        <comment type="block" pos:start="47:9" pos:end="47:72">/* TODO: We currently assume EL1/2/3 are running in AArch64.  */</comment>
+
+        <expr_stmt pos:start="49:9" pos:end="49:25"><expr pos:start="49:9" pos:end="49:24"><name pos:start="49:9" pos:end="49:20"><name pos:start="49:9" pos:end="49:11">env</name><operator pos:start="49:12" pos:end="49:13">-&gt;</operator><name pos:start="49:14" pos:end="49:20">aarch64</name></name> <operator pos:start="49:22" pos:end="49:22">=</operator> <literal type="number" pos:start="49:24" pos:end="49:24">0</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="51:9" pos:end="51:19"><expr pos:start="51:9" pos:end="51:18"><name pos:start="51:9" pos:end="51:14">new_el</name> <operator pos:start="51:16" pos:end="51:16">=</operator> <literal type="number" pos:start="51:18" pos:end="51:18">0</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="53:9" pos:end="53:34"><expr pos:start="53:9" pos:end="53:33"><name pos:start="53:9" pos:end="53:26"><name pos:start="53:9" pos:end="53:11">env</name><operator pos:start="53:12" pos:end="53:13">-&gt;</operator><name pos:start="53:14" pos:end="53:26">uncached_cpsr</name></name> <operator pos:start="53:28" pos:end="53:28">=</operator> <literal type="number" pos:start="53:30" pos:end="53:33">0x10</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="55:9" pos:end="55:34"><expr pos:start="55:9" pos:end="55:33"><call pos:start="55:9" pos:end="55:33"><name pos:start="55:9" pos:end="55:18">cpsr_write</name><argument_list pos:start="55:19" pos:end="55:33">(<argument pos:start="55:20" pos:end="55:22"><expr pos:start="55:20" pos:end="55:22"><name pos:start="55:20" pos:end="55:22">env</name></expr></argument>, <argument pos:start="55:25" pos:end="55:28"><expr pos:start="55:25" pos:end="55:28"><name pos:start="55:25" pos:end="55:28">spsr</name></expr></argument>, <argument pos:start="55:31" pos:end="55:32"><expr pos:start="55:31" pos:end="55:32"><operator pos:start="55:31" pos:end="55:31">~</operator><literal type="number" pos:start="55:32" pos:end="55:32">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="57:9" pos:end="61:9"><if pos:start="57:9" pos:end="61:9">if <condition pos:start="57:12" pos:end="57:40">(<expr pos:start="57:13" pos:end="57:39"><operator pos:start="57:13" pos:end="57:13">!</operator><call pos:start="57:14" pos:end="57:39"><name pos:start="57:14" pos:end="57:34">arm_singlestep_active</name><argument_list pos:start="57:35" pos:end="57:39">(<argument pos:start="57:36" pos:end="57:38"><expr pos:start="57:36" pos:end="57:38"><name pos:start="57:36" pos:end="57:38">env</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="57:42" pos:end="61:9">{<block_content pos:start="59:13" pos:end="59:45">
+
+            <expr_stmt pos:start="59:13" pos:end="59:45"><expr pos:start="59:13" pos:end="59:44"><name pos:start="59:13" pos:end="59:30"><name pos:start="59:13" pos:end="59:15">env</name><operator pos:start="59:16" pos:end="59:17">-&gt;</operator><name pos:start="59:18" pos:end="59:30">uncached_cpsr</name></name> <operator pos:start="59:32" pos:end="59:33">&amp;=</operator> <operator pos:start="59:35" pos:end="59:35">~</operator><name pos:start="59:36" pos:end="59:44">PSTATE_SS</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="63:9" pos:end="63:35"><expr pos:start="63:9" pos:end="63:34"><call pos:start="63:9" pos:end="63:34"><name pos:start="63:9" pos:end="63:29">aarch64_sync_64_to_32</name><argument_list pos:start="63:30" pos:end="63:34">(<argument pos:start="63:31" pos:end="63:33"><expr pos:start="63:31" pos:end="63:33"><name pos:start="63:31" pos:end="63:33">env</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="67:9" pos:end="67:46"><expr pos:start="67:9" pos:end="67:45"><name pos:start="67:9" pos:end="67:21"><name pos:start="67:9" pos:end="67:11">env</name><operator pos:start="67:12" pos:end="67:13">-&gt;</operator><name pos:start="67:14" pos:end="67:17">regs</name><index pos:start="67:18" pos:end="67:21">[<expr pos:start="67:19" pos:end="67:20"><literal type="number" pos:start="67:19" pos:end="67:20">15</literal></expr>]</index></name> <operator pos:start="67:23" pos:end="67:23">=</operator> <name pos:start="67:25" pos:end="67:38"><name pos:start="67:25" pos:end="67:27">env</name><operator pos:start="67:28" pos:end="67:29">-&gt;</operator><name pos:start="67:30" pos:end="67:35">elr_el</name><index pos:start="67:36" pos:end="67:38">[<expr pos:start="67:37" pos:end="67:37"><literal type="number" pos:start="67:37" pos:end="67:37">1</literal></expr>]</index></name> <operator pos:start="67:40" pos:end="67:40">&amp;</operator> <operator pos:start="67:42" pos:end="67:42">~</operator><literal type="number" pos:start="67:43" pos:end="67:45">0x1</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="69:7" pos:end="117:5">else <block pos:start="69:12" pos:end="117:5">{<block_content pos:start="71:9" pos:end="115:38">
+
+        <expr_stmt pos:start="71:9" pos:end="71:39"><expr pos:start="71:9" pos:end="71:38"><name pos:start="71:9" pos:end="71:14">new_el</name> <operator pos:start="71:16" pos:end="71:16">=</operator> <call pos:start="71:18" pos:end="71:38"><name pos:start="71:18" pos:end="71:26">extract32</name><argument_list pos:start="71:27" pos:end="71:38">(<argument pos:start="71:28" pos:end="71:31"><expr pos:start="71:28" pos:end="71:31"><name pos:start="71:28" pos:end="71:31">spsr</name></expr></argument>, <argument pos:start="71:34" pos:end="71:34"><expr pos:start="71:34" pos:end="71:34"><literal type="number" pos:start="71:34" pos:end="71:34">2</literal></expr></argument>, <argument pos:start="71:37" pos:end="71:37"><expr pos:start="71:37" pos:end="71:37"><literal type="number" pos:start="71:37" pos:end="71:37">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="73:9" pos:end="85:9"><if pos:start="73:9" pos:end="85:9">if <condition pos:start="73:12" pos:end="75:67">(<expr pos:start="73:13" pos:end="75:66"><name pos:start="73:13" pos:end="73:18">new_el</name> <operator pos:start="73:20" pos:end="73:20">&gt;</operator> <name pos:start="73:22" pos:end="73:27">cur_el</name>
+
+            <operator pos:start="75:13" pos:end="75:14">||</operator> <operator pos:start="75:16" pos:end="75:16">(</operator><name pos:start="75:17" pos:end="75:22">new_el</name> <operator pos:start="75:24" pos:end="75:25">==</operator> <literal type="number" pos:start="75:27" pos:end="75:27">2</literal> <operator pos:start="75:29" pos:end="75:30">&amp;&amp;</operator> <operator pos:start="75:32" pos:end="75:32">!</operator><call pos:start="75:33" pos:end="75:65"><name pos:start="75:33" pos:end="75:43">arm_feature</name><argument_list pos:start="75:44" pos:end="75:65">(<argument pos:start="75:45" pos:end="75:47"><expr pos:start="75:45" pos:end="75:47"><name pos:start="75:45" pos:end="75:47">env</name></expr></argument>, <argument pos:start="75:50" pos:end="75:64"><expr pos:start="75:50" pos:end="75:64"><name pos:start="75:50" pos:end="75:64">ARM_FEATURE_EL2</name></expr></argument>)</argument_list></call><operator pos:start="75:66" pos:end="75:66">)</operator></expr>)</condition> <block pos:start="75:69" pos:end="85:9">{<block_content pos:start="83:13" pos:end="83:32">
+
+            <comment type="block" pos:start="77:13" pos:end="81:15">/* Disallow return to an EL which is unimplemented or higher
+
+             * than the current one.
+
+             */</comment>
+
+            <goto pos:start="83:13" pos:end="83:32">goto <name pos:start="83:18" pos:end="83:31">illegal_return</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+        <if_stmt pos:start="87:9" pos:end="93:9"><if pos:start="87:9" pos:end="93:9">if <condition pos:start="87:12" pos:end="87:34">(<expr pos:start="87:13" pos:end="87:33"><call pos:start="87:13" pos:end="87:33"><name pos:start="87:13" pos:end="87:21">extract32</name><argument_list pos:start="87:22" pos:end="87:33">(<argument pos:start="87:23" pos:end="87:26"><expr pos:start="87:23" pos:end="87:26"><name pos:start="87:23" pos:end="87:26">spsr</name></expr></argument>, <argument pos:start="87:29" pos:end="87:29"><expr pos:start="87:29" pos:end="87:29"><literal type="number" pos:start="87:29" pos:end="87:29">1</literal></expr></argument>, <argument pos:start="87:32" pos:end="87:32"><expr pos:start="87:32" pos:end="87:32"><literal type="number" pos:start="87:32" pos:end="87:32">1</literal></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="87:36" pos:end="93:9">{<block_content pos:start="91:13" pos:end="91:32">
+
+            <comment type="block" pos:start="89:13" pos:end="89:51">/* Return with reserved M[1] bit set */</comment>
+
+            <goto pos:start="91:13" pos:end="91:32">goto <name pos:start="91:18" pos:end="91:31">illegal_return</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+        <if_stmt pos:start="95:9" pos:end="101:9"><if pos:start="95:9" pos:end="101:9">if <condition pos:start="95:12" pos:end="95:46">(<expr pos:start="95:13" pos:end="95:45"><name pos:start="95:13" pos:end="95:18">new_el</name> <operator pos:start="95:20" pos:end="95:21">==</operator> <literal type="number" pos:start="95:23" pos:end="95:23">0</literal> <operator pos:start="95:25" pos:end="95:26">&amp;&amp;</operator> <operator pos:start="95:28" pos:end="95:28">(</operator><name pos:start="95:29" pos:end="95:32">spsr</name> <operator pos:start="95:34" pos:end="95:34">&amp;</operator> <name pos:start="95:36" pos:end="95:44">PSTATE_SP</name><operator pos:start="95:45" pos:end="95:45">)</operator></expr>)</condition> <block pos:start="95:48" pos:end="101:9">{<block_content pos:start="99:13" pos:end="99:32">
+
+            <comment type="block" pos:start="97:13" pos:end="97:49">/* Return to EL0 with M[0] bit set */</comment>
+
+            <goto pos:start="99:13" pos:end="99:32">goto <name pos:start="99:18" pos:end="99:31">illegal_return</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="103:9" pos:end="103:25"><expr pos:start="103:9" pos:end="103:24"><name pos:start="103:9" pos:end="103:20"><name pos:start="103:9" pos:end="103:11">env</name><operator pos:start="103:12" pos:end="103:13">-&gt;</operator><name pos:start="103:14" pos:end="103:20">aarch64</name></name> <operator pos:start="103:22" pos:end="103:22">=</operator> <literal type="number" pos:start="103:24" pos:end="103:24">1</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="105:9" pos:end="105:32"><expr pos:start="105:9" pos:end="105:31"><call pos:start="105:9" pos:end="105:31"><name pos:start="105:9" pos:end="105:20">pstate_write</name><argument_list pos:start="105:21" pos:end="105:31">(<argument pos:start="105:22" pos:end="105:24"><expr pos:start="105:22" pos:end="105:24"><name pos:start="105:22" pos:end="105:24">env</name></expr></argument>, <argument pos:start="105:27" pos:end="105:30"><expr pos:start="105:27" pos:end="105:30"><name pos:start="105:27" pos:end="105:30">spsr</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="107:9" pos:end="111:9"><if pos:start="107:9" pos:end="111:9">if <condition pos:start="107:12" pos:end="107:40">(<expr pos:start="107:13" pos:end="107:39"><operator pos:start="107:13" pos:end="107:13">!</operator><call pos:start="107:14" pos:end="107:39"><name pos:start="107:14" pos:end="107:34">arm_singlestep_active</name><argument_list pos:start="107:35" pos:end="107:39">(<argument pos:start="107:36" pos:end="107:38"><expr pos:start="107:36" pos:end="107:38"><name pos:start="107:36" pos:end="107:38">env</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="107:42" pos:end="111:9">{<block_content pos:start="109:13" pos:end="109:38">
+
+            <expr_stmt pos:start="109:13" pos:end="109:38"><expr pos:start="109:13" pos:end="109:37"><name pos:start="109:13" pos:end="109:23"><name pos:start="109:13" pos:end="109:15">env</name><operator pos:start="109:16" pos:end="109:17">-&gt;</operator><name pos:start="109:18" pos:end="109:23">pstate</name></name> <operator pos:start="109:25" pos:end="109:26">&amp;=</operator> <operator pos:start="109:28" pos:end="109:28">~</operator><name pos:start="109:29" pos:end="109:37">PSTATE_SS</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="113:9" pos:end="113:40"><expr pos:start="113:9" pos:end="113:39"><call pos:start="113:9" pos:end="113:39"><name pos:start="113:9" pos:end="113:26">aarch64_restore_sp</name><argument_list pos:start="113:27" pos:end="113:39">(<argument pos:start="113:28" pos:end="113:30"><expr pos:start="113:28" pos:end="113:30"><name pos:start="113:28" pos:end="113:30">env</name></expr></argument>, <argument pos:start="113:33" pos:end="113:38"><expr pos:start="113:33" pos:end="113:38"><name pos:start="113:33" pos:end="113:38">new_el</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="115:9" pos:end="115:38"><expr pos:start="115:9" pos:end="115:37"><name pos:start="115:9" pos:end="115:15"><name pos:start="115:9" pos:end="115:11">env</name><operator pos:start="115:12" pos:end="115:13">-&gt;</operator><name pos:start="115:14" pos:end="115:15">pc</name></name> <operator pos:start="115:17" pos:end="115:17">=</operator> <name pos:start="115:19" pos:end="115:37"><name pos:start="115:19" pos:end="115:21">env</name><operator pos:start="115:22" pos:end="115:23">-&gt;</operator><name pos:start="115:24" pos:end="115:29">elr_el</name><index pos:start="115:30" pos:end="115:37">[<expr pos:start="115:31" pos:end="115:36"><name pos:start="115:31" pos:end="115:36">cur_el</name></expr>]</index></name></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <return pos:start="121:5" pos:end="121:11">return;</return>
+
+
+
+<label pos:start="125:1" pos:end="125:15"><name pos:start="125:1" pos:end="125:14">illegal_return</name>:</label>
+
+    <comment type="block" pos:start="127:5" pos:end="139:7">/* Illegal return events of various kinds have architecturally
+
+     * mandated behaviour:
+
+     * restore NZCV and DAIF from SPSR_ELx
+
+     * set PSTATE.IL
+
+     * restore PC from ELR_ELx
+
+     * no change to exception level, execution state or stack pointer
+
+     */</comment>
+
+    <expr_stmt pos:start="141:5" pos:end="141:29"><expr pos:start="141:5" pos:end="141:28"><name pos:start="141:5" pos:end="141:15"><name pos:start="141:5" pos:end="141:7">env</name><operator pos:start="141:8" pos:end="141:9">-&gt;</operator><name pos:start="141:10" pos:end="141:15">pstate</name></name> <operator pos:start="141:17" pos:end="141:18">|=</operator> <name pos:start="141:20" pos:end="141:28">PSTATE_IL</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="143:5" pos:end="143:34"><expr pos:start="143:5" pos:end="143:33"><name pos:start="143:5" pos:end="143:11"><name pos:start="143:5" pos:end="143:7">env</name><operator pos:start="143:8" pos:end="143:9">-&gt;</operator><name pos:start="143:10" pos:end="143:11">pc</name></name> <operator pos:start="143:13" pos:end="143:13">=</operator> <name pos:start="143:15" pos:end="143:33"><name pos:start="143:15" pos:end="143:17">env</name><operator pos:start="143:18" pos:end="143:19">-&gt;</operator><name pos:start="143:20" pos:end="143:25">elr_el</name><index pos:start="143:26" pos:end="143:33">[<expr pos:start="143:27" pos:end="143:32"><name pos:start="143:27" pos:end="143:32">cur_el</name></expr>]</index></name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="145:5" pos:end="145:38"><expr pos:start="145:5" pos:end="145:37"><name pos:start="145:5" pos:end="145:8">spsr</name> <operator pos:start="145:10" pos:end="145:11">&amp;=</operator> <name pos:start="145:13" pos:end="145:23">PSTATE_NZCV</name> <operator pos:start="145:25" pos:end="145:25">|</operator> <name pos:start="145:27" pos:end="145:37">PSTATE_DAIF</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="147:5" pos:end="147:60"><expr pos:start="147:5" pos:end="147:59"><name pos:start="147:5" pos:end="147:8">spsr</name> <operator pos:start="147:10" pos:end="147:11">|=</operator> <call pos:start="147:13" pos:end="147:28"><name pos:start="147:13" pos:end="147:23">pstate_read</name><argument_list pos:start="147:24" pos:end="147:28">(<argument pos:start="147:25" pos:end="147:27"><expr pos:start="147:25" pos:end="147:27"><name pos:start="147:25" pos:end="147:27">env</name></expr></argument>)</argument_list></call> <operator pos:start="147:30" pos:end="147:30">&amp;</operator> <operator pos:start="147:32" pos:end="147:32">~</operator><operator pos:start="147:33" pos:end="147:33">(</operator><name pos:start="147:34" pos:end="147:44">PSTATE_NZCV</name> <operator pos:start="147:46" pos:end="147:46">|</operator> <name pos:start="147:48" pos:end="147:58">PSTATE_DAIF</name><operator pos:start="147:59" pos:end="147:59">)</operator></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="149:5" pos:end="149:28"><expr pos:start="149:5" pos:end="149:27"><call pos:start="149:5" pos:end="149:27"><name pos:start="149:5" pos:end="149:16">pstate_write</name><argument_list pos:start="149:17" pos:end="149:27">(<argument pos:start="149:18" pos:end="149:20"><expr pos:start="149:18" pos:end="149:20"><name pos:start="149:18" pos:end="149:20">env</name></expr></argument>, <argument pos:start="149:23" pos:end="149:26"><expr pos:start="149:23" pos:end="149:26"><name pos:start="149:23" pos:end="149:26">spsr</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="151:5" pos:end="155:5"><if pos:start="151:5" pos:end="155:5">if <condition pos:start="151:8" pos:end="151:36">(<expr pos:start="151:9" pos:end="151:35"><operator pos:start="151:9" pos:end="151:9">!</operator><call pos:start="151:10" pos:end="151:35"><name pos:start="151:10" pos:end="151:30">arm_singlestep_active</name><argument_list pos:start="151:31" pos:end="151:35">(<argument pos:start="151:32" pos:end="151:34"><expr pos:start="151:32" pos:end="151:34"><name pos:start="151:32" pos:end="151:34">env</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="151:38" pos:end="155:5">{<block_content pos:start="153:9" pos:end="153:34">
+
+        <expr_stmt pos:start="153:9" pos:end="153:34"><expr pos:start="153:9" pos:end="153:33"><name pos:start="153:9" pos:end="153:19"><name pos:start="153:9" pos:end="153:11">env</name><operator pos:start="153:12" pos:end="153:13">-&gt;</operator><name pos:start="153:14" pos:end="153:19">pstate</name></name> <operator pos:start="153:21" pos:end="153:22">&amp;=</operator> <operator pos:start="153:24" pos:end="153:24">~</operator><name pos:start="153:25" pos:end="153:33">PSTATE_SS</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+</block_content>}</block></function>
+</unit>

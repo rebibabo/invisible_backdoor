@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/7273.c" pos:tabs="8"><function pos:start="1:1" pos:end="227:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:31">vtenc_cm_to_avpacket</name><parameter_list pos:start="1:32" pos:end="9:27">(
+
+    <parameter pos:start="3:5" pos:end="3:28"><decl pos:start="3:5" pos:end="3:28"><type pos:start="3:5" pos:end="3:28"><name pos:start="3:5" pos:end="3:18">AVCodecContext</name>    <modifier pos:start="3:23" pos:end="3:23">*</modifier></type><name pos:start="3:24" pos:end="3:28">avctx</name></decl></parameter>,
+
+    <parameter pos:start="5:5" pos:end="5:35"><decl pos:start="5:5" pos:end="5:35"><type pos:start="5:5" pos:end="5:35"><name pos:start="5:5" pos:end="5:21">CMSampleBufferRef</name></type> <name pos:start="5:23" pos:end="5:35">sample_buffer</name></decl></parameter>,
+
+    <parameter pos:start="7:5" pos:end="7:26"><decl pos:start="7:5" pos:end="7:26"><type pos:start="7:5" pos:end="7:26"><name pos:start="7:5" pos:end="7:12">AVPacket</name>          <modifier pos:start="7:23" pos:end="7:23">*</modifier></type><name pos:start="7:24" pos:end="7:26">pkt</name></decl></parameter>,
+
+    <parameter pos:start="9:5" pos:end="9:26"><decl pos:start="9:5" pos:end="9:26"><type pos:start="9:5" pos:end="9:26"><name pos:start="9:5" pos:end="9:12">ExtraSEI</name>          <modifier pos:start="9:23" pos:end="9:23">*</modifier></type><name pos:start="9:24" pos:end="9:26">sei</name></decl></parameter>)</parameter_list>
+
+<block pos:start="11:1" pos:end="227:1">{<block_content pos:start="13:5" pos:end="225:13">
+
+    <decl_stmt pos:start="13:5" pos:end="13:43"><decl pos:start="13:5" pos:end="13:42"><type pos:start="13:5" pos:end="13:18"><name pos:start="13:5" pos:end="13:16">VTEncContext</name> <modifier pos:start="13:18" pos:end="13:18">*</modifier></type><name pos:start="13:19" pos:end="13:23">vtctx</name> <init pos:start="13:25" pos:end="13:42">= <expr pos:start="13:27" pos:end="13:42"><name pos:start="13:27" pos:end="13:42"><name pos:start="13:27" pos:end="13:31">avctx</name><operator pos:start="13:32" pos:end="13:33">-&gt;</operator><name pos:start="13:34" pos:end="13:42">priv_data</name></name></expr></init></decl>;</decl_stmt>
+
+
+
+    <decl_stmt pos:start="17:5" pos:end="17:19"><decl pos:start="17:5" pos:end="17:18"><type pos:start="17:5" pos:end="17:7"><name pos:start="17:5" pos:end="17:7">int</name></type>     <name pos:start="17:13" pos:end="17:18">status</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:25"><decl pos:start="19:5" pos:end="19:24"><type pos:start="19:5" pos:end="19:8"><name pos:start="19:5" pos:end="19:8">bool</name></type>    <name pos:start="19:13" pos:end="19:24">is_key_frame</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="21:5" pos:end="21:23"><decl pos:start="21:5" pos:end="21:22"><type pos:start="21:5" pos:end="21:8"><name pos:start="21:5" pos:end="21:8">bool</name></type>    <name pos:start="21:13" pos:end="21:22">add_header</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="23:5" pos:end="23:29"><decl pos:start="23:5" pos:end="23:28"><type pos:start="23:5" pos:end="23:10"><name pos:start="23:5" pos:end="23:10">size_t</name></type>  <name pos:start="23:13" pos:end="23:28">length_code_size</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="25:5" pos:end="25:28"><decl pos:start="25:5" pos:end="25:27"><type pos:start="25:5" pos:end="25:10"><name pos:start="25:5" pos:end="25:10">size_t</name></type>  <name pos:start="25:13" pos:end="25:23">header_size</name> <init pos:start="25:25" pos:end="25:27">= <expr pos:start="25:27" pos:end="25:27"><literal type="number" pos:start="25:27" pos:end="25:27">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="27:5" pos:end="27:24"><decl pos:start="27:5" pos:end="27:23"><type pos:start="27:5" pos:end="27:10"><name pos:start="27:5" pos:end="27:10">size_t</name></type>  <name pos:start="27:13" pos:end="27:23">in_buf_size</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="29:5" pos:end="29:25"><decl pos:start="29:5" pos:end="29:24"><type pos:start="29:5" pos:end="29:10"><name pos:start="29:5" pos:end="29:10">size_t</name></type>  <name pos:start="29:13" pos:end="29:24">out_buf_size</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="31:5" pos:end="31:30"><decl pos:start="31:5" pos:end="31:29"><type pos:start="31:5" pos:end="31:10"><name pos:start="31:5" pos:end="31:10">size_t</name></type>  <name pos:start="31:13" pos:end="31:25">sei_nalu_size</name> <init pos:start="31:27" pos:end="31:29">= <expr pos:start="31:29" pos:end="31:29"><literal type="number" pos:start="31:29" pos:end="31:29">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="33:5" pos:end="33:22"><decl pos:start="33:5" pos:end="33:21"><type pos:start="33:5" pos:end="33:11"><name pos:start="33:5" pos:end="33:11">int64_t</name></type> <name pos:start="33:13" pos:end="33:21">dts_delta</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="35:5" pos:end="35:26"><decl pos:start="35:5" pos:end="35:25"><type pos:start="35:5" pos:end="35:11"><name pos:start="35:5" pos:end="35:11">int64_t</name></type> <name pos:start="35:13" pos:end="35:25">time_base_num</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="37:5" pos:end="37:19"><decl pos:start="37:5" pos:end="37:18"><type pos:start="37:5" pos:end="37:7"><name pos:start="37:5" pos:end="37:7">int</name></type> <name pos:start="37:9" pos:end="37:18">nalu_count</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="39:5" pos:end="39:16"><decl pos:start="39:5" pos:end="39:15"><type pos:start="39:5" pos:end="39:10"><name pos:start="39:5" pos:end="39:10">CMTime</name></type>  <name pos:start="39:13" pos:end="39:15">pts</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="41:5" pos:end="41:16"><decl pos:start="41:5" pos:end="41:15"><type pos:start="41:5" pos:end="41:10"><name pos:start="41:5" pos:end="41:10">CMTime</name></type>  <name pos:start="41:13" pos:end="41:15">dts</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="43:5" pos:end="43:40"><decl pos:start="43:5" pos:end="43:39"><type pos:start="43:5" pos:end="43:31"><name pos:start="43:5" pos:end="43:31">CMVideoFormatDescriptionRef</name></type> <name pos:start="43:33" pos:end="43:39">vid_fmt</name></decl>;</decl_stmt>
+
+
+
+
+
+    <expr_stmt pos:start="49:5" pos:end="49:55"><expr pos:start="49:5" pos:end="49:54"><call pos:start="49:5" pos:end="49:54"><name pos:start="49:5" pos:end="49:24">vtenc_get_frame_info</name><argument_list pos:start="49:25" pos:end="49:54">(<argument pos:start="49:26" pos:end="49:38"><expr pos:start="49:26" pos:end="49:38"><name pos:start="49:26" pos:end="49:38">sample_buffer</name></expr></argument>, <argument pos:start="49:41" pos:end="49:53"><expr pos:start="49:41" pos:end="49:53"><operator pos:start="49:41" pos:end="49:41">&amp;</operator><name pos:start="49:42" pos:end="49:53">is_key_frame</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="51:5" pos:end="51:75"><expr pos:start="51:5" pos:end="51:74"><name pos:start="51:5" pos:end="51:10">status</name> <operator pos:start="51:12" pos:end="51:12">=</operator> <call pos:start="51:14" pos:end="51:74"><name pos:start="51:14" pos:end="51:33">get_length_code_size</name><argument_list pos:start="51:34" pos:end="51:74">(<argument pos:start="51:35" pos:end="51:39"><expr pos:start="51:35" pos:end="51:39"><name pos:start="51:35" pos:end="51:39">avctx</name></expr></argument>, <argument pos:start="51:42" pos:end="51:54"><expr pos:start="51:42" pos:end="51:54"><name pos:start="51:42" pos:end="51:54">sample_buffer</name></expr></argument>, <argument pos:start="51:57" pos:end="51:73"><expr pos:start="51:57" pos:end="51:73"><operator pos:start="51:57" pos:end="51:57">&amp;</operator><name pos:start="51:58" pos:end="51:73">length_code_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="53:5" pos:end="53:30"><if pos:start="53:5" pos:end="53:30">if <condition pos:start="53:8" pos:end="53:15">(<expr pos:start="53:9" pos:end="53:14"><name pos:start="53:9" pos:end="53:14">status</name></expr>)</condition><block type="pseudo" pos:start="53:17" pos:end="53:30"><block_content pos:start="53:17" pos:end="53:30"> <return pos:start="53:17" pos:end="53:30">return <expr pos:start="53:24" pos:end="53:29"><name pos:start="53:24" pos:end="53:29">status</name></expr>;</return></block_content></block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="57:5" pos:end="57:79"><expr pos:start="57:5" pos:end="57:78"><name pos:start="57:5" pos:end="57:14">add_header</name> <operator pos:start="57:16" pos:end="57:16">=</operator> <name pos:start="57:18" pos:end="57:29">is_key_frame</name> <operator pos:start="57:31" pos:end="57:32">&amp;&amp;</operator> <operator pos:start="57:34" pos:end="57:34">!</operator><operator pos:start="57:35" pos:end="57:35">(</operator><name pos:start="57:36" pos:end="57:47"><name pos:start="57:36" pos:end="57:40">avctx</name><operator pos:start="57:41" pos:end="57:42">-&gt;</operator><name pos:start="57:43" pos:end="57:47">flags</name></name> <operator pos:start="57:49" pos:end="57:49">&amp;</operator> <name pos:start="57:51" pos:end="57:77">AV_CODEC_FLAG_GLOBAL_HEADER</name><operator pos:start="57:78" pos:end="57:78">)</operator></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="61:5" pos:end="79:5"><if pos:start="61:5" pos:end="79:5">if <condition pos:start="61:8" pos:end="61:19">(<expr pos:start="61:9" pos:end="61:18"><name pos:start="61:9" pos:end="61:18">add_header</name></expr>)</condition> <block pos:start="61:21" pos:end="79:5">{<block_content pos:start="63:9" pos:end="77:34">
+
+        <expr_stmt pos:start="63:9" pos:end="63:68"><expr pos:start="63:9" pos:end="63:67"><name pos:start="63:9" pos:end="63:15">vid_fmt</name> <operator pos:start="63:17" pos:end="63:17">=</operator> <call pos:start="63:19" pos:end="63:67"><name pos:start="63:19" pos:end="63:52">CMSampleBufferGetFormatDescription</name><argument_list pos:start="63:53" pos:end="63:67">(<argument pos:start="63:54" pos:end="63:66"><expr pos:start="63:54" pos:end="63:66"><name pos:start="63:54" pos:end="63:66">sample_buffer</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="65:9" pos:end="71:9"><if pos:start="65:9" pos:end="71:9">if <condition pos:start="65:12" pos:end="65:21">(<expr pos:start="65:13" pos:end="65:20"><operator pos:start="65:13" pos:end="65:13">!</operator><name pos:start="65:14" pos:end="65:20">vid_fmt</name></expr>)</condition> <block pos:start="65:23" pos:end="71:9">{<block_content pos:start="67:13" pos:end="69:36">
+
+            <expr_stmt pos:start="67:13" pos:end="67:76"><expr pos:start="67:13" pos:end="67:75"><call pos:start="67:13" pos:end="67:75"><name pos:start="67:13" pos:end="67:18">av_log</name><argument_list pos:start="67:19" pos:end="67:75">(<argument pos:start="67:20" pos:end="67:24"><expr pos:start="67:20" pos:end="67:24"><name pos:start="67:20" pos:end="67:24">avctx</name></expr></argument>, <argument pos:start="67:27" pos:end="67:38"><expr pos:start="67:27" pos:end="67:38"><name pos:start="67:27" pos:end="67:38">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="67:41" pos:end="67:74"><expr pos:start="67:41" pos:end="67:74"><literal type="string" pos:start="67:41" pos:end="67:74">"Cannot get format description.\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="69:13" pos:end="69:36">return <expr pos:start="69:20" pos:end="69:35"><name pos:start="69:20" pos:end="69:35">AVERROR_EXTERNAL</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <decl_stmt pos:start="75:9" pos:end="75:67"><decl pos:start="75:9" pos:end="75:66"><type pos:start="75:9" pos:end="75:11"><name pos:start="75:9" pos:end="75:11">int</name></type> <name pos:start="75:13" pos:end="75:18">status</name> <init pos:start="75:20" pos:end="75:66">= <expr pos:start="75:22" pos:end="75:66"><call pos:start="75:22" pos:end="75:66"><name pos:start="75:22" pos:end="75:36">get_params_size</name><argument_list pos:start="75:37" pos:end="75:66">(<argument pos:start="75:38" pos:end="75:42"><expr pos:start="75:38" pos:end="75:42"><name pos:start="75:38" pos:end="75:42">avctx</name></expr></argument>, <argument pos:start="75:45" pos:end="75:51"><expr pos:start="75:45" pos:end="75:51"><name pos:start="75:45" pos:end="75:51">vid_fmt</name></expr></argument>, <argument pos:start="75:54" pos:end="75:65"><expr pos:start="75:54" pos:end="75:65"><operator pos:start="75:54" pos:end="75:54">&amp;</operator><name pos:start="75:55" pos:end="75:65">header_size</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <if_stmt pos:start="77:9" pos:end="77:34"><if pos:start="77:9" pos:end="77:34">if <condition pos:start="77:12" pos:end="77:19">(<expr pos:start="77:13" pos:end="77:18"><name pos:start="77:13" pos:end="77:18">status</name></expr>)</condition><block type="pseudo" pos:start="77:21" pos:end="77:34"><block_content pos:start="77:21" pos:end="77:34"> <return pos:start="77:21" pos:end="77:34">return <expr pos:start="77:28" pos:end="77:33"><name pos:start="77:28" pos:end="77:33">status</name></expr>;</return></block_content></block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="83:5" pos:end="83:71"><expr pos:start="83:5" pos:end="83:70"><name pos:start="83:5" pos:end="83:10">status</name> <operator pos:start="83:12" pos:end="83:12">=</operator> <call pos:start="83:14" pos:end="83:70"><name pos:start="83:14" pos:end="83:24">count_nalus</name><argument_list pos:start="83:25" pos:end="83:70">(<argument pos:start="83:26" pos:end="83:41"><expr pos:start="83:26" pos:end="83:41"><name pos:start="83:26" pos:end="83:41">length_code_size</name></expr></argument>, <argument pos:start="83:44" pos:end="83:56"><expr pos:start="83:44" pos:end="83:56"><name pos:start="83:44" pos:end="83:56">sample_buffer</name></expr></argument>, <argument pos:start="83:59" pos:end="83:69"><expr pos:start="83:59" pos:end="83:69"><operator pos:start="83:59" pos:end="83:59">&amp;</operator><name pos:start="83:60" pos:end="83:69">nalu_count</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="85:5" pos:end="87:22"><if pos:start="85:5" pos:end="87:22">if<condition pos:start="85:7" pos:end="85:14">(<expr pos:start="85:8" pos:end="85:13"><name pos:start="85:8" pos:end="85:13">status</name></expr>)</condition><block type="pseudo" pos:start="87:9" pos:end="87:22"><block_content pos:start="87:9" pos:end="87:22">
+
+        <return pos:start="87:9" pos:end="87:22">return <expr pos:start="87:16" pos:end="87:21"><name pos:start="87:16" pos:end="87:21">status</name></expr>;</return></block_content></block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="91:5" pos:end="95:5"><if pos:start="91:5" pos:end="95:5">if <condition pos:start="91:8" pos:end="91:12">(<expr pos:start="91:9" pos:end="91:11"><name pos:start="91:9" pos:end="91:11">sei</name></expr>)</condition> <block pos:start="91:14" pos:end="95:5">{<block_content pos:start="93:9" pos:end="93:63">
+
+        <expr_stmt pos:start="93:9" pos:end="93:63"><expr pos:start="93:9" pos:end="93:62"><name pos:start="93:9" pos:end="93:21">sei_nalu_size</name> <operator pos:start="93:23" pos:end="93:23">=</operator> <sizeof pos:start="93:25" pos:end="93:42">sizeof<argument_list pos:start="93:31" pos:end="93:42">(<argument pos:start="93:32" pos:end="93:41"><expr pos:start="93:32" pos:end="93:41"><name pos:start="93:32" pos:end="93:41">start_code</name></expr></argument>)</argument_list></sizeof> <operator pos:start="93:44" pos:end="93:44">+</operator> <literal type="number" pos:start="93:46" pos:end="93:48">3</literal> <operator pos:start="93:48" pos:end="93:48">+</operator> <name pos:start="93:50" pos:end="93:58"><name pos:start="93:50" pos:end="93:52">sei</name><operator pos:start="93:53" pos:end="93:54">-&gt;</operator><name pos:start="93:55" pos:end="93:58">size</name></name> <operator pos:start="93:60" pos:end="93:60">+</operator> <literal type="number" pos:start="93:62" pos:end="93:62">1</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="99:5" pos:end="99:66"><expr pos:start="99:5" pos:end="99:65"><name pos:start="99:5" pos:end="99:15">in_buf_size</name> <operator pos:start="99:17" pos:end="99:17">=</operator> <call pos:start="99:19" pos:end="99:65"><name pos:start="99:19" pos:end="99:50">CMSampleBufferGetTotalSampleSize</name><argument_list pos:start="99:51" pos:end="99:65">(<argument pos:start="99:52" pos:end="99:64"><expr pos:start="99:52" pos:end="99:64"><name pos:start="99:52" pos:end="99:64">sample_buffer</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="101:5" pos:end="107:82"><expr pos:start="101:5" pos:end="107:81"><name pos:start="101:5" pos:end="101:16">out_buf_size</name> <operator pos:start="101:18" pos:end="101:18">=</operator> <name pos:start="101:20" pos:end="101:30">header_size</name> <operator pos:start="101:32" pos:end="101:32">+</operator>
+
+                   <name pos:start="103:20" pos:end="103:30">in_buf_size</name> <operator pos:start="103:32" pos:end="103:32">+</operator>
+
+                   <name pos:start="105:20" pos:end="105:32">sei_nalu_size</name> <operator pos:start="105:34" pos:end="105:34">+</operator>
+
+                   <name pos:start="107:20" pos:end="107:29">nalu_count</name> <operator pos:start="107:31" pos:end="107:31">*</operator> <operator pos:start="107:33" pos:end="107:33">(</operator><operator pos:start="107:34" pos:end="107:34">(</operator><name pos:start="107:35" pos:end="107:37">int</name><operator pos:start="107:38" pos:end="107:38">)</operator><sizeof pos:start="107:39" pos:end="107:56">sizeof<argument_list pos:start="107:45" pos:end="107:56">(<argument pos:start="107:46" pos:end="107:55"><expr pos:start="107:46" pos:end="107:55"><name pos:start="107:46" pos:end="107:55">start_code</name></expr></argument>)</argument_list></sizeof> <operator pos:start="107:58" pos:end="107:58">-</operator> <operator pos:start="107:60" pos:end="107:60">(</operator><name pos:start="107:61" pos:end="107:63">int</name><operator pos:start="107:64" pos:end="107:64">)</operator><name pos:start="107:65" pos:end="107:80">length_code_size</name><operator pos:start="107:81" pos:end="107:81">)</operator></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="111:5" pos:end="111:70"><expr pos:start="111:5" pos:end="111:69"><name pos:start="111:5" pos:end="111:10">status</name> <operator pos:start="111:12" pos:end="111:12">=</operator> <call pos:start="111:14" pos:end="111:69"><name pos:start="111:14" pos:end="111:29">ff_alloc_packet2</name><argument_list pos:start="111:30" pos:end="111:69">(<argument pos:start="111:31" pos:end="111:35"><expr pos:start="111:31" pos:end="111:35"><name pos:start="111:31" pos:end="111:35">avctx</name></expr></argument>, <argument pos:start="111:38" pos:end="111:40"><expr pos:start="111:38" pos:end="111:40"><name pos:start="111:38" pos:end="111:40">pkt</name></expr></argument>, <argument pos:start="111:43" pos:end="111:54"><expr pos:start="111:43" pos:end="111:54"><name pos:start="111:43" pos:end="111:54">out_buf_size</name></expr></argument>, <argument pos:start="111:57" pos:end="111:68"><expr pos:start="111:57" pos:end="111:68"><name pos:start="111:57" pos:end="111:68">out_buf_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="113:5" pos:end="115:22"><if pos:start="113:5" pos:end="115:22">if <condition pos:start="113:8" pos:end="113:19">(<expr pos:start="113:9" pos:end="113:18"><name pos:start="113:9" pos:end="113:14">status</name> <operator pos:start="113:16" pos:end="113:16">&lt;</operator> <literal type="number" pos:start="113:18" pos:end="113:18">0</literal></expr>)</condition><block type="pseudo" pos:start="115:9" pos:end="115:22"><block_content pos:start="115:9" pos:end="115:22">
+
+        <return pos:start="115:9" pos:end="115:22">return <expr pos:start="115:16" pos:end="115:21"><name pos:start="115:16" pos:end="115:21">status</name></expr>;</return></block_content></block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="119:5" pos:end="125:5"><if pos:start="119:5" pos:end="125:5">if <condition pos:start="119:8" pos:end="119:19">(<expr pos:start="119:9" pos:end="119:18"><name pos:start="119:9" pos:end="119:18">add_header</name></expr>)</condition> <block pos:start="119:21" pos:end="125:5">{<block_content pos:start="121:9" pos:end="123:33">
+
+        <expr_stmt pos:start="121:9" pos:end="121:74"><expr pos:start="121:9" pos:end="121:73"><name pos:start="121:9" pos:end="121:14">status</name> <operator pos:start="121:16" pos:end="121:16">=</operator> <call pos:start="121:18" pos:end="121:73"><name pos:start="121:18" pos:end="121:32">copy_param_sets</name><argument_list pos:start="121:33" pos:end="121:73">(<argument pos:start="121:34" pos:end="121:38"><expr pos:start="121:34" pos:end="121:38"><name pos:start="121:34" pos:end="121:38">avctx</name></expr></argument>, <argument pos:start="121:41" pos:end="121:47"><expr pos:start="121:41" pos:end="121:47"><name pos:start="121:41" pos:end="121:47">vid_fmt</name></expr></argument>, <argument pos:start="121:50" pos:end="121:58"><expr pos:start="121:50" pos:end="121:58"><name pos:start="121:50" pos:end="121:58"><name pos:start="121:50" pos:end="121:52">pkt</name><operator pos:start="121:53" pos:end="121:54">-&gt;</operator><name pos:start="121:55" pos:end="121:58">data</name></name></expr></argument>, <argument pos:start="121:61" pos:end="121:72"><expr pos:start="121:61" pos:end="121:72"><name pos:start="121:61" pos:end="121:72">out_buf_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="123:9" pos:end="123:33"><if pos:start="123:9" pos:end="123:33">if<condition pos:start="123:11" pos:end="123:18">(<expr pos:start="123:12" pos:end="123:17"><name pos:start="123:12" pos:end="123:17">status</name></expr>)</condition><block type="pseudo" pos:start="123:20" pos:end="123:33"><block_content pos:start="123:20" pos:end="123:33"> <return pos:start="123:20" pos:end="123:33">return <expr pos:start="123:27" pos:end="123:32"><name pos:start="123:27" pos:end="123:32">status</name></expr>;</return></block_content></block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="129:5" pos:end="141:6"><expr pos:start="129:5" pos:end="141:5"><name pos:start="129:5" pos:end="129:10">status</name> <operator pos:start="129:12" pos:end="129:12">=</operator> <call pos:start="129:14" pos:end="141:5"><name pos:start="129:14" pos:end="129:38">copy_replace_length_codes</name><argument_list pos:start="129:39" pos:end="141:5">(
+
+        <argument pos:start="131:9" pos:end="131:13"><expr pos:start="131:9" pos:end="131:13"><name pos:start="131:9" pos:end="131:13">avctx</name></expr></argument>,
+
+        <argument pos:start="133:9" pos:end="133:24"><expr pos:start="133:9" pos:end="133:24"><name pos:start="133:9" pos:end="133:24">length_code_size</name></expr></argument>,
+
+        <argument pos:start="135:9" pos:end="135:21"><expr pos:start="135:9" pos:end="135:21"><name pos:start="135:9" pos:end="135:21">sample_buffer</name></expr></argument>,
+
+        <argument pos:start="137:9" pos:end="137:31"><expr pos:start="137:9" pos:end="137:31"><name pos:start="137:9" pos:end="137:17"><name pos:start="137:9" pos:end="137:11">pkt</name><operator pos:start="137:12" pos:end="137:13">-&gt;</operator><name pos:start="137:14" pos:end="137:17">data</name></name> <operator pos:start="137:19" pos:end="137:19">+</operator> <name pos:start="137:21" pos:end="137:31">header_size</name></expr></argument>,
+
+        <argument pos:start="139:9" pos:end="139:47"><expr pos:start="139:9" pos:end="139:47"><name pos:start="139:9" pos:end="139:17"><name pos:start="139:9" pos:end="139:11">pkt</name><operator pos:start="139:12" pos:end="139:13">-&gt;</operator><name pos:start="139:14" pos:end="139:17">size</name></name> <operator pos:start="139:19" pos:end="139:19">-</operator> <name pos:start="139:21" pos:end="139:31">header_size</name> <operator pos:start="139:33" pos:end="139:33">-</operator> <name pos:start="139:35" pos:end="139:47">sei_nalu_size</name></expr></argument>
+
+    )</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="145:5" pos:end="151:5"><if pos:start="145:5" pos:end="151:5">if <condition pos:start="145:8" pos:end="145:15">(<expr pos:start="145:9" pos:end="145:14"><name pos:start="145:9" pos:end="145:14">status</name></expr>)</condition> <block pos:start="145:17" pos:end="151:5">{<block_content pos:start="147:9" pos:end="149:22">
+
+        <expr_stmt pos:start="147:9" pos:end="147:77"><expr pos:start="147:9" pos:end="147:76"><call pos:start="147:9" pos:end="147:76"><name pos:start="147:9" pos:end="147:14">av_log</name><argument_list pos:start="147:15" pos:end="147:76">(<argument pos:start="147:16" pos:end="147:20"><expr pos:start="147:16" pos:end="147:20"><name pos:start="147:16" pos:end="147:20">avctx</name></expr></argument>, <argument pos:start="147:23" pos:end="147:34"><expr pos:start="147:23" pos:end="147:34"><name pos:start="147:23" pos:end="147:34">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="147:37" pos:end="147:67"><expr pos:start="147:37" pos:end="147:67"><literal type="string" pos:start="147:37" pos:end="147:67">"Error copying packet data: %d"</literal></expr></argument>, <argument pos:start="147:70" pos:end="147:75"><expr pos:start="147:70" pos:end="147:75"><name pos:start="147:70" pos:end="147:75">status</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="149:9" pos:end="149:22">return <expr pos:start="149:16" pos:end="149:21"><name pos:start="149:16" pos:end="149:21">status</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="155:5" pos:end="177:5"><if pos:start="155:5" pos:end="177:5">if <condition pos:start="155:8" pos:end="155:26">(<expr pos:start="155:9" pos:end="155:25"><name pos:start="155:9" pos:end="155:21">sei_nalu_size</name> <operator pos:start="155:23" pos:end="155:23">&gt;</operator> <literal type="number" pos:start="155:25" pos:end="155:25">0</literal></expr>)</condition> <block pos:start="155:28" pos:end="177:5">{<block_content pos:start="157:9" pos:end="175:24">
+
+        <decl_stmt pos:start="157:9" pos:end="157:66"><decl pos:start="157:9" pos:end="157:65"><type pos:start="157:9" pos:end="157:17"><name pos:start="157:9" pos:end="157:15">uint8_t</name> <modifier pos:start="157:17" pos:end="157:17">*</modifier></type><name pos:start="157:18" pos:end="157:25">sei_nalu</name> <init pos:start="157:27" pos:end="157:65">= <expr pos:start="157:29" pos:end="157:65"><name pos:start="157:29" pos:end="157:37"><name pos:start="157:29" pos:end="157:31">pkt</name><operator pos:start="157:32" pos:end="157:33">-&gt;</operator><name pos:start="157:34" pos:end="157:37">data</name></name> <operator pos:start="157:39" pos:end="157:39">+</operator> <name pos:start="157:41" pos:end="157:49"><name pos:start="157:41" pos:end="157:43">pkt</name><operator pos:start="157:44" pos:end="157:45">-&gt;</operator><name pos:start="157:46" pos:end="157:49">size</name></name> <operator pos:start="157:51" pos:end="157:51">-</operator> <name pos:start="157:53" pos:end="157:65">sei_nalu_size</name></expr></init></decl>;</decl_stmt>
+
+        <expr_stmt pos:start="159:9" pos:end="159:57"><expr pos:start="159:9" pos:end="159:56"><call pos:start="159:9" pos:end="159:56"><name pos:start="159:9" pos:end="159:14">memcpy</name><argument_list pos:start="159:15" pos:end="159:56">(<argument pos:start="159:16" pos:end="159:23"><expr pos:start="159:16" pos:end="159:23"><name pos:start="159:16" pos:end="159:23">sei_nalu</name></expr></argument>, <argument pos:start="159:26" pos:end="159:35"><expr pos:start="159:26" pos:end="159:35"><name pos:start="159:26" pos:end="159:35">start_code</name></expr></argument>, <argument pos:start="159:38" pos:end="159:55"><expr pos:start="159:38" pos:end="159:55"><sizeof pos:start="159:38" pos:end="159:55">sizeof<argument_list pos:start="159:44" pos:end="159:55">(<argument pos:start="159:45" pos:end="159:54"><expr pos:start="159:45" pos:end="159:54"><name pos:start="159:45" pos:end="159:54">start_code</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="161:9" pos:end="161:39"><expr pos:start="161:9" pos:end="161:38"><name pos:start="161:9" pos:end="161:16">sei_nalu</name> <operator pos:start="161:18" pos:end="161:19">+=</operator> <sizeof pos:start="161:21" pos:end="161:38">sizeof<argument_list pos:start="161:27" pos:end="161:38">(<argument pos:start="161:28" pos:end="161:37"><expr pos:start="161:28" pos:end="161:37"><name pos:start="161:28" pos:end="161:37">start_code</name></expr></argument>)</argument_list></sizeof></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="163:9" pos:end="163:35"><expr pos:start="163:9" pos:end="163:34"><name pos:start="163:9" pos:end="163:19"><name pos:start="163:9" pos:end="163:16">sei_nalu</name><index pos:start="163:17" pos:end="163:19">[<expr pos:start="163:18" pos:end="163:18"><literal type="number" pos:start="163:18" pos:end="163:18">0</literal></expr>]</index></name> <operator pos:start="163:21" pos:end="163:21">=</operator> <name pos:start="163:23" pos:end="163:34">H264_NAL_SEI</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="165:9" pos:end="165:52"><expr pos:start="165:9" pos:end="165:51"><name pos:start="165:9" pos:end="165:19"><name pos:start="165:9" pos:end="165:16">sei_nalu</name><index pos:start="165:17" pos:end="165:19">[<expr pos:start="165:18" pos:end="165:18"><literal type="number" pos:start="165:18" pos:end="165:18">1</literal></expr>]</index></name> <operator pos:start="165:21" pos:end="165:21">=</operator> <name pos:start="165:23" pos:end="165:51">SEI_TYPE_USER_DATA_REGISTERED</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="167:9" pos:end="167:32"><expr pos:start="167:9" pos:end="167:31"><name pos:start="167:9" pos:end="167:19"><name pos:start="167:9" pos:end="167:16">sei_nalu</name><index pos:start="167:17" pos:end="167:19">[<expr pos:start="167:18" pos:end="167:18"><literal type="number" pos:start="167:18" pos:end="167:18">2</literal></expr>]</index></name> <operator pos:start="167:21" pos:end="167:21">=</operator> <name pos:start="167:23" pos:end="167:31"><name pos:start="167:23" pos:end="167:25">sei</name><operator pos:start="167:26" pos:end="167:27">-&gt;</operator><name pos:start="167:28" pos:end="167:31">size</name></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="169:9" pos:end="169:22"><expr pos:start="169:9" pos:end="169:21"><name pos:start="169:9" pos:end="169:16">sei_nalu</name> <operator pos:start="169:18" pos:end="169:19">+=</operator> <literal type="number" pos:start="169:21" pos:end="169:21">3</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="171:9" pos:end="171:47"><expr pos:start="171:9" pos:end="171:46"><call pos:start="171:9" pos:end="171:46"><name pos:start="171:9" pos:end="171:14">memcpy</name><argument_list pos:start="171:15" pos:end="171:46">(<argument pos:start="171:16" pos:end="171:23"><expr pos:start="171:16" pos:end="171:23"><name pos:start="171:16" pos:end="171:23">sei_nalu</name></expr></argument>, <argument pos:start="171:26" pos:end="171:34"><expr pos:start="171:26" pos:end="171:34"><name pos:start="171:26" pos:end="171:34"><name pos:start="171:26" pos:end="171:28">sei</name><operator pos:start="171:29" pos:end="171:30">-&gt;</operator><name pos:start="171:31" pos:end="171:34">data</name></name></expr></argument>, <argument pos:start="171:37" pos:end="171:45"><expr pos:start="171:37" pos:end="171:45"><name pos:start="171:37" pos:end="171:45"><name pos:start="171:37" pos:end="171:39">sei</name><operator pos:start="171:40" pos:end="171:41">-&gt;</operator><name pos:start="171:42" pos:end="171:45">size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="173:9" pos:end="173:30"><expr pos:start="173:9" pos:end="173:29"><name pos:start="173:9" pos:end="173:16">sei_nalu</name> <operator pos:start="173:18" pos:end="173:19">+=</operator> <name pos:start="173:21" pos:end="173:29"><name pos:start="173:21" pos:end="173:23">sei</name><operator pos:start="173:24" pos:end="173:25">-&gt;</operator><name pos:start="173:26" pos:end="173:29">size</name></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="175:9" pos:end="175:24"><expr pos:start="175:9" pos:end="175:23"><name pos:start="175:9" pos:end="175:19"><name pos:start="175:9" pos:end="175:16">sei_nalu</name><index pos:start="175:17" pos:end="175:19">[<expr pos:start="175:18" pos:end="175:18"><literal type="number" pos:start="175:18" pos:end="175:18">0</literal></expr>]</index></name> <operator pos:start="175:21" pos:end="175:21">=</operator> <literal type="number" pos:start="175:23" pos:end="175:23">1</literal></expr>;</expr_stmt> <comment type="line" pos:start="175:26" pos:end="175:32">// RBSP</comment>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="181:5" pos:end="185:5"><if pos:start="181:5" pos:end="185:5">if <condition pos:start="181:8" pos:end="181:21">(<expr pos:start="181:9" pos:end="181:20"><name pos:start="181:9" pos:end="181:20">is_key_frame</name></expr>)</condition> <block pos:start="181:23" pos:end="185:5">{<block_content pos:start="183:9" pos:end="183:38">
+
+        <expr_stmt pos:start="183:9" pos:end="183:38"><expr pos:start="183:9" pos:end="183:37"><name pos:start="183:9" pos:end="183:18"><name pos:start="183:9" pos:end="183:11">pkt</name><operator pos:start="183:12" pos:end="183:13">-&gt;</operator><name pos:start="183:14" pos:end="183:18">flags</name></name> <operator pos:start="183:20" pos:end="183:21">|=</operator> <name pos:start="183:23" pos:end="183:37">AV_PKT_FLAG_KEY</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="189:5" pos:end="189:64"><expr pos:start="189:5" pos:end="189:63"><name pos:start="189:5" pos:end="189:7">pts</name> <operator pos:start="189:9" pos:end="189:9">=</operator> <call pos:start="189:11" pos:end="189:63"><name pos:start="189:11" pos:end="189:48">CMSampleBufferGetPresentationTimeStamp</name><argument_list pos:start="189:49" pos:end="189:63">(<argument pos:start="189:50" pos:end="189:62"><expr pos:start="189:50" pos:end="189:62"><name pos:start="189:50" pos:end="189:62">sample_buffer</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="191:5" pos:end="191:64"><expr pos:start="191:5" pos:end="191:63"><name pos:start="191:5" pos:end="191:7">dts</name> <operator pos:start="191:9" pos:end="191:9">=</operator> <call pos:start="191:11" pos:end="191:63"><name pos:start="191:11" pos:end="191:42">CMSampleBufferGetDecodeTimeStamp</name>      <argument_list pos:start="191:49" pos:end="191:63">(<argument pos:start="191:50" pos:end="191:62"><expr pos:start="191:50" pos:end="191:62"><name pos:start="191:50" pos:end="191:62">sample_buffer</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="195:5" pos:end="209:5"><if pos:start="195:5" pos:end="209:5">if <condition pos:start="195:8" pos:end="195:31">(<expr pos:start="195:9" pos:end="195:30"><call pos:start="195:9" pos:end="195:30"><name pos:start="195:9" pos:end="195:25">CMTIME_IS_INVALID</name><argument_list pos:start="195:26" pos:end="195:30">(<argument pos:start="195:27" pos:end="195:29"><expr pos:start="195:27" pos:end="195:29"><name pos:start="195:27" pos:end="195:29">dts</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="195:33" pos:end="209:5">{<block_content pos:start="197:9" pos:end="207:9">
+
+        <if_stmt pos:start="197:9" pos:end="207:9"><if pos:start="197:9" pos:end="201:9">if <condition pos:start="197:12" pos:end="197:33">(<expr pos:start="197:13" pos:end="197:32"><operator pos:start="197:13" pos:end="197:13">!</operator><name pos:start="197:14" pos:end="197:32"><name pos:start="197:14" pos:end="197:18">vtctx</name><operator pos:start="197:19" pos:end="197:20">-&gt;</operator><name pos:start="197:21" pos:end="197:32">has_b_frames</name></name></expr>)</condition> <block pos:start="197:35" pos:end="201:9">{<block_content pos:start="199:13" pos:end="199:22">
+
+            <expr_stmt pos:start="199:13" pos:end="199:22"><expr pos:start="199:13" pos:end="199:21"><name pos:start="199:13" pos:end="199:15">dts</name> <operator pos:start="199:17" pos:end="199:17">=</operator> <name pos:start="199:19" pos:end="199:21">pts</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="201:11" pos:end="207:9">else <block pos:start="201:16" pos:end="207:9">{<block_content pos:start="203:13" pos:end="205:36">
+
+            <expr_stmt pos:start="203:13" pos:end="203:61"><expr pos:start="203:13" pos:end="203:60"><call pos:start="203:13" pos:end="203:60"><name pos:start="203:13" pos:end="203:18">av_log</name><argument_list pos:start="203:19" pos:end="203:60">(<argument pos:start="203:20" pos:end="203:24"><expr pos:start="203:20" pos:end="203:24"><name pos:start="203:20" pos:end="203:24">avctx</name></expr></argument>, <argument pos:start="203:27" pos:end="203:38"><expr pos:start="203:27" pos:end="203:38"><name pos:start="203:27" pos:end="203:38">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="203:41" pos:end="203:59"><expr pos:start="203:41" pos:end="203:59"><literal type="string" pos:start="203:41" pos:end="203:59">"DTS is invalid.\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="205:13" pos:end="205:36">return <expr pos:start="205:20" pos:end="205:35"><name pos:start="205:20" pos:end="205:35">AVERROR_EXTERNAL</name></expr>;</return>
+
+        </block_content>}</block></else></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="213:5" pos:end="213:61"><expr pos:start="213:5" pos:end="213:60"><name pos:start="213:5" pos:end="213:13">dts_delta</name> <operator pos:start="213:15" pos:end="213:15">=</operator> <ternary pos:start="213:17" pos:end="213:60"><condition pos:start="213:17" pos:end="213:39"><expr pos:start="213:17" pos:end="213:37"><name pos:start="213:17" pos:end="213:32"><name pos:start="213:17" pos:end="213:21">vtctx</name><operator pos:start="213:22" pos:end="213:23">-&gt;</operator><name pos:start="213:24" pos:end="213:32">dts_delta</name></name> <operator pos:start="213:34" pos:end="213:35">&gt;=</operator> <literal type="number" pos:start="213:37" pos:end="213:37">0</literal></expr> ?</condition><then pos:start="213:41" pos:end="213:56"> <expr pos:start="213:41" pos:end="213:56"><name pos:start="213:41" pos:end="213:56"><name pos:start="213:41" pos:end="213:45">vtctx</name><operator pos:start="213:46" pos:end="213:47">-&gt;</operator><name pos:start="213:48" pos:end="213:56">dts_delta</name></name></expr> </then><else pos:start="213:58" pos:end="213:60">: <expr pos:start="213:60" pos:end="213:60"><literal type="number" pos:start="213:60" pos:end="213:60">0</literal></expr></else></ternary></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="215:5" pos:end="215:41"><expr pos:start="215:5" pos:end="215:40"><name pos:start="215:5" pos:end="215:17">time_base_num</name> <operator pos:start="215:19" pos:end="215:19">=</operator> <name pos:start="215:21" pos:end="215:40"><name pos:start="215:21" pos:end="215:25">avctx</name><operator pos:start="215:26" pos:end="215:27">-&gt;</operator><name pos:start="215:28" pos:end="215:36">time_base</name><operator pos:start="215:37" pos:end="215:37">.</operator><name pos:start="215:38" pos:end="215:40">num</name></name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="217:5" pos:end="217:41"><expr pos:start="217:5" pos:end="217:40"><name pos:start="217:5" pos:end="217:12"><name pos:start="217:5" pos:end="217:7">pkt</name><operator pos:start="217:8" pos:end="217:9">-&gt;</operator><name pos:start="217:10" pos:end="217:12">pts</name></name> <operator pos:start="217:14" pos:end="217:14">=</operator> <name pos:start="217:16" pos:end="217:24"><name pos:start="217:16" pos:end="217:18">pts</name><operator pos:start="217:19" pos:end="217:19">.</operator><name pos:start="217:20" pos:end="217:24">value</name></name> <operator pos:start="217:26" pos:end="217:26">/</operator> <name pos:start="217:28" pos:end="217:40">time_base_num</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="219:5" pos:end="219:53"><expr pos:start="219:5" pos:end="219:52"><name pos:start="219:5" pos:end="219:12"><name pos:start="219:5" pos:end="219:7">pkt</name><operator pos:start="219:8" pos:end="219:9">-&gt;</operator><name pos:start="219:10" pos:end="219:12">dts</name></name> <operator pos:start="219:14" pos:end="219:14">=</operator> <name pos:start="219:16" pos:end="219:24"><name pos:start="219:16" pos:end="219:18">dts</name><operator pos:start="219:19" pos:end="219:19">.</operator><name pos:start="219:20" pos:end="219:24">value</name></name> <operator pos:start="219:26" pos:end="219:26">/</operator> <name pos:start="219:28" pos:end="219:40">time_base_num</name> <operator pos:start="219:42" pos:end="219:42">-</operator> <name pos:start="219:44" pos:end="219:52">dts_delta</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="221:5" pos:end="221:29"><expr pos:start="221:5" pos:end="221:28"><name pos:start="221:5" pos:end="221:13"><name pos:start="221:5" pos:end="221:7">pkt</name><operator pos:start="221:8" pos:end="221:9">-&gt;</operator><name pos:start="221:10" pos:end="221:13">size</name></name> <operator pos:start="221:15" pos:end="221:15">=</operator> <name pos:start="221:17" pos:end="221:28">out_buf_size</name></expr>;</expr_stmt>
+
+
+
+    <return pos:start="225:5" pos:end="225:13">return <expr pos:start="225:12" pos:end="225:12"><literal type="number" pos:start="225:12" pos:end="225:12">0</literal></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

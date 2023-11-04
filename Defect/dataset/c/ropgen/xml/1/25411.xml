@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/25411.c" pos:tabs="8"><function pos:start="1:1" pos:end="179:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:20">nal_send</name><parameter_list pos:start="1:21" pos:end="1:97">(<parameter pos:start="1:22" pos:end="1:41"><decl pos:start="1:22" pos:end="1:41"><type pos:start="1:22" pos:end="1:41"><name pos:start="1:22" pos:end="1:36">AVFormatContext</name> <modifier pos:start="1:38" pos:end="1:38">*</modifier></type><name pos:start="1:39" pos:end="1:41">ctx</name></decl></parameter>, <parameter pos:start="1:44" pos:end="1:61"><decl pos:start="1:44" pos:end="1:61"><type pos:start="1:44" pos:end="1:61"><specifier pos:start="1:44" pos:end="1:48">const</specifier> <name pos:start="1:50" pos:end="1:56">uint8_t</name> <modifier pos:start="1:58" pos:end="1:58">*</modifier></type><name pos:start="1:59" pos:end="1:61">buf</name></decl></parameter>, <parameter pos:start="1:64" pos:end="1:70"><decl pos:start="1:64" pos:end="1:70"><type pos:start="1:64" pos:end="1:70"><name pos:start="1:64" pos:end="1:66">int</name></type> <name pos:start="1:68" pos:end="1:70">len</name></decl></parameter>, <parameter pos:start="1:73" pos:end="1:96"><decl pos:start="1:73" pos:end="1:96"><type pos:start="1:73" pos:end="1:96"><name pos:start="1:73" pos:end="1:75">int</name></type> <name pos:start="1:77" pos:end="1:96">last_packet_of_frame</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="179:1">{<block_content pos:start="5:5" pos:end="177:5">
+
+    <decl_stmt pos:start="5:5" pos:end="5:44"><decl pos:start="5:5" pos:end="5:43"><type pos:start="5:5" pos:end="5:19"><name pos:start="5:5" pos:end="5:17">RTPMuxContext</name> <modifier pos:start="5:19" pos:end="5:19">*</modifier></type><name pos:start="5:20" pos:end="5:26">rtp_ctx</name> <init pos:start="5:28" pos:end="5:43">= <expr pos:start="5:30" pos:end="5:43"><name pos:start="5:30" pos:end="5:43"><name pos:start="5:30" pos:end="5:32">ctx</name><operator pos:start="5:33" pos:end="5:34">-&gt;</operator><name pos:start="5:35" pos:end="5:43">priv_data</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:79"><decl pos:start="7:5" pos:end="7:78"><type pos:start="7:5" pos:end="7:7"><name pos:start="7:5" pos:end="7:7">int</name></type> <name pos:start="7:9" pos:end="7:24">rtp_payload_size</name>   <init pos:start="7:28" pos:end="7:78">= <expr pos:start="7:30" pos:end="7:78"><name pos:start="7:30" pos:end="7:54"><name pos:start="7:30" pos:end="7:36">rtp_ctx</name><operator pos:start="7:37" pos:end="7:38">-&gt;</operator><name pos:start="7:39" pos:end="7:54">max_payload_size</name></name> <operator pos:start="7:56" pos:end="7:56">-</operator> <name pos:start="7:58" pos:end="7:78">RTP_HEVC_HEADERS_SIZE</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:50"><decl pos:start="9:5" pos:end="9:49"><type pos:start="9:5" pos:end="9:7"><name pos:start="9:5" pos:end="9:7">int</name></type> <name pos:start="9:9" pos:end="9:16">nal_type</name>           <init pos:start="9:28" pos:end="9:49">= <expr pos:start="9:30" pos:end="9:49"><operator pos:start="9:30" pos:end="9:30">(</operator><name pos:start="9:31" pos:end="9:36"><name pos:start="9:31" pos:end="9:33">buf</name><index pos:start="9:34" pos:end="9:36">[<expr pos:start="9:35" pos:end="9:35"><literal type="number" pos:start="9:35" pos:end="9:35">0</literal></expr>]</index></name> <operator pos:start="9:38" pos:end="9:39">&gt;&gt;</operator> <literal type="number" pos:start="9:41" pos:end="9:41">1</literal><operator pos:start="9:42" pos:end="9:42">)</operator> <operator pos:start="9:44" pos:end="9:44">&amp;</operator> <literal type="number" pos:start="9:46" pos:end="9:49">0x3F</literal></expr></init></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="13:5" pos:end="13:41">/* send it as one single NAL unit? */</comment>
+
+    <if_stmt pos:start="15:5" pos:end="177:5"><if pos:start="15:5" pos:end="63:5">if <condition pos:start="15:8" pos:end="15:41">(<expr pos:start="15:9" pos:end="15:40"><name pos:start="15:9" pos:end="15:11">len</name> <operator pos:start="15:13" pos:end="15:14">&lt;=</operator> <name pos:start="15:16" pos:end="15:40"><name pos:start="15:16" pos:end="15:22">rtp_ctx</name><operator pos:start="15:23" pos:end="15:24">-&gt;</operator><name pos:start="15:25" pos:end="15:40">max_payload_size</name></name></expr>)</condition> <block pos:start="15:43" pos:end="63:5">{<block_content pos:start="17:9" pos:end="61:9">
+
+        <decl_stmt pos:start="17:9" pos:end="17:60"><decl pos:start="17:9" pos:end="17:59"><type pos:start="17:9" pos:end="17:11"><name pos:start="17:9" pos:end="17:11">int</name></type> <name pos:start="17:13" pos:end="17:25">buffered_size</name> <init pos:start="17:27" pos:end="17:59">= <expr pos:start="17:29" pos:end="17:59"><name pos:start="17:29" pos:end="17:44"><name pos:start="17:29" pos:end="17:35">rtp_ctx</name><operator pos:start="17:36" pos:end="17:37">-&gt;</operator><name pos:start="17:38" pos:end="17:44">buf_ptr</name></name> <operator pos:start="17:46" pos:end="17:46">-</operator> <name pos:start="17:48" pos:end="17:59"><name pos:start="17:48" pos:end="17:54">rtp_ctx</name><operator pos:start="17:55" pos:end="17:56">-&gt;</operator><name pos:start="17:57" pos:end="17:59">buf</name></name></expr></init></decl>;</decl_stmt>
+
+        <comment type="block" pos:start="19:9" pos:end="19:70">/* Flush buffered NAL units if the current unit doesn't fit */</comment>
+
+        <if_stmt pos:start="21:9" pos:end="27:9"><if pos:start="21:9" pos:end="27:9">if <condition pos:start="21:12" pos:end="21:64">(<expr pos:start="21:13" pos:end="21:63"><name pos:start="21:13" pos:end="21:25">buffered_size</name> <operator pos:start="21:27" pos:end="21:27">+</operator> <literal type="number" pos:start="21:29" pos:end="21:31">2</literal> <operator pos:start="21:31" pos:end="21:31">+</operator> <name pos:start="21:33" pos:end="21:35">len</name> <operator pos:start="21:37" pos:end="21:37">&gt;</operator> <name pos:start="21:39" pos:end="21:63"><name pos:start="21:39" pos:end="21:45">rtp_ctx</name><operator pos:start="21:46" pos:end="21:47">-&gt;</operator><name pos:start="21:48" pos:end="21:63">max_payload_size</name></name></expr>)</condition> <block pos:start="21:66" pos:end="27:9">{<block_content pos:start="23:13" pos:end="25:30">
+
+            <expr_stmt pos:start="23:13" pos:end="23:35"><expr pos:start="23:13" pos:end="23:34"><call pos:start="23:13" pos:end="23:34"><name pos:start="23:13" pos:end="23:26">flush_buffered</name><argument_list pos:start="23:27" pos:end="23:34">(<argument pos:start="23:28" pos:end="23:30"><expr pos:start="23:28" pos:end="23:30"><name pos:start="23:28" pos:end="23:30">ctx</name></expr></argument>, <argument pos:start="23:33" pos:end="23:33"><expr pos:start="23:33" pos:end="23:33"><literal type="number" pos:start="23:33" pos:end="23:33">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="25:13" pos:end="25:30"><expr pos:start="25:13" pos:end="25:29"><name pos:start="25:13" pos:end="25:25">buffered_size</name> <operator pos:start="25:27" pos:end="25:27">=</operator> <literal type="number" pos:start="25:29" pos:end="25:29">0</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <comment type="block" pos:start="29:9" pos:end="33:33">/* If the NAL unit fits including the framing, write the unit
+
+         * to the buffer as an aggregate packet, otherwise flush and
+
+         * send as single NAL. */</comment>
+
+        <if_stmt pos:start="35:9" pos:end="61:9"><if pos:start="35:9" pos:end="55:9">if <condition pos:start="35:12" pos:end="35:65">(<expr pos:start="35:13" pos:end="35:64"><name pos:start="35:13" pos:end="35:25">buffered_size</name> <operator pos:start="35:27" pos:end="35:27">+</operator> <literal type="number" pos:start="35:29" pos:end="35:31">4</literal> <operator pos:start="35:31" pos:end="35:31">+</operator> <name pos:start="35:33" pos:end="35:35">len</name> <operator pos:start="35:37" pos:end="35:38">&lt;=</operator> <name pos:start="35:40" pos:end="35:64"><name pos:start="35:40" pos:end="35:46">rtp_ctx</name><operator pos:start="35:47" pos:end="35:48">-&gt;</operator><name pos:start="35:49" pos:end="35:64">max_payload_size</name></name></expr>)</condition> <block pos:start="35:67" pos:end="55:9">{<block_content pos:start="37:13" pos:end="53:37">
+
+            <if_stmt pos:start="37:13" pos:end="43:13"><if pos:start="37:13" pos:end="43:13">if <condition pos:start="37:16" pos:end="37:35">(<expr pos:start="37:17" pos:end="37:34"><name pos:start="37:17" pos:end="37:29">buffered_size</name> <operator pos:start="37:31" pos:end="37:32">==</operator> <literal type="number" pos:start="37:34" pos:end="37:34">0</literal></expr>)</condition> <block pos:start="37:37" pos:end="43:13">{<block_content pos:start="39:17" pos:end="41:40">
+
+                <expr_stmt pos:start="39:17" pos:end="39:46"><expr pos:start="39:17" pos:end="39:45"><operator pos:start="39:17" pos:end="39:17">*</operator><name pos:start="39:18" pos:end="39:33"><name pos:start="39:18" pos:end="39:24">rtp_ctx</name><operator pos:start="39:25" pos:end="39:26">-&gt;</operator><name pos:start="39:27" pos:end="39:33">buf_ptr</name></name><operator pos:start="39:34" pos:end="39:35">++</operator> <operator pos:start="39:37" pos:end="39:37">=</operator> <literal type="number" pos:start="39:39" pos:end="39:40">48</literal> <operator pos:start="39:42" pos:end="39:43">&lt;&lt;</operator> <literal type="number" pos:start="39:45" pos:end="39:45">1</literal></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="41:17" pos:end="41:40"><expr pos:start="41:17" pos:end="41:39"><operator pos:start="41:17" pos:end="41:17">*</operator><name pos:start="41:18" pos:end="41:33"><name pos:start="41:18" pos:end="41:24">rtp_ctx</name><operator pos:start="41:25" pos:end="41:26">-&gt;</operator><name pos:start="41:27" pos:end="41:33">buf_ptr</name></name><operator pos:start="41:34" pos:end="41:35">++</operator> <operator pos:start="41:37" pos:end="41:37">=</operator> <literal type="number" pos:start="41:39" pos:end="41:39">1</literal></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <expr_stmt pos:start="45:13" pos:end="45:43"><expr pos:start="45:13" pos:end="45:42"><call pos:start="45:13" pos:end="45:42"><name pos:start="45:13" pos:end="45:19">AV_WB16</name><argument_list pos:start="45:20" pos:end="45:42">(<argument pos:start="45:21" pos:end="45:36"><expr pos:start="45:21" pos:end="45:36"><name pos:start="45:21" pos:end="45:36"><name pos:start="45:21" pos:end="45:27">rtp_ctx</name><operator pos:start="45:28" pos:end="45:29">-&gt;</operator><name pos:start="45:30" pos:end="45:36">buf_ptr</name></name></expr></argument>, <argument pos:start="45:39" pos:end="45:41"><expr pos:start="45:39" pos:end="45:41"><name pos:start="45:39" pos:end="45:41">len</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="47:13" pos:end="47:34"><expr pos:start="47:13" pos:end="47:33"><name pos:start="47:13" pos:end="47:28"><name pos:start="47:13" pos:end="47:19">rtp_ctx</name><operator pos:start="47:20" pos:end="47:21">-&gt;</operator><name pos:start="47:22" pos:end="47:28">buf_ptr</name></name> <operator pos:start="47:30" pos:end="47:31">+=</operator> <literal type="number" pos:start="47:33" pos:end="47:33">2</literal></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="49:13" pos:end="49:47"><expr pos:start="49:13" pos:end="49:46"><call pos:start="49:13" pos:end="49:46"><name pos:start="49:13" pos:end="49:18">memcpy</name><argument_list pos:start="49:19" pos:end="49:46">(<argument pos:start="49:20" pos:end="49:35"><expr pos:start="49:20" pos:end="49:35"><name pos:start="49:20" pos:end="49:35"><name pos:start="49:20" pos:end="49:26">rtp_ctx</name><operator pos:start="49:27" pos:end="49:28">-&gt;</operator><name pos:start="49:29" pos:end="49:35">buf_ptr</name></name></expr></argument>, <argument pos:start="49:38" pos:end="49:40"><expr pos:start="49:38" pos:end="49:40"><name pos:start="49:38" pos:end="49:40">buf</name></expr></argument>, <argument pos:start="49:43" pos:end="49:45"><expr pos:start="49:43" pos:end="49:45"><name pos:start="49:43" pos:end="49:45">len</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="51:13" pos:end="51:36"><expr pos:start="51:13" pos:end="51:35"><name pos:start="51:13" pos:end="51:28"><name pos:start="51:13" pos:end="51:19">rtp_ctx</name><operator pos:start="51:20" pos:end="51:21">-&gt;</operator><name pos:start="51:22" pos:end="51:28">buf_ptr</name></name> <operator pos:start="51:30" pos:end="51:31">+=</operator> <name pos:start="51:33" pos:end="51:35">len</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="53:13" pos:end="53:37"><expr pos:start="53:13" pos:end="53:36"><name pos:start="53:13" pos:end="53:34"><name pos:start="53:13" pos:end="53:19">rtp_ctx</name><operator pos:start="53:20" pos:end="53:21">-&gt;</operator><name pos:start="53:22" pos:end="53:34">buffered_nals</name></name><operator pos:start="53:35" pos:end="53:36">++</operator></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="55:11" pos:end="61:9">else <block pos:start="55:16" pos:end="61:9">{<block_content pos:start="57:13" pos:end="59:66">
+
+            <expr_stmt pos:start="57:13" pos:end="57:35"><expr pos:start="57:13" pos:end="57:34"><call pos:start="57:13" pos:end="57:34"><name pos:start="57:13" pos:end="57:26">flush_buffered</name><argument_list pos:start="57:27" pos:end="57:34">(<argument pos:start="57:28" pos:end="57:30"><expr pos:start="57:28" pos:end="57:30"><name pos:start="57:28" pos:end="57:30">ctx</name></expr></argument>, <argument pos:start="57:33" pos:end="57:33"><expr pos:start="57:33" pos:end="57:33"><literal type="number" pos:start="57:33" pos:end="57:33">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="59:13" pos:end="59:66"><expr pos:start="59:13" pos:end="59:65"><call pos:start="59:13" pos:end="59:65"><name pos:start="59:13" pos:end="59:28">ff_rtp_send_data</name><argument_list pos:start="59:29" pos:end="59:65">(<argument pos:start="59:30" pos:end="59:32"><expr pos:start="59:30" pos:end="59:32"><name pos:start="59:30" pos:end="59:32">ctx</name></expr></argument>, <argument pos:start="59:35" pos:end="59:37"><expr pos:start="59:35" pos:end="59:37"><name pos:start="59:35" pos:end="59:37">buf</name></expr></argument>, <argument pos:start="59:40" pos:end="59:42"><expr pos:start="59:40" pos:end="59:42"><name pos:start="59:40" pos:end="59:42">len</name></expr></argument>, <argument pos:start="59:45" pos:end="59:64"><expr pos:start="59:45" pos:end="59:64"><name pos:start="59:45" pos:end="59:64">last_packet_of_frame</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+    </block_content>}</block></if> <else pos:start="63:7" pos:end="177:5">else <block pos:start="63:12" pos:end="177:5">{<block_content pos:start="65:9" pos:end="175:75">
+
+        <expr_stmt pos:start="65:9" pos:end="65:31"><expr pos:start="65:9" pos:end="65:30"><call pos:start="65:9" pos:end="65:30"><name pos:start="65:9" pos:end="65:22">flush_buffered</name><argument_list pos:start="65:23" pos:end="65:30">(<argument pos:start="65:24" pos:end="65:26"><expr pos:start="65:24" pos:end="65:26"><name pos:start="65:24" pos:end="65:26">ctx</name></expr></argument>, <argument pos:start="65:29" pos:end="65:29"><expr pos:start="65:29" pos:end="65:29"><literal type="number" pos:start="65:29" pos:end="65:29">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <comment type="block" pos:start="67:9" pos:end="93:11">/*
+
+          create the HEVC payload header and transmit the buffer as fragmentation units (FU)
+
+
+
+             0                   1
+
+             0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
+
+            +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+            |F|   Type    |  LayerId  | TID |
+
+            +-------------+-----------------+
+
+
+
+               F       = 0
+
+               Type    = 49 (fragmentation unit (FU))
+
+               LayerId = 0
+
+               TID     = 1
+
+         */</comment>
+
+        <expr_stmt pos:start="95:9" pos:end="95:34"><expr pos:start="95:9" pos:end="95:33"><name pos:start="95:9" pos:end="95:23"><name pos:start="95:9" pos:end="95:15">rtp_ctx</name><operator pos:start="95:16" pos:end="95:17">-&gt;</operator><name pos:start="95:18" pos:end="95:20">buf</name><index pos:start="95:21" pos:end="95:23">[<expr pos:start="95:22" pos:end="95:22"><literal type="number" pos:start="95:22" pos:end="95:22">0</literal></expr>]</index></name> <operator pos:start="95:25" pos:end="95:25">=</operator> <literal type="number" pos:start="95:27" pos:end="95:28">49</literal> <operator pos:start="95:30" pos:end="95:31">&lt;&lt;</operator> <literal type="number" pos:start="95:33" pos:end="95:33">1</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="97:9" pos:end="97:28"><expr pos:start="97:9" pos:end="97:27"><name pos:start="97:9" pos:end="97:23"><name pos:start="97:9" pos:end="97:15">rtp_ctx</name><operator pos:start="97:16" pos:end="97:17">-&gt;</operator><name pos:start="97:18" pos:end="97:20">buf</name><index pos:start="97:21" pos:end="97:23">[<expr pos:start="97:22" pos:end="97:22"><literal type="number" pos:start="97:22" pos:end="97:22">1</literal></expr>]</index></name> <operator pos:start="97:25" pos:end="97:25">=</operator> <literal type="number" pos:start="97:27" pos:end="97:27">1</literal></expr>;</expr_stmt>
+
+
+
+        <comment type="block" pos:start="101:9" pos:end="123:11">/*
+
+              create the FU header
+
+
+
+              0 1 2 3 4 5 6 7
+
+             +-+-+-+-+-+-+-+-+
+
+             |S|E|  FuType   |
+
+             +---------------+
+
+
+
+                S       = variable
+
+                E       = variable
+
+                FuType  = NAL unit type
+
+         */</comment>
+
+        <expr_stmt pos:start="125:9" pos:end="125:36"><expr pos:start="125:9" pos:end="125:35"><name pos:start="125:9" pos:end="125:23"><name pos:start="125:9" pos:end="125:15">rtp_ctx</name><operator pos:start="125:16" pos:end="125:17">-&gt;</operator><name pos:start="125:18" pos:end="125:20">buf</name><index pos:start="125:21" pos:end="125:23">[<expr pos:start="125:22" pos:end="125:22"><literal type="number" pos:start="125:22" pos:end="125:22">2</literal></expr>]</index></name>  <operator pos:start="125:26" pos:end="125:26">=</operator> <name pos:start="125:28" pos:end="125:35">nal_type</name></expr>;</expr_stmt>
+
+        <comment type="block" pos:start="127:9" pos:end="127:51">/* set the S bit: mark as start fragment */</comment>
+
+        <expr_stmt pos:start="129:9" pos:end="129:34"><expr pos:start="129:9" pos:end="129:33"><name pos:start="129:9" pos:end="129:23"><name pos:start="129:9" pos:end="129:15">rtp_ctx</name><operator pos:start="129:16" pos:end="129:17">-&gt;</operator><name pos:start="129:18" pos:end="129:20">buf</name><index pos:start="129:21" pos:end="129:23">[<expr pos:start="129:22" pos:end="129:22"><literal type="number" pos:start="129:22" pos:end="129:22">2</literal></expr>]</index></name> <operator pos:start="129:25" pos:end="129:26">|=</operator> <literal type="number" pos:start="129:28" pos:end="129:28">1</literal> <operator pos:start="129:30" pos:end="129:31">&lt;&lt;</operator> <literal type="number" pos:start="129:33" pos:end="129:33">7</literal></expr>;</expr_stmt>
+
+
+
+        <comment type="block" pos:start="133:9" pos:end="133:42">/* pass the original NAL header */</comment>
+
+        <expr_stmt pos:start="135:9" pos:end="135:17"><expr pos:start="135:9" pos:end="135:16"><name pos:start="135:9" pos:end="135:11">buf</name> <operator pos:start="135:13" pos:end="135:14">+=</operator> <literal type="number" pos:start="135:16" pos:end="135:16">2</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="137:9" pos:end="137:17"><expr pos:start="137:9" pos:end="137:16"><name pos:start="137:9" pos:end="137:11">len</name> <operator pos:start="137:13" pos:end="137:14">-=</operator> <literal type="number" pos:start="137:16" pos:end="137:16">2</literal></expr>;</expr_stmt>
+
+
+
+        <while pos:start="141:9" pos:end="161:9">while <condition pos:start="141:15" pos:end="141:38">(<expr pos:start="141:16" pos:end="141:37"><name pos:start="141:16" pos:end="141:18">len</name> <operator pos:start="141:20" pos:end="141:20">&gt;</operator> <name pos:start="141:22" pos:end="141:37">rtp_payload_size</name></expr>)</condition> <block pos:start="141:40" pos:end="161:9">{<block_content pos:start="145:13" pos:end="159:41">
+
+            <comment type="block" pos:start="143:13" pos:end="143:54">/* complete and send current RTP packet */</comment>
+
+            <expr_stmt pos:start="145:13" pos:end="145:80"><expr pos:start="145:13" pos:end="145:79"><call pos:start="145:13" pos:end="145:79"><name pos:start="145:13" pos:end="145:18">memcpy</name><argument_list pos:start="145:19" pos:end="145:79">(<argument pos:start="145:20" pos:end="145:55"><expr pos:start="145:20" pos:end="145:55"><operator pos:start="145:20" pos:end="145:20">&amp;</operator><name pos:start="145:21" pos:end="145:55"><name pos:start="145:21" pos:end="145:27">rtp_ctx</name><operator pos:start="145:28" pos:end="145:29">-&gt;</operator><name pos:start="145:30" pos:end="145:32">buf</name><index pos:start="145:33" pos:end="145:55">[<expr pos:start="145:34" pos:end="145:54"><name pos:start="145:34" pos:end="145:54">RTP_HEVC_HEADERS_SIZE</name></expr>]</index></name></expr></argument>, <argument pos:start="145:58" pos:end="145:60"><expr pos:start="145:58" pos:end="145:60"><name pos:start="145:58" pos:end="145:60">buf</name></expr></argument>, <argument pos:start="145:63" pos:end="145:78"><expr pos:start="145:63" pos:end="145:78"><name pos:start="145:63" pos:end="145:78">rtp_payload_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="147:13" pos:end="147:78"><expr pos:start="147:13" pos:end="147:77"><call pos:start="147:13" pos:end="147:77"><name pos:start="147:13" pos:end="147:28">ff_rtp_send_data</name><argument_list pos:start="147:29" pos:end="147:77">(<argument pos:start="147:30" pos:end="147:32"><expr pos:start="147:30" pos:end="147:32"><name pos:start="147:30" pos:end="147:32">ctx</name></expr></argument>, <argument pos:start="147:35" pos:end="147:46"><expr pos:start="147:35" pos:end="147:46"><name pos:start="147:35" pos:end="147:46"><name pos:start="147:35" pos:end="147:41">rtp_ctx</name><operator pos:start="147:42" pos:end="147:43">-&gt;</operator><name pos:start="147:44" pos:end="147:46">buf</name></name></expr></argument>, <argument pos:start="147:49" pos:end="147:73"><expr pos:start="147:49" pos:end="147:73"><name pos:start="147:49" pos:end="147:73"><name pos:start="147:49" pos:end="147:55">rtp_ctx</name><operator pos:start="147:56" pos:end="147:57">-&gt;</operator><name pos:start="147:58" pos:end="147:73">max_payload_size</name></name></expr></argument>, <argument pos:start="147:76" pos:end="147:76"><expr pos:start="147:76" pos:end="147:76"><literal type="number" pos:start="147:76" pos:end="147:76">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <expr_stmt pos:start="151:13" pos:end="151:36"><expr pos:start="151:13" pos:end="151:35"><name pos:start="151:13" pos:end="151:15">buf</name> <operator pos:start="151:17" pos:end="151:18">+=</operator> <name pos:start="151:20" pos:end="151:35">rtp_payload_size</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="153:13" pos:end="153:36"><expr pos:start="153:13" pos:end="153:35"><name pos:start="153:13" pos:end="153:15">len</name> <operator pos:start="153:17" pos:end="153:18">-=</operator> <name pos:start="153:20" pos:end="153:35">rtp_payload_size</name></expr>;</expr_stmt>
+
+
+
+            <comment type="block" pos:start="157:13" pos:end="157:33">/* reset the S bit */</comment>
+
+            <expr_stmt pos:start="159:13" pos:end="159:41"><expr pos:start="159:13" pos:end="159:40"><name pos:start="159:13" pos:end="159:27"><name pos:start="159:13" pos:end="159:19">rtp_ctx</name><operator pos:start="159:20" pos:end="159:21">-&gt;</operator><name pos:start="159:22" pos:end="159:24">buf</name><index pos:start="159:25" pos:end="159:27">[<expr pos:start="159:26" pos:end="159:26"><literal type="number" pos:start="159:26" pos:end="159:26">2</literal></expr>]</index></name> <operator pos:start="159:29" pos:end="159:30">&amp;=</operator> <operator pos:start="159:32" pos:end="159:32">~</operator><operator pos:start="159:33" pos:end="159:33">(</operator><literal type="number" pos:start="159:34" pos:end="159:34">1</literal> <operator pos:start="159:36" pos:end="159:37">&lt;&lt;</operator> <literal type="number" pos:start="159:39" pos:end="159:39">7</literal><operator pos:start="159:40" pos:end="159:40">)</operator></expr>;</expr_stmt>
+
+        </block_content>}</block></while>
+
+
+
+        <comment type="block" pos:start="165:9" pos:end="165:50">/* set the E bit: mark as last fragment */</comment>
+
+        <expr_stmt pos:start="167:9" pos:end="167:34"><expr pos:start="167:9" pos:end="167:33"><name pos:start="167:9" pos:end="167:23"><name pos:start="167:9" pos:end="167:15">rtp_ctx</name><operator pos:start="167:16" pos:end="167:17">-&gt;</operator><name pos:start="167:18" pos:end="167:20">buf</name><index pos:start="167:21" pos:end="167:23">[<expr pos:start="167:22" pos:end="167:22"><literal type="number" pos:start="167:22" pos:end="167:22">2</literal></expr>]</index></name> <operator pos:start="167:25" pos:end="167:26">|=</operator> <literal type="number" pos:start="167:28" pos:end="167:28">1</literal> <operator pos:start="167:30" pos:end="167:31">&lt;&lt;</operator> <literal type="number" pos:start="167:33" pos:end="167:33">6</literal></expr>;</expr_stmt>
+
+
+
+        <comment type="block" pos:start="171:9" pos:end="171:47">/* complete and send last RTP packet */</comment>
+
+        <expr_stmt pos:start="173:9" pos:end="173:63"><expr pos:start="173:9" pos:end="173:62"><call pos:start="173:9" pos:end="173:62"><name pos:start="173:9" pos:end="173:14">memcpy</name><argument_list pos:start="173:15" pos:end="173:62">(<argument pos:start="173:16" pos:end="173:51"><expr pos:start="173:16" pos:end="173:51"><operator pos:start="173:16" pos:end="173:16">&amp;</operator><name pos:start="173:17" pos:end="173:51"><name pos:start="173:17" pos:end="173:23">rtp_ctx</name><operator pos:start="173:24" pos:end="173:25">-&gt;</operator><name pos:start="173:26" pos:end="173:28">buf</name><index pos:start="173:29" pos:end="173:51">[<expr pos:start="173:30" pos:end="173:50"><name pos:start="173:30" pos:end="173:50">RTP_HEVC_HEADERS_SIZE</name></expr>]</index></name></expr></argument>, <argument pos:start="173:54" pos:end="173:56"><expr pos:start="173:54" pos:end="173:56"><name pos:start="173:54" pos:end="173:56">buf</name></expr></argument>, <argument pos:start="173:59" pos:end="173:61"><expr pos:start="173:59" pos:end="173:61"><name pos:start="173:59" pos:end="173:61">len</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="175:9" pos:end="175:75"><expr pos:start="175:9" pos:end="175:74"><call pos:start="175:9" pos:end="175:74"><name pos:start="175:9" pos:end="175:24">ff_rtp_send_data</name><argument_list pos:start="175:25" pos:end="175:74">(<argument pos:start="175:26" pos:end="175:28"><expr pos:start="175:26" pos:end="175:28"><name pos:start="175:26" pos:end="175:28">ctx</name></expr></argument>, <argument pos:start="175:31" pos:end="175:42"><expr pos:start="175:31" pos:end="175:42"><name pos:start="175:31" pos:end="175:42"><name pos:start="175:31" pos:end="175:37">rtp_ctx</name><operator pos:start="175:38" pos:end="175:39">-&gt;</operator><name pos:start="175:40" pos:end="175:42">buf</name></name></expr></argument>, <argument pos:start="175:45" pos:end="175:51"><expr pos:start="175:45" pos:end="175:51"><name pos:start="175:45" pos:end="175:47">len</name> <operator pos:start="175:49" pos:end="175:49">+</operator> <literal type="number" pos:start="175:51" pos:end="175:51">2</literal></expr></argument>, <argument pos:start="175:54" pos:end="175:73"><expr pos:start="175:54" pos:end="175:73"><name pos:start="175:54" pos:end="175:73">last_packet_of_frame</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+</block_content>}</block></function>
+</unit>

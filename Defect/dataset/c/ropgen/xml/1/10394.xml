@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/10394.c" pos:tabs="8"><function pos:start="1:1" pos:end="103:1"><type pos:start="1:1" pos:end="1:25"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <specifier pos:start="1:8" pos:end="1:13">inline</specifier> <name pos:start="1:15" pos:end="1:18">void</name> <name pos:start="1:20" pos:end="1:25">RENAME</name></type>(<name pos:start="1:27" pos:end="1:38">bgr24ToY_mmx</name>)<parameter_list pos:start="1:40" pos:end="1:112">(<parameter pos:start="1:41" pos:end="1:52"><decl pos:start="1:41" pos:end="1:52"><type pos:start="1:41" pos:end="1:52"><name pos:start="1:41" pos:end="1:47">uint8_t</name> <modifier pos:start="1:49" pos:end="1:49">*</modifier></type><name pos:start="1:50" pos:end="1:52">dst</name></decl></parameter>, <parameter pos:start="1:55" pos:end="1:72"><decl pos:start="1:55" pos:end="1:72"><type pos:start="1:55" pos:end="1:72"><specifier pos:start="1:55" pos:end="1:59">const</specifier> <name pos:start="1:61" pos:end="1:67">uint8_t</name> <modifier pos:start="1:69" pos:end="1:69">*</modifier></type><name pos:start="1:70" pos:end="1:72">src</name></decl></parameter>, <parameter pos:start="1:75" pos:end="1:83"><decl pos:start="1:75" pos:end="1:83"><type pos:start="1:75" pos:end="1:83"><name pos:start="1:75" pos:end="1:77">int</name></type> <name pos:start="1:79" pos:end="1:83">width</name></decl></parameter>, <parameter pos:start="1:86" pos:end="1:111"><decl pos:start="1:86" pos:end="1:111"><type pos:start="1:86" pos:end="1:111"><name pos:start="1:86" pos:end="1:101"><name pos:start="1:86" pos:end="1:89">enum</name> <name pos:start="1:91" pos:end="1:101">PixelFormat</name></name></type> <name pos:start="1:103" pos:end="1:111">srcFormat</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="103:1">{<block_content pos:start="7:5" pos:end="101:6">
+
+
+
+    <if_stmt pos:start="7:5" pos:end="31:5"><if pos:start="7:5" pos:end="19:5">if<condition pos:start="7:7" pos:end="7:34">(<expr pos:start="7:8" pos:end="7:33"><name pos:start="7:8" pos:end="7:16">srcFormat</name> <operator pos:start="7:18" pos:end="7:19">==</operator> <name pos:start="7:21" pos:end="7:33">PIX_FMT_BGR24</name></expr>)</condition> <block pos:start="7:36" pos:end="19:5">{<block_content pos:start="9:9" pos:end="17:10">
+
+        <asm pos:start="9:9" pos:end="17:10">__asm__ <specifier pos:start="9:17" pos:end="9:24">volatile</specifier>(
+
+            "movq  "MANGLE(ff_bgr24toY1Coeff)", %%mm5       \n\t"
+
+            "movq  "MANGLE(ff_bgr24toY2Coeff)", %%mm6       \n\t"
+
+            :
+
+        );</asm>
+
+    </block_content>}</block></if> <else pos:start="19:7" pos:end="31:5">else <block pos:start="19:12" pos:end="31:5">{<block_content pos:start="21:9" pos:end="29:10">
+
+        <asm pos:start="21:9" pos:end="29:10">__asm__ <specifier pos:start="21:17" pos:end="21:24">volatile</specifier>(
+
+            "movq  "MANGLE(ff_rgb24toY1Coeff)", %%mm5       \n\t"
+
+            "movq  "MANGLE(ff_rgb24toY2Coeff)", %%mm6       \n\t"
+
+            :
+
+        );</asm>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <asm pos:start="35:5" pos:end="101:6">__asm__ <specifier pos:start="35:13" pos:end="35:20">volatile</specifier>(
+
+        "movq  "MANGLE(ff_bgr24toYOffset)", %%mm4   \n\t"
+
+        "mov                        %2, %%"REG_a"   \n\t"
+
+        "pxor                    %%mm7, %%mm7       \n\t"
+
+        "1:                                         \n\t"
+
+        PREFETCH"               64(%0)              \n\t"
+
+        "movd                     (%0), %%mm0       \n\t"
+
+        "movd                    2(%0), %%mm1       \n\t"
+
+        "movd                    6(%0), %%mm2       \n\t"
+
+        "movd                    8(%0), %%mm3       \n\t"
+
+        "add                       $12, %0          \n\t"
+
+        "punpcklbw               %%mm7, %%mm0       \n\t"
+
+        "punpcklbw               %%mm7, %%mm1       \n\t"
+
+        "punpcklbw               %%mm7, %%mm2       \n\t"
+
+        "punpcklbw               %%mm7, %%mm3       \n\t"
+
+        "pmaddwd                 %%mm5, %%mm0       \n\t"
+
+        "pmaddwd                 %%mm6, %%mm1       \n\t"
+
+        "pmaddwd                 %%mm5, %%mm2       \n\t"
+
+        "pmaddwd                 %%mm6, %%mm3       \n\t"
+
+        "paddd                   %%mm1, %%mm0       \n\t"
+
+        "paddd                   %%mm3, %%mm2       \n\t"
+
+        "paddd                   %%mm4, %%mm0       \n\t"
+
+        "paddd                   %%mm4, %%mm2       \n\t"
+
+        "psrad                     $15, %%mm0       \n\t"
+
+        "psrad                     $15, %%mm2       \n\t"
+
+        "packssdw                %%mm2, %%mm0       \n\t"
+
+        "packuswb                %%mm0, %%mm0       \n\t"
+
+        "movd                %%mm0, (%1, %%"REG_a") \n\t"
+
+        "add                        $4, %%"REG_a"   \n\t"
+
+        " js                        1b              \n\t"
+
+    : "+r" (src)
+
+    : "r" (dst+width), "g" ((x86_reg)-width)
+
+    : "%"REG_a
+
+    );</asm>
+
+</block_content>}</block></function>
+</unit>

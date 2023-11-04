@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/12442.c" pos:tabs="8"><function pos:start="1:1" pos:end="173:1"><type pos:start="1:1" pos:end="1:4"><name pos:start="1:1" pos:end="1:4">void</name></type> <name pos:start="1:6" pos:end="1:20">qemu_clock_warp</name><parameter_list pos:start="1:21" pos:end="1:40">(<parameter pos:start="1:22" pos:end="1:39"><decl pos:start="1:22" pos:end="1:39"><type pos:start="1:22" pos:end="1:34"><name pos:start="1:22" pos:end="1:34">QEMUClockType</name></type> <name pos:start="1:36" pos:end="1:39">type</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="173:1">{<block_content pos:start="5:5" pos:end="171:5">
+
+    <decl_stmt pos:start="5:5" pos:end="5:18"><decl pos:start="5:5" pos:end="5:17"><type pos:start="5:5" pos:end="5:11"><name pos:start="5:5" pos:end="5:11">int64_t</name></type> <name pos:start="5:13" pos:end="5:17">clock</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:21"><decl pos:start="7:5" pos:end="7:20"><type pos:start="7:5" pos:end="7:11"><name pos:start="7:5" pos:end="7:11">int64_t</name></type> <name pos:start="7:13" pos:end="7:20">deadline</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="11:5" pos:end="19:7">/*
+
+     * There are too many global variables to make the "warp" behavior
+
+     * applicable to other clocks.  But a clock argument removes the
+
+     * need for if statements all over the place.
+
+     */</comment>
+
+    <if_stmt pos:start="21:5" pos:end="25:5"><if pos:start="21:5" pos:end="25:5">if <condition pos:start="21:8" pos:end="21:50">(<expr pos:start="21:9" pos:end="21:49"><name pos:start="21:9" pos:end="21:12">type</name> <operator pos:start="21:14" pos:end="21:15">!=</operator> <name pos:start="21:17" pos:end="21:34">QEMU_CLOCK_VIRTUAL</name> <operator pos:start="21:36" pos:end="21:37">||</operator> <operator pos:start="21:39" pos:end="21:39">!</operator><name pos:start="21:40" pos:end="21:49">use_icount</name></expr>)</condition> <block pos:start="21:52" pos:end="25:5">{<block_content pos:start="23:9" pos:end="23:15">
+
+        <return pos:start="23:9" pos:end="23:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="29:5" pos:end="51:5"><if pos:start="29:5" pos:end="51:5">if <condition pos:start="29:8" pos:end="29:21">(<expr pos:start="29:9" pos:end="29:20"><name pos:start="29:9" pos:end="29:20">icount_sleep</name></expr>)</condition> <block pos:start="29:23" pos:end="51:5">{<block_content pos:start="47:9" pos:end="49:37">
+
+        <comment type="block" pos:start="31:9" pos:end="45:11">/*
+
+         * If the CPUs have been sleeping, advance QEMU_CLOCK_VIRTUAL timer now.
+
+         * This ensures that the deadline for the timer is computed correctly
+
+         * below.
+
+         * This also makes sure that the insn counter is synchronized before
+
+         * the CPU starts running, in case the CPU is woken by an event other
+
+         * than the earliest QEMU_CLOCK_VIRTUAL timer.
+
+         */</comment>
+
+        <expr_stmt pos:start="47:9" pos:end="47:29"><expr pos:start="47:9" pos:end="47:28"><call pos:start="47:9" pos:end="47:28"><name pos:start="47:9" pos:end="47:22">icount_warp_rt</name><argument_list pos:start="47:23" pos:end="47:28">(<argument pos:start="47:24" pos:end="47:27"><expr pos:start="47:24" pos:end="47:27"><name pos:start="47:24" pos:end="47:27">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="49:9" pos:end="49:37"><expr pos:start="49:9" pos:end="49:36"><call pos:start="49:9" pos:end="49:36"><name pos:start="49:9" pos:end="49:17">timer_del</name><argument_list pos:start="49:18" pos:end="49:36">(<argument pos:start="49:19" pos:end="49:35"><expr pos:start="49:19" pos:end="49:35"><name pos:start="49:19" pos:end="49:35">icount_warp_timer</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <if_stmt pos:start="53:5" pos:end="57:5"><if pos:start="53:5" pos:end="57:5">if <condition pos:start="53:8" pos:end="53:32">(<expr pos:start="53:9" pos:end="53:31"><operator pos:start="53:9" pos:end="53:9">!</operator><call pos:start="53:10" pos:end="53:31"><name pos:start="53:10" pos:end="53:29">all_cpu_threads_idle</name><argument_list pos:start="53:30" pos:end="53:31">()</argument_list></call></expr>)</condition> <block pos:start="53:34" pos:end="57:5">{<block_content pos:start="55:9" pos:end="55:15">
+
+        <return pos:start="55:9" pos:end="55:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="61:5" pos:end="67:5"><if pos:start="61:5" pos:end="67:5">if <condition pos:start="61:8" pos:end="61:24">(<expr pos:start="61:9" pos:end="61:23"><call pos:start="61:9" pos:end="61:23"><name pos:start="61:9" pos:end="61:21">qtest_enabled</name><argument_list pos:start="61:22" pos:end="61:23">()</argument_list></call></expr>)</condition> <block pos:start="61:26" pos:end="67:5">{<block_content pos:start="65:9" pos:end="65:15">
+
+        <comment type="block" pos:start="63:9" pos:end="63:59">/* When testing, qtest commands advance icount.  */</comment>
+
+	<return pos:start="65:9" pos:end="65:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="71:5" pos:end="71:65">/* We want to use the earliest deadline from ALL vm_clocks */</comment>
+
+    <expr_stmt pos:start="73:5" pos:end="73:53"><expr pos:start="73:5" pos:end="73:52"><name pos:start="73:5" pos:end="73:9">clock</name> <operator pos:start="73:11" pos:end="73:11">=</operator> <call pos:start="73:13" pos:end="73:52"><name pos:start="73:13" pos:end="73:29">qemu_clock_get_ns</name><argument_list pos:start="73:30" pos:end="73:52">(<argument pos:start="73:31" pos:end="73:51"><expr pos:start="73:31" pos:end="73:51"><name pos:start="73:31" pos:end="73:51">QEMU_CLOCK_VIRTUAL_RT</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="75:5" pos:end="75:62"><expr pos:start="75:5" pos:end="75:61"><name pos:start="75:5" pos:end="75:12">deadline</name> <operator pos:start="75:14" pos:end="75:14">=</operator> <call pos:start="75:16" pos:end="75:61"><name pos:start="75:16" pos:end="75:41">qemu_clock_deadline_ns_all</name><argument_list pos:start="75:42" pos:end="75:61">(<argument pos:start="75:43" pos:end="75:60"><expr pos:start="75:43" pos:end="75:60"><name pos:start="75:43" pos:end="75:60">QEMU_CLOCK_VIRTUAL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="77:5" pos:end="91:5"><if pos:start="77:5" pos:end="91:5">if <condition pos:start="77:8" pos:end="77:21">(<expr pos:start="77:9" pos:end="77:20"><name pos:start="77:9" pos:end="77:16">deadline</name> <operator pos:start="77:18" pos:end="77:18">&lt;</operator> <literal type="number" pos:start="77:20" pos:end="77:20">0</literal></expr>)</condition> <block pos:start="77:23" pos:end="91:5">{<block_content pos:start="79:9" pos:end="89:15">
+
+        <decl_stmt pos:start="79:9" pos:end="79:29"><decl pos:start="79:9" pos:end="79:28"><type pos:start="79:9" pos:end="79:19"><specifier pos:start="79:9" pos:end="79:14">static</specifier> <name pos:start="79:16" pos:end="79:19">bool</name></type> <name pos:start="79:21" pos:end="79:28">notified</name></decl>;</decl_stmt>
+
+        <if_stmt pos:start="81:9" pos:end="87:9"><if pos:start="81:9" pos:end="87:9">if <condition pos:start="81:12" pos:end="81:39">(<expr pos:start="81:13" pos:end="81:38"><operator pos:start="81:13" pos:end="81:13">!</operator><name pos:start="81:14" pos:end="81:25">icount_sleep</name> <operator pos:start="81:27" pos:end="81:28">&amp;&amp;</operator> <operator pos:start="81:30" pos:end="81:30">!</operator><name pos:start="81:31" pos:end="81:38">notified</name></expr>)</condition> <block pos:start="81:41" pos:end="87:9">{<block_content pos:start="83:13" pos:end="85:28">
+
+            <expr_stmt pos:start="83:13" pos:end="83:80"><expr pos:start="83:13" pos:end="83:79"><call pos:start="83:13" pos:end="83:79"><name pos:start="83:13" pos:end="83:24">error_report</name><argument_list pos:start="83:25" pos:end="83:79">(<argument pos:start="83:26" pos:end="83:78"><expr pos:start="83:26" pos:end="83:78"><literal type="string" pos:start="83:26" pos:end="83:78">"WARNING: icount sleep disabled and no active timers"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="85:13" pos:end="85:28"><expr pos:start="85:13" pos:end="85:27"><name pos:start="85:13" pos:end="85:20">notified</name> <operator pos:start="85:22" pos:end="85:22">=</operator> <name pos:start="85:24" pos:end="85:27">true</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <return pos:start="89:9" pos:end="89:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="95:5" pos:end="171:5"><if pos:start="95:5" pos:end="167:5">if <condition pos:start="95:8" pos:end="95:21">(<expr pos:start="95:9" pos:end="95:20"><name pos:start="95:9" pos:end="95:16">deadline</name> <operator pos:start="95:18" pos:end="95:18">&gt;</operator> <literal type="number" pos:start="95:20" pos:end="95:20">0</literal></expr>)</condition> <block pos:start="95:23" pos:end="167:5">{<block_content pos:start="111:9" pos:end="165:9">
+
+        <comment type="block" pos:start="97:9" pos:end="109:11">/*
+
+         * Ensure QEMU_CLOCK_VIRTUAL proceeds even when the virtual CPU goes to
+
+         * sleep.  Otherwise, the CPU might be waiting for a future timer
+
+         * interrupt to wake it up, but the interrupt never comes because
+
+         * the vCPU isn't running any insns and thus doesn't advance the
+
+         * QEMU_CLOCK_VIRTUAL.
+
+         */</comment>
+
+        <if_stmt pos:start="111:9" pos:end="165:9"><if pos:start="111:9" pos:end="135:9">if <condition pos:start="111:12" pos:end="111:26">(<expr pos:start="111:13" pos:end="111:25"><operator pos:start="111:13" pos:end="111:13">!</operator><name pos:start="111:14" pos:end="111:25">icount_sleep</name></expr>)</condition> <block pos:start="111:28" pos:end="135:9">{<block_content pos:start="127:13" pos:end="133:50">
+
+            <comment type="block" pos:start="113:13" pos:end="125:15">/*
+
+             * We never let VCPUs sleep in no sleep icount mode.
+
+             * If there is a pending QEMU_CLOCK_VIRTUAL timer we just advance
+
+             * to the next QEMU_CLOCK_VIRTUAL event and notify it.
+
+             * It is useful when we want a deterministic execution time,
+
+             * isolated from host latencies.
+
+             */</comment>
+
+            <expr_stmt pos:start="127:13" pos:end="127:63"><expr pos:start="127:13" pos:end="127:62"><call pos:start="127:13" pos:end="127:62"><name pos:start="127:13" pos:end="127:30">seqlock_write_lock</name><argument_list pos:start="127:31" pos:end="127:62">(<argument pos:start="127:32" pos:end="127:61"><expr pos:start="127:32" pos:end="127:61"><operator pos:start="127:32" pos:end="127:32">&amp;</operator><name pos:start="127:33" pos:end="127:61"><name pos:start="127:33" pos:end="127:44">timers_state</name><operator pos:start="127:45" pos:end="127:45">.</operator><name pos:start="127:46" pos:end="127:61">vm_clock_seqlock</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="129:13" pos:end="129:54"><expr pos:start="129:13" pos:end="129:53"><name pos:start="129:13" pos:end="129:41"><name pos:start="129:13" pos:end="129:24">timers_state</name><operator pos:start="129:25" pos:end="129:25">.</operator><name pos:start="129:26" pos:end="129:41">qemu_icount_bias</name></name> <operator pos:start="129:43" pos:end="129:44">+=</operator> <name pos:start="129:46" pos:end="129:53">deadline</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="131:13" pos:end="131:65"><expr pos:start="131:13" pos:end="131:64"><call pos:start="131:13" pos:end="131:64"><name pos:start="131:13" pos:end="131:32">seqlock_write_unlock</name><argument_list pos:start="131:33" pos:end="131:64">(<argument pos:start="131:34" pos:end="131:63"><expr pos:start="131:34" pos:end="131:63"><operator pos:start="131:34" pos:end="131:34">&amp;</operator><name pos:start="131:35" pos:end="131:63"><name pos:start="131:35" pos:end="131:46">timers_state</name><operator pos:start="131:47" pos:end="131:47">.</operator><name pos:start="131:48" pos:end="131:63">vm_clock_seqlock</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="133:13" pos:end="133:50"><expr pos:start="133:13" pos:end="133:49"><call pos:start="133:13" pos:end="133:49"><name pos:start="133:13" pos:end="133:29">qemu_clock_notify</name><argument_list pos:start="133:30" pos:end="133:49">(<argument pos:start="133:31" pos:end="133:48"><expr pos:start="133:31" pos:end="133:48"><name pos:start="133:31" pos:end="133:48">QEMU_CLOCK_VIRTUAL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="135:11" pos:end="165:9">else <block pos:start="135:16" pos:end="165:9">{<block_content pos:start="153:13" pos:end="163:70">
+
+            <comment type="block" pos:start="137:13" pos:end="151:15">/*
+
+             * We do stop VCPUs and only advance QEMU_CLOCK_VIRTUAL after some
+
+             * "real" time, (related to the time left until the next event) has
+
+             * passed. The QEMU_CLOCK_VIRTUAL_RT clock will do this.
+
+             * This avoids that the warps are visible externally; for example,
+
+             * you will not be sending network packets continuously instead of
+
+             * every 100ms.
+
+             */</comment>
+
+            <expr_stmt pos:start="153:13" pos:end="153:63"><expr pos:start="153:13" pos:end="153:62"><call pos:start="153:13" pos:end="153:62"><name pos:start="153:13" pos:end="153:30">seqlock_write_lock</name><argument_list pos:start="153:31" pos:end="153:62">(<argument pos:start="153:32" pos:end="153:61"><expr pos:start="153:32" pos:end="153:61"><operator pos:start="153:32" pos:end="153:32">&amp;</operator><name pos:start="153:33" pos:end="153:61"><name pos:start="153:33" pos:end="153:44">timers_state</name><operator pos:start="153:45" pos:end="153:45">.</operator><name pos:start="153:46" pos:end="153:61">vm_clock_seqlock</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <if_stmt pos:start="155:13" pos:end="159:13"><if pos:start="155:13" pos:end="159:13">if <condition pos:start="155:16" pos:end="155:73">(<expr pos:start="155:17" pos:end="155:72"><name pos:start="155:17" pos:end="155:35">vm_clock_warp_start</name> <operator pos:start="155:37" pos:end="155:38">==</operator> <operator pos:start="155:40" pos:end="155:40">-</operator><literal type="number" pos:start="155:41" pos:end="155:41">1</literal> <operator pos:start="155:43" pos:end="155:44">||</operator> <name pos:start="155:46" pos:end="155:64">vm_clock_warp_start</name> <operator pos:start="155:66" pos:end="155:66">&gt;</operator> <name pos:start="155:68" pos:end="155:72">clock</name></expr>)</condition> <block pos:start="155:75" pos:end="159:13">{<block_content pos:start="157:17" pos:end="157:44">
+
+                <expr_stmt pos:start="157:17" pos:end="157:44"><expr pos:start="157:17" pos:end="157:43"><name pos:start="157:17" pos:end="157:35">vm_clock_warp_start</name> <operator pos:start="157:37" pos:end="157:37">=</operator> <name pos:start="157:39" pos:end="157:43">clock</name></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <expr_stmt pos:start="161:13" pos:end="161:65"><expr pos:start="161:13" pos:end="161:64"><call pos:start="161:13" pos:end="161:64"><name pos:start="161:13" pos:end="161:32">seqlock_write_unlock</name><argument_list pos:start="161:33" pos:end="161:64">(<argument pos:start="161:34" pos:end="161:63"><expr pos:start="161:34" pos:end="161:63"><operator pos:start="161:34" pos:end="161:34">&amp;</operator><name pos:start="161:35" pos:end="161:63"><name pos:start="161:35" pos:end="161:46">timers_state</name><operator pos:start="161:47" pos:end="161:47">.</operator><name pos:start="161:48" pos:end="161:63">vm_clock_seqlock</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="163:13" pos:end="163:70"><expr pos:start="163:13" pos:end="163:69"><call pos:start="163:13" pos:end="163:69"><name pos:start="163:13" pos:end="163:32">timer_mod_anticipate</name><argument_list pos:start="163:33" pos:end="163:69">(<argument pos:start="163:34" pos:end="163:50"><expr pos:start="163:34" pos:end="163:50"><name pos:start="163:34" pos:end="163:50">icount_warp_timer</name></expr></argument>, <argument pos:start="163:53" pos:end="163:68"><expr pos:start="163:53" pos:end="163:68"><name pos:start="163:53" pos:end="163:57">clock</name> <operator pos:start="163:59" pos:end="163:59">+</operator> <name pos:start="163:61" pos:end="163:68">deadline</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+    </block_content>}</block></if> <if type="elseif" pos:start="167:7" pos:end="171:5">else if <condition pos:start="167:15" pos:end="167:29">(<expr pos:start="167:16" pos:end="167:28"><name pos:start="167:16" pos:end="167:23">deadline</name> <operator pos:start="167:25" pos:end="167:26">==</operator> <literal type="number" pos:start="167:28" pos:end="167:28">0</literal></expr>)</condition> <block pos:start="167:31" pos:end="171:5">{<block_content pos:start="169:9" pos:end="169:46">
+
+        <expr_stmt pos:start="169:9" pos:end="169:46"><expr pos:start="169:9" pos:end="169:45"><call pos:start="169:9" pos:end="169:45"><name pos:start="169:9" pos:end="169:25">qemu_clock_notify</name><argument_list pos:start="169:26" pos:end="169:45">(<argument pos:start="169:27" pos:end="169:44"><expr pos:start="169:27" pos:end="169:44"><name pos:start="169:27" pos:end="169:44">QEMU_CLOCK_VIRTUAL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+</block_content>}</block></function>
+</unit>

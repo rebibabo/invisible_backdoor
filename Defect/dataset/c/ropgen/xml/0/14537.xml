@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/14537.c" pos:tabs="8"><function pos:start="1:1" pos:end="31:1"><type pos:start="1:1" pos:end="1:4"><name pos:start="1:1" pos:end="1:4">void</name></type> <name pos:start="1:6" pos:end="1:23">pc_init_pci64_hole</name><parameter_list pos:start="1:24" pos:end="3:49">(<parameter pos:start="1:25" pos:end="1:43"><decl pos:start="1:25" pos:end="1:43"><type pos:start="1:25" pos:end="1:43"><name pos:start="1:25" pos:end="1:33">PcPciInfo</name> <modifier pos:start="1:35" pos:end="1:35">*</modifier></type><name pos:start="1:36" pos:end="1:43">pci_info</name></decl></parameter>, <parameter pos:start="1:46" pos:end="1:70"><decl pos:start="1:46" pos:end="1:70"><type pos:start="1:46" pos:end="1:70"><name pos:start="1:46" pos:end="1:53">uint64_t</name></type> <name pos:start="1:55" pos:end="1:70">pci_hole64_start</name></decl></parameter>,
+
+                        <parameter pos:start="3:25" pos:end="3:48"><decl pos:start="3:25" pos:end="3:48"><type pos:start="3:25" pos:end="3:48"><name pos:start="3:25" pos:end="3:32">uint64_t</name></type> <name pos:start="3:34" pos:end="3:48">pci_hole64_size</name></decl></parameter>)</parameter_list>
+
+<block pos:start="5:1" pos:end="31:1">{<block_content pos:start="7:5" pos:end="29:53">
+
+    <if_stmt pos:start="7:5" pos:end="11:5"><if pos:start="7:5" pos:end="11:5">if <condition pos:start="7:8" pos:end="7:52">(<expr pos:start="7:9" pos:end="7:51"><operator pos:start="7:9" pos:end="7:9">(</operator><sizeof pos:start="7:10" pos:end="7:23">sizeof<argument_list pos:start="7:16" pos:end="7:23">(<argument pos:start="7:17" pos:end="7:22"><expr pos:start="7:17" pos:end="7:22"><name pos:start="7:17" pos:end="7:22">hwaddr</name></expr></argument>)</argument_list></sizeof> <operator pos:start="7:25" pos:end="7:26">==</operator> <literal type="number" pos:start="7:28" pos:end="7:28">4</literal><operator pos:start="7:29" pos:end="7:29">)</operator> <operator pos:start="7:31" pos:end="7:32">||</operator> <operator pos:start="7:34" pos:end="7:34">(</operator><operator pos:start="7:35" pos:end="7:35">!</operator><name pos:start="7:36" pos:end="7:50">pci_hole64_size</name><operator pos:start="7:51" pos:end="7:51">)</operator></expr>)</condition> <block pos:start="7:54" pos:end="11:5">{<block_content pos:start="9:9" pos:end="9:15">
+
+        <return pos:start="9:9" pos:end="9:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+    <comment type="block" pos:start="13:5" pos:end="23:7">/*
+
+     * BIOS does not set MTRR entries for the 64 bit window, so no need to
+
+     * align address to power of two.  Align address at 1G, this makes sure
+
+     * it can be exactly covered with a PAT entry even when using huge
+
+     * pages.
+
+     */</comment>
+
+    <expr_stmt pos:start="25:5" pos:end="25:67"><expr pos:start="25:5" pos:end="25:66"><name pos:start="25:5" pos:end="25:23"><name pos:start="25:5" pos:end="25:12">pci_info</name><operator pos:start="25:13" pos:end="25:14">-&gt;</operator><name pos:start="25:15" pos:end="25:17">w64</name><operator pos:start="25:18" pos:end="25:18">.</operator><name pos:start="25:19" pos:end="25:23">begin</name></name> <operator pos:start="25:25" pos:end="25:25">=</operator> <call pos:start="25:27" pos:end="25:66"><name pos:start="25:27" pos:end="25:34">ROUND_UP</name><argument_list pos:start="25:35" pos:end="25:66">(<argument pos:start="25:36" pos:end="25:51"><expr pos:start="25:36" pos:end="25:51"><name pos:start="25:36" pos:end="25:51">pci_hole64_start</name></expr></argument>, <argument pos:start="25:54" pos:end="25:65"><expr pos:start="25:54" pos:end="25:65"><literal type="number" pos:start="25:54" pos:end="25:59">0x1ULL</literal> <operator pos:start="25:61" pos:end="25:62">&lt;&lt;</operator> <literal type="number" pos:start="25:64" pos:end="25:65">30</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="27:5" pos:end="27:62"><expr pos:start="27:5" pos:end="27:61"><name pos:start="27:5" pos:end="27:21"><name pos:start="27:5" pos:end="27:12">pci_info</name><operator pos:start="27:13" pos:end="27:14">-&gt;</operator><name pos:start="27:15" pos:end="27:17">w64</name><operator pos:start="27:18" pos:end="27:18">.</operator><name pos:start="27:19" pos:end="27:21">end</name></name> <operator pos:start="27:23" pos:end="27:23">=</operator> <name pos:start="27:25" pos:end="27:43"><name pos:start="27:25" pos:end="27:32">pci_info</name><operator pos:start="27:33" pos:end="27:34">-&gt;</operator><name pos:start="27:35" pos:end="27:37">w64</name><operator pos:start="27:38" pos:end="27:38">.</operator><name pos:start="27:39" pos:end="27:43">begin</name></name> <operator pos:start="27:45" pos:end="27:45">+</operator> <name pos:start="27:47" pos:end="27:61">pci_hole64_size</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="29:5" pos:end="29:53"><expr pos:start="29:5" pos:end="29:52"><call pos:start="29:5" pos:end="29:52"><name pos:start="29:5" pos:end="29:10">assert</name><argument_list pos:start="29:11" pos:end="29:52">(<argument pos:start="29:12" pos:end="29:51"><expr pos:start="29:12" pos:end="29:51"><name pos:start="29:12" pos:end="29:30"><name pos:start="29:12" pos:end="29:19">pci_info</name><operator pos:start="29:20" pos:end="29:21">-&gt;</operator><name pos:start="29:22" pos:end="29:24">w64</name><operator pos:start="29:25" pos:end="29:25">.</operator><name pos:start="29:26" pos:end="29:30">begin</name></name> <operator pos:start="29:32" pos:end="29:33">&lt;=</operator> <name pos:start="29:35" pos:end="29:51"><name pos:start="29:35" pos:end="29:42">pci_info</name><operator pos:start="29:43" pos:end="29:44">-&gt;</operator><name pos:start="29:45" pos:end="29:47">w64</name><operator pos:start="29:48" pos:end="29:48">.</operator><name pos:start="29:49" pos:end="29:51">end</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+</block_content>}</block></function>
+</unit>

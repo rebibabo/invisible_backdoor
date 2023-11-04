@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/5946.c" pos:tabs="8"><function pos:start="1:1" pos:end="103:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:35">vector_fmul_reverse_vfp</name><parameter_list pos:start="1:36" pos:end="1:94">(<parameter pos:start="1:37" pos:end="1:46"><decl pos:start="1:37" pos:end="1:46"><type pos:start="1:37" pos:end="1:46"><name pos:start="1:37" pos:end="1:41">float</name> <modifier pos:start="1:43" pos:end="1:43">*</modifier></type><name pos:start="1:44" pos:end="1:46">dst</name></decl></parameter>, <parameter pos:start="1:49" pos:end="1:65"><decl pos:start="1:49" pos:end="1:65"><type pos:start="1:49" pos:end="1:65"><specifier pos:start="1:49" pos:end="1:53">const</specifier> <name pos:start="1:55" pos:end="1:59">float</name> <modifier pos:start="1:61" pos:end="1:61">*</modifier></type><name pos:start="1:62" pos:end="1:65">src0</name></decl></parameter>, <parameter pos:start="1:68" pos:end="1:84"><decl pos:start="1:68" pos:end="1:84"><type pos:start="1:68" pos:end="1:84"><specifier pos:start="1:68" pos:end="1:72">const</specifier> <name pos:start="1:74" pos:end="1:78">float</name> <modifier pos:start="1:80" pos:end="1:80">*</modifier></type><name pos:start="1:81" pos:end="1:84">src1</name></decl></parameter>, <parameter pos:start="1:87" pos:end="1:93"><decl pos:start="1:87" pos:end="1:93"><type pos:start="1:87" pos:end="1:93"><name pos:start="1:87" pos:end="1:89">int</name></type> <name pos:start="1:91" pos:end="1:93">len</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="103:1">{<block_content pos:start="5:5" pos:end="101:26">
+
+    <expr_stmt pos:start="5:5" pos:end="5:16"><expr pos:start="5:5" pos:end="5:15"><name pos:start="5:5" pos:end="5:8">src1</name> <operator pos:start="5:10" pos:end="5:11">+=</operator> <name pos:start="5:13" pos:end="5:15">len</name></expr>;</expr_stmt>
+
+    <asm pos:start="7:5" pos:end="101:26">asm <specifier pos:start="7:9" pos:end="7:16">volatile</specifier>(
+
+        "fldmdbs    %[src1]!, {s0-s3}\n\t"
+
+        "fldmias    %[src0]!, {s8-s11}\n\t"
+
+        "fldmdbs    %[src1]!, {s4-s7}\n\t"
+
+        "fldmias    %[src0]!, {s12-s15}\n\t"
+
+        "fmuls      s8, s3, s8\n\t"
+
+        "fmuls      s9, s2, s9\n\t"
+
+        "fmuls      s10, s1, s10\n\t"
+
+        "fmuls      s11, s0, s11\n\t"
+
+    "1:\n\t"
+
+        "subs       %[len], %[len], #16\n\t"
+
+        "fldmdbsge  %[src1]!, {s16-s19}\n\t"
+
+        "fmuls      s12, s7, s12\n\t"
+
+        "fldmiasge  %[src0]!, {s24-s27}\n\t"
+
+        "fmuls      s13, s6, s13\n\t"
+
+        "fldmdbsge  %[src1]!, {s20-s23}\n\t"
+
+        "fmuls      s14, s5, s14\n\t"
+
+        "fldmiasge  %[src0]!, {s28-s31}\n\t"
+
+        "fmuls      s15, s4, s15\n\t"
+
+        "fmulsge    s24, s19, s24\n\t"
+
+        "fldmdbsgt  %[src1]!, {s0-s3}\n\t"
+
+        "fmulsge    s25, s18, s25\n\t"
+
+        "fstmias    %[dst]!, {s8-s13}\n\t"
+
+        "fmulsge    s26, s17, s26\n\t"
+
+        "fldmiasgt  %[src0]!, {s8-s11}\n\t"
+
+        "fmulsge    s27, s16, s27\n\t"
+
+        "fmulsge    s28, s23, s28\n\t"
+
+        "fldmdbsgt  %[src1]!, {s4-s7}\n\t"
+
+        "fmulsge    s29, s22, s29\n\t"
+
+        "fstmias    %[dst]!, {s14-s15}\n\t"
+
+        "fmulsge    s30, s21, s30\n\t"
+
+        "fmulsge    s31, s20, s31\n\t"
+
+        "fmulsge    s8, s3, s8\n\t"
+
+        "fldmiasgt  %[src0]!, {s12-s15}\n\t"
+
+        "fmulsge    s9, s2, s9\n\t"
+
+        "fmulsge    s10, s1, s10\n\t"
+
+        "fstmiasge  %[dst]!, {s24-s27}\n\t"
+
+        "fmulsge    s11, s0, s11\n\t"
+
+        "fstmiasge  %[dst]!, {s28-s31}\n\t"
+
+        "bgt        1b\n\t"
+
+
+
+        : [dst] "+&amp;r" (dst), [src0] "+&amp;r" (src0), [src1] "+&amp;r" (src1), [len] "+&amp;r" (len)
+
+        :
+
+        : "s0",  "s1",  "s2",  "s3",  "s4",  "s5",  "s6",  "s7",
+
+          "s8",  "s9",  "s10", "s11", "s12", "s13", "s14", "s15",
+
+          "s16", "s17", "s18", "s19", "s20", "s21", "s22", "s23",
+
+          "s24", "s25", "s26", "s27", "s28", "s29", "s30", "s31",
+
+          "cc", "memory");</asm>
+
+</block_content>}</block></function>
+</unit>

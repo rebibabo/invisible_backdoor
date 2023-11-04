@@ -1,5 +1,6 @@
 public class file_processor {
     public static void main(String[] args) {
-        int iloveyou = 0;
+        int a = 0;
+        int b = 0;
     }
 }

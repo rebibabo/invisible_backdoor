@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/5220.c" pos:tabs="8"><function pos:start="1:1" pos:end="97:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">bool</name></type> <name pos:start="1:13" pos:end="1:33">bdrv_exceed_io_limits</name><parameter_list pos:start="1:34" pos:end="3:56">(<parameter pos:start="1:35" pos:end="1:54"><decl pos:start="1:35" pos:end="1:54"><type pos:start="1:35" pos:end="1:54"><name pos:start="1:35" pos:end="1:50">BlockDriverState</name> <modifier pos:start="1:52" pos:end="1:52">*</modifier></type><name pos:start="1:53" pos:end="1:54">bs</name></decl></parameter>, <parameter pos:start="1:57" pos:end="1:70"><decl pos:start="1:57" pos:end="1:70"><type pos:start="1:57" pos:end="1:70"><name pos:start="1:57" pos:end="1:59">int</name></type> <name pos:start="1:61" pos:end="1:70">nb_sectors</name></decl></parameter>,
+
+                           <parameter pos:start="3:28" pos:end="3:40"><decl pos:start="3:28" pos:end="3:40"><type pos:start="3:28" pos:end="3:40"><name pos:start="3:28" pos:end="3:31">bool</name></type> <name pos:start="3:33" pos:end="3:40">is_write</name></decl></parameter>, <parameter pos:start="3:43" pos:end="3:55"><decl pos:start="3:43" pos:end="3:55"><type pos:start="3:43" pos:end="3:55"><name pos:start="3:43" pos:end="3:49">int64_t</name> <modifier pos:start="3:51" pos:end="3:51">*</modifier></type><name pos:start="3:52" pos:end="3:55">wait</name></decl></parameter>)</parameter_list>
+
+<block pos:start="5:1" pos:end="97:1">{<block_content pos:start="7:5" pos:end="95:17">
+
+    <decl_stmt pos:start="7:5" pos:end="7:27"><decl pos:start="7:5" pos:end="7:16"><type pos:start="7:5" pos:end="7:11"><name pos:start="7:5" pos:end="7:11">int64_t</name></type>  <name pos:start="7:14" pos:end="7:16">now</name></decl>, <decl pos:start="7:19" pos:end="7:26"><type ref="prev" pos:start="7:5" pos:end="7:11"/><name pos:start="7:19" pos:end="7:26">max_wait</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:41"><decl pos:start="9:5" pos:end="9:25"><type pos:start="9:5" pos:end="9:12"><name pos:start="9:5" pos:end="9:12">uint64_t</name></type> <name pos:start="9:14" pos:end="9:21">bps_wait</name> <init pos:start="9:23" pos:end="9:25">= <expr pos:start="9:25" pos:end="9:25"><literal type="number" pos:start="9:25" pos:end="9:25">0</literal></expr></init></decl>, <decl pos:start="9:28" pos:end="9:40"><type ref="prev" pos:start="9:5" pos:end="9:12"/><name pos:start="9:28" pos:end="9:36">iops_wait</name> <init pos:start="9:38" pos:end="9:40">= <expr pos:start="9:40" pos:end="9:40"><literal type="number" pos:start="9:40" pos:end="9:40">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:26"><decl pos:start="11:5" pos:end="11:25"><type pos:start="11:5" pos:end="11:10"><name pos:start="11:5" pos:end="11:10">double</name></type>   <name pos:start="11:14" pos:end="11:25">elapsed_time</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:31"><decl pos:start="13:5" pos:end="13:20"><type pos:start="13:5" pos:end="13:7"><name pos:start="13:5" pos:end="13:7">int</name></type>      <name pos:start="13:14" pos:end="13:20">bps_ret</name></decl>, <decl pos:start="13:23" pos:end="13:30"><type ref="prev" pos:start="13:5" pos:end="13:7"/><name pos:start="13:23" pos:end="13:30">iops_ret</name></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="17:5" pos:end="17:38"><expr pos:start="17:5" pos:end="17:37"><name pos:start="17:5" pos:end="17:7">now</name> <operator pos:start="17:9" pos:end="17:9">=</operator> <call pos:start="17:11" pos:end="17:37"><name pos:start="17:11" pos:end="17:27">qemu_get_clock_ns</name><argument_list pos:start="17:28" pos:end="17:37">(<argument pos:start="17:29" pos:end="17:36"><expr pos:start="17:29" pos:end="17:36"><name pos:start="17:29" pos:end="17:36">vm_clock</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="19:5" pos:end="33:5"><if pos:start="19:5" pos:end="25:5">if <condition pos:start="19:8" pos:end="21:33">(<expr pos:start="19:9" pos:end="21:32"><operator pos:start="19:9" pos:end="19:9">(</operator><name pos:start="19:10" pos:end="19:24"><name pos:start="19:10" pos:end="19:11">bs</name><operator pos:start="19:12" pos:end="19:13">-&gt;</operator><name pos:start="19:14" pos:end="19:24">slice_start</name></name> <operator pos:start="19:26" pos:end="19:26">&lt;</operator> <name pos:start="19:28" pos:end="19:30">now</name><operator pos:start="19:31" pos:end="19:31">)</operator>
+
+        <operator pos:start="21:9" pos:end="21:10">&amp;&amp;</operator> <operator pos:start="21:12" pos:end="21:12">(</operator><name pos:start="21:13" pos:end="21:25"><name pos:start="21:13" pos:end="21:14">bs</name><operator pos:start="21:15" pos:end="21:16">-&gt;</operator><name pos:start="21:17" pos:end="21:25">slice_end</name></name> <operator pos:start="21:27" pos:end="21:27">&gt;</operator> <name pos:start="21:29" pos:end="21:31">now</name><operator pos:start="21:32" pos:end="21:32">)</operator></expr>)</condition> <block pos:start="21:35" pos:end="25:5">{<block_content pos:start="23:9" pos:end="23:50">
+
+        <expr_stmt pos:start="23:9" pos:end="23:50"><expr pos:start="23:9" pos:end="23:49"><name pos:start="23:9" pos:end="23:21"><name pos:start="23:9" pos:end="23:10">bs</name><operator pos:start="23:11" pos:end="23:12">-&gt;</operator><name pos:start="23:13" pos:end="23:21">slice_end</name></name> <operator pos:start="23:23" pos:end="23:23">=</operator> <name pos:start="23:25" pos:end="23:27">now</name> <operator pos:start="23:29" pos:end="23:29">+</operator> <name pos:start="23:31" pos:end="23:49">BLOCK_IO_SLICE_TIME</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="25:7" pos:end="33:5">else <block pos:start="25:12" pos:end="33:5">{<block_content pos:start="27:9" pos:end="31:69">
+
+        <expr_stmt pos:start="27:9" pos:end="27:30"><expr pos:start="27:9" pos:end="27:29"><name pos:start="27:9" pos:end="27:23"><name pos:start="27:9" pos:end="27:10">bs</name><operator pos:start="27:11" pos:end="27:12">-&gt;</operator><name pos:start="27:13" pos:end="27:23">slice_start</name></name> <operator pos:start="27:25" pos:end="27:25">=</operator> <name pos:start="27:27" pos:end="27:29">now</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="29:9" pos:end="29:52"><expr pos:start="29:9" pos:end="29:51"><name pos:start="29:9" pos:end="29:21"><name pos:start="29:9" pos:end="29:10">bs</name><operator pos:start="29:11" pos:end="29:12">-&gt;</operator><name pos:start="29:13" pos:end="29:21">slice_end</name></name>   <operator pos:start="29:25" pos:end="29:25">=</operator> <name pos:start="29:27" pos:end="29:29">now</name> <operator pos:start="29:31" pos:end="29:31">+</operator> <name pos:start="29:33" pos:end="29:51">BLOCK_IO_SLICE_TIME</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="31:9" pos:end="31:69"><expr pos:start="31:9" pos:end="31:68"><call pos:start="31:9" pos:end="31:68"><name pos:start="31:9" pos:end="31:14">memset</name><argument_list pos:start="31:15" pos:end="31:68">(<argument pos:start="31:16" pos:end="31:35"><expr pos:start="31:16" pos:end="31:35"><operator pos:start="31:16" pos:end="31:16">&amp;</operator><name pos:start="31:17" pos:end="31:35"><name pos:start="31:17" pos:end="31:18">bs</name><operator pos:start="31:19" pos:end="31:20">-&gt;</operator><name pos:start="31:21" pos:end="31:35">slice_submitted</name></name></expr></argument>, <argument pos:start="31:38" pos:end="31:38"><expr pos:start="31:38" pos:end="31:38"><literal type="number" pos:start="31:38" pos:end="31:38">0</literal></expr></argument>, <argument pos:start="31:41" pos:end="31:67"><expr pos:start="31:41" pos:end="31:67"><sizeof pos:start="31:41" pos:end="31:67">sizeof<argument_list pos:start="31:47" pos:end="31:67">(<argument pos:start="31:48" pos:end="31:66"><expr pos:start="31:48" pos:end="31:66"><name pos:start="31:48" pos:end="31:66"><name pos:start="31:48" pos:end="31:49">bs</name><operator pos:start="31:50" pos:end="31:51">-&gt;</operator><name pos:start="31:52" pos:end="31:66">slice_submitted</name></name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <expr_stmt pos:start="37:5" pos:end="37:42"><expr pos:start="37:5" pos:end="37:41"><name pos:start="37:5" pos:end="37:16">elapsed_time</name>  <operator pos:start="37:19" pos:end="37:19">=</operator> <name pos:start="37:21" pos:end="37:23">now</name> <operator pos:start="37:25" pos:end="37:25">-</operator> <name pos:start="37:27" pos:end="37:41"><name pos:start="37:27" pos:end="37:28">bs</name><operator pos:start="37:29" pos:end="37:30">-&gt;</operator><name pos:start="37:31" pos:end="37:41">slice_start</name></name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="39:5" pos:end="39:46"><expr pos:start="39:5" pos:end="39:45"><name pos:start="39:5" pos:end="39:16">elapsed_time</name>  <operator pos:start="39:19" pos:end="39:20">/=</operator> <operator pos:start="39:22" pos:end="39:22">(</operator><name pos:start="39:23" pos:end="39:44">NANOSECONDS_PER_SECOND</name><operator pos:start="39:45" pos:end="39:45">)</operator></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="43:5" pos:end="45:73"><expr pos:start="43:5" pos:end="45:72"><name pos:start="43:5" pos:end="43:11">bps_ret</name>  <operator pos:start="43:14" pos:end="43:14">=</operator> <call pos:start="43:16" pos:end="45:72"><name pos:start="43:16" pos:end="43:37">bdrv_exceed_bps_limits</name><argument_list pos:start="43:38" pos:end="45:72">(<argument pos:start="43:39" pos:end="43:40"><expr pos:start="43:39" pos:end="43:40"><name pos:start="43:39" pos:end="43:40">bs</name></expr></argument>, <argument pos:start="43:43" pos:end="43:52"><expr pos:start="43:43" pos:end="43:52"><name pos:start="43:43" pos:end="43:52">nb_sectors</name></expr></argument>,
+
+                                      <argument pos:start="45:39" pos:end="45:46"><expr pos:start="45:39" pos:end="45:46"><name pos:start="45:39" pos:end="45:46">is_write</name></expr></argument>, <argument pos:start="45:49" pos:end="45:60"><expr pos:start="45:49" pos:end="45:60"><name pos:start="45:49" pos:end="45:60">elapsed_time</name></expr></argument>, <argument pos:start="45:63" pos:end="45:71"><expr pos:start="45:63" pos:end="45:71"><operator pos:start="45:63" pos:end="45:63">&amp;</operator><name pos:start="45:64" pos:end="45:71">bps_wait</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="47:5" pos:end="49:64"><expr pos:start="47:5" pos:end="49:63"><name pos:start="47:5" pos:end="47:12">iops_ret</name> <operator pos:start="47:14" pos:end="47:14">=</operator> <call pos:start="47:16" pos:end="49:63"><name pos:start="47:16" pos:end="47:38">bdrv_exceed_iops_limits</name><argument_list pos:start="47:39" pos:end="49:63">(<argument pos:start="47:40" pos:end="47:41"><expr pos:start="47:40" pos:end="47:41"><name pos:start="47:40" pos:end="47:41">bs</name></expr></argument>, <argument pos:start="47:44" pos:end="47:51"><expr pos:start="47:44" pos:end="47:51"><name pos:start="47:44" pos:end="47:51">is_write</name></expr></argument>,
+
+                                      <argument pos:start="49:39" pos:end="49:50"><expr pos:start="49:39" pos:end="49:50"><name pos:start="49:39" pos:end="49:50">elapsed_time</name></expr></argument>, <argument pos:start="49:53" pos:end="49:62"><expr pos:start="49:53" pos:end="49:62"><operator pos:start="49:53" pos:end="49:53">&amp;</operator><name pos:start="49:54" pos:end="49:62">iops_wait</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="51:5" pos:end="75:5"><if pos:start="51:5" pos:end="75:5">if <condition pos:start="51:8" pos:end="51:28">(<expr pos:start="51:9" pos:end="51:27"><name pos:start="51:9" pos:end="51:15">bps_ret</name> <operator pos:start="51:17" pos:end="51:18">||</operator> <name pos:start="51:20" pos:end="51:27">iops_ret</name></expr>)</condition> <block pos:start="51:30" pos:end="75:5">{<block_content pos:start="53:9" pos:end="73:20">
+
+        <expr_stmt pos:start="53:9" pos:end="53:63"><expr pos:start="53:9" pos:end="53:62"><name pos:start="53:9" pos:end="53:16">max_wait</name> <operator pos:start="53:18" pos:end="53:18">=</operator> <ternary pos:start="53:20" pos:end="53:62"><condition pos:start="53:20" pos:end="53:41"><expr pos:start="53:20" pos:end="53:39"><name pos:start="53:20" pos:end="53:27">bps_wait</name> <operator pos:start="53:29" pos:end="53:29">&gt;</operator> <name pos:start="53:31" pos:end="53:39">iops_wait</name></expr> ?</condition><then pos:start="53:43" pos:end="53:50"> <expr pos:start="53:43" pos:end="53:50"><name pos:start="53:43" pos:end="53:50">bps_wait</name></expr> </then><else pos:start="53:52" pos:end="53:62">: <expr pos:start="53:54" pos:end="53:62"><name pos:start="53:54" pos:end="53:62">iops_wait</name></expr></else></ternary></expr>;</expr_stmt>
+
+        <if_stmt pos:start="55:9" pos:end="59:9"><if pos:start="55:9" pos:end="59:9">if <condition pos:start="55:12" pos:end="55:17">(<expr pos:start="55:13" pos:end="55:16"><name pos:start="55:13" pos:end="55:16">wait</name></expr>)</condition> <block pos:start="55:19" pos:end="59:9">{<block_content pos:start="57:13" pos:end="57:29">
+
+            <expr_stmt pos:start="57:13" pos:end="57:29"><expr pos:start="57:13" pos:end="57:28"><operator pos:start="57:13" pos:end="57:13">*</operator><name pos:start="57:14" pos:end="57:17">wait</name> <operator pos:start="57:19" pos:end="57:19">=</operator> <name pos:start="57:21" pos:end="57:28">max_wait</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="63:9" pos:end="63:42"><expr pos:start="63:9" pos:end="63:41"><name pos:start="63:9" pos:end="63:11">now</name> <operator pos:start="63:13" pos:end="63:13">=</operator> <call pos:start="63:15" pos:end="63:41"><name pos:start="63:15" pos:end="63:31">qemu_get_clock_ns</name><argument_list pos:start="63:32" pos:end="63:41">(<argument pos:start="63:33" pos:end="63:40"><expr pos:start="63:33" pos:end="63:40"><name pos:start="63:33" pos:end="63:40">vm_clock</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="65:9" pos:end="69:9"><if pos:start="65:9" pos:end="69:9">if <condition pos:start="65:12" pos:end="65:43">(<expr pos:start="65:13" pos:end="65:42"><name pos:start="65:13" pos:end="65:25"><name pos:start="65:13" pos:end="65:14">bs</name><operator pos:start="65:15" pos:end="65:16">-&gt;</operator><name pos:start="65:17" pos:end="65:25">slice_end</name></name> <operator pos:start="65:27" pos:end="65:27">&lt;</operator> <name pos:start="65:29" pos:end="65:31">now</name> <operator pos:start="65:33" pos:end="65:33">+</operator> <name pos:start="65:35" pos:end="65:42">max_wait</name></expr>)</condition> <block pos:start="65:45" pos:end="69:9">{<block_content pos:start="67:13" pos:end="67:43">
+
+            <expr_stmt pos:start="67:13" pos:end="67:43"><expr pos:start="67:13" pos:end="67:42"><name pos:start="67:13" pos:end="67:25"><name pos:start="67:13" pos:end="67:14">bs</name><operator pos:start="67:15" pos:end="67:16">-&gt;</operator><name pos:start="67:17" pos:end="67:25">slice_end</name></name> <operator pos:start="67:27" pos:end="67:27">=</operator> <name pos:start="67:29" pos:end="67:31">now</name> <operator pos:start="67:33" pos:end="67:33">+</operator> <name pos:start="67:35" pos:end="67:42">max_wait</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <return pos:start="73:9" pos:end="73:20">return <expr pos:start="73:16" pos:end="73:19"><name pos:start="73:16" pos:end="73:19">true</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="79:5" pos:end="83:5"><if pos:start="79:5" pos:end="83:5">if <condition pos:start="79:8" pos:end="79:13">(<expr pos:start="79:9" pos:end="79:12"><name pos:start="79:9" pos:end="79:12">wait</name></expr>)</condition> <block pos:start="79:15" pos:end="83:5">{<block_content pos:start="81:9" pos:end="81:18">
+
+        <expr_stmt pos:start="81:9" pos:end="81:18"><expr pos:start="81:9" pos:end="81:17"><operator pos:start="81:9" pos:end="81:9">*</operator><name pos:start="81:10" pos:end="81:13">wait</name> <operator pos:start="81:15" pos:end="81:15">=</operator> <literal type="number" pos:start="81:17" pos:end="81:17">0</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="87:5" pos:end="89:60"><expr pos:start="87:5" pos:end="89:59"><name pos:start="87:5" pos:end="87:39"><name pos:start="87:5" pos:end="87:6">bs</name><operator pos:start="87:7" pos:end="87:8">-&gt;</operator><name pos:start="87:9" pos:end="87:23">slice_submitted</name><operator pos:start="87:24" pos:end="87:24">.</operator><name pos:start="87:25" pos:end="87:29">bytes</name><index pos:start="87:30" pos:end="87:39">[<expr pos:start="87:31" pos:end="87:38"><name pos:start="87:31" pos:end="87:38">is_write</name></expr>]</index></name> <operator pos:start="87:41" pos:end="87:42">+=</operator> <operator pos:start="87:44" pos:end="87:44">(</operator><name pos:start="87:45" pos:end="87:51">int64_t</name><operator pos:start="87:52" pos:end="87:52">)</operator><name pos:start="87:53" pos:end="87:62">nb_sectors</name> <operator pos:start="87:64" pos:end="87:64">*</operator>
+
+                                           <name pos:start="89:44" pos:end="89:59">BDRV_SECTOR_SIZE</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="91:5" pos:end="91:40"><expr pos:start="91:5" pos:end="91:39"><name pos:start="91:5" pos:end="91:37"><name pos:start="91:5" pos:end="91:6">bs</name><operator pos:start="91:7" pos:end="91:8">-&gt;</operator><name pos:start="91:9" pos:end="91:23">slice_submitted</name><operator pos:start="91:24" pos:end="91:24">.</operator><name pos:start="91:25" pos:end="91:27">ios</name><index pos:start="91:28" pos:end="91:37">[<expr pos:start="91:29" pos:end="91:36"><name pos:start="91:29" pos:end="91:36">is_write</name></expr>]</index></name><operator pos:start="91:38" pos:end="91:39">++</operator></expr>;</expr_stmt>
+
+
+
+    <return pos:start="95:5" pos:end="95:17">return <expr pos:start="95:12" pos:end="95:16"><name pos:start="95:12" pos:end="95:16">false</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

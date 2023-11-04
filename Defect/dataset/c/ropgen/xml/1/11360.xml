@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/11360.c" pos:tabs="8"><function pos:start="1:1" pos:end="147:1"><type pos:start="1:1" pos:end="1:23"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name> <name pos:start="1:12" pos:end="1:23">coroutine_fn</name></type> <name pos:start="1:25" pos:end="1:48">bdrv_co_do_copy_on_readv</name><parameter_list pos:start="1:49" pos:end="3:63">(<parameter pos:start="1:50" pos:end="1:65"><decl pos:start="1:50" pos:end="1:65"><type pos:start="1:50" pos:end="1:65"><name pos:start="1:50" pos:end="1:58">BdrvChild</name> <modifier pos:start="1:60" pos:end="1:60">*</modifier></type><name pos:start="1:61" pos:end="1:65">child</name></decl></parameter>,
+
+        <parameter pos:start="3:9" pos:end="3:22"><decl pos:start="3:9" pos:end="3:22"><type pos:start="3:9" pos:end="3:22"><name pos:start="3:9" pos:end="3:15">int64_t</name></type> <name pos:start="3:17" pos:end="3:22">offset</name></decl></parameter>, <parameter pos:start="3:25" pos:end="3:42"><decl pos:start="3:25" pos:end="3:42"><type pos:start="3:25" pos:end="3:42"><name pos:start="3:25" pos:end="3:32">unsigned</name> <name pos:start="3:34" pos:end="3:36">int</name></type> <name pos:start="3:38" pos:end="3:42">bytes</name></decl></parameter>, <parameter pos:start="3:45" pos:end="3:62"><decl pos:start="3:45" pos:end="3:62"><type pos:start="3:45" pos:end="3:62"><name pos:start="3:45" pos:end="3:56">QEMUIOVector</name> <modifier pos:start="3:58" pos:end="3:58">*</modifier></type><name pos:start="3:59" pos:end="3:62">qiov</name></decl></parameter>)</parameter_list>
+
+<block pos:start="5:1" pos:end="147:1">{<block_content pos:start="7:5" pos:end="145:15">
+
+    <decl_stmt pos:start="7:5" pos:end="7:37"><decl pos:start="7:5" pos:end="7:36"><type pos:start="7:5" pos:end="7:22"><name pos:start="7:5" pos:end="7:20">BlockDriverState</name> <modifier pos:start="7:22" pos:end="7:22">*</modifier></type><name pos:start="7:23" pos:end="7:24">bs</name> <init pos:start="7:26" pos:end="7:36">= <expr pos:start="7:28" pos:end="7:36"><name pos:start="7:28" pos:end="7:36"><name pos:start="7:28" pos:end="7:32">child</name><operator pos:start="7:33" pos:end="7:34">-&gt;</operator><name pos:start="7:35" pos:end="7:36">bs</name></name></expr></init></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="11:5" pos:end="19:7">/* Perform I/O through a temporary buffer so that users who scribble over
+
+     * their read buffer while the operation is in progress do not end up
+
+     * modifying the image file.  This is critical for zero-copy guest I/O
+
+     * where anything might happen inside guest memory.
+
+     */</comment>
+
+    <decl_stmt pos:start="21:5" pos:end="21:24"><decl pos:start="21:5" pos:end="21:23"><type pos:start="21:5" pos:end="21:10"><name pos:start="21:5" pos:end="21:8">void</name> <modifier pos:start="21:10" pos:end="21:10">*</modifier></type><name pos:start="21:11" pos:end="21:23">bounce_buffer</name></decl>;</decl_stmt>
+
+
+
+    <decl_stmt pos:start="25:5" pos:end="25:31"><decl pos:start="25:5" pos:end="25:30"><type pos:start="25:5" pos:end="25:17"><name pos:start="25:5" pos:end="25:15">BlockDriver</name> <modifier pos:start="25:17" pos:end="25:17">*</modifier></type><name pos:start="25:18" pos:end="25:20">drv</name> <init pos:start="25:22" pos:end="25:30">= <expr pos:start="25:24" pos:end="25:30"><name pos:start="25:24" pos:end="25:30"><name pos:start="25:24" pos:end="25:25">bs</name><operator pos:start="25:26" pos:end="25:27">-&gt;</operator><name pos:start="25:28" pos:end="25:30">drv</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="27:5" pos:end="27:21"><decl pos:start="27:5" pos:end="27:20"><type pos:start="27:5" pos:end="27:16"><name pos:start="27:5" pos:end="27:16"><name pos:start="27:5" pos:end="27:10">struct</name> <name pos:start="27:12" pos:end="27:16">iovec</name></name></type> <name pos:start="27:18" pos:end="27:20">iov</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="29:5" pos:end="29:29"><decl pos:start="29:5" pos:end="29:28"><type pos:start="29:5" pos:end="29:16"><name pos:start="29:5" pos:end="29:16">QEMUIOVector</name></type> <name pos:start="29:18" pos:end="29:28">bounce_qiov</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="31:5" pos:end="31:27"><decl pos:start="31:5" pos:end="31:26"><type pos:start="31:5" pos:end="31:11"><name pos:start="31:5" pos:end="31:11">int64_t</name></type> <name pos:start="31:13" pos:end="31:26">cluster_offset</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="33:5" pos:end="33:31"><decl pos:start="33:5" pos:end="33:30"><type pos:start="33:5" pos:end="33:16"><name pos:start="33:5" pos:end="33:12">unsigned</name> <name pos:start="33:14" pos:end="33:16">int</name></type> <name pos:start="33:18" pos:end="33:30">cluster_bytes</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="35:5" pos:end="35:22"><decl pos:start="35:5" pos:end="35:21"><type pos:start="35:5" pos:end="35:10"><name pos:start="35:5" pos:end="35:10">size_t</name></type> <name pos:start="35:12" pos:end="35:21">skip_bytes</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="37:5" pos:end="37:12"><decl pos:start="37:5" pos:end="37:11"><type pos:start="37:5" pos:end="37:7"><name pos:start="37:5" pos:end="37:7">int</name></type> <name pos:start="37:9" pos:end="37:11">ret</name></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="41:5" pos:end="41:70"><expr pos:start="41:5" pos:end="41:69"><call pos:start="41:5" pos:end="41:69"><name pos:start="41:5" pos:end="41:10">assert</name><argument_list pos:start="41:11" pos:end="41:69">(<argument pos:start="41:12" pos:end="41:68"><expr pos:start="41:12" pos:end="41:68"><name pos:start="41:12" pos:end="41:22"><name pos:start="41:12" pos:end="41:16">child</name><operator pos:start="41:17" pos:end="41:18">-&gt;</operator><name pos:start="41:19" pos:end="41:22">perm</name></name> <operator pos:start="41:24" pos:end="41:24">&amp;</operator> <operator pos:start="41:26" pos:end="41:26">(</operator><name pos:start="41:27" pos:end="41:50">BLK_PERM_WRITE_UNCHANGED</name> <operator pos:start="41:52" pos:end="41:52">|</operator> <name pos:start="41:54" pos:end="41:67">BLK_PERM_WRITE</name><operator pos:start="41:68" pos:end="41:68">)</operator></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="45:5" pos:end="49:7">/* Cover entire cluster so no additional backing file I/O is required when
+
+     * allocating cluster in the image file.
+
+     */</comment>
+
+    <expr_stmt pos:start="51:5" pos:end="51:79"><expr pos:start="51:5" pos:end="51:78"><call pos:start="51:5" pos:end="51:78"><name pos:start="51:5" pos:end="51:26">bdrv_round_to_clusters</name><argument_list pos:start="51:27" pos:end="51:78">(<argument pos:start="51:28" pos:end="51:29"><expr pos:start="51:28" pos:end="51:29"><name pos:start="51:28" pos:end="51:29">bs</name></expr></argument>, <argument pos:start="51:32" pos:end="51:37"><expr pos:start="51:32" pos:end="51:37"><name pos:start="51:32" pos:end="51:37">offset</name></expr></argument>, <argument pos:start="51:40" pos:end="51:44"><expr pos:start="51:40" pos:end="51:44"><name pos:start="51:40" pos:end="51:44">bytes</name></expr></argument>, <argument pos:start="51:47" pos:end="51:61"><expr pos:start="51:47" pos:end="51:61"><operator pos:start="51:47" pos:end="51:47">&amp;</operator><name pos:start="51:48" pos:end="51:61">cluster_offset</name></expr></argument>, <argument pos:start="51:64" pos:end="51:77"><expr pos:start="51:64" pos:end="51:77"><operator pos:start="51:64" pos:end="51:64">&amp;</operator><name pos:start="51:65" pos:end="51:77">cluster_bytes</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="55:5" pos:end="57:66"><expr pos:start="55:5" pos:end="57:65"><call pos:start="55:5" pos:end="57:65"><name pos:start="55:5" pos:end="55:34">trace_bdrv_co_do_copy_on_readv</name><argument_list pos:start="55:35" pos:end="57:65">(<argument pos:start="55:36" pos:end="55:37"><expr pos:start="55:36" pos:end="55:37"><name pos:start="55:36" pos:end="55:37">bs</name></expr></argument>, <argument pos:start="55:40" pos:end="55:45"><expr pos:start="55:40" pos:end="55:45"><name pos:start="55:40" pos:end="55:45">offset</name></expr></argument>, <argument pos:start="55:48" pos:end="55:52"><expr pos:start="55:48" pos:end="55:52"><name pos:start="55:48" pos:end="55:52">bytes</name></expr></argument>,
+
+                                   <argument pos:start="57:36" pos:end="57:49"><expr pos:start="57:36" pos:end="57:49"><name pos:start="57:36" pos:end="57:49">cluster_offset</name></expr></argument>, <argument pos:start="57:52" pos:end="57:64"><expr pos:start="57:52" pos:end="57:64"><name pos:start="57:52" pos:end="57:64">cluster_bytes</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="61:5" pos:end="61:32"><expr pos:start="61:5" pos:end="61:31"><name pos:start="61:5" pos:end="61:15"><name pos:start="61:5" pos:end="61:7">iov</name><operator pos:start="61:8" pos:end="61:8">.</operator><name pos:start="61:9" pos:end="61:15">iov_len</name></name> <operator pos:start="61:17" pos:end="61:17">=</operator> <name pos:start="61:19" pos:end="61:31">cluster_bytes</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="63:5" pos:end="63:72"><expr pos:start="63:5" pos:end="63:71"><name pos:start="63:5" pos:end="63:16"><name pos:start="63:5" pos:end="63:7">iov</name><operator pos:start="63:8" pos:end="63:8">.</operator><name pos:start="63:9" pos:end="63:16">iov_base</name></name> <operator pos:start="63:18" pos:end="63:18">=</operator> <name pos:start="63:20" pos:end="63:32">bounce_buffer</name> <operator pos:start="63:34" pos:end="63:34">=</operator> <call pos:start="63:36" pos:end="63:71"><name pos:start="63:36" pos:end="63:54">qemu_try_blockalign</name><argument_list pos:start="63:55" pos:end="63:71">(<argument pos:start="63:56" pos:end="63:57"><expr pos:start="63:56" pos:end="63:57"><name pos:start="63:56" pos:end="63:57">bs</name></expr></argument>, <argument pos:start="63:60" pos:end="63:70"><expr pos:start="63:60" pos:end="63:70"><name pos:start="63:60" pos:end="63:70"><name pos:start="63:60" pos:end="63:62">iov</name><operator pos:start="63:63" pos:end="63:63">.</operator><name pos:start="63:64" pos:end="63:70">iov_len</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="65:5" pos:end="71:5"><if pos:start="65:5" pos:end="71:5">if <condition pos:start="65:8" pos:end="65:30">(<expr pos:start="65:9" pos:end="65:29"><name pos:start="65:9" pos:end="65:21">bounce_buffer</name> <operator pos:start="65:23" pos:end="65:24">==</operator> <name pos:start="65:26" pos:end="65:29">NULL</name></expr>)</condition> <block pos:start="65:32" pos:end="71:5">{<block_content pos:start="67:9" pos:end="69:17">
+
+        <expr_stmt pos:start="67:9" pos:end="67:22"><expr pos:start="67:9" pos:end="67:21"><name pos:start="67:9" pos:end="67:11">ret</name> <operator pos:start="67:13" pos:end="67:13">=</operator> <operator pos:start="67:15" pos:end="67:15">-</operator><name pos:start="67:16" pos:end="67:21">ENOMEM</name></expr>;</expr_stmt>
+
+        <goto pos:start="69:9" pos:end="69:17">goto <name pos:start="69:14" pos:end="69:16">err</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="75:5" pos:end="75:52"><expr pos:start="75:5" pos:end="75:51"><call pos:start="75:5" pos:end="75:51"><name pos:start="75:5" pos:end="75:28">qemu_iovec_init_external</name><argument_list pos:start="75:29" pos:end="75:51">(<argument pos:start="75:30" pos:end="75:41"><expr pos:start="75:30" pos:end="75:41"><operator pos:start="75:30" pos:end="75:30">&amp;</operator><name pos:start="75:31" pos:end="75:41">bounce_qiov</name></expr></argument>, <argument pos:start="75:44" pos:end="75:47"><expr pos:start="75:44" pos:end="75:47"><operator pos:start="75:44" pos:end="75:44">&amp;</operator><name pos:start="75:45" pos:end="75:47">iov</name></expr></argument>, <argument pos:start="75:50" pos:end="75:50"><expr pos:start="75:50" pos:end="75:50"><literal type="number" pos:start="75:50" pos:end="75:50">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="79:5" pos:end="81:46"><expr pos:start="79:5" pos:end="81:45"><name pos:start="79:5" pos:end="79:7">ret</name> <operator pos:start="79:9" pos:end="79:9">=</operator> <call pos:start="79:11" pos:end="81:45"><name pos:start="79:11" pos:end="79:28">bdrv_driver_preadv</name><argument_list pos:start="79:29" pos:end="81:45">(<argument pos:start="79:30" pos:end="79:31"><expr pos:start="79:30" pos:end="79:31"><name pos:start="79:30" pos:end="79:31">bs</name></expr></argument>, <argument pos:start="79:34" pos:end="79:47"><expr pos:start="79:34" pos:end="79:47"><name pos:start="79:34" pos:end="79:47">cluster_offset</name></expr></argument>, <argument pos:start="79:50" pos:end="79:62"><expr pos:start="79:50" pos:end="79:62"><name pos:start="79:50" pos:end="79:62">cluster_bytes</name></expr></argument>,
+
+                             <argument pos:start="81:30" pos:end="81:41"><expr pos:start="81:30" pos:end="81:41"><operator pos:start="81:30" pos:end="81:30">&amp;</operator><name pos:start="81:31" pos:end="81:41">bounce_qiov</name></expr></argument>, <argument pos:start="81:44" pos:end="81:44"><expr pos:start="81:44" pos:end="81:44"><literal type="number" pos:start="81:44" pos:end="81:44">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="83:5" pos:end="87:5"><if pos:start="83:5" pos:end="87:5">if <condition pos:start="83:8" pos:end="83:16">(<expr pos:start="83:9" pos:end="83:15"><name pos:start="83:9" pos:end="83:11">ret</name> <operator pos:start="83:13" pos:end="83:13">&lt;</operator> <literal type="number" pos:start="83:15" pos:end="83:15">0</literal></expr>)</condition> <block pos:start="83:18" pos:end="87:5">{<block_content pos:start="85:9" pos:end="85:17">
+
+        <goto pos:start="85:9" pos:end="85:17">goto <name pos:start="85:14" pos:end="85:16">err</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="91:5" pos:end="115:5"><if pos:start="91:5" pos:end="103:5">if <condition pos:start="91:8" pos:end="93:51">(<expr pos:start="91:9" pos:end="93:50"><name pos:start="91:9" pos:end="91:34"><name pos:start="91:9" pos:end="91:11">drv</name><operator pos:start="91:12" pos:end="91:13">-&gt;</operator><name pos:start="91:14" pos:end="91:34">bdrv_co_pwrite_zeroes</name></name> <operator pos:start="91:36" pos:end="91:37">&amp;&amp;</operator>
+
+        <call pos:start="93:9" pos:end="93:50"><name pos:start="93:9" pos:end="93:22">buffer_is_zero</name><argument_list pos:start="93:23" pos:end="93:50">(<argument pos:start="93:24" pos:end="93:36"><expr pos:start="93:24" pos:end="93:36"><name pos:start="93:24" pos:end="93:36">bounce_buffer</name></expr></argument>, <argument pos:start="93:39" pos:end="93:49"><expr pos:start="93:39" pos:end="93:49"><name pos:start="93:39" pos:end="93:49"><name pos:start="93:39" pos:end="93:41">iov</name><operator pos:start="93:42" pos:end="93:42">.</operator><name pos:start="93:43" pos:end="93:49">iov_len</name></name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="93:53" pos:end="103:5">{<block_content pos:start="101:9" pos:end="101:77">
+
+        <comment type="block" pos:start="95:9" pos:end="99:49">/* FIXME: Should we (perhaps conditionally) be setting
+
+         * BDRV_REQ_MAY_UNMAP, if it will allow for a sparser copy
+
+         * that still correctly reads as zero? */</comment>
+
+        <expr_stmt pos:start="101:9" pos:end="101:77"><expr pos:start="101:9" pos:end="101:76"><name pos:start="101:9" pos:end="101:11">ret</name> <operator pos:start="101:13" pos:end="101:13">=</operator> <call pos:start="101:15" pos:end="101:76"><name pos:start="101:15" pos:end="101:38">bdrv_co_do_pwrite_zeroes</name><argument_list pos:start="101:39" pos:end="101:76">(<argument pos:start="101:40" pos:end="101:41"><expr pos:start="101:40" pos:end="101:41"><name pos:start="101:40" pos:end="101:41">bs</name></expr></argument>, <argument pos:start="101:44" pos:end="101:57"><expr pos:start="101:44" pos:end="101:57"><name pos:start="101:44" pos:end="101:57">cluster_offset</name></expr></argument>, <argument pos:start="101:60" pos:end="101:72"><expr pos:start="101:60" pos:end="101:72"><name pos:start="101:60" pos:end="101:72">cluster_bytes</name></expr></argument>, <argument pos:start="101:75" pos:end="101:75"><expr pos:start="101:75" pos:end="101:75"><literal type="number" pos:start="101:75" pos:end="101:75">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="103:7" pos:end="115:5">else <block pos:start="103:12" pos:end="115:5">{<block_content pos:start="111:9" pos:end="113:51">
+
+        <comment type="block" pos:start="105:9" pos:end="109:11">/* This does not change the data on the disk, it is not necessary
+
+         * to flush even in cache=writethrough mode.
+
+         */</comment>
+
+        <expr_stmt pos:start="111:9" pos:end="113:51"><expr pos:start="111:9" pos:end="113:50"><name pos:start="111:9" pos:end="111:11">ret</name> <operator pos:start="111:13" pos:end="111:13">=</operator> <call pos:start="111:15" pos:end="113:50"><name pos:start="111:15" pos:end="111:33">bdrv_driver_pwritev</name><argument_list pos:start="111:34" pos:end="113:50">(<argument pos:start="111:35" pos:end="111:36"><expr pos:start="111:35" pos:end="111:36"><name pos:start="111:35" pos:end="111:36">bs</name></expr></argument>, <argument pos:start="111:39" pos:end="111:52"><expr pos:start="111:39" pos:end="111:52"><name pos:start="111:39" pos:end="111:52">cluster_offset</name></expr></argument>, <argument pos:start="111:55" pos:end="111:67"><expr pos:start="111:55" pos:end="111:67"><name pos:start="111:55" pos:end="111:67">cluster_bytes</name></expr></argument>,
+
+                                  <argument pos:start="113:35" pos:end="113:46"><expr pos:start="113:35" pos:end="113:46"><operator pos:start="113:35" pos:end="113:35">&amp;</operator><name pos:start="113:36" pos:end="113:46">bounce_qiov</name></expr></argument>, <argument pos:start="113:49" pos:end="113:49"><expr pos:start="113:49" pos:end="113:49"><literal type="number" pos:start="113:49" pos:end="113:49">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <if_stmt pos:start="119:5" pos:end="131:5"><if pos:start="119:5" pos:end="131:5">if <condition pos:start="119:8" pos:end="119:16">(<expr pos:start="119:9" pos:end="119:15"><name pos:start="119:9" pos:end="119:11">ret</name> <operator pos:start="119:13" pos:end="119:13">&lt;</operator> <literal type="number" pos:start="119:15" pos:end="119:15">0</literal></expr>)</condition> <block pos:start="119:18" pos:end="131:5">{<block_content pos:start="129:9" pos:end="129:17">
+
+        <comment type="block" pos:start="121:9" pos:end="127:11">/* It might be okay to ignore write errors for guest requests.  If this
+
+         * is a deliberate copy-on-read then we don't want to ignore the error.
+
+         * Simply report it in all cases.
+
+         */</comment>
+
+        <goto pos:start="129:9" pos:end="129:17">goto <name pos:start="129:14" pos:end="129:16">err</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="135:5" pos:end="135:41"><expr pos:start="135:5" pos:end="135:40"><name pos:start="135:5" pos:end="135:14">skip_bytes</name> <operator pos:start="135:16" pos:end="135:16">=</operator> <name pos:start="135:18" pos:end="135:23">offset</name> <operator pos:start="135:25" pos:end="135:25">-</operator> <name pos:start="135:27" pos:end="135:40">cluster_offset</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="137:5" pos:end="137:68"><expr pos:start="137:5" pos:end="137:67"><call pos:start="137:5" pos:end="137:67"><name pos:start="137:5" pos:end="137:23">qemu_iovec_from_buf</name><argument_list pos:start="137:24" pos:end="137:67">(<argument pos:start="137:25" pos:end="137:28"><expr pos:start="137:25" pos:end="137:28"><name pos:start="137:25" pos:end="137:28">qiov</name></expr></argument>, <argument pos:start="137:31" pos:end="137:31"><expr pos:start="137:31" pos:end="137:31"><literal type="number" pos:start="137:31" pos:end="137:31">0</literal></expr></argument>, <argument pos:start="137:34" pos:end="137:59"><expr pos:start="137:34" pos:end="137:59"><name pos:start="137:34" pos:end="137:46">bounce_buffer</name> <operator pos:start="137:48" pos:end="137:48">+</operator> <name pos:start="137:50" pos:end="137:59">skip_bytes</name></expr></argument>, <argument pos:start="137:62" pos:end="137:66"><expr pos:start="137:62" pos:end="137:66"><name pos:start="137:62" pos:end="137:66">bytes</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+<label pos:start="141:1" pos:end="141:4"><name pos:start="141:1" pos:end="141:3">err</name>:</label>
+
+    <expr_stmt pos:start="143:5" pos:end="143:30"><expr pos:start="143:5" pos:end="143:29"><call pos:start="143:5" pos:end="143:29"><name pos:start="143:5" pos:end="143:14">qemu_vfree</name><argument_list pos:start="143:15" pos:end="143:29">(<argument pos:start="143:16" pos:end="143:28"><expr pos:start="143:16" pos:end="143:28"><name pos:start="143:16" pos:end="143:28">bounce_buffer</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <return pos:start="145:5" pos:end="145:15">return <expr pos:start="145:12" pos:end="145:14"><name pos:start="145:12" pos:end="145:14">ret</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/9993.c" pos:tabs="8"><function pos:start="1:1" pos:end="79:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:37">ff_h264_idct_dc_add8_mmx2</name><parameter_list pos:start="1:38" pos:end="1:79">(<parameter pos:start="1:39" pos:end="1:50"><decl pos:start="1:39" pos:end="1:50"><type pos:start="1:39" pos:end="1:50"><name pos:start="1:39" pos:end="1:45">uint8_t</name> <modifier pos:start="1:47" pos:end="1:47">*</modifier></type><name pos:start="1:48" pos:end="1:50">dst</name></decl></parameter>, <parameter pos:start="1:53" pos:end="1:66"><decl pos:start="1:53" pos:end="1:66"><type pos:start="1:53" pos:end="1:66"><name pos:start="1:53" pos:end="1:59">int16_t</name> <modifier pos:start="1:61" pos:end="1:61">*</modifier></type><name pos:start="1:62" pos:end="1:66">block</name></decl></parameter>, <parameter pos:start="1:69" pos:end="1:78"><decl pos:start="1:69" pos:end="1:78"><type pos:start="1:69" pos:end="1:78"><name pos:start="1:69" pos:end="1:71">int</name></type> <name pos:start="1:73" pos:end="1:78">stride</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="79:1">{<block_content pos:start="5:5" pos:end="77:6">
+
+    <asm pos:start="5:5" pos:end="33:6">__asm__ <specifier pos:start="5:13" pos:end="5:20">volatile</specifier>(
+
+        "movd             %0, %%mm0 \n\t"   <comment type="line" pos:start="7:45" pos:end="7:55">//  0 0 X D</comment>
+
+        "punpcklwd        %1, %%mm0 \n\t"   <comment type="line" pos:start="9:45" pos:end="9:55">//  x X d D</comment>
+
+        "paddsw           %2, %%mm0 \n\t"
+
+        "psraw            $6, %%mm0 \n\t"
+
+        "punpcklwd     %%mm0, %%mm0 \n\t"   <comment type="line" pos:start="15:45" pos:end="15:55">//  d d D D</comment>
+
+        "pxor          %%mm1, %%mm1 \n\t"   <comment type="line" pos:start="17:45" pos:end="17:55">//  0 0 0 0</comment>
+
+        "psubw         %%mm0, %%mm1 \n\t"   <comment type="line" pos:start="19:45" pos:end="19:55">// -d-d-D-D</comment>
+
+        "packuswb      %%mm1, %%mm0 \n\t"   <comment type="line" pos:start="21:45" pos:end="21:63">// -d-d-D-D d d D D</comment>
+
+        "pshufw $0xFA, %%mm0, %%mm1 \n\t"   <comment type="line" pos:start="23:45" pos:end="23:63">// -d-d-d-d-D-D-D-D</comment>
+
+        "punpcklwd     %%mm0, %%mm0 \n\t"   <comment type="line" pos:start="25:45" pos:end="25:63">//  d d d d D D D D</comment>
+
+        ::"m"(block[ 0]),
+
+          "m"(block[16]),
+
+          "m"(ff_pw_32)
+
+    );</asm>
+
+    <asm pos:start="35:5" pos:end="77:6">__asm__ <specifier pos:start="35:13" pos:end="35:20">volatile</specifier>(
+
+        "movq          %0, %%mm2 \n\t"
+
+        "movq          %1, %%mm3 \n\t"
+
+        "movq          %2, %%mm4 \n\t"
+
+        "movq          %3, %%mm5 \n\t"
+
+        "paddusb    %%mm0, %%mm2 \n\t"
+
+        "paddusb    %%mm0, %%mm3 \n\t"
+
+        "paddusb    %%mm0, %%mm4 \n\t"
+
+        "paddusb    %%mm0, %%mm5 \n\t"
+
+        "psubusb    %%mm1, %%mm2 \n\t"
+
+        "psubusb    %%mm1, %%mm3 \n\t"
+
+        "psubusb    %%mm1, %%mm4 \n\t"
+
+        "psubusb    %%mm1, %%mm5 \n\t"
+
+        "movq       %%mm2, %0    \n\t"
+
+        "movq       %%mm3, %1    \n\t"
+
+        "movq       %%mm4, %2    \n\t"
+
+        "movq       %%mm5, %3    \n\t"
+
+        :"+m"(*(uint64_t*)(dst+0*stride)),
+
+         "+m"(*(uint64_t*)(dst+1*stride)),
+
+         "+m"(*(uint64_t*)(dst+2*stride)),
+
+         "+m"(*(uint64_t*)(dst+3*stride))
+
+    );</asm>
+
+</block_content>}</block></function>
+</unit>

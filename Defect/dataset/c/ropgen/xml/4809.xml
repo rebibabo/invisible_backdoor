@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/4809.c" pos:tabs="8"><function pos:start="1:1" pos:end="297:1"><type pos:start="1:1" pos:end="1:21"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <specifier pos:start="1:8" pos:end="1:13">inline</specifier> <name pos:start="1:15" pos:end="1:21">CopyRet</name></type> <name pos:start="1:23" pos:end="1:32">copy_frame</name><parameter_list pos:start="1:33" pos:end="7:54">(<parameter pos:start="1:34" pos:end="1:54"><decl pos:start="1:34" pos:end="1:54"><type pos:start="1:34" pos:end="1:54"><name pos:start="1:34" pos:end="1:47">AVCodecContext</name> <modifier pos:start="1:49" pos:end="1:49">*</modifier></type><name pos:start="1:50" pos:end="1:54">avctx</name></decl></parameter>,
+
+                                 <parameter pos:start="3:34" pos:end="3:56"><decl pos:start="3:34" pos:end="3:56"><type pos:start="3:34" pos:end="3:56"><name pos:start="3:34" pos:end="3:48">BC_DTS_PROC_OUT</name> <modifier pos:start="3:50" pos:end="3:50">*</modifier></type><name pos:start="3:51" pos:end="3:56">output</name></decl></parameter>,
+
+                                 <parameter pos:start="5:34" pos:end="5:43"><decl pos:start="5:34" pos:end="5:43"><type pos:start="5:34" pos:end="5:43"><name pos:start="5:34" pos:end="5:37">void</name> <modifier pos:start="5:39" pos:end="5:39">*</modifier></type><name pos:start="5:40" pos:end="5:43">data</name></decl></parameter>, <parameter pos:start="5:46" pos:end="5:59"><decl pos:start="5:46" pos:end="5:59"><type pos:start="5:46" pos:end="5:59"><name pos:start="5:46" pos:end="5:48">int</name> <modifier pos:start="5:50" pos:end="5:50">*</modifier></type><name pos:start="5:51" pos:end="5:59">data_size</name></decl></parameter>,
+
+                                 <parameter pos:start="7:34" pos:end="7:53"><decl pos:start="7:34" pos:end="7:53"><type pos:start="7:34" pos:end="7:53"><name pos:start="7:34" pos:end="7:40">uint8_t</name></type> <name pos:start="7:42" pos:end="7:53">second_field</name></decl></parameter>)</parameter_list>
+
+<block pos:start="9:1" pos:end="297:1">{<block_content pos:start="11:5" pos:end="295:40">
+
+    <decl_stmt pos:start="11:5" pos:end="11:18"><decl pos:start="11:5" pos:end="11:17"><type pos:start="11:5" pos:end="11:13"><name pos:start="11:5" pos:end="11:13">BC_STATUS</name></type> <name pos:start="11:15" pos:end="11:17">ret</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:33"><decl pos:start="13:5" pos:end="13:32"><type pos:start="13:5" pos:end="13:17"><name pos:start="13:5" pos:end="13:17">BC_DTS_STATUS</name></type> <name pos:start="13:19" pos:end="13:32">decoder_status</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:20"><decl pos:start="15:5" pos:end="15:19"><type pos:start="15:5" pos:end="15:11"><name pos:start="15:5" pos:end="15:11">uint8_t</name></type> <name pos:start="15:13" pos:end="15:19">is_paff</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="17:5" pos:end="17:28"><decl pos:start="17:5" pos:end="17:27"><type pos:start="17:5" pos:end="17:11"><name pos:start="17:5" pos:end="17:11">uint8_t</name></type> <name pos:start="17:13" pos:end="17:27">next_frame_same</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:23"><decl pos:start="19:5" pos:end="19:22"><type pos:start="19:5" pos:end="19:11"><name pos:start="19:5" pos:end="19:11">uint8_t</name></type> <name pos:start="19:13" pos:end="19:22">interlaced</name></decl>;</decl_stmt>
+
+
+
+    <decl_stmt pos:start="23:5" pos:end="23:40"><decl pos:start="23:5" pos:end="23:39"><type pos:start="23:5" pos:end="23:16"><name pos:start="23:5" pos:end="23:14">CHDContext</name> <modifier pos:start="23:16" pos:end="23:16">*</modifier></type><name pos:start="23:17" pos:end="23:20">priv</name> <init pos:start="23:22" pos:end="23:39">= <expr pos:start="23:24" pos:end="23:39"><name pos:start="23:24" pos:end="23:39"><name pos:start="23:24" pos:end="23:28">avctx</name><operator pos:start="23:29" pos:end="23:30">-&gt;</operator><name pos:start="23:31" pos:end="23:39">priv_data</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="25:5" pos:end="25:38"><decl pos:start="25:5" pos:end="25:37"><type pos:start="25:5" pos:end="25:11"><name pos:start="25:5" pos:end="25:11">int64_t</name></type> <name pos:start="25:13" pos:end="25:19">pkt_pts</name>  <init pos:start="25:22" pos:end="25:37">= <expr pos:start="25:24" pos:end="25:37"><name pos:start="25:24" pos:end="25:37">AV_NOPTS_VALUE</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="27:5" pos:end="27:25"><decl pos:start="27:5" pos:end="27:24"><type pos:start="27:5" pos:end="27:11"><name pos:start="27:5" pos:end="27:11">uint8_t</name></type> <name pos:start="27:13" pos:end="27:20">pic_type</name> <init pos:start="27:22" pos:end="27:24">= <expr pos:start="27:24" pos:end="27:24"><literal type="number" pos:start="27:24" pos:end="27:24">0</literal></expr></init></decl>;</decl_stmt>
+
+
+
+    <decl_stmt pos:start="31:5" pos:end="33:49"><decl pos:start="31:5" pos:end="33:48"><type pos:start="31:5" pos:end="31:11"><name pos:start="31:5" pos:end="31:11">uint8_t</name></type> <name pos:start="31:13" pos:end="31:24">bottom_field</name> <init pos:start="31:26" pos:end="33:48">= <expr pos:start="31:28" pos:end="33:48"><operator pos:start="31:28" pos:end="31:28">(</operator><name pos:start="31:29" pos:end="31:49"><name pos:start="31:29" pos:end="31:34">output</name><operator pos:start="31:35" pos:end="31:36">-&gt;</operator><name pos:start="31:37" pos:end="31:43">PicInfo</name><operator pos:start="31:44" pos:end="31:44">.</operator><name pos:start="31:45" pos:end="31:49">flags</name></name> <operator pos:start="31:51" pos:end="31:51">&amp;</operator> <name pos:start="31:53" pos:end="31:73">VDEC_FLAG_BOTTOMFIELD</name><operator pos:start="31:74" pos:end="31:74">)</operator> <operator pos:start="31:76" pos:end="31:77">==</operator>
+
+                           <name pos:start="33:28" pos:end="33:48">VDEC_FLAG_BOTTOMFIELD</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="35:5" pos:end="35:78"><decl pos:start="35:5" pos:end="35:77"><type pos:start="35:5" pos:end="35:11"><name pos:start="35:5" pos:end="35:11">uint8_t</name></type> <name pos:start="35:13" pos:end="35:24">bottom_first</name> <init pos:start="35:26" pos:end="35:77">= <expr pos:start="35:28" pos:end="35:77"><operator pos:start="35:28" pos:end="35:28">!</operator><operator pos:start="35:29" pos:end="35:29">!</operator><operator pos:start="35:30" pos:end="35:30">(</operator><name pos:start="35:31" pos:end="35:51"><name pos:start="35:31" pos:end="35:36">output</name><operator pos:start="35:37" pos:end="35:38">-&gt;</operator><name pos:start="35:39" pos:end="35:45">PicInfo</name><operator pos:start="35:46" pos:end="35:46">.</operator><name pos:start="35:47" pos:end="35:51">flags</name></name> <operator pos:start="35:53" pos:end="35:53">&amp;</operator> <name pos:start="35:55" pos:end="35:76">VDEC_FLAG_BOTTOM_FIRST</name><operator pos:start="35:77" pos:end="35:77">)</operator></expr></init></decl>;</decl_stmt>
+
+
+
+    <decl_stmt pos:start="39:5" pos:end="39:41"><decl pos:start="39:5" pos:end="39:40"><type pos:start="39:5" pos:end="39:7"><name pos:start="39:5" pos:end="39:7">int</name></type> <name pos:start="39:9" pos:end="39:13">width</name>    <init pos:start="39:18" pos:end="39:40">= <expr pos:start="39:20" pos:end="39:40"><name pos:start="39:20" pos:end="39:40"><name pos:start="39:20" pos:end="39:25">output</name><operator pos:start="39:26" pos:end="39:27">-&gt;</operator><name pos:start="39:28" pos:end="39:34">PicInfo</name><operator pos:start="39:35" pos:end="39:35">.</operator><name pos:start="39:36" pos:end="39:40">width</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="41:5" pos:end="41:42"><decl pos:start="41:5" pos:end="41:41"><type pos:start="41:5" pos:end="41:7"><name pos:start="41:5" pos:end="41:7">int</name></type> <name pos:start="41:9" pos:end="41:14">height</name>   <init pos:start="41:18" pos:end="41:41">= <expr pos:start="41:20" pos:end="41:41"><name pos:start="41:20" pos:end="41:41"><name pos:start="41:20" pos:end="41:25">output</name><operator pos:start="41:26" pos:end="41:27">-&gt;</operator><name pos:start="41:28" pos:end="41:34">PicInfo</name><operator pos:start="41:35" pos:end="41:35">.</operator><name pos:start="41:36" pos:end="41:41">height</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="43:5" pos:end="43:15"><decl pos:start="43:5" pos:end="43:14"><type pos:start="43:5" pos:end="43:7"><name pos:start="43:5" pos:end="43:7">int</name></type> <name pos:start="43:9" pos:end="43:14">bwidth</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="45:5" pos:end="45:33"><decl pos:start="45:5" pos:end="45:32"><type pos:start="45:5" pos:end="45:13"><name pos:start="45:5" pos:end="45:11">uint8_t</name> <modifier pos:start="45:13" pos:end="45:13">*</modifier></type><name pos:start="45:14" pos:end="45:16">src</name> <init pos:start="45:18" pos:end="45:32">= <expr pos:start="45:20" pos:end="45:32"><name pos:start="45:20" pos:end="45:32"><name pos:start="45:20" pos:end="45:25">output</name><operator pos:start="45:26" pos:end="45:27">-&gt;</operator><name pos:start="45:28" pos:end="45:32">Ybuff</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="47:5" pos:end="47:16"><decl pos:start="47:5" pos:end="47:15"><type pos:start="47:5" pos:end="47:7"><name pos:start="47:5" pos:end="47:7">int</name></type> <name pos:start="47:9" pos:end="47:15">sStride</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="49:5" pos:end="49:17"><decl pos:start="49:5" pos:end="49:16"><type pos:start="49:5" pos:end="49:13"><name pos:start="49:5" pos:end="49:11">uint8_t</name> <modifier pos:start="49:13" pos:end="49:13">*</modifier></type><name pos:start="49:14" pos:end="49:16">dst</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="51:5" pos:end="51:16"><decl pos:start="51:5" pos:end="51:15"><type pos:start="51:5" pos:end="51:7"><name pos:start="51:5" pos:end="51:7">int</name></type> <name pos:start="51:9" pos:end="51:15">dStride</name></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="55:5" pos:end="97:5"><if pos:start="55:5" pos:end="97:5">if <condition pos:start="55:8" pos:end="55:39">(<expr pos:start="55:9" pos:end="55:38"><name pos:start="55:9" pos:end="55:33"><name pos:start="55:9" pos:end="55:14">output</name><operator pos:start="55:15" pos:end="55:16">-&gt;</operator><name pos:start="55:17" pos:end="55:23">PicInfo</name><operator pos:start="55:24" pos:end="55:24">.</operator><name pos:start="55:25" pos:end="55:33">timeStamp</name></name> <operator pos:start="55:35" pos:end="55:36">!=</operator> <literal type="number" pos:start="55:38" pos:end="55:38">0</literal></expr>)</condition> <block pos:start="55:41" pos:end="97:5">{<block_content pos:start="57:9" pos:end="95:25">
+
+        <decl_stmt pos:start="57:9" pos:end="57:76"><decl pos:start="57:9" pos:end="57:75"><type pos:start="57:9" pos:end="57:20"><name pos:start="57:9" pos:end="57:18">OpaqueList</name> <modifier pos:start="57:20" pos:end="57:20">*</modifier></type><name pos:start="57:21" pos:end="57:24">node</name> <init pos:start="57:26" pos:end="57:75">= <expr pos:start="57:28" pos:end="57:75"><call pos:start="57:28" pos:end="57:75"><name pos:start="57:28" pos:end="57:42">opaque_list_pop</name><argument_list pos:start="57:43" pos:end="57:75">(<argument pos:start="57:44" pos:end="57:47"><expr pos:start="57:44" pos:end="57:47"><name pos:start="57:44" pos:end="57:47">priv</name></expr></argument>, <argument pos:start="57:50" pos:end="57:74"><expr pos:start="57:50" pos:end="57:74"><name pos:start="57:50" pos:end="57:74"><name pos:start="57:50" pos:end="57:55">output</name><operator pos:start="57:56" pos:end="57:57">-&gt;</operator><name pos:start="57:58" pos:end="57:64">PicInfo</name><operator pos:start="57:65" pos:end="57:65">.</operator><name pos:start="57:66" pos:end="57:74">timeStamp</name></name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <if_stmt pos:start="59:9" pos:end="87:9"><if pos:start="59:9" pos:end="67:9">if <condition pos:start="59:12" pos:end="59:17">(<expr pos:start="59:13" pos:end="59:16"><name pos:start="59:13" pos:end="59:16">node</name></expr>)</condition> <block pos:start="59:19" pos:end="67:9">{<block_content pos:start="61:13" pos:end="65:26">
+
+            <expr_stmt pos:start="61:13" pos:end="61:45"><expr pos:start="61:13" pos:end="61:44"><name pos:start="61:13" pos:end="61:19">pkt_pts</name> <operator pos:start="61:21" pos:end="61:21">=</operator> <name pos:start="61:23" pos:end="61:44"><name pos:start="61:23" pos:end="61:26">node</name><operator pos:start="61:27" pos:end="61:28">-&gt;</operator><name pos:start="61:29" pos:end="61:44">reordered_opaque</name></name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="63:13" pos:end="63:38"><expr pos:start="63:13" pos:end="63:37"><name pos:start="63:13" pos:end="63:20">pic_type</name> <operator pos:start="63:22" pos:end="63:22">=</operator> <name pos:start="63:24" pos:end="63:37"><name pos:start="63:24" pos:end="63:27">node</name><operator pos:start="63:28" pos:end="63:29">-&gt;</operator><name pos:start="63:30" pos:end="63:37">pic_type</name></name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="65:13" pos:end="65:26"><expr pos:start="65:13" pos:end="65:25"><call pos:start="65:13" pos:end="65:25"><name pos:start="65:13" pos:end="65:19">av_free</name><argument_list pos:start="65:20" pos:end="65:25">(<argument pos:start="65:21" pos:end="65:24"><expr pos:start="65:21" pos:end="65:24"><name pos:start="65:21" pos:end="65:24">node</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="67:11" pos:end="87:9">else <block pos:start="67:16" pos:end="87:9">{<block_content pos:start="85:13" pos:end="85:41">
+
+            <comment type="block" pos:start="69:13" pos:end="83:15">/*
+
+             * We will encounter a situation where a timestamp cannot be
+
+             * popped if a second field is being returned. In this case,
+
+             * each field has the same timestamp and the first one will
+
+             * cause it to be popped. To keep subsequent calculations
+
+             * simple, pic_type should be set a FIELD value - doesn't
+
+             * matter which, but I chose BOTTOM.
+
+             */</comment>
+
+            <expr_stmt pos:start="85:13" pos:end="85:41"><expr pos:start="85:13" pos:end="85:40"><name pos:start="85:13" pos:end="85:20">pic_type</name> <operator pos:start="85:22" pos:end="85:22">=</operator> <name pos:start="85:24" pos:end="85:40">PICT_BOTTOM_FIELD</name></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+        <expr_stmt pos:start="89:9" pos:end="91:42"><expr pos:start="89:9" pos:end="91:41"><call pos:start="89:9" pos:end="91:41"><name pos:start="89:9" pos:end="89:14">av_log</name><argument_list pos:start="89:15" pos:end="91:41">(<argument pos:start="89:16" pos:end="89:20"><expr pos:start="89:16" pos:end="89:20"><name pos:start="89:16" pos:end="89:20">avctx</name></expr></argument>, <argument pos:start="89:23" pos:end="89:36"><expr pos:start="89:23" pos:end="89:36"><name pos:start="89:23" pos:end="89:36">AV_LOG_VERBOSE</name></expr></argument>, <argument pos:start="89:39" pos:end="89:67"><expr pos:start="89:39" pos:end="89:67"><literal type="string" pos:start="89:39" pos:end="89:57">"output \"pts\": %"</literal><name pos:start="89:58" pos:end="89:63">PRIu64</name><literal type="string" pos:start="89:64" pos:end="89:67">"\n"</literal></expr></argument>,
+
+               <argument pos:start="91:16" pos:end="91:40"><expr pos:start="91:16" pos:end="91:40"><name pos:start="91:16" pos:end="91:40"><name pos:start="91:16" pos:end="91:21">output</name><operator pos:start="91:22" pos:end="91:23">-&gt;</operator><name pos:start="91:24" pos:end="91:30">PicInfo</name><operator pos:start="91:31" pos:end="91:31">.</operator><name pos:start="91:32" pos:end="91:40">timeStamp</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="93:9" pos:end="95:25"><expr pos:start="93:9" pos:end="95:24"><call pos:start="93:9" pos:end="95:24"><name pos:start="93:9" pos:end="93:14">av_log</name><argument_list pos:start="93:15" pos:end="95:24">(<argument pos:start="93:16" pos:end="93:20"><expr pos:start="93:16" pos:end="93:20"><name pos:start="93:16" pos:end="93:20">avctx</name></expr></argument>, <argument pos:start="93:23" pos:end="93:36"><expr pos:start="93:23" pos:end="93:36"><name pos:start="93:23" pos:end="93:36">AV_LOG_VERBOSE</name></expr></argument>, <argument pos:start="93:39" pos:end="93:64"><expr pos:start="93:39" pos:end="93:64"><literal type="string" pos:start="93:39" pos:end="93:64">"output picture type %d\n"</literal></expr></argument>,
+
+               <argument pos:start="95:16" pos:end="95:23"><expr pos:start="95:16" pos:end="95:23"><name pos:start="95:16" pos:end="95:23">pic_type</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="101:5" pos:end="101:57"><expr pos:start="101:5" pos:end="101:56"><name pos:start="101:5" pos:end="101:7">ret</name> <operator pos:start="101:9" pos:end="101:9">=</operator> <call pos:start="101:11" pos:end="101:56"><name pos:start="101:11" pos:end="101:28">DtsGetDriverStatus</name><argument_list pos:start="101:29" pos:end="101:56">(<argument pos:start="101:30" pos:end="101:38"><expr pos:start="101:30" pos:end="101:38"><name pos:start="101:30" pos:end="101:38"><name pos:start="101:30" pos:end="101:33">priv</name><operator pos:start="101:34" pos:end="101:35">-&gt;</operator><name pos:start="101:36" pos:end="101:38">dev</name></name></expr></argument>, <argument pos:start="101:41" pos:end="101:55"><expr pos:start="101:41" pos:end="101:55"><operator pos:start="101:41" pos:end="101:41">&amp;</operator><name pos:start="101:42" pos:end="101:55">decoder_status</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="103:5" pos:end="111:5"><if pos:start="103:5" pos:end="111:5">if <condition pos:start="103:8" pos:end="103:30">(<expr pos:start="103:9" pos:end="103:29"><name pos:start="103:9" pos:end="103:11">ret</name> <operator pos:start="103:13" pos:end="103:14">!=</operator> <name pos:start="103:16" pos:end="103:29">BC_STS_SUCCESS</name></expr>)</condition> <block pos:start="103:32" pos:end="111:5">{<block_content pos:start="105:9" pos:end="109:24">
+
+        <expr_stmt pos:start="105:9" pos:end="107:63"><expr pos:start="105:9" pos:end="107:62"><call pos:start="105:9" pos:end="107:62"><name pos:start="105:9" pos:end="105:14">av_log</name><argument_list pos:start="105:15" pos:end="107:62">(<argument pos:start="105:16" pos:end="105:20"><expr pos:start="105:16" pos:end="105:20"><name pos:start="105:16" pos:end="105:20">avctx</name></expr></argument>, <argument pos:start="105:23" pos:end="105:34"><expr pos:start="105:23" pos:end="105:34"><name pos:start="105:23" pos:end="105:34">AV_LOG_ERROR</name></expr></argument>,
+
+               <argument pos:start="107:16" pos:end="107:56"><expr pos:start="107:16" pos:end="107:56"><literal type="string" pos:start="107:16" pos:end="107:56">"CrystalHD: GetDriverStatus failed: %u\n"</literal></expr></argument>, <argument pos:start="107:59" pos:end="107:61"><expr pos:start="107:59" pos:end="107:61"><name pos:start="107:59" pos:end="107:61">ret</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+       <return pos:start="109:8" pos:end="109:24">return <expr pos:start="109:15" pos:end="109:23"><name pos:start="109:15" pos:end="109:23">RET_ERROR</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="115:5" pos:end="117:73"><expr pos:start="115:5" pos:end="117:72"><name pos:start="115:5" pos:end="115:11">is_paff</name>           <operator pos:start="115:23" pos:end="115:23">=</operator> <name pos:start="115:25" pos:end="115:46">ASSUME_PAFF_OVER_MBAFF</name> <operator pos:start="115:48" pos:end="115:49">||</operator>
+
+                        <operator pos:start="117:25" pos:end="117:25">!</operator><operator pos:start="117:26" pos:end="117:26">(</operator><name pos:start="117:27" pos:end="117:47"><name pos:start="117:27" pos:end="117:32">output</name><operator pos:start="117:33" pos:end="117:34">-&gt;</operator><name pos:start="117:35" pos:end="117:41">PicInfo</name><operator pos:start="117:42" pos:end="117:42">.</operator><name pos:start="117:43" pos:end="117:47">flags</name></name> <operator pos:start="117:49" pos:end="117:49">&amp;</operator> <name pos:start="117:51" pos:end="117:71">VDEC_FLAG_UNKNOWN_SRC</name><operator pos:start="117:72" pos:end="117:72">)</operator></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="119:5" pos:end="121:67"><expr pos:start="119:5" pos:end="121:66"><name pos:start="119:5" pos:end="119:19">next_frame_same</name>   <operator pos:start="119:23" pos:end="119:23">=</operator> <name pos:start="119:25" pos:end="119:54"><name pos:start="119:25" pos:end="119:30">output</name><operator pos:start="119:31" pos:end="119:32">-&gt;</operator><name pos:start="119:33" pos:end="119:39">PicInfo</name><operator pos:start="119:40" pos:end="119:40">.</operator><name pos:start="119:41" pos:end="119:54">picture_number</name></name> <operator pos:start="119:56" pos:end="119:57">==</operator>
+
+                        <operator pos:start="121:25" pos:end="121:25">(</operator><name pos:start="121:26" pos:end="121:51"><name pos:start="121:26" pos:end="121:39">decoder_status</name><operator pos:start="121:40" pos:end="121:40">.</operator><name pos:start="121:41" pos:end="121:51">picNumFlags</name></name> <operator pos:start="121:53" pos:end="121:53">&amp;</operator> <operator pos:start="121:55" pos:end="121:55">~</operator><literal type="number" pos:start="121:56" pos:end="121:65">0x40000000</literal><operator pos:start="121:66" pos:end="121:66">)</operator></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="123:5" pos:end="127:73"><expr pos:start="123:5" pos:end="127:72"><name pos:start="123:5" pos:end="123:14">interlaced</name>        <operator pos:start="123:23" pos:end="123:23">=</operator> <operator pos:start="123:25" pos:end="123:25">(</operator><operator pos:start="123:26" pos:end="123:26">(</operator><name pos:start="123:27" pos:end="123:47"><name pos:start="123:27" pos:end="123:32">output</name><operator pos:start="123:33" pos:end="123:34">-&gt;</operator><name pos:start="123:35" pos:end="123:41">PicInfo</name><operator pos:start="123:42" pos:end="123:42">.</operator><name pos:start="123:43" pos:end="123:47">flags</name></name> <operator pos:start="123:49" pos:end="123:49">&amp;</operator>
+
+                          <name pos:start="125:27" pos:end="125:50">VDEC_FLAG_INTERLACED_SRC</name><operator pos:start="125:51" pos:end="125:51">)</operator> <operator pos:start="125:53" pos:end="125:54">&amp;&amp;</operator> <name pos:start="125:56" pos:end="125:62">is_paff</name><operator pos:start="125:63" pos:end="125:63">)</operator> <operator pos:start="125:65" pos:end="125:66">||</operator>
+
+                         <name pos:start="127:26" pos:end="127:40">next_frame_same</name> <operator pos:start="127:42" pos:end="127:43">||</operator> <name pos:start="127:45" pos:end="127:56">bottom_field</name> <operator pos:start="127:58" pos:end="127:59">||</operator> <name pos:start="127:61" pos:end="127:72">second_field</name></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="131:5" pos:end="135:53"><expr pos:start="131:5" pos:end="135:52"><call pos:start="131:5" pos:end="135:52"><name pos:start="131:5" pos:end="131:10">av_log</name><argument_list pos:start="131:11" pos:end="135:52">(<argument pos:start="131:12" pos:end="131:16"><expr pos:start="131:12" pos:end="131:16"><name pos:start="131:12" pos:end="131:16">avctx</name></expr></argument>, <argument pos:start="131:19" pos:end="131:32"><expr pos:start="131:19" pos:end="131:32"><name pos:start="131:19" pos:end="131:32">AV_LOG_VERBOSE</name></expr></argument>, <argument pos:start="131:35" pos:end="131:78"><expr pos:start="131:35" pos:end="131:78"><literal type="string" pos:start="131:35" pos:end="131:78">"CrystalHD: next_frame_same: %u | %u | %u\n"</literal></expr></argument>,
+
+           <argument pos:start="133:12" pos:end="133:26"><expr pos:start="133:12" pos:end="133:26"><name pos:start="133:12" pos:end="133:26">next_frame_same</name></expr></argument>, <argument pos:start="133:29" pos:end="133:58"><expr pos:start="133:29" pos:end="133:58"><name pos:start="133:29" pos:end="133:58"><name pos:start="133:29" pos:end="133:34">output</name><operator pos:start="133:35" pos:end="133:36">-&gt;</operator><name pos:start="133:37" pos:end="133:43">PicInfo</name><operator pos:start="133:44" pos:end="133:44">.</operator><name pos:start="133:45" pos:end="133:58">picture_number</name></name></expr></argument>,
+
+           <argument pos:start="135:12" pos:end="135:51"><expr pos:start="135:12" pos:end="135:51"><name pos:start="135:12" pos:end="135:37"><name pos:start="135:12" pos:end="135:25">decoder_status</name><operator pos:start="135:26" pos:end="135:26">.</operator><name pos:start="135:27" pos:end="135:37">picNumFlags</name></name> <operator pos:start="135:39" pos:end="135:39">&amp;</operator> <operator pos:start="135:41" pos:end="135:41">~</operator><literal type="number" pos:start="135:42" pos:end="135:51">0x40000000</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="139:5" pos:end="141:49"><if pos:start="139:5" pos:end="141:49">if <condition pos:start="139:8" pos:end="139:54">(<expr pos:start="139:9" pos:end="139:53"><name pos:start="139:9" pos:end="139:25"><name pos:start="139:9" pos:end="139:12">priv</name><operator pos:start="139:13" pos:end="139:14">-&gt;</operator><name pos:start="139:15" pos:end="139:17">pic</name><operator pos:start="139:18" pos:end="139:18">.</operator><name pos:start="139:19" pos:end="139:22">data</name><index pos:start="139:23" pos:end="139:25">[<expr pos:start="139:24" pos:end="139:24"><literal type="number" pos:start="139:24" pos:end="139:24">0</literal></expr>]</index></name> <operator pos:start="139:27" pos:end="139:28">&amp;&amp;</operator> <operator pos:start="139:30" pos:end="139:30">!</operator><name pos:start="139:31" pos:end="139:53"><name pos:start="139:31" pos:end="139:34">priv</name><operator pos:start="139:35" pos:end="139:36">-&gt;</operator><name pos:start="139:37" pos:end="139:53">need_second_field</name></name></expr>)</condition><block type="pseudo" pos:start="141:9" pos:end="141:49"><block_content pos:start="141:9" pos:end="141:49">
+
+        <expr_stmt pos:start="141:9" pos:end="141:49"><expr pos:start="141:9" pos:end="141:48"><call pos:start="141:9" pos:end="141:48"><name pos:start="141:9" pos:end="141:29"><name pos:start="141:9" pos:end="141:13">avctx</name><operator pos:start="141:14" pos:end="141:15">-&gt;</operator><name pos:start="141:16" pos:end="141:29">release_buffer</name></name><argument_list pos:start="141:30" pos:end="141:48">(<argument pos:start="141:31" pos:end="141:35"><expr pos:start="141:31" pos:end="141:35"><name pos:start="141:31" pos:end="141:35">avctx</name></expr></argument>, <argument pos:start="141:38" pos:end="141:47"><expr pos:start="141:38" pos:end="141:47"><operator pos:start="141:38" pos:end="141:38">&amp;</operator><name pos:start="141:39" pos:end="141:47"><name pos:start="141:39" pos:end="141:42">priv</name><operator pos:start="141:43" pos:end="141:44">-&gt;</operator><name pos:start="141:45" pos:end="141:47">pic</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="145:5" pos:end="145:69"><expr pos:start="145:5" pos:end="145:68"><name pos:start="145:5" pos:end="145:27"><name pos:start="145:5" pos:end="145:8">priv</name><operator pos:start="145:9" pos:end="145:10">-&gt;</operator><name pos:start="145:11" pos:end="145:27">need_second_field</name></name> <operator pos:start="145:29" pos:end="145:29">=</operator> <name pos:start="145:31" pos:end="145:40">interlaced</name> <operator pos:start="145:42" pos:end="145:43">&amp;&amp;</operator> <operator pos:start="145:45" pos:end="145:45">!</operator><name pos:start="145:46" pos:end="145:68"><name pos:start="145:46" pos:end="145:49">priv</name><operator pos:start="145:50" pos:end="145:51">-&gt;</operator><name pos:start="145:52" pos:end="145:68">need_second_field</name></name></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="149:5" pos:end="151:54"><expr pos:start="149:5" pos:end="151:53"><name pos:start="149:5" pos:end="149:26"><name pos:start="149:5" pos:end="149:8">priv</name><operator pos:start="149:9" pos:end="149:10">-&gt;</operator><name pos:start="149:11" pos:end="149:13">pic</name><operator pos:start="149:14" pos:end="149:14">.</operator><name pos:start="149:15" pos:end="149:26">buffer_hints</name></name> <operator pos:start="149:28" pos:end="149:28">=</operator> <name pos:start="149:30" pos:end="149:50">FF_BUFFER_HINTS_VALID</name> <operator pos:start="149:52" pos:end="149:52">|</operator> <name pos:start="149:54" pos:end="149:77">FF_BUFFER_HINTS_PRESERVE</name> <operator pos:start="149:79" pos:end="149:79">|</operator>
+
+                             <name pos:start="151:30" pos:end="151:53">FF_BUFFER_HINTS_REUSABLE</name></expr>;</expr_stmt>
+
+    <if_stmt pos:start="153:5" pos:end="163:5"><if pos:start="153:5" pos:end="163:5">if <condition pos:start="153:8" pos:end="153:27">(<expr pos:start="153:9" pos:end="153:26"><operator pos:start="153:9" pos:end="153:9">!</operator><name pos:start="153:10" pos:end="153:26"><name pos:start="153:10" pos:end="153:13">priv</name><operator pos:start="153:14" pos:end="153:15">-&gt;</operator><name pos:start="153:16" pos:end="153:18">pic</name><operator pos:start="153:19" pos:end="153:19">.</operator><name pos:start="153:20" pos:end="153:23">data</name><index pos:start="153:24" pos:end="153:26">[<expr pos:start="153:25" pos:end="153:25"><literal type="number" pos:start="153:25" pos:end="153:25">0</literal></expr>]</index></name></expr>)</condition> <block pos:start="153:29" pos:end="163:5">{<block_content pos:start="155:9" pos:end="161:9">
+
+        <if_stmt pos:start="155:9" pos:end="161:9"><if pos:start="155:9" pos:end="161:9">if <condition pos:start="155:12" pos:end="155:53">(<expr pos:start="155:13" pos:end="155:52"><call pos:start="155:13" pos:end="155:48"><name pos:start="155:13" pos:end="155:29"><name pos:start="155:13" pos:end="155:17">avctx</name><operator pos:start="155:18" pos:end="155:19">-&gt;</operator><name pos:start="155:20" pos:end="155:29">get_buffer</name></name><argument_list pos:start="155:30" pos:end="155:48">(<argument pos:start="155:31" pos:end="155:35"><expr pos:start="155:31" pos:end="155:35"><name pos:start="155:31" pos:end="155:35">avctx</name></expr></argument>, <argument pos:start="155:38" pos:end="155:47"><expr pos:start="155:38" pos:end="155:47"><operator pos:start="155:38" pos:end="155:38">&amp;</operator><name pos:start="155:39" pos:end="155:47"><name pos:start="155:39" pos:end="155:42">priv</name><operator pos:start="155:43" pos:end="155:44">-&gt;</operator><name pos:start="155:45" pos:end="155:47">pic</name></name></expr></argument>)</argument_list></call> <operator pos:start="155:50" pos:end="155:50">&lt;</operator> <literal type="number" pos:start="155:52" pos:end="155:52">0</literal></expr>)</condition> <block pos:start="155:55" pos:end="161:9">{<block_content pos:start="157:13" pos:end="159:29">
+
+            <expr_stmt pos:start="157:13" pos:end="157:65"><expr pos:start="157:13" pos:end="157:64"><call pos:start="157:13" pos:end="157:64"><name pos:start="157:13" pos:end="157:18">av_log</name><argument_list pos:start="157:19" pos:end="157:64">(<argument pos:start="157:20" pos:end="157:24"><expr pos:start="157:20" pos:end="157:24"><name pos:start="157:20" pos:end="157:24">avctx</name></expr></argument>, <argument pos:start="157:27" pos:end="157:38"><expr pos:start="157:27" pos:end="157:38"><name pos:start="157:27" pos:end="157:38">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="157:41" pos:end="157:63"><expr pos:start="157:41" pos:end="157:63"><literal type="string" pos:start="157:41" pos:end="157:63">"get_buffer() failed\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="159:13" pos:end="159:29">return <expr pos:start="159:20" pos:end="159:28"><name pos:start="159:20" pos:end="159:28">RET_ERROR</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="167:5" pos:end="167:61"><expr pos:start="167:5" pos:end="167:60"><name pos:start="167:5" pos:end="167:10">bwidth</name> <operator pos:start="167:12" pos:end="167:12">=</operator> <call pos:start="167:14" pos:end="167:60"><name pos:start="167:14" pos:end="167:34">av_image_get_linesize</name><argument_list pos:start="167:35" pos:end="167:60">(<argument pos:start="167:36" pos:end="167:49"><expr pos:start="167:36" pos:end="167:49"><name pos:start="167:36" pos:end="167:49"><name pos:start="167:36" pos:end="167:40">avctx</name><operator pos:start="167:41" pos:end="167:42">-&gt;</operator><name pos:start="167:43" pos:end="167:49">pix_fmt</name></name></expr></argument>, <argument pos:start="167:52" pos:end="167:56"><expr pos:start="167:52" pos:end="167:56"><name pos:start="167:52" pos:end="167:56">width</name></expr></argument>, <argument pos:start="167:59" pos:end="167:59"><expr pos:start="167:59" pos:end="167:59"><literal type="number" pos:start="167:59" pos:end="167:59">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="169:5" pos:end="193:5"><if pos:start="169:5" pos:end="189:5">if <condition pos:start="169:8" pos:end="169:23">(<expr pos:start="169:9" pos:end="169:22"><name pos:start="169:9" pos:end="169:22"><name pos:start="169:9" pos:end="169:12">priv</name><operator pos:start="169:13" pos:end="169:14">-&gt;</operator><name pos:start="169:15" pos:end="169:22">is_70012</name></name></expr>)</condition> <block pos:start="169:25" pos:end="189:5">{<block_content pos:start="171:9" pos:end="187:68">
+
+        <decl_stmt pos:start="171:9" pos:end="171:20"><decl pos:start="171:9" pos:end="171:19"><type pos:start="171:9" pos:end="171:11"><name pos:start="171:9" pos:end="171:11">int</name></type> <name pos:start="171:13" pos:end="171:19">pStride</name></decl>;</decl_stmt>
+
+
+
+        <if_stmt pos:start="175:9" pos:end="185:27"><if pos:start="175:9" pos:end="177:26">if <condition pos:start="175:12" pos:end="175:25">(<expr pos:start="175:13" pos:end="175:24"><name pos:start="175:13" pos:end="175:17">width</name> <operator pos:start="175:19" pos:end="175:20">&lt;=</operator> <literal type="number" pos:start="175:22" pos:end="175:24">720</literal></expr>)</condition><block type="pseudo" pos:start="177:13" pos:end="177:26"><block_content pos:start="177:13" pos:end="177:26">
+
+            <expr_stmt pos:start="177:13" pos:end="177:26"><expr pos:start="177:13" pos:end="177:25"><name pos:start="177:13" pos:end="177:19">pStride</name> <operator pos:start="177:21" pos:end="177:21">=</operator> <literal type="number" pos:start="177:23" pos:end="177:25">720</literal></expr>;</expr_stmt></block_content></block></if>
+
+        <if type="elseif" pos:start="179:9" pos:end="181:27">else if <condition pos:start="179:17" pos:end="179:31">(<expr pos:start="179:18" pos:end="179:30"><name pos:start="179:18" pos:end="179:22">width</name> <operator pos:start="179:24" pos:end="179:25">&lt;=</operator> <literal type="number" pos:start="179:27" pos:end="179:30">1280</literal></expr>)</condition><block type="pseudo" pos:start="181:13" pos:end="181:27"><block_content pos:start="181:13" pos:end="181:27">
+
+            <expr_stmt pos:start="181:13" pos:end="181:27"><expr pos:start="181:13" pos:end="181:26"><name pos:start="181:13" pos:end="181:19">pStride</name> <operator pos:start="181:21" pos:end="181:21">=</operator> <literal type="number" pos:start="181:23" pos:end="181:26">1280</literal></expr>;</expr_stmt></block_content></block></if>
+
+        <if type="elseif" pos:start="183:9" pos:end="185:27">else if <condition pos:start="183:17" pos:end="183:31">(<expr pos:start="183:18" pos:end="183:30"><name pos:start="183:18" pos:end="183:22">width</name> <operator pos:start="183:24" pos:end="183:25">&lt;=</operator> <literal type="number" pos:start="183:27" pos:end="183:30">1080</literal></expr>)</condition><block type="pseudo" pos:start="185:13" pos:end="185:27"><block_content pos:start="185:13" pos:end="185:27">
+
+            <expr_stmt pos:start="185:13" pos:end="185:27"><expr pos:start="185:13" pos:end="185:26"><name pos:start="185:13" pos:end="185:19">pStride</name> <operator pos:start="185:21" pos:end="185:21">=</operator> <literal type="number" pos:start="185:23" pos:end="185:26">1080</literal></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+        <expr_stmt pos:start="187:9" pos:end="187:68"><expr pos:start="187:9" pos:end="187:67"><name pos:start="187:9" pos:end="187:15">sStride</name> <operator pos:start="187:17" pos:end="187:17">=</operator> <call pos:start="187:19" pos:end="187:67"><name pos:start="187:19" pos:end="187:39">av_image_get_linesize</name><argument_list pos:start="187:40" pos:end="187:67">(<argument pos:start="187:41" pos:end="187:54"><expr pos:start="187:41" pos:end="187:54"><name pos:start="187:41" pos:end="187:54"><name pos:start="187:41" pos:end="187:45">avctx</name><operator pos:start="187:46" pos:end="187:47">-&gt;</operator><name pos:start="187:48" pos:end="187:54">pix_fmt</name></name></expr></argument>, <argument pos:start="187:57" pos:end="187:63"><expr pos:start="187:57" pos:end="187:63"><name pos:start="187:57" pos:end="187:63">pStride</name></expr></argument>, <argument pos:start="187:66" pos:end="187:66"><expr pos:start="187:66" pos:end="187:66"><literal type="number" pos:start="187:66" pos:end="187:66">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="189:7" pos:end="193:5">else <block pos:start="189:12" pos:end="193:5">{<block_content pos:start="191:9" pos:end="191:25">
+
+        <expr_stmt pos:start="191:9" pos:end="191:25"><expr pos:start="191:9" pos:end="191:24"><name pos:start="191:9" pos:end="191:15">sStride</name> <operator pos:start="191:17" pos:end="191:17">=</operator> <name pos:start="191:19" pos:end="191:24">bwidth</name></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <expr_stmt pos:start="197:5" pos:end="197:36"><expr pos:start="197:5" pos:end="197:35"><name pos:start="197:5" pos:end="197:11">dStride</name> <operator pos:start="197:13" pos:end="197:13">=</operator> <name pos:start="197:15" pos:end="197:35"><name pos:start="197:15" pos:end="197:18">priv</name><operator pos:start="197:19" pos:end="197:20">-&gt;</operator><name pos:start="197:21" pos:end="197:23">pic</name><operator pos:start="197:24" pos:end="197:24">.</operator><name pos:start="197:25" pos:end="197:32">linesize</name><index pos:start="197:33" pos:end="197:35">[<expr pos:start="197:34" pos:end="197:34"><literal type="number" pos:start="197:34" pos:end="197:34">0</literal></expr>]</index></name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="199:5" pos:end="199:32"><expr pos:start="199:5" pos:end="199:31"><name pos:start="199:5" pos:end="199:7">dst</name>     <operator pos:start="199:13" pos:end="199:13">=</operator> <name pos:start="199:15" pos:end="199:31"><name pos:start="199:15" pos:end="199:18">priv</name><operator pos:start="199:19" pos:end="199:20">-&gt;</operator><name pos:start="199:21" pos:end="199:23">pic</name><operator pos:start="199:24" pos:end="199:24">.</operator><name pos:start="199:25" pos:end="199:28">data</name><index pos:start="199:29" pos:end="199:31">[<expr pos:start="199:30" pos:end="199:30"><literal type="number" pos:start="199:30" pos:end="199:30">0</literal></expr>]</index></name></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="203:5" pos:end="203:74"><expr pos:start="203:5" pos:end="203:73"><call pos:start="203:5" pos:end="203:73"><name pos:start="203:5" pos:end="203:10">av_log</name><argument_list pos:start="203:11" pos:end="203:73">(<argument pos:start="203:12" pos:end="203:22"><expr pos:start="203:12" pos:end="203:22"><name pos:start="203:12" pos:end="203:22"><name pos:start="203:12" pos:end="203:15">priv</name><operator pos:start="203:16" pos:end="203:17">-&gt;</operator><name pos:start="203:18" pos:end="203:22">avctx</name></name></expr></argument>, <argument pos:start="203:25" pos:end="203:38"><expr pos:start="203:25" pos:end="203:38"><name pos:start="203:25" pos:end="203:38">AV_LOG_VERBOSE</name></expr></argument>, <argument pos:start="203:41" pos:end="203:72"><expr pos:start="203:41" pos:end="203:72"><literal type="string" pos:start="203:41" pos:end="203:72">"CrystalHD: Copying out frame\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="207:5" pos:end="245:5"><if pos:start="207:5" pos:end="241:5">if <condition pos:start="207:8" pos:end="207:19">(<expr pos:start="207:9" pos:end="207:18"><name pos:start="207:9" pos:end="207:18">interlaced</name></expr>)</condition> <block pos:start="207:21" pos:end="241:5">{<block_content pos:start="209:9" pos:end="239:9">
+
+        <decl_stmt pos:start="209:9" pos:end="209:19"><decl pos:start="209:9" pos:end="209:18"><type pos:start="209:9" pos:end="209:11"><name pos:start="209:9" pos:end="209:11">int</name></type> <name pos:start="209:13" pos:end="209:14">dY</name> <init pos:start="209:16" pos:end="209:18">= <expr pos:start="209:18" pos:end="209:18"><literal type="number" pos:start="209:18" pos:end="209:18">0</literal></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="211:9" pos:end="211:19"><decl pos:start="211:9" pos:end="211:18"><type pos:start="211:9" pos:end="211:11"><name pos:start="211:9" pos:end="211:11">int</name></type> <name pos:start="211:13" pos:end="211:14">sY</name> <init pos:start="211:16" pos:end="211:18">= <expr pos:start="211:18" pos:end="211:18"><literal type="number" pos:start="211:18" pos:end="211:18">0</literal></expr></init></decl>;</decl_stmt>
+
+
+
+        <expr_stmt pos:start="215:9" pos:end="215:20"><expr pos:start="215:9" pos:end="215:19"><name pos:start="215:9" pos:end="215:14">height</name> <operator pos:start="215:16" pos:end="215:17">/=</operator> <literal type="number" pos:start="215:19" pos:end="215:19">2</literal></expr>;</expr_stmt>
+
+        <if_stmt pos:start="217:9" pos:end="229:9"><if pos:start="217:9" pos:end="223:9">if <condition pos:start="217:12" pos:end="217:25">(<expr pos:start="217:13" pos:end="217:24"><name pos:start="217:13" pos:end="217:24">bottom_field</name></expr>)</condition> <block pos:start="217:27" pos:end="223:9">{<block_content pos:start="219:13" pos:end="221:19">
+
+            <expr_stmt pos:start="219:13" pos:end="219:78"><expr pos:start="219:13" pos:end="219:77"><call pos:start="219:13" pos:end="219:77"><name pos:start="219:13" pos:end="219:18">av_log</name><argument_list pos:start="219:19" pos:end="219:77">(<argument pos:start="219:20" pos:end="219:30"><expr pos:start="219:20" pos:end="219:30"><name pos:start="219:20" pos:end="219:30"><name pos:start="219:20" pos:end="219:23">priv</name><operator pos:start="219:24" pos:end="219:25">-&gt;</operator><name pos:start="219:26" pos:end="219:30">avctx</name></name></expr></argument>, <argument pos:start="219:33" pos:end="219:46"><expr pos:start="219:33" pos:end="219:46"><name pos:start="219:33" pos:end="219:46">AV_LOG_VERBOSE</name></expr></argument>, <argument pos:start="219:49" pos:end="219:76"><expr pos:start="219:49" pos:end="219:76"><literal type="string" pos:start="219:49" pos:end="219:76">"Interlaced: bottom field\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="221:13" pos:end="221:19"><expr pos:start="221:13" pos:end="221:18"><name pos:start="221:13" pos:end="221:14">dY</name> <operator pos:start="221:16" pos:end="221:16">=</operator> <literal type="number" pos:start="221:18" pos:end="221:18">1</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="223:11" pos:end="229:9">else <block pos:start="223:16" pos:end="229:9">{<block_content pos:start="225:13" pos:end="227:19">
+
+            <expr_stmt pos:start="225:13" pos:end="225:75"><expr pos:start="225:13" pos:end="225:74"><call pos:start="225:13" pos:end="225:74"><name pos:start="225:13" pos:end="225:18">av_log</name><argument_list pos:start="225:19" pos:end="225:74">(<argument pos:start="225:20" pos:end="225:30"><expr pos:start="225:20" pos:end="225:30"><name pos:start="225:20" pos:end="225:30"><name pos:start="225:20" pos:end="225:23">priv</name><operator pos:start="225:24" pos:end="225:25">-&gt;</operator><name pos:start="225:26" pos:end="225:30">avctx</name></name></expr></argument>, <argument pos:start="225:33" pos:end="225:46"><expr pos:start="225:33" pos:end="225:46"><name pos:start="225:33" pos:end="225:46">AV_LOG_VERBOSE</name></expr></argument>, <argument pos:start="225:49" pos:end="225:73"><expr pos:start="225:49" pos:end="225:73"><literal type="string" pos:start="225:49" pos:end="225:73">"Interlaced: top field\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="227:13" pos:end="227:19"><expr pos:start="227:13" pos:end="227:18"><name pos:start="227:13" pos:end="227:14">dY</name> <operator pos:start="227:16" pos:end="227:16">=</operator> <literal type="number" pos:start="227:18" pos:end="227:18">0</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+
+
+        <for pos:start="233:9" pos:end="239:9">for <control pos:start="233:13" pos:end="233:45">(<init pos:start="233:14" pos:end="233:20"><expr pos:start="233:14" pos:end="233:19"><name pos:start="233:14" pos:end="233:15">sY</name> <operator pos:start="233:17" pos:end="233:17">=</operator> <literal type="number" pos:start="233:19" pos:end="233:19">0</literal></expr>;</init> <condition pos:start="233:22" pos:end="233:33"><expr pos:start="233:22" pos:end="233:32"><name pos:start="233:22" pos:end="233:23">sY</name> <operator pos:start="233:25" pos:end="233:25">&lt;</operator> <name pos:start="233:27" pos:end="233:32">height</name></expr>;</condition> <incr pos:start="233:35" pos:end="233:44"><expr pos:start="233:35" pos:end="233:38"><name pos:start="233:35" pos:end="233:36">dY</name><operator pos:start="233:37" pos:end="233:38">++</operator></expr><operator pos:start="233:39" pos:end="233:39">,</operator> <expr pos:start="233:41" pos:end="233:44"><name pos:start="233:41" pos:end="233:42">sY</name><operator pos:start="233:43" pos:end="233:44">++</operator></expr></incr>)</control> <block pos:start="233:47" pos:end="239:9">{<block_content pos:start="235:13" pos:end="237:17">
+
+            <expr_stmt pos:start="235:13" pos:end="235:71"><expr pos:start="235:13" pos:end="235:70"><call pos:start="235:13" pos:end="235:70"><name pos:start="235:13" pos:end="235:18">memcpy</name><argument_list pos:start="235:19" pos:end="235:70">(<argument pos:start="235:20" pos:end="235:39"><expr pos:start="235:20" pos:end="235:39"><operator pos:start="235:20" pos:end="235:20">&amp;</operator><operator pos:start="235:21" pos:end="235:21">(</operator><name pos:start="235:22" pos:end="235:38"><name pos:start="235:22" pos:end="235:24">dst</name><index pos:start="235:25" pos:end="235:38">[<expr pos:start="235:26" pos:end="235:37"><name pos:start="235:26" pos:end="235:27">dY</name> <operator pos:start="235:29" pos:end="235:29">*</operator> <name pos:start="235:31" pos:end="235:37">dStride</name></expr>]</index></name><operator pos:start="235:39" pos:end="235:39">)</operator></expr></argument>, <argument pos:start="235:42" pos:end="235:61"><expr pos:start="235:42" pos:end="235:61"><operator pos:start="235:42" pos:end="235:42">&amp;</operator><operator pos:start="235:43" pos:end="235:43">(</operator><name pos:start="235:44" pos:end="235:60"><name pos:start="235:44" pos:end="235:46">src</name><index pos:start="235:47" pos:end="235:60">[<expr pos:start="235:48" pos:end="235:59"><name pos:start="235:48" pos:end="235:49">sY</name> <operator pos:start="235:51" pos:end="235:51">*</operator> <name pos:start="235:53" pos:end="235:59">sStride</name></expr>]</index></name><operator pos:start="235:61" pos:end="235:61">)</operator></expr></argument>, <argument pos:start="235:64" pos:end="235:69"><expr pos:start="235:64" pos:end="235:69"><name pos:start="235:64" pos:end="235:69">bwidth</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="237:13" pos:end="237:17"><expr pos:start="237:13" pos:end="237:16"><name pos:start="237:13" pos:end="237:14">dY</name><operator pos:start="237:15" pos:end="237:16">++</operator></expr>;</expr_stmt>
+
+        </block_content>}</block></for>
+
+    </block_content>}</block></if> <else pos:start="241:7" pos:end="245:5">else <block pos:start="241:12" pos:end="245:5">{<block_content pos:start="243:9" pos:end="243:72">
+
+        <expr_stmt pos:start="243:9" pos:end="243:72"><expr pos:start="243:9" pos:end="243:71"><call pos:start="243:9" pos:end="243:71"><name pos:start="243:9" pos:end="243:27">av_image_copy_plane</name><argument_list pos:start="243:28" pos:end="243:71">(<argument pos:start="243:29" pos:end="243:31"><expr pos:start="243:29" pos:end="243:31"><name pos:start="243:29" pos:end="243:31">dst</name></expr></argument>, <argument pos:start="243:34" pos:end="243:40"><expr pos:start="243:34" pos:end="243:40"><name pos:start="243:34" pos:end="243:40">dStride</name></expr></argument>, <argument pos:start="243:43" pos:end="243:45"><expr pos:start="243:43" pos:end="243:45"><name pos:start="243:43" pos:end="243:45">src</name></expr></argument>, <argument pos:start="243:48" pos:end="243:54"><expr pos:start="243:48" pos:end="243:54"><name pos:start="243:48" pos:end="243:54">sStride</name></expr></argument>, <argument pos:start="243:57" pos:end="243:62"><expr pos:start="243:57" pos:end="243:62"><name pos:start="243:57" pos:end="243:62">bwidth</name></expr></argument>, <argument pos:start="243:65" pos:end="243:70"><expr pos:start="243:65" pos:end="243:70"><name pos:start="243:65" pos:end="243:70">height</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <expr_stmt pos:start="249:5" pos:end="249:44"><expr pos:start="249:5" pos:end="249:43"><name pos:start="249:5" pos:end="249:30"><name pos:start="249:5" pos:end="249:8">priv</name><operator pos:start="249:9" pos:end="249:10">-&gt;</operator><name pos:start="249:11" pos:end="249:13">pic</name><operator pos:start="249:14" pos:end="249:14">.</operator><name pos:start="249:15" pos:end="249:30">interlaced_frame</name></name> <operator pos:start="249:32" pos:end="249:32">=</operator> <name pos:start="249:34" pos:end="249:43">interlaced</name></expr>;</expr_stmt>
+
+    <if_stmt pos:start="251:5" pos:end="253:50"><if pos:start="251:5" pos:end="253:50">if <condition pos:start="251:8" pos:end="251:19">(<expr pos:start="251:9" pos:end="251:18"><name pos:start="251:9" pos:end="251:18">interlaced</name></expr>)</condition><block type="pseudo" pos:start="253:9" pos:end="253:50"><block_content pos:start="253:9" pos:end="253:50">
+
+        <expr_stmt pos:start="253:9" pos:end="253:50"><expr pos:start="253:9" pos:end="253:49"><name pos:start="253:9" pos:end="253:33"><name pos:start="253:9" pos:end="253:12">priv</name><operator pos:start="253:13" pos:end="253:14">-&gt;</operator><name pos:start="253:15" pos:end="253:17">pic</name><operator pos:start="253:18" pos:end="253:18">.</operator><name pos:start="253:19" pos:end="253:33">top_field_first</name></name> <operator pos:start="253:35" pos:end="253:35">=</operator> <operator pos:start="253:37" pos:end="253:37">!</operator><name pos:start="253:38" pos:end="253:49">bottom_first</name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="257:5" pos:end="257:32"><expr pos:start="257:5" pos:end="257:31"><name pos:start="257:5" pos:end="257:21"><name pos:start="257:5" pos:end="257:8">priv</name><operator pos:start="257:9" pos:end="257:10">-&gt;</operator><name pos:start="257:11" pos:end="257:13">pic</name><operator pos:start="257:14" pos:end="257:14">.</operator><name pos:start="257:15" pos:end="257:21">pkt_pts</name></name> <operator pos:start="257:23" pos:end="257:23">=</operator> <name pos:start="257:25" pos:end="257:31">pkt_pts</name></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="261:5" pos:end="267:5"><if pos:start="261:5" pos:end="267:5">if <condition pos:start="261:8" pos:end="261:33">(<expr pos:start="261:9" pos:end="261:32"><operator pos:start="261:9" pos:end="261:9">!</operator><name pos:start="261:10" pos:end="261:32"><name pos:start="261:10" pos:end="261:13">priv</name><operator pos:start="261:14" pos:end="261:15">-&gt;</operator><name pos:start="261:16" pos:end="261:32">need_second_field</name></name></expr>)</condition> <block pos:start="261:35" pos:end="267:5">{<block_content pos:start="263:9" pos:end="265:37">
+
+        <expr_stmt pos:start="263:9" pos:end="263:43"><expr pos:start="263:9" pos:end="263:42"><operator pos:start="263:9" pos:end="263:9">*</operator><name pos:start="263:10" pos:end="263:18">data_size</name>       <operator pos:start="263:26" pos:end="263:26">=</operator> <sizeof pos:start="263:28" pos:end="263:42">sizeof<argument_list pos:start="263:34" pos:end="263:42">(<argument pos:start="263:35" pos:end="263:41"><expr pos:start="263:35" pos:end="263:41"><name pos:start="263:35" pos:end="263:41">AVFrame</name></expr></argument>)</argument_list></sizeof></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="265:9" pos:end="265:37"><expr pos:start="265:9" pos:end="265:36"><operator pos:start="265:9" pos:end="265:9">*</operator><operator pos:start="265:10" pos:end="265:10">(</operator><name pos:start="265:11" pos:end="265:17">AVFrame</name> <operator pos:start="265:19" pos:end="265:19">*</operator><operator pos:start="265:20" pos:end="265:20">)</operator><name pos:start="265:21" pos:end="265:24">data</name> <operator pos:start="265:26" pos:end="265:26">=</operator> <name pos:start="265:28" pos:end="265:36"><name pos:start="265:28" pos:end="265:31">priv</name><operator pos:start="265:32" pos:end="265:33">-&gt;</operator><name pos:start="265:34" pos:end="265:36">pic</name></name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="271:5" pos:end="279:5"><if pos:start="271:5" pos:end="279:5">if <condition pos:start="271:8" pos:end="273:54">(<expr pos:start="271:9" pos:end="273:53"><name pos:start="271:9" pos:end="271:36">ASSUME_TWO_INPUTS_ONE_OUTPUT</name> <operator pos:start="271:38" pos:end="271:39">&amp;&amp;</operator>
+
+        <name pos:start="273:9" pos:end="273:29"><name pos:start="273:9" pos:end="273:14">output</name><operator pos:start="273:15" pos:end="273:16">-&gt;</operator><name pos:start="273:17" pos:end="273:23">PicInfo</name><operator pos:start="273:24" pos:end="273:24">.</operator><name pos:start="273:25" pos:end="273:29">flags</name></name> <operator pos:start="273:31" pos:end="273:31">&amp;</operator> <name pos:start="273:33" pos:end="273:53">VDEC_FLAG_UNKNOWN_SRC</name></expr>)</condition> <block pos:start="273:56" pos:end="279:5">{<block_content pos:start="275:9" pos:end="277:34">
+
+        <expr_stmt pos:start="275:9" pos:end="275:77"><expr pos:start="275:9" pos:end="275:76"><call pos:start="275:9" pos:end="275:76"><name pos:start="275:9" pos:end="275:14">av_log</name><argument_list pos:start="275:15" pos:end="275:76">(<argument pos:start="275:16" pos:end="275:26"><expr pos:start="275:16" pos:end="275:26"><name pos:start="275:16" pos:end="275:26"><name pos:start="275:16" pos:end="275:19">priv</name><operator pos:start="275:20" pos:end="275:21">-&gt;</operator><name pos:start="275:22" pos:end="275:26">avctx</name></name></expr></argument>, <argument pos:start="275:29" pos:end="275:42"><expr pos:start="275:29" pos:end="275:42"><name pos:start="275:29" pos:end="275:42">AV_LOG_VERBOSE</name></expr></argument>, <argument pos:start="275:45" pos:end="275:75"><expr pos:start="275:45" pos:end="275:75"><literal type="string" pos:start="275:45" pos:end="275:75">"Fieldpair from two packets.\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="277:9" pos:end="277:34">return <expr pos:start="277:16" pos:end="277:33"><name pos:start="277:16" pos:end="277:33">RET_SKIP_NEXT_COPY</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="283:5" pos:end="289:7">/*
+
+     * Testing has shown that in all cases where we don't want to return the
+
+     * full frame immediately, VDEC_FLAG_UNKNOWN_SRC is set.
+
+     */</comment>
+
+    <return pos:start="291:5" pos:end="295:40">return <expr pos:start="291:12" pos:end="295:39"><ternary pos:start="291:12" pos:end="295:39"><condition pos:start="291:12" pos:end="293:61"><expr pos:start="291:12" pos:end="293:59"><name pos:start="291:12" pos:end="291:34"><name pos:start="291:12" pos:end="291:15">priv</name><operator pos:start="291:16" pos:end="291:17">-&gt;</operator><name pos:start="291:18" pos:end="291:34">need_second_field</name></name> <operator pos:start="291:36" pos:end="291:37">&amp;&amp;</operator>
+
+           <operator pos:start="293:12" pos:end="293:12">!</operator><operator pos:start="293:13" pos:end="293:13">(</operator><name pos:start="293:14" pos:end="293:34"><name pos:start="293:14" pos:end="293:19">output</name><operator pos:start="293:20" pos:end="293:21">-&gt;</operator><name pos:start="293:22" pos:end="293:28">PicInfo</name><operator pos:start="293:29" pos:end="293:29">.</operator><name pos:start="293:30" pos:end="293:34">flags</name></name> <operator pos:start="293:36" pos:end="293:36">&amp;</operator> <name pos:start="293:38" pos:end="293:58">VDEC_FLAG_UNKNOWN_SRC</name><operator pos:start="293:59" pos:end="293:59">)</operator></expr> ?</condition><then pos:start="295:12" pos:end="295:30">
+
+           <expr pos:start="295:12" pos:end="295:30"><name pos:start="295:12" pos:end="295:30">RET_COPY_NEXT_FIELD</name></expr> </then><else pos:start="295:32" pos:end="295:39">: <expr pos:start="295:34" pos:end="295:39"><name pos:start="295:34" pos:end="295:39">RET_OK</name></expr></else></ternary></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

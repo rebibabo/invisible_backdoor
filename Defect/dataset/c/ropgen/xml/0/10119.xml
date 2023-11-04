@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/10119.c" pos:tabs="8"><function pos:start="1:1" pos:end="159:1"><type pos:start="1:1" pos:end="1:4"><name pos:start="1:1" pos:end="1:4">void</name></type> <name pos:start="1:6" pos:end="1:20">ff_fft_calc_sse</name><parameter_list pos:start="1:21" pos:end="1:50">(<parameter pos:start="1:22" pos:end="1:34"><decl pos:start="1:22" pos:end="1:34"><type pos:start="1:22" pos:end="1:34"><name pos:start="1:22" pos:end="1:31">FFTContext</name> <modifier pos:start="1:33" pos:end="1:33">*</modifier></type><name pos:start="1:34" pos:end="1:34">s</name></decl></parameter>, <parameter pos:start="1:37" pos:end="1:49"><decl pos:start="1:37" pos:end="1:49"><type pos:start="1:37" pos:end="1:49"><name pos:start="1:37" pos:end="1:46">FFTComplex</name> <modifier pos:start="1:48" pos:end="1:48">*</modifier></type><name pos:start="1:49" pos:end="1:49">z</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="159:1">{<block_content pos:start="5:5" pos:end="157:27">
+
+    <decl_stmt pos:start="5:5" pos:end="5:22"><decl pos:start="5:5" pos:end="5:21"><type pos:start="5:5" pos:end="5:7"><name pos:start="5:5" pos:end="5:7">int</name></type> <name pos:start="5:9" pos:end="5:10">ln</name> <init pos:start="5:12" pos:end="5:21">= <expr pos:start="5:14" pos:end="5:21"><name pos:start="5:14" pos:end="5:21"><name pos:start="5:14" pos:end="5:14">s</name><operator pos:start="5:15" pos:end="5:16">-&gt;</operator><name pos:start="5:17" pos:end="5:21">nbits</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:14"><decl pos:start="7:5" pos:end="7:10"><type pos:start="7:5" pos:end="7:8"><name pos:start="7:5" pos:end="7:8">long</name></type> <name pos:start="7:10" pos:end="7:10">i</name></decl>, <decl pos:start="7:13" pos:end="7:13"><type ref="prev" pos:start="7:5" pos:end="7:8"/><name pos:start="7:13" pos:end="7:13">j</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:25"><decl pos:start="9:5" pos:end="9:16"><type pos:start="9:5" pos:end="9:8"><name pos:start="9:5" pos:end="9:8">long</name></type> <name pos:start="9:10" pos:end="9:16">nblocks</name></decl>, <decl pos:start="9:19" pos:end="9:24"><type ref="prev" pos:start="9:5" pos:end="9:8"/><name pos:start="9:19" pos:end="9:24">nloops</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:25"><decl pos:start="11:5" pos:end="11:17"><type pos:start="11:5" pos:end="11:16"><name pos:start="11:5" pos:end="11:14">FFTComplex</name> <modifier pos:start="11:16" pos:end="11:16">*</modifier></type><name pos:start="11:17" pos:end="11:17">p</name></decl>, <decl pos:start="11:20" pos:end="11:24"><type ref="prev" pos:start="11:5" pos:end="11:16"><modifier pos:start="11:20" pos:end="11:20">*</modifier></type><name pos:start="11:21" pos:end="11:24">cptr</name></decl>;</decl_stmt>
+
+
+
+    <asm pos:start="15:5" pos:end="25:6">asm <specifier pos:start="15:9" pos:end="15:16">volatile</specifier>(
+
+        "movaps %0, %%xmm4 \n\t"
+
+        "movaps %1, %%xmm5 \n\t"
+
+        ::"m"(*p1p1m1m1),
+
+          "m"(*(s-&gt;inverse <operator pos:start="23:28" pos:end="23:28">?</operator> p1p1m1p1 : p1p1p1m1))
+
+    );</asm>
+
+
+
+    <expr_stmt pos:start="29:5" pos:end="29:16"><expr pos:start="29:5" pos:end="29:15"><name pos:start="29:5" pos:end="29:5">i</name> <operator pos:start="29:7" pos:end="29:7">=</operator> <literal type="number" pos:start="29:9" pos:end="29:9">8</literal> <operator pos:start="29:11" pos:end="29:12">&lt;&lt;</operator> <name pos:start="29:14" pos:end="29:15">ln</name></expr>;</expr_stmt>
+
+    <asm pos:start="31:5" pos:end="85:6">asm <specifier pos:start="31:9" pos:end="31:16">volatile</specifier>(
+
+        "1: \n\t"
+
+        "sub $32, %0 \n\t"
+
+        <comment type="block" pos:start="37:9" pos:end="37:37">/* do the pass 0 butterfly */</comment>
+
+        "movaps   (%0,%1), %%xmm0 \n\t"
+
+        "movaps    %%xmm0, %%xmm1 \n\t"
+
+        "shufps     $0x4E, %%xmm0, %%xmm0 \n\t"
+
+        "xorps     %%xmm4, %%xmm1 \n\t"
+
+        "addps     %%xmm1, %%xmm0 \n\t"
+
+        "movaps 16(%0,%1), %%xmm2 \n\t"
+
+        "movaps    %%xmm2, %%xmm3 \n\t"
+
+        "shufps     $0x4E, %%xmm2, %%xmm2 \n\t"
+
+        "xorps     %%xmm4, %%xmm3 \n\t"
+
+        "addps     %%xmm3, %%xmm2 \n\t"
+
+        <comment type="block" pos:start="59:9" pos:end="59:34">/* multiply third by -i */</comment>
+
+        <comment type="block" pos:start="61:9" pos:end="61:38">/* by toggling the sign bit */</comment>
+
+        "shufps     $0xB4, %%xmm2, %%xmm2 \n\t"
+
+        "xorps     %%xmm5, %%xmm2 \n\t"
+
+        <comment type="block" pos:start="67:9" pos:end="67:37">/* do the pass 1 butterfly */</comment>
+
+        "movaps    %%xmm0, %%xmm1 \n\t"
+
+        "addps     %%xmm2, %%xmm0 \n\t"
+
+        "subps     %%xmm2, %%xmm1 \n\t"
+
+        "movaps    %%xmm0,   (%0,%1) \n\t"
+
+        "movaps    %%xmm1, 16(%0,%1) \n\t"
+
+        "jg 1b \n\t"
+
+        :"+r"(i)
+
+        :"r"(z)
+
+    );</asm>
+
+    <comment type="block" pos:start="87:5" pos:end="87:24">/* pass 2 .. ln-1 */</comment>
+
+
+
+    <expr_stmt pos:start="91:5" pos:end="91:26"><expr pos:start="91:5" pos:end="91:25"><name pos:start="91:5" pos:end="91:11">nblocks</name> <operator pos:start="91:13" pos:end="91:13">=</operator> <literal type="number" pos:start="91:15" pos:end="91:15">1</literal> <operator pos:start="91:17" pos:end="91:18">&lt;&lt;</operator> <operator pos:start="91:20" pos:end="91:20">(</operator><name pos:start="91:21" pos:end="91:22">ln</name><operator pos:start="91:23" pos:end="91:23">-</operator><literal type="number" pos:start="91:24" pos:end="91:24">3</literal><operator pos:start="91:25" pos:end="91:25">)</operator></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="93:5" pos:end="93:20"><expr pos:start="93:5" pos:end="93:19"><name pos:start="93:5" pos:end="93:10">nloops</name> <operator pos:start="93:12" pos:end="93:12">=</operator> <literal type="number" pos:start="93:14" pos:end="93:14">1</literal> <operator pos:start="93:16" pos:end="93:17">&lt;&lt;</operator> <literal type="number" pos:start="93:19" pos:end="93:19">2</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="95:5" pos:end="95:22"><expr pos:start="95:5" pos:end="95:21"><name pos:start="95:5" pos:end="95:8">cptr</name> <operator pos:start="95:10" pos:end="95:10">=</operator> <name pos:start="95:12" pos:end="95:21"><name pos:start="95:12" pos:end="95:12">s</name><operator pos:start="95:13" pos:end="95:14">-&gt;</operator><name pos:start="95:15" pos:end="95:21">exptab1</name></name></expr>;</expr_stmt>
+
+    <do pos:start="97:5" pos:end="157:27">do <block pos:start="97:8" pos:end="157:5">{<block_content pos:start="99:9" pos:end="155:21">
+
+        <expr_stmt pos:start="99:9" pos:end="99:14"><expr pos:start="99:9" pos:end="99:13"><name pos:start="99:9" pos:end="99:9">p</name> <operator pos:start="99:11" pos:end="99:11">=</operator> <name pos:start="99:13" pos:end="99:13">z</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="101:9" pos:end="101:20"><expr pos:start="101:9" pos:end="101:19"><name pos:start="101:9" pos:end="101:9">j</name> <operator pos:start="101:11" pos:end="101:11">=</operator> <name pos:start="101:13" pos:end="101:19">nblocks</name></expr>;</expr_stmt>
+
+        <do pos:start="103:9" pos:end="149:22">do <block pos:start="103:12" pos:end="149:9">{<block_content pos:start="105:13" pos:end="147:26">
+
+            <expr_stmt pos:start="105:13" pos:end="105:25"><expr pos:start="105:13" pos:end="105:24"><name pos:start="105:13" pos:end="105:13">i</name> <operator pos:start="105:15" pos:end="105:15">=</operator> <name pos:start="105:17" pos:end="105:22">nloops</name><operator pos:start="105:23" pos:end="105:23">*</operator><literal type="number" pos:start="105:24" pos:end="105:24">8</literal></expr>;</expr_stmt>
+
+            <asm pos:start="107:13" pos:end="145:14">asm <specifier pos:start="107:17" pos:end="107:24">volatile</specifier>(
+
+                "1: \n\t"
+
+                "sub $16, %0 \n\t"
+
+                "movaps    (%2,%0), %%xmm1 \n\t"
+
+                "movaps    (%1,%0), %%xmm0 \n\t"
+
+                "movaps     %%xmm1, %%xmm2 \n\t"
+
+                "shufps      $0xA0, %%xmm1, %%xmm1 \n\t"
+
+                "shufps      $0xF5, %%xmm2, %%xmm2 \n\t"
+
+                "mulps   (%3,%0,2), %%xmm1 \n\t" <comment type="line" pos:start="123:50" pos:end="123:66">//  cre*re cim*re</comment>
+
+                "mulps 16(%3,%0,2), %%xmm2 \n\t" <comment type="line" pos:start="125:50" pos:end="125:66">// -cim*im cre*im</comment>
+
+                "addps      %%xmm2, %%xmm1 \n\t"
+
+                "movaps     %%xmm0, %%xmm3 \n\t"
+
+                "addps      %%xmm1, %%xmm0 \n\t"
+
+                "subps      %%xmm1, %%xmm3 \n\t"
+
+                "movaps     %%xmm0, (%1,%0) \n\t"
+
+                "movaps     %%xmm3, (%2,%0) \n\t"
+
+                "jg 1b \n\t"
+
+                :"+r"(i)
+
+                :"r"(p), "r"(p + nloops), "r"(cptr)
+
+            );</asm>
+
+            <expr_stmt pos:start="147:13" pos:end="147:26"><expr pos:start="147:13" pos:end="147:25"><name pos:start="147:13" pos:end="147:13">p</name> <operator pos:start="147:15" pos:end="147:16">+=</operator> <name pos:start="147:18" pos:end="147:23">nloops</name><operator pos:start="147:24" pos:end="147:24">*</operator><literal type="number" pos:start="147:25" pos:end="147:25">2</literal></expr>;</expr_stmt>
+
+        </block_content>}</block> while <condition pos:start="149:17" pos:end="149:21">(<expr pos:start="149:18" pos:end="149:20"><operator pos:start="149:18" pos:end="149:19">--</operator><name pos:start="149:20" pos:end="149:20">j</name></expr>)</condition>;</do>
+
+        <expr_stmt pos:start="151:9" pos:end="151:25"><expr pos:start="151:9" pos:end="151:24"><name pos:start="151:9" pos:end="151:12">cptr</name> <operator pos:start="151:14" pos:end="151:15">+=</operator> <name pos:start="151:17" pos:end="151:22">nloops</name><operator pos:start="151:23" pos:end="151:23">*</operator><literal type="number" pos:start="151:24" pos:end="151:24">2</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="153:9" pos:end="153:22"><expr pos:start="153:9" pos:end="153:21"><name pos:start="153:9" pos:end="153:15">nblocks</name> <operator pos:start="153:17" pos:end="153:19">&gt;&gt;=</operator> <literal type="number" pos:start="153:21" pos:end="153:21">1</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="155:9" pos:end="155:21"><expr pos:start="155:9" pos:end="155:20"><name pos:start="155:9" pos:end="155:14">nloops</name> <operator pos:start="155:16" pos:end="155:18">&lt;&lt;=</operator> <literal type="number" pos:start="155:20" pos:end="155:20">1</literal></expr>;</expr_stmt>
+
+    </block_content>}</block> while <condition pos:start="157:13" pos:end="157:26">(<expr pos:start="157:14" pos:end="157:25"><name pos:start="157:14" pos:end="157:20">nblocks</name> <operator pos:start="157:22" pos:end="157:23">!=</operator> <literal type="number" pos:start="157:25" pos:end="157:25">0</literal></expr>)</condition>;</do>
+
+</block_content>}</block></function>
+</unit>

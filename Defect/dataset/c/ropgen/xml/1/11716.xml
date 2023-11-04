@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/11716.c" pos:tabs="8"><function pos:start="1:1" pos:end="97:1"><type pos:start="1:1" pos:end="1:8"><name pos:start="1:1" pos:end="1:8">abi_long</name></type> <name pos:start="1:10" pos:end="1:15">do_brk</name><parameter_list pos:start="1:16" pos:end="1:34">(<parameter pos:start="1:17" pos:end="1:33"><decl pos:start="1:17" pos:end="1:33"><type pos:start="1:17" pos:end="1:25"><name pos:start="1:17" pos:end="1:25">abi_ulong</name></type> <name pos:start="1:27" pos:end="1:33">new_brk</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="97:1">{<block_content pos:start="5:5" pos:end="95:22">
+
+    <decl_stmt pos:start="5:5" pos:end="5:23"><decl pos:start="5:5" pos:end="5:22"><type pos:start="5:5" pos:end="5:13"><name pos:start="5:5" pos:end="5:13">abi_ulong</name></type> <name pos:start="5:15" pos:end="5:22">brk_page</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:25"><decl pos:start="7:5" pos:end="7:24"><type pos:start="7:5" pos:end="7:12"><name pos:start="7:5" pos:end="7:12">abi_long</name></type> <name pos:start="7:14" pos:end="7:24">mapped_addr</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:23"><decl pos:start="9:5" pos:end="9:22"><type pos:start="9:5" pos:end="9:7"><name pos:start="9:5" pos:end="9:7">int</name></type>	<name pos:start="9:9" pos:end="9:22">new_alloc_size</name></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="13:5" pos:end="15:26"><if pos:start="13:5" pos:end="15:26">if <condition pos:start="13:8" pos:end="13:17">(<expr pos:start="13:9" pos:end="13:16"><operator pos:start="13:9" pos:end="13:9">!</operator><name pos:start="13:10" pos:end="13:16">new_brk</name></expr>)</condition><block type="pseudo" pos:start="15:9" pos:end="15:26"><block_content pos:start="15:9" pos:end="15:26">
+
+        <return pos:start="15:9" pos:end="15:26">return <expr pos:start="15:16" pos:end="15:25"><name pos:start="15:16" pos:end="15:25">target_brk</name></expr>;</return></block_content></block></if></if_stmt>
+
+    <if_stmt pos:start="17:5" pos:end="19:26"><if pos:start="17:5" pos:end="19:26">if <condition pos:start="17:8" pos:end="17:38">(<expr pos:start="17:9" pos:end="17:37"><name pos:start="17:9" pos:end="17:15">new_brk</name> <operator pos:start="17:17" pos:end="17:17">&lt;</operator> <name pos:start="17:19" pos:end="17:37">target_original_brk</name></expr>)</condition><block type="pseudo" pos:start="19:9" pos:end="19:26"><block_content pos:start="19:9" pos:end="19:26">
+
+        <return pos:start="19:9" pos:end="19:26">return <expr pos:start="19:16" pos:end="19:25"><name pos:start="19:16" pos:end="19:25">target_brk</name></expr>;</return></block_content></block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="23:5" pos:end="23:43"><expr pos:start="23:5" pos:end="23:42"><name pos:start="23:5" pos:end="23:12">brk_page</name> <operator pos:start="23:14" pos:end="23:14">=</operator> <call pos:start="23:16" pos:end="23:42"><name pos:start="23:16" pos:end="23:30">HOST_PAGE_ALIGN</name><argument_list pos:start="23:31" pos:end="23:42">(<argument pos:start="23:32" pos:end="23:41"><expr pos:start="23:32" pos:end="23:41"><name pos:start="23:32" pos:end="23:41">target_brk</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="27:5" pos:end="27:68">/* If the new brk is less than this, set it and we're done... */</comment>
+
+    <if_stmt pos:start="29:5" pos:end="35:5"><if pos:start="29:5" pos:end="35:5">if <condition pos:start="29:8" pos:end="29:27">(<expr pos:start="29:9" pos:end="29:26"><name pos:start="29:9" pos:end="29:15">new_brk</name> <operator pos:start="29:17" pos:end="29:17">&lt;</operator> <name pos:start="29:19" pos:end="29:26">brk_page</name></expr>)</condition> <block pos:start="29:29" pos:end="35:5">{<block_content pos:start="31:9" pos:end="33:26">
+
+	<expr_stmt pos:start="31:9" pos:end="31:29"><expr pos:start="31:9" pos:end="31:28"><name pos:start="31:9" pos:end="31:18">target_brk</name> <operator pos:start="31:20" pos:end="31:20">=</operator> <name pos:start="31:22" pos:end="31:28">new_brk</name></expr>;</expr_stmt>
+
+    	<return pos:start="33:9" pos:end="33:26">return <expr pos:start="33:16" pos:end="33:25"><name pos:start="33:16" pos:end="33:25">target_brk</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="39:5" pos:end="49:7">/* We need to allocate more memory after the brk... Note that
+
+     * we don't use MAP_FIXED because that will map over the top of
+
+     * any existing mapping (like the one with the host libc or qemu
+
+     * itself); instead we treat "mapped but at wrong address" as
+
+     * a failure and unmap again.
+
+     */</comment>
+
+    <expr_stmt pos:start="51:5" pos:end="51:61"><expr pos:start="51:5" pos:end="51:60"><name pos:start="51:5" pos:end="51:18">new_alloc_size</name> <operator pos:start="51:20" pos:end="51:20">=</operator> <call pos:start="51:22" pos:end="51:60"><name pos:start="51:22" pos:end="51:36">HOST_PAGE_ALIGN</name><argument_list pos:start="51:37" pos:end="51:60">(<argument pos:start="51:38" pos:end="51:59"><expr pos:start="51:38" pos:end="51:59"><name pos:start="51:38" pos:end="51:44">new_brk</name> <operator pos:start="51:46" pos:end="51:46">-</operator> <name pos:start="51:48" pos:end="51:55">brk_page</name> <operator pos:start="51:57" pos:end="51:57">+</operator> <literal type="number" pos:start="51:59" pos:end="51:59">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="53:5" pos:end="57:69"><expr pos:start="53:5" pos:end="57:68"><name pos:start="53:5" pos:end="53:15">mapped_addr</name> <operator pos:start="53:17" pos:end="53:17">=</operator> <call pos:start="53:19" pos:end="57:68"><name pos:start="53:19" pos:end="53:27">get_errno</name><argument_list pos:start="53:28" pos:end="57:68">(<argument pos:start="53:29" pos:end="57:67"><expr pos:start="53:29" pos:end="57:67"><call pos:start="53:29" pos:end="57:67"><name pos:start="53:29" pos:end="53:39">target_mmap</name><argument_list pos:start="53:40" pos:end="57:67">(<argument pos:start="53:41" pos:end="53:48"><expr pos:start="53:41" pos:end="53:48"><name pos:start="53:41" pos:end="53:48">brk_page</name></expr></argument>, <argument pos:start="53:51" pos:end="53:64"><expr pos:start="53:51" pos:end="53:64"><name pos:start="53:51" pos:end="53:64">new_alloc_size</name></expr></argument>,
+
+                                        <argument pos:start="55:41" pos:end="55:60"><expr pos:start="55:41" pos:end="55:60"><name pos:start="55:41" pos:end="55:49">PROT_READ</name><operator pos:start="55:50" pos:end="55:50">|</operator><name pos:start="55:51" pos:end="55:60">PROT_WRITE</name></expr></argument>,
+
+                                        <argument pos:start="57:41" pos:end="57:60"><expr pos:start="57:41" pos:end="57:60"><name pos:start="57:41" pos:end="57:48">MAP_ANON</name><operator pos:start="57:49" pos:end="57:49">|</operator><name pos:start="57:50" pos:end="57:60">MAP_PRIVATE</name></expr></argument>, <argument pos:start="57:63" pos:end="57:63"><expr pos:start="57:63" pos:end="57:63"><literal type="number" pos:start="57:63" pos:end="57:63">0</literal></expr></argument>, <argument pos:start="57:66" pos:end="57:66"><expr pos:start="57:66" pos:end="57:66"><literal type="number" pos:start="57:66" pos:end="57:66">0</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="61:5" pos:end="84:0"><if pos:start="61:5" pos:end="67:5">if <condition pos:start="61:8" pos:end="61:32">(<expr pos:start="61:9" pos:end="61:31"><name pos:start="61:9" pos:end="61:19">mapped_addr</name> <operator pos:start="61:21" pos:end="61:22">==</operator> <name pos:start="61:24" pos:end="61:31">brk_page</name></expr>)</condition> <block pos:start="61:34" pos:end="67:5">{<block_content pos:start="63:9" pos:end="65:26">
+
+        <expr_stmt pos:start="63:9" pos:end="63:29"><expr pos:start="63:9" pos:end="63:28"><name pos:start="63:9" pos:end="63:18">target_brk</name> <operator pos:start="63:20" pos:end="63:20">=</operator> <name pos:start="63:22" pos:end="63:28">new_brk</name></expr>;</expr_stmt>
+
+        <return pos:start="65:9" pos:end="65:26">return <expr pos:start="65:16" pos:end="65:25"><name pos:start="65:16" pos:end="65:25">target_brk</name></expr>;</return>
+
+    </block_content>}</block></if> <if type="elseif" pos:start="67:7" pos:end="84:0">else if <condition pos:start="67:15" pos:end="67:33">(<expr pos:start="67:16" pos:end="67:32"><name pos:start="67:16" pos:end="67:26">mapped_addr</name> <operator pos:start="67:28" pos:end="67:29">!=</operator> <operator pos:start="67:31" pos:end="67:31">-</operator><literal type="number" pos:start="67:32" pos:end="67:32">1</literal></expr>)</condition> <block pos:start="67:35" pos:end="84:0">{<block_content pos:start="75:9" pos:end="77:25">
+
+        <comment type="block" pos:start="69:9" pos:end="73:11">/* Mapped but at wrong address, meaning there wasn't actually
+
+         * enough space for this brk.
+
+         */</comment>
+
+        <expr_stmt pos:start="75:9" pos:end="75:51"><expr pos:start="75:9" pos:end="75:50"><call pos:start="75:9" pos:end="75:50"><name pos:start="75:9" pos:end="75:21">target_munmap</name><argument_list pos:start="75:22" pos:end="75:50">(<argument pos:start="75:23" pos:end="75:33"><expr pos:start="75:23" pos:end="75:33"><name pos:start="75:23" pos:end="75:33">mapped_addr</name></expr></argument>, <argument pos:start="75:36" pos:end="75:49"><expr pos:start="75:36" pos:end="75:49"><name pos:start="75:36" pos:end="75:49">new_alloc_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="77:9" pos:end="77:25"><expr pos:start="77:9" pos:end="77:24"><name pos:start="77:9" pos:end="77:19">mapped_addr</name> <operator pos:start="77:21" pos:end="77:21">=</operator> <operator pos:start="77:23" pos:end="77:23">-</operator><literal type="number" pos:start="77:24" pos:end="77:24">1</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+<cpp:if pos:start="83:1" pos:end="83:25">#<cpp:directive pos:start="83:2" pos:end="83:3">if</cpp:directive> <expr pos:start="83:5" pos:end="83:25"><call pos:start="83:5" pos:end="83:25"><name pos:start="83:5" pos:end="83:11">defined</name><argument_list pos:start="83:12" pos:end="83:25">(<argument pos:start="83:13" pos:end="83:24"><expr pos:start="83:13" pos:end="83:24"><name pos:start="83:13" pos:end="83:24">TARGET_ALPHA</name></expr></argument>)</argument_list></call></expr></cpp:if>
+
+    <comment type="block" pos:start="85:5" pos:end="87:61">/* We (partially) emulate OSF/1 on Alpha, which requires we
+
+       return a proper errno, not an unchanged brk value.  */</comment>
+
+    <return pos:start="89:5" pos:end="92:0">return <expr pos:start="89:12" pos:end="89:25"><operator pos:start="89:12" pos:end="89:12">-</operator><name pos:start="89:13" pos:end="89:25">TARGET_ENOMEM</name></expr>;</return>
+
+<cpp:endif pos:start="91:1" pos:end="91:6">#<cpp:directive pos:start="91:2" pos:end="91:6">endif</cpp:directive></cpp:endif>
+
+    <comment type="block" pos:start="93:5" pos:end="93:57">/* For everything else, return the previous break. */</comment>
+
+    <return pos:start="95:5" pos:end="95:22">return <expr pos:start="95:12" pos:end="95:21"><name pos:start="95:12" pos:end="95:21">target_brk</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

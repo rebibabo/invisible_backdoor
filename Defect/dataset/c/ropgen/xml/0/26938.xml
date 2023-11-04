@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/26938.c" pos:tabs="8"><function pos:start="1:1" pos:end="29:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:24">spawn_thread</name><parameter_list pos:start="1:25" pos:end="1:42">(<parameter pos:start="1:26" pos:end="1:41"><decl pos:start="1:26" pos:end="1:41"><type pos:start="1:26" pos:end="1:37"><name pos:start="1:26" pos:end="1:35">ThreadPool</name> <modifier pos:start="1:37" pos:end="1:37">*</modifier></type><name pos:start="1:38" pos:end="1:41">pool</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="29:1">{<block_content pos:start="5:5" pos:end="27:5">
+
+    <expr_stmt pos:start="5:5" pos:end="5:24"><expr pos:start="5:5" pos:end="5:23"><name pos:start="5:5" pos:end="5:21"><name pos:start="5:5" pos:end="5:8">pool</name><operator pos:start="5:9" pos:end="5:10">-&gt;</operator><name pos:start="5:11" pos:end="5:21">cur_threads</name></name><operator pos:start="5:22" pos:end="5:23">++</operator></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="7:5" pos:end="7:24"><expr pos:start="7:5" pos:end="7:23"><name pos:start="7:5" pos:end="7:21"><name pos:start="7:5" pos:end="7:8">pool</name><operator pos:start="7:9" pos:end="7:10">-&gt;</operator><name pos:start="7:11" pos:end="7:21">new_threads</name></name><operator pos:start="7:22" pos:end="7:23">++</operator></expr>;</expr_stmt>
+
+    <comment type="block" pos:start="9:5" pos:end="21:7">/* If there are threads being created, they will spawn new workers, so
+
+     * we don't spend time creating many threads in a loop holding a mutex or
+
+     * starving the current vcpu.
+
+     *
+
+     * If there are no idle threads, ask the main thread to create one, so we
+
+     * inherit the correct affinity instead of the vcpu affinity.
+
+     */</comment>
+
+    <if_stmt pos:start="23:5" pos:end="27:5"><if pos:start="23:5" pos:end="27:5">if <condition pos:start="23:8" pos:end="23:31">(<expr pos:start="23:9" pos:end="23:30"><operator pos:start="23:9" pos:end="23:9">!</operator><name pos:start="23:10" pos:end="23:30"><name pos:start="23:10" pos:end="23:13">pool</name><operator pos:start="23:14" pos:end="23:15">-&gt;</operator><name pos:start="23:16" pos:end="23:30">pending_threads</name></name></expr>)</condition> <block pos:start="23:33" pos:end="27:5">{<block_content pos:start="25:9" pos:end="25:46">
+
+        <expr_stmt pos:start="25:9" pos:end="25:46"><expr pos:start="25:9" pos:end="25:45"><call pos:start="25:9" pos:end="25:45"><name pos:start="25:9" pos:end="25:24">qemu_bh_schedule</name><argument_list pos:start="25:25" pos:end="25:45">(<argument pos:start="25:26" pos:end="25:44"><expr pos:start="25:26" pos:end="25:44"><name pos:start="25:26" pos:end="25:44"><name pos:start="25:26" pos:end="25:29">pool</name><operator pos:start="25:30" pos:end="25:31">-&gt;</operator><name pos:start="25:32" pos:end="25:44">new_thread_bh</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+</block_content>}</block></function>
+</unit>

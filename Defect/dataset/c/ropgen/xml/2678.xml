@@ -1,0 +1,2179 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/2678.c" pos:tabs="8"><function pos:start="1:1" pos:end="2177:1"><type pos:start="1:1" pos:end="1:18"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <specifier pos:start="1:8" pos:end="1:13">inline</specifier> <name pos:start="1:15" pos:end="1:18">void</name></type> <name pos:start="1:20" pos:end="1:23">idct</name><parameter_list pos:start="1:24" pos:end="1:39">(<parameter pos:start="1:25" pos:end="1:38"><decl pos:start="1:25" pos:end="1:38"><type pos:start="1:25" pos:end="1:33"><name pos:start="1:25" pos:end="1:31">int16_t</name> <modifier pos:start="1:33" pos:end="1:33">*</modifier></type><name pos:start="1:34" pos:end="1:38">block</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="2177:1">{<block_content pos:start="5:9" pos:end="2175:10">
+
+        <decl_stmt pos:start="5:9" pos:end="5:58"><decl pos:start="5:9" pos:end="5:57"><type pos:start="5:9" pos:end="5:15"><name pos:start="5:9" pos:end="5:15">int64_t</name></type> <name pos:start="5:17" pos:end="5:29">__attribute__</name><argument_list pos:start="5:30" pos:end="5:43">(<argument pos:start="5:31" pos:end="5:42"><expr pos:start="5:31" pos:end="5:42"><operator pos:start="5:31" pos:end="5:31">(</operator><call pos:start="5:32" pos:end="5:41"><name pos:start="5:32" pos:end="5:38">aligned</name><argument_list pos:start="5:39" pos:end="5:41">(<argument pos:start="5:40" pos:end="5:40"><expr pos:start="5:40" pos:end="5:40"><literal type="number" pos:start="5:40" pos:end="5:40">8</literal></expr></argument>)</argument_list></call><operator pos:start="5:42" pos:end="5:42">)</operator></expr></argument>)</argument_list> <name pos:start="5:45" pos:end="5:57"><name pos:start="5:45" pos:end="5:53">align_tmp</name><index pos:start="5:54" pos:end="5:57">[<expr pos:start="5:55" pos:end="5:56"><literal type="number" pos:start="5:55" pos:end="5:56">16</literal></expr>]</index></name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="7:9" pos:end="7:50"><decl pos:start="7:9" pos:end="7:49"><type pos:start="7:9" pos:end="7:23"><name pos:start="7:9" pos:end="7:15">int16_t</name> <modifier pos:start="7:17" pos:end="7:17">*</modifier> <specifier pos:start="7:19" pos:end="7:23">const</specifier></type> <name pos:start="7:25" pos:end="7:28">temp</name><init pos:start="7:29" pos:end="7:49">= <expr pos:start="7:31" pos:end="7:49"><operator pos:start="7:31" pos:end="7:31">(</operator><name pos:start="7:32" pos:end="7:38">int16_t</name><operator pos:start="7:39" pos:end="7:39">*</operator><operator pos:start="7:40" pos:end="7:40">)</operator><name pos:start="7:41" pos:end="7:49">align_tmp</name></expr></init></decl>;</decl_stmt>
+
+
+
+        <asm pos:start="11:9" pos:end="2175:10">asm <specifier pos:start="11:13" pos:end="11:20">volatile</specifier>(
+
+<cpp:if pos:start="13:1" pos:end="13:5">#<cpp:directive pos:start="13:2" pos:end="13:3">if</cpp:directive> <expr pos:start="13:5" pos:end="13:5"><literal type="number" pos:start="13:5" pos:end="13:5">0</literal></expr></cpp:if> <comment type="line" pos:start="13:7" pos:end="13:36">//Alternative, simpler variant</comment>
+
+
+
+<cpp:define pos:start="17:1" pos:end="479:45">#<cpp:directive pos:start="17:2" pos:end="17:7">define</cpp:directive> <cpp:macro pos:start="17:9" pos:end="17:61"><name pos:start="17:9" pos:end="17:16">ROW_IDCT</name><parameter_list pos:start="17:17" pos:end="17:61">(<parameter pos:start="17:18" pos:end="17:21"><type pos:start="17:18" pos:end="17:21"><name pos:start="17:18" pos:end="17:21">src0</name></type></parameter>, <parameter pos:start="17:24" pos:end="17:27"><type pos:start="17:24" pos:end="17:27"><name pos:start="17:24" pos:end="17:27">src4</name></type></parameter>, <parameter pos:start="17:30" pos:end="17:33"><type pos:start="17:30" pos:end="17:33"><name pos:start="17:30" pos:end="17:33">src1</name></type></parameter>, <parameter pos:start="17:36" pos:end="17:39"><type pos:start="17:36" pos:end="17:39"><name pos:start="17:36" pos:end="17:39">src5</name></type></parameter>, <parameter pos:start="17:42" pos:end="17:44"><type pos:start="17:42" pos:end="17:44"><name pos:start="17:42" pos:end="17:44">dst</name></type></parameter>, <parameter pos:start="17:47" pos:end="17:53"><type pos:start="17:47" pos:end="17:53"><name pos:start="17:47" pos:end="17:53">rounder</name></type></parameter>, <parameter pos:start="17:56" pos:end="17:60"><type pos:start="17:56" pos:end="17:60"><name pos:start="17:56" pos:end="17:60">shift</name></type></parameter>)</parameter_list></cpp:macro> \
+
+        <cpp:value pos:start="19:9" pos:end="479:45">"movq " #src0 ", %%mm0          \n\t" <comment type="block" pos:start="19:47" pos:end="19:77">/* R4     R0      r4      r0 */</comment>\
+
+        "movq " #src4 ", %%mm1          \n\t" <comment type="block" pos:start="21:47" pos:end="21:77">/* R6     R2      r6      r2 */</comment>\
+
+        "movq " #src1 ", %%mm2          \n\t" <comment type="block" pos:start="23:47" pos:end="23:77">/* R3     R1      r3      r1 */</comment>\
+
+        "movq " #src5 ", %%mm3          \n\t" <comment type="block" pos:start="25:47" pos:end="25:77">/* R7     R5      r7      r5 */</comment>\
+
+        "movq 16(%2), %%mm4             \n\t" <comment type="block" pos:start="27:47" pos:end="27:77">/* C4     C4      C4      C4 */</comment>\
+
+        "pmaddwd %%mm0, %%mm4           \n\t" <comment type="block" pos:start="29:47" pos:end="29:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 24(%2), %%mm5             \n\t" <comment type="block" pos:start="31:47" pos:end="31:77">/* -C4    C4      -C4     C4 */</comment>\
+
+        "pmaddwd %%mm5, %%mm0           \n\t" <comment type="block" pos:start="33:47" pos:end="33:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "movq 32(%2), %%mm5             \n\t" <comment type="block" pos:start="35:47" pos:end="35:77">/* C6     C2      C6      C2 */</comment>\
+
+        "pmaddwd %%mm1, %%mm5           \n\t" <comment type="block" pos:start="37:47" pos:end="37:76">/* C6R6+C2R2      C6r6+C2r2 */</comment>\
+
+        "movq 40(%2), %%mm6             \n\t" <comment type="block" pos:start="39:47" pos:end="39:77">/* -C2    C6      -C2     C6 */</comment>\
+
+        "pmaddwd %%mm6, %%mm1           \n\t" <comment type="block" pos:start="41:47" pos:end="41:77">/* -C2R6+C6R2     -C2r6+C6r2 */</comment>\
+
+        "movq 48(%2), %%mm7             \n\t" <comment type="block" pos:start="43:47" pos:end="43:77">/* C3     C1      C3      C1 */</comment>\
+
+        "pmaddwd %%mm2, %%mm7           \n\t" <comment type="block" pos:start="45:47" pos:end="45:76">/* C3R3+C1R1      C3r3+C1r1 */</comment>\
+
+        #rounder ", %%mm4               \n\t"\
+
+        "movq %%mm4, %%mm6              \n\t" <comment type="block" pos:start="49:47" pos:end="49:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "paddd %%mm5, %%mm4             \n\t" <comment type="block" pos:start="51:47" pos:end="51:69">/* A0             a0 */</comment>\
+
+        "psubd %%mm5, %%mm6             \n\t" <comment type="block" pos:start="53:47" pos:end="53:69">/* A3             a3 */</comment>\
+
+        "movq 56(%2), %%mm5             \n\t" <comment type="block" pos:start="55:47" pos:end="55:77">/* C7     C5      C7      C5 */</comment>\
+
+        "pmaddwd %%mm3, %%mm5           \n\t" <comment type="block" pos:start="57:47" pos:end="57:76">/* C7R7+C5R5      C7r7+C5r5 */</comment>\
+
+        #rounder ", %%mm0               \n\t"\
+
+        "paddd %%mm0, %%mm1             \n\t" <comment type="block" pos:start="61:47" pos:end="61:69">/* A1             a1 */</comment>\
+
+        "paddd %%mm0, %%mm0             \n\t" \
+
+        "psubd %%mm1, %%mm0             \n\t" <comment type="block" pos:start="65:47" pos:end="65:69">/* A2             a2 */</comment>\
+
+        "pmaddwd 64(%2), %%mm2          \n\t" <comment type="block" pos:start="67:47" pos:end="67:77">/* -C7R3+C3R1     -C7r3+C3r1 */</comment>\
+
+        "paddd %%mm5, %%mm7             \n\t" <comment type="block" pos:start="69:47" pos:end="69:69">/* B0             b0 */</comment>\
+
+        "movq 72(%2), %%mm5             \n\t" <comment type="block" pos:start="71:47" pos:end="71:78">/* -C5    -C1     -C5     -C1 */</comment>\
+
+        "pmaddwd %%mm3, %%mm5           \n\t" <comment type="block" pos:start="73:47" pos:end="73:77">/* -C5R7-C1R5     -C5r7-C1r5 */</comment>\
+
+        "paddd %%mm4, %%mm7             \n\t" <comment type="block" pos:start="75:47" pos:end="75:72">/* A0+B0          a0+b0 */</comment>\
+
+        "paddd %%mm4, %%mm4             \n\t" <comment type="block" pos:start="77:47" pos:end="77:70">/* 2A0            2a0 */</comment>\
+
+        "psubd %%mm7, %%mm4             \n\t" <comment type="block" pos:start="79:47" pos:end="79:72">/* A0-B0          a0-b0 */</comment>\
+
+        "paddd %%mm2, %%mm5             \n\t" <comment type="block" pos:start="81:47" pos:end="81:69">/* B1             b1 */</comment>\
+
+        "psrad $" #shift ", %%mm7       \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "movq %%mm1, %%mm2              \n\t" <comment type="block" pos:start="87:47" pos:end="87:69">/* A1             a1 */</comment>\
+
+        "paddd %%mm5, %%mm1             \n\t" <comment type="block" pos:start="89:47" pos:end="89:72">/* A1+B1          a1+b1 */</comment>\
+
+        "psubd %%mm5, %%mm2             \n\t" <comment type="block" pos:start="91:47" pos:end="91:72">/* A1-B1          a1-b1 */</comment>\
+
+        "psrad $" #shift ", %%mm1       \n\t"\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "packssdw %%mm1, %%mm7          \n\t" <comment type="block" pos:start="97:47" pos:end="97:80">/* A1+B1  a1+b1   A0+B0   a0+b0 */</comment>\
+
+        "packssdw %%mm4, %%mm2          \n\t" <comment type="block" pos:start="99:47" pos:end="99:80">/* A0-B0  a0-b0   A1-B1   a1-b1 */</comment>\
+
+        "movq %%mm7, " #dst "           \n\t"\
+
+        "movq " #src1 ", %%mm1          \n\t" <comment type="block" pos:start="103:47" pos:end="103:77">/* R3     R1      r3      r1 */</comment>\
+
+        "movq 80(%2), %%mm4             \n\t" <comment type="block" pos:start="105:47" pos:end="105:77">/* -C1    C5      -C1     C5 */</comment>\
+
+        "movq %%mm2, 24+" #dst "        \n\t"\
+
+        "pmaddwd %%mm1, %%mm4           \n\t" <comment type="block" pos:start="109:47" pos:end="109:77">/* -C1R3+C5R1     -C1r3+C5r1 */</comment>\
+
+        "movq 88(%2), %%mm7             \n\t" <comment type="block" pos:start="111:47" pos:end="111:77">/* C3     C7      C3      C7 */</comment>\
+
+        "pmaddwd 96(%2), %%mm1          \n\t" <comment type="block" pos:start="113:47" pos:end="113:77">/* -C5R3+C7R1     -C5r3+C7r1 */</comment>\
+
+        "pmaddwd %%mm3, %%mm7           \n\t" <comment type="block" pos:start="115:47" pos:end="115:76">/* C3R7+C7R5      C3r7+C7r5 */</comment>\
+
+        "movq %%mm0, %%mm2              \n\t" <comment type="block" pos:start="117:47" pos:end="117:69">/* A2             a2 */</comment>\
+
+        "pmaddwd 104(%2), %%mm3         \n\t" <comment type="block" pos:start="119:47" pos:end="119:77">/* -C1R7+C3R5     -C1r7+C3r5 */</comment>\
+
+        "paddd %%mm7, %%mm4             \n\t" <comment type="block" pos:start="121:47" pos:end="121:69">/* B2             b2 */</comment>\
+
+        "paddd %%mm4, %%mm2             \n\t" <comment type="block" pos:start="123:47" pos:end="123:72">/* A2+B2          a2+b2 */</comment>\
+
+        "psubd %%mm4, %%mm0             \n\t" <comment type="block" pos:start="125:47" pos:end="125:72">/* a2-B2          a2-b2 */</comment>\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "psrad $" #shift ", %%mm0       \n\t"\
+
+        "movq %%mm6, %%mm4              \n\t" <comment type="block" pos:start="131:47" pos:end="131:69">/* A3             a3 */</comment>\
+
+        "paddd %%mm1, %%mm3             \n\t" <comment type="block" pos:start="133:47" pos:end="133:69">/* B3             b3 */</comment>\
+
+        "paddd %%mm3, %%mm6             \n\t" <comment type="block" pos:start="135:47" pos:end="135:72">/* A3+B3          a3+b3 */</comment>\
+
+        "psubd %%mm3, %%mm4             \n\t" <comment type="block" pos:start="137:47" pos:end="137:72">/* a3-B3          a3-b3 */</comment>\
+
+        "psrad $" #shift ", %%mm6       \n\t"\
+
+        "packssdw %%mm6, %%mm2          \n\t" <comment type="block" pos:start="141:47" pos:end="141:80">/* A3+B3  a3+b3   A2+B2   a2+b2 */</comment>\
+
+        "movq %%mm2, 8+" #dst "         \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "packssdw %%mm0, %%mm4          \n\t" <comment type="block" pos:start="147:47" pos:end="147:80">/* A2-B2  a2-b2   A3-B3   a3-b3 */</comment>\
+
+        "movq %%mm4, 16+" #dst "        \n\t"\
+
+
+
+#define COL_IDCT(src0, src4, src1, src5, dst, rounder, shift) \
+
+        "movq " #src0 ", %%mm0          \n\t" <comment type="block" pos:start="155:47" pos:end="155:77">/* R4     R0      r4      r0 */</comment>\
+
+        "movq " #src4 ", %%mm1          \n\t" <comment type="block" pos:start="157:47" pos:end="157:77">/* R6     R2      r6      r2 */</comment>\
+
+        "movq " #src1 ", %%mm2          \n\t" <comment type="block" pos:start="159:47" pos:end="159:77">/* R3     R1      r3      r1 */</comment>\
+
+        "movq " #src5 ", %%mm3          \n\t" <comment type="block" pos:start="161:47" pos:end="161:77">/* R7     R5      r7      r5 */</comment>\
+
+        "movq 16(%2), %%mm4             \n\t" <comment type="block" pos:start="163:47" pos:end="163:77">/* C4     C4      C4      C4 */</comment>\
+
+        "pmaddwd %%mm0, %%mm4           \n\t" <comment type="block" pos:start="165:47" pos:end="165:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 24(%2), %%mm5             \n\t" <comment type="block" pos:start="167:47" pos:end="167:77">/* -C4    C4      -C4     C4 */</comment>\
+
+        "pmaddwd %%mm5, %%mm0           \n\t" <comment type="block" pos:start="169:47" pos:end="169:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "movq 32(%2), %%mm5             \n\t" <comment type="block" pos:start="171:47" pos:end="171:77">/* C6     C2      C6      C2 */</comment>\
+
+        "pmaddwd %%mm1, %%mm5           \n\t" <comment type="block" pos:start="173:47" pos:end="173:76">/* C6R6+C2R2      C6r6+C2r2 */</comment>\
+
+        "movq 40(%2), %%mm6             \n\t" <comment type="block" pos:start="175:47" pos:end="175:77">/* -C2    C6      -C2     C6 */</comment>\
+
+        "pmaddwd %%mm6, %%mm1           \n\t" <comment type="block" pos:start="177:47" pos:end="177:77">/* -C2R6+C6R2     -C2r6+C6r2 */</comment>\
+
+        #rounder ", %%mm4               \n\t"\
+
+        "movq %%mm4, %%mm6              \n\t" <comment type="block" pos:start="181:47" pos:end="181:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 48(%2), %%mm7             \n\t" <comment type="block" pos:start="183:47" pos:end="183:77">/* C3     C1      C3      C1 */</comment>\
+
+        #rounder ", %%mm0               \n\t"\
+
+        "pmaddwd %%mm2, %%mm7           \n\t" <comment type="block" pos:start="187:47" pos:end="187:76">/* C3R3+C1R1      C3r3+C1r1 */</comment>\
+
+        "paddd %%mm5, %%mm4             \n\t" <comment type="block" pos:start="189:47" pos:end="189:69">/* A0             a0 */</comment>\
+
+        "psubd %%mm5, %%mm6             \n\t" <comment type="block" pos:start="191:47" pos:end="191:69">/* A3             a3 */</comment>\
+
+        "movq %%mm0, %%mm5              \n\t" <comment type="block" pos:start="193:47" pos:end="193:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "paddd %%mm1, %%mm0             \n\t" <comment type="block" pos:start="195:47" pos:end="195:69">/* A1             a1 */</comment>\
+
+        "psubd %%mm1, %%mm5             \n\t" <comment type="block" pos:start="197:47" pos:end="197:69">/* A2             a2 */</comment>\
+
+        "movq 56(%2), %%mm1             \n\t" <comment type="block" pos:start="199:47" pos:end="199:77">/* C7     C5      C7      C5 */</comment>\
+
+        "pmaddwd %%mm3, %%mm1           \n\t" <comment type="block" pos:start="201:47" pos:end="201:76">/* C7R7+C5R5      C7r7+C5r5 */</comment>\
+
+        "pmaddwd 64(%2), %%mm2          \n\t" <comment type="block" pos:start="203:47" pos:end="203:77">/* -C7R3+C3R1     -C7r3+C3r1 */</comment>\
+
+        "paddd %%mm1, %%mm7             \n\t" <comment type="block" pos:start="205:47" pos:end="205:69">/* B0             b0 */</comment>\
+
+        "movq 72(%2), %%mm1             \n\t" <comment type="block" pos:start="207:47" pos:end="207:78">/* -C5    -C1     -C5     -C1 */</comment>\
+
+        "pmaddwd %%mm3, %%mm1           \n\t" <comment type="block" pos:start="209:47" pos:end="209:77">/* -C5R7-C1R5     -C5r7-C1r5 */</comment>\
+
+        "paddd %%mm4, %%mm7             \n\t" <comment type="block" pos:start="211:47" pos:end="211:72">/* A0+B0          a0+b0 */</comment>\
+
+        "paddd %%mm4, %%mm4             \n\t" <comment type="block" pos:start="213:47" pos:end="213:70">/* 2A0            2a0 */</comment>\
+
+        "psubd %%mm7, %%mm4             \n\t" <comment type="block" pos:start="215:47" pos:end="215:72">/* A0-B0          a0-b0 */</comment>\
+
+        "paddd %%mm2, %%mm1             \n\t" <comment type="block" pos:start="217:47" pos:end="217:69">/* B1             b1 */</comment>\
+
+        "psrad $" #shift ", %%mm7       \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "movq %%mm0, %%mm2              \n\t" <comment type="block" pos:start="223:47" pos:end="223:69">/* A1             a1 */</comment>\
+
+        "paddd %%mm1, %%mm0             \n\t" <comment type="block" pos:start="225:47" pos:end="225:72">/* A1+B1          a1+b1 */</comment>\
+
+        "psubd %%mm1, %%mm2             \n\t" <comment type="block" pos:start="227:47" pos:end="227:72">/* A1-B1          a1-b1 */</comment>\
+
+        "psrad $" #shift ", %%mm0       \n\t"\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "packssdw %%mm7, %%mm7          \n\t" <comment type="block" pos:start="233:47" pos:end="233:64">/* A0+B0  a0+b0 */</comment>\
+
+        "movd %%mm7, " #dst "           \n\t"\
+
+        "packssdw %%mm0, %%mm0          \n\t" <comment type="block" pos:start="237:47" pos:end="237:64">/* A1+B1  a1+b1 */</comment>\
+
+        "movd %%mm0, 16+" #dst "        \n\t"\
+
+        "packssdw %%mm2, %%mm2          \n\t" <comment type="block" pos:start="241:47" pos:end="241:64">/* A1-B1  a1-b1 */</comment>\
+
+        "movd %%mm2, 96+" #dst "        \n\t"\
+
+        "packssdw %%mm4, %%mm4          \n\t" <comment type="block" pos:start="245:47" pos:end="245:64">/* A0-B0  a0-b0 */</comment>\
+
+        "movd %%mm4, 112+" #dst "       \n\t"\
+
+        "movq " #src1 ", %%mm0          \n\t" <comment type="block" pos:start="249:47" pos:end="249:77">/* R3     R1      r3      r1 */</comment>\
+
+        "movq 80(%2), %%mm4             \n\t" <comment type="block" pos:start="251:47" pos:end="251:77">/* -C1    C5      -C1     C5 */</comment>\
+
+        "pmaddwd %%mm0, %%mm4           \n\t" <comment type="block" pos:start="253:47" pos:end="253:77">/* -C1R3+C5R1     -C1r3+C5r1 */</comment>\
+
+        "movq 88(%2), %%mm7             \n\t" <comment type="block" pos:start="255:47" pos:end="255:77">/* C3     C7      C3      C7 */</comment>\
+
+        "pmaddwd 96(%2), %%mm0          \n\t" <comment type="block" pos:start="257:47" pos:end="257:77">/* -C5R3+C7R1     -C5r3+C7r1 */</comment>\
+
+        "pmaddwd %%mm3, %%mm7           \n\t" <comment type="block" pos:start="259:47" pos:end="259:76">/* C3R7+C7R5      C3r7+C7r5 */</comment>\
+
+        "movq %%mm5, %%mm2              \n\t" <comment type="block" pos:start="261:47" pos:end="261:69">/* A2             a2 */</comment>\
+
+        "pmaddwd 104(%2), %%mm3         \n\t" <comment type="block" pos:start="263:47" pos:end="263:77">/* -C1R7+C3R5     -C1r7+C3r5 */</comment>\
+
+        "paddd %%mm7, %%mm4             \n\t" <comment type="block" pos:start="265:47" pos:end="265:69">/* B2             b2 */</comment>\
+
+        "paddd %%mm4, %%mm2             \n\t" <comment type="block" pos:start="267:47" pos:end="267:72">/* A2+B2          a2+b2 */</comment>\
+
+        "psubd %%mm4, %%mm5             \n\t" <comment type="block" pos:start="269:47" pos:end="269:72">/* a2-B2          a2-b2 */</comment>\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "psrad $" #shift ", %%mm5       \n\t"\
+
+        "movq %%mm6, %%mm4              \n\t" <comment type="block" pos:start="275:47" pos:end="275:69">/* A3             a3 */</comment>\
+
+        "paddd %%mm0, %%mm3             \n\t" <comment type="block" pos:start="277:47" pos:end="277:69">/* B3             b3 */</comment>\
+
+        "paddd %%mm3, %%mm6             \n\t" <comment type="block" pos:start="279:47" pos:end="279:72">/* A3+B3          a3+b3 */</comment>\
+
+        "psubd %%mm3, %%mm4             \n\t" <comment type="block" pos:start="281:47" pos:end="281:72">/* a3-B3          a3-b3 */</comment>\
+
+        "psrad $" #shift ", %%mm6       \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "packssdw %%mm2, %%mm2          \n\t" <comment type="block" pos:start="287:47" pos:end="287:64">/* A2+B2  a2+b2 */</comment>\
+
+        "packssdw %%mm6, %%mm6          \n\t" <comment type="block" pos:start="289:47" pos:end="289:64">/* A3+B3  a3+b3 */</comment>\
+
+        "movd %%mm2, 32+" #dst "        \n\t"\
+
+        "packssdw %%mm4, %%mm4          \n\t" <comment type="block" pos:start="293:47" pos:end="293:64">/* A3-B3  a3-b3 */</comment>\
+
+        "packssdw %%mm5, %%mm5          \n\t" <comment type="block" pos:start="295:47" pos:end="295:64">/* A2-B2  a2-b2 */</comment>\
+
+        "movd %%mm6, 48+" #dst "        \n\t"\
+
+        "movd %%mm4, 64+" #dst "        \n\t"\
+
+        "movd %%mm5, 80+" #dst "        \n\t"\
+
+
+
+
+
+#define DC_COND_ROW_IDCT(src0, src4, src1, src5, dst, rounder, shift) \
+
+        "movq " #src0 ", %%mm0          \n\t" <comment type="block" pos:start="309:47" pos:end="309:77">/* R4     R0      r4      r0 */</comment>\
+
+        "movq " #src4 ", %%mm1          \n\t" <comment type="block" pos:start="311:47" pos:end="311:77">/* R6     R2      r6      r2 */</comment>\
+
+        "movq " #src1 ", %%mm2          \n\t" <comment type="block" pos:start="313:47" pos:end="313:77">/* R3     R1      r3      r1 */</comment>\
+
+        "movq " #src5 ", %%mm3          \n\t" <comment type="block" pos:start="315:47" pos:end="315:77">/* R7     R5      r7      r5 */</comment>\
+
+        "movq "MANGLE(wm1010)", %%mm4   \n\t"\
+
+        "pand %%mm0, %%mm4              \n\t"\
+
+        "por %%mm1, %%mm4               \n\t"\
+
+        "por %%mm2, %%mm4               \n\t"\
+
+        "por %%mm3, %%mm4               \n\t"\
+
+        "packssdw %%mm4,%%mm4           \n\t"\
+
+        "movd %%mm4, %%eax              \n\t"\
+
+        "orl %%eax, %%eax               \n\t"\
+
+        "jz 1f                          \n\t"\
+
+        "movq 16(%2), %%mm4             \n\t" <comment type="block" pos:start="335:47" pos:end="335:77">/* C4     C4      C4      C4 */</comment>\
+
+        "pmaddwd %%mm0, %%mm4           \n\t" <comment type="block" pos:start="337:47" pos:end="337:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 24(%2), %%mm5             \n\t" <comment type="block" pos:start="339:47" pos:end="339:77">/* -C4    C4      -C4     C4 */</comment>\
+
+        "pmaddwd %%mm5, %%mm0           \n\t" <comment type="block" pos:start="341:47" pos:end="341:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "movq 32(%2), %%mm5             \n\t" <comment type="block" pos:start="343:47" pos:end="343:77">/* C6     C2      C6      C2 */</comment>\
+
+        "pmaddwd %%mm1, %%mm5           \n\t" <comment type="block" pos:start="345:47" pos:end="345:76">/* C6R6+C2R2      C6r6+C2r2 */</comment>\
+
+        "movq 40(%2), %%mm6             \n\t" <comment type="block" pos:start="347:47" pos:end="347:77">/* -C2    C6      -C2     C6 */</comment>\
+
+        "pmaddwd %%mm6, %%mm1           \n\t" <comment type="block" pos:start="349:47" pos:end="349:77">/* -C2R6+C6R2     -C2r6+C6r2 */</comment>\
+
+        "movq 48(%2), %%mm7             \n\t" <comment type="block" pos:start="351:47" pos:end="351:77">/* C3     C1      C3      C1 */</comment>\
+
+        "pmaddwd %%mm2, %%mm7           \n\t" <comment type="block" pos:start="353:47" pos:end="353:76">/* C3R3+C1R1      C3r3+C1r1 */</comment>\
+
+        #rounder ", %%mm4               \n\t"\
+
+        "movq %%mm4, %%mm6              \n\t" <comment type="block" pos:start="357:47" pos:end="357:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "paddd %%mm5, %%mm4             \n\t" <comment type="block" pos:start="359:47" pos:end="359:69">/* A0             a0 */</comment>\
+
+        "psubd %%mm5, %%mm6             \n\t" <comment type="block" pos:start="361:47" pos:end="361:69">/* A3             a3 */</comment>\
+
+        "movq 56(%2), %%mm5             \n\t" <comment type="block" pos:start="363:47" pos:end="363:77">/* C7     C5      C7      C5 */</comment>\
+
+        "pmaddwd %%mm3, %%mm5           \n\t" <comment type="block" pos:start="365:47" pos:end="365:76">/* C7R7+C5R5      C7r7+C5r5 */</comment>\
+
+        #rounder ", %%mm0               \n\t"\
+
+        "paddd %%mm0, %%mm1             \n\t" <comment type="block" pos:start="369:47" pos:end="369:69">/* A1             a1 */</comment>\
+
+        "paddd %%mm0, %%mm0             \n\t" \
+
+        "psubd %%mm1, %%mm0             \n\t" <comment type="block" pos:start="373:47" pos:end="373:69">/* A2             a2 */</comment>\
+
+        "pmaddwd 64(%2), %%mm2          \n\t" <comment type="block" pos:start="375:47" pos:end="375:77">/* -C7R3+C3R1     -C7r3+C3r1 */</comment>\
+
+        "paddd %%mm5, %%mm7             \n\t" <comment type="block" pos:start="377:47" pos:end="377:69">/* B0             b0 */</comment>\
+
+        "movq 72(%2), %%mm5             \n\t" <comment type="block" pos:start="379:47" pos:end="379:78">/* -C5    -C1     -C5     -C1 */</comment>\
+
+        "pmaddwd %%mm3, %%mm5           \n\t" <comment type="block" pos:start="381:47" pos:end="381:77">/* -C5R7-C1R5     -C5r7-C1r5 */</comment>\
+
+        "paddd %%mm4, %%mm7             \n\t" <comment type="block" pos:start="383:47" pos:end="383:72">/* A0+B0          a0+b0 */</comment>\
+
+        "paddd %%mm4, %%mm4             \n\t" <comment type="block" pos:start="385:47" pos:end="385:70">/* 2A0            2a0 */</comment>\
+
+        "psubd %%mm7, %%mm4             \n\t" <comment type="block" pos:start="387:47" pos:end="387:72">/* A0-B0          a0-b0 */</comment>\
+
+        "paddd %%mm2, %%mm5             \n\t" <comment type="block" pos:start="389:47" pos:end="389:69">/* B1             b1 */</comment>\
+
+        "psrad $" #shift ", %%mm7       \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "movq %%mm1, %%mm2              \n\t" <comment type="block" pos:start="395:47" pos:end="395:69">/* A1             a1 */</comment>\
+
+        "paddd %%mm5, %%mm1             \n\t" <comment type="block" pos:start="397:47" pos:end="397:72">/* A1+B1          a1+b1 */</comment>\
+
+        "psubd %%mm5, %%mm2             \n\t" <comment type="block" pos:start="399:47" pos:end="399:72">/* A1-B1          a1-b1 */</comment>\
+
+        "psrad $" #shift ", %%mm1       \n\t"\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "packssdw %%mm1, %%mm7          \n\t" <comment type="block" pos:start="405:47" pos:end="405:80">/* A1+B1  a1+b1   A0+B0   a0+b0 */</comment>\
+
+        "packssdw %%mm4, %%mm2          \n\t" <comment type="block" pos:start="407:47" pos:end="407:80">/* A0-B0  a0-b0   A1-B1   a1-b1 */</comment>\
+
+        "movq %%mm7, " #dst "           \n\t"\
+
+        "movq " #src1 ", %%mm1          \n\t" <comment type="block" pos:start="411:47" pos:end="411:77">/* R3     R1      r3      r1 */</comment>\
+
+        "movq 80(%2), %%mm4             \n\t" <comment type="block" pos:start="413:47" pos:end="413:77">/* -C1    C5      -C1     C5 */</comment>\
+
+        "movq %%mm2, 24+" #dst "        \n\t"\
+
+        "pmaddwd %%mm1, %%mm4           \n\t" <comment type="block" pos:start="417:47" pos:end="417:77">/* -C1R3+C5R1     -C1r3+C5r1 */</comment>\
+
+        "movq 88(%2), %%mm7             \n\t" <comment type="block" pos:start="419:47" pos:end="419:77">/* C3     C7      C3      C7 */</comment>\
+
+        "pmaddwd 96(%2), %%mm1          \n\t" <comment type="block" pos:start="421:47" pos:end="421:77">/* -C5R3+C7R1     -C5r3+C7r1 */</comment>\
+
+        "pmaddwd %%mm3, %%mm7           \n\t" <comment type="block" pos:start="423:47" pos:end="423:76">/* C3R7+C7R5      C3r7+C7r5 */</comment>\
+
+        "movq %%mm0, %%mm2              \n\t" <comment type="block" pos:start="425:47" pos:end="425:69">/* A2             a2 */</comment>\
+
+        "pmaddwd 104(%2), %%mm3         \n\t" <comment type="block" pos:start="427:47" pos:end="427:77">/* -C1R7+C3R5     -C1r7+C3r5 */</comment>\
+
+        "paddd %%mm7, %%mm4             \n\t" <comment type="block" pos:start="429:47" pos:end="429:69">/* B2             b2 */</comment>\
+
+        "paddd %%mm4, %%mm2             \n\t" <comment type="block" pos:start="431:47" pos:end="431:72">/* A2+B2          a2+b2 */</comment>\
+
+        "psubd %%mm4, %%mm0             \n\t" <comment type="block" pos:start="433:47" pos:end="433:72">/* a2-B2          a2-b2 */</comment>\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "psrad $" #shift ", %%mm0       \n\t"\
+
+        "movq %%mm6, %%mm4              \n\t" <comment type="block" pos:start="439:47" pos:end="439:69">/* A3             a3 */</comment>\
+
+        "paddd %%mm1, %%mm3             \n\t" <comment type="block" pos:start="441:47" pos:end="441:69">/* B3             b3 */</comment>\
+
+        "paddd %%mm3, %%mm6             \n\t" <comment type="block" pos:start="443:47" pos:end="443:72">/* A3+B3          a3+b3 */</comment>\
+
+        "psubd %%mm3, %%mm4             \n\t" <comment type="block" pos:start="445:47" pos:end="445:72">/* a3-B3          a3-b3 */</comment>\
+
+        "psrad $" #shift ", %%mm6       \n\t"\
+
+        "packssdw %%mm6, %%mm2          \n\t" <comment type="block" pos:start="449:47" pos:end="449:80">/* A3+B3  a3+b3   A2+B2   a2+b2 */</comment>\
+
+        "movq %%mm2, 8+" #dst "         \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "packssdw %%mm0, %%mm4          \n\t" <comment type="block" pos:start="455:47" pos:end="455:80">/* A2-B2  a2-b2   A3-B3   a3-b3 */</comment>\
+
+        "movq %%mm4, 16+" #dst "        \n\t"\
+
+        "jmp 2f                         \n\t"\
+
+        "1:                             \n\t"\
+
+        "pslld $16, %%mm0               \n\t"\
+
+        "#paddd "MANGLE(d40000)", %%mm0 \n\t"\
+
+        "psrad $13, %%mm0               \n\t"\
+
+        "packssdw %%mm0, %%mm0          \n\t"\
+
+        "movq %%mm0, " #dst "           \n\t"\
+
+        "movq %%mm0, 8+" #dst "         \n\t"\
+
+        "movq %%mm0, 16+" #dst "        \n\t"\
+
+        "movq %%mm0, 24+" #dst "        \n\t"\
+
+        "2:                             \n\t"</cpp:value></cpp:define>
+
+
+
+
+
+<comment type="line" pos:start="485:1" pos:end="485:69">//IDCT(      src0,   src4,   src1,   src5,    dst,    rounder, shift)</comment>
+
+ROW_IDCT(    (%0),  8(%0), 16(%0), 24(%0),  0(%1),paddd 8(%2), 11)
+
+<comment type="block" pos:start="489:1" pos:end="493:68">/*ROW_IDCT(  32(%0), 40(%0), 48(%0), 56(%0), 32(%1), paddd (%2), 11)
+
+ROW_IDCT(  64(%0), 72(%0), 80(%0), 88(%0), 64(%1), paddd (%2), 11)
+
+ROW_IDCT(  96(%0),104(%0),112(%0),120(%0), 96(%1), paddd (%2), 11)*/</comment>
+
+
+
+DC_COND_ROW_IDCT(  32(%0), 40(%0), 48(%0), 56(%0), 32(%1),paddd (%2), 11)
+
+DC_COND_ROW_IDCT(  64(%0), 72(%0), 80(%0), 88(%0), 64(%1),paddd (%2), 11)
+
+DC_COND_ROW_IDCT(  96(%0),104(%0),112(%0),120(%0), 96(%1),paddd (%2), 11)
+
+
+
+
+
+<comment type="line" pos:start="507:1" pos:end="507:67">//IDCT(      src0,   src4,   src1,    src5,    dst, rounder, shift)</comment>
+
+COL_IDCT(    (%1), 64(%1), 32(%1),  96(%1),  0(%0),/nop, 20)
+
+COL_IDCT(   8(%1), 72(%1), 40(%1), 104(%1),  4(%0),/nop, 20)
+
+COL_IDCT(  16(%1), 80(%1), 48(%1), 112(%1),  8(%0),/nop, 20)
+
+COL_IDCT(  24(%1), 88(%1), 56(%1), 120(%1), 12(%0),/nop, 20)
+
+
+
+<cpp:else pos:start="519:1" pos:end="519:5">#<cpp:directive pos:start="519:2" pos:end="519:5">else</cpp:directive></cpp:else>
+
+
+
+<cpp:define pos:start="523:1" pos:end="695:45">#<cpp:directive pos:start="523:2" pos:end="523:7">define</cpp:directive> <cpp:macro pos:start="523:9" pos:end="523:65"><name pos:start="523:9" pos:end="523:20">DC_COND_IDCT</name><parameter_list pos:start="523:21" pos:end="523:65">(<parameter pos:start="523:22" pos:end="523:25"><type pos:start="523:22" pos:end="523:25"><name pos:start="523:22" pos:end="523:25">src0</name></type></parameter>, <parameter pos:start="523:28" pos:end="523:31"><type pos:start="523:28" pos:end="523:31"><name pos:start="523:28" pos:end="523:31">src4</name></type></parameter>, <parameter pos:start="523:34" pos:end="523:37"><type pos:start="523:34" pos:end="523:37"><name pos:start="523:34" pos:end="523:37">src1</name></type></parameter>, <parameter pos:start="523:40" pos:end="523:43"><type pos:start="523:40" pos:end="523:43"><name pos:start="523:40" pos:end="523:43">src5</name></type></parameter>, <parameter pos:start="523:46" pos:end="523:48"><type pos:start="523:46" pos:end="523:48"><name pos:start="523:46" pos:end="523:48">dst</name></type></parameter>, <parameter pos:start="523:51" pos:end="523:57"><type pos:start="523:51" pos:end="523:57"><name pos:start="523:51" pos:end="523:57">rounder</name></type></parameter>, <parameter pos:start="523:60" pos:end="523:64"><type pos:start="523:60" pos:end="523:64"><name pos:start="523:60" pos:end="523:64">shift</name></type></parameter>)</parameter_list></cpp:macro> \
+
+        <cpp:value pos:start="525:9" pos:end="695:45">"movq " #src0 ", %%mm0          \n\t" <comment type="block" pos:start="525:47" pos:end="525:77">/* R4     R0      r4      r0 */</comment>\
+
+        "movq " #src4 ", %%mm1          \n\t" <comment type="block" pos:start="527:47" pos:end="527:77">/* R6     R2      r6      r2 */</comment>\
+
+        "movq " #src1 ", %%mm2          \n\t" <comment type="block" pos:start="529:47" pos:end="529:77">/* R3     R1      r3      r1 */</comment>\
+
+        "movq " #src5 ", %%mm3          \n\t" <comment type="block" pos:start="531:47" pos:end="531:77">/* R7     R5      r7      r5 */</comment>\
+
+        "movq "MANGLE(wm1010)", %%mm4   \n\t"\
+
+        "pand %%mm0, %%mm4              \n\t"\
+
+        "por %%mm1, %%mm4               \n\t"\
+
+        "por %%mm2, %%mm4               \n\t"\
+
+        "por %%mm3, %%mm4               \n\t"\
+
+        "packssdw %%mm4,%%mm4           \n\t"\
+
+        "movd %%mm4, %%eax              \n\t"\
+
+        "orl %%eax, %%eax               \n\t"\
+
+        "jz 1f                          \n\t"\
+
+        "movq 16(%2), %%mm4             \n\t" <comment type="block" pos:start="551:47" pos:end="551:77">/* C4     C4      C4      C4 */</comment>\
+
+        "pmaddwd %%mm0, %%mm4           \n\t" <comment type="block" pos:start="553:47" pos:end="553:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 24(%2), %%mm5             \n\t" <comment type="block" pos:start="555:47" pos:end="555:77">/* -C4    C4      -C4     C4 */</comment>\
+
+        "pmaddwd %%mm5, %%mm0           \n\t" <comment type="block" pos:start="557:47" pos:end="557:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "movq 32(%2), %%mm5             \n\t" <comment type="block" pos:start="559:47" pos:end="559:77">/* C6     C2      C6      C2 */</comment>\
+
+        "pmaddwd %%mm1, %%mm5           \n\t" <comment type="block" pos:start="561:47" pos:end="561:76">/* C6R6+C2R2      C6r6+C2r2 */</comment>\
+
+        "movq 40(%2), %%mm6             \n\t" <comment type="block" pos:start="563:47" pos:end="563:77">/* -C2    C6      -C2     C6 */</comment>\
+
+        "pmaddwd %%mm6, %%mm1           \n\t" <comment type="block" pos:start="565:47" pos:end="565:77">/* -C2R6+C6R2     -C2r6+C6r2 */</comment>\
+
+        "movq 48(%2), %%mm7             \n\t" <comment type="block" pos:start="567:47" pos:end="567:77">/* C3     C1      C3      C1 */</comment>\
+
+        "pmaddwd %%mm2, %%mm7           \n\t" <comment type="block" pos:start="569:47" pos:end="569:76">/* C3R3+C1R1      C3r3+C1r1 */</comment>\
+
+        #rounder ", %%mm4               \n\t"\
+
+        "movq %%mm4, %%mm6              \n\t" <comment type="block" pos:start="573:47" pos:end="573:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "paddd %%mm5, %%mm4             \n\t" <comment type="block" pos:start="575:47" pos:end="575:69">/* A0             a0 */</comment>\
+
+        "psubd %%mm5, %%mm6             \n\t" <comment type="block" pos:start="577:47" pos:end="577:69">/* A3             a3 */</comment>\
+
+        "movq 56(%2), %%mm5             \n\t" <comment type="block" pos:start="579:47" pos:end="579:77">/* C7     C5      C7      C5 */</comment>\
+
+        "pmaddwd %%mm3, %%mm5           \n\t" <comment type="block" pos:start="581:47" pos:end="581:76">/* C7R7+C5R5      C7r7+C5r5 */</comment>\
+
+        #rounder ", %%mm0               \n\t"\
+
+        "paddd %%mm0, %%mm1             \n\t" <comment type="block" pos:start="585:47" pos:end="585:69">/* A1             a1 */</comment>\
+
+        "paddd %%mm0, %%mm0             \n\t" \
+
+        "psubd %%mm1, %%mm0             \n\t" <comment type="block" pos:start="589:47" pos:end="589:69">/* A2             a2 */</comment>\
+
+        "pmaddwd 64(%2), %%mm2          \n\t" <comment type="block" pos:start="591:47" pos:end="591:77">/* -C7R3+C3R1     -C7r3+C3r1 */</comment>\
+
+        "paddd %%mm5, %%mm7             \n\t" <comment type="block" pos:start="593:47" pos:end="593:69">/* B0             b0 */</comment>\
+
+        "movq 72(%2), %%mm5             \n\t" <comment type="block" pos:start="595:47" pos:end="595:78">/* -C5    -C1     -C5     -C1 */</comment>\
+
+        "pmaddwd %%mm3, %%mm5           \n\t" <comment type="block" pos:start="597:47" pos:end="597:77">/* -C5R7-C1R5     -C5r7-C1r5 */</comment>\
+
+        "paddd %%mm4, %%mm7             \n\t" <comment type="block" pos:start="599:47" pos:end="599:72">/* A0+B0          a0+b0 */</comment>\
+
+        "paddd %%mm4, %%mm4             \n\t" <comment type="block" pos:start="601:47" pos:end="601:70">/* 2A0            2a0 */</comment>\
+
+        "psubd %%mm7, %%mm4             \n\t" <comment type="block" pos:start="603:47" pos:end="603:72">/* A0-B0          a0-b0 */</comment>\
+
+        "paddd %%mm2, %%mm5             \n\t" <comment type="block" pos:start="605:47" pos:end="605:69">/* B1             b1 */</comment>\
+
+        "psrad $" #shift ", %%mm7       \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "movq %%mm1, %%mm2              \n\t" <comment type="block" pos:start="611:47" pos:end="611:69">/* A1             a1 */</comment>\
+
+        "paddd %%mm5, %%mm1             \n\t" <comment type="block" pos:start="613:47" pos:end="613:72">/* A1+B1          a1+b1 */</comment>\
+
+        "psubd %%mm5, %%mm2             \n\t" <comment type="block" pos:start="615:47" pos:end="615:72">/* A1-B1          a1-b1 */</comment>\
+
+        "psrad $" #shift ", %%mm1       \n\t"\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "packssdw %%mm1, %%mm7          \n\t" <comment type="block" pos:start="621:47" pos:end="621:80">/* A1+B1  a1+b1   A0+B0   a0+b0 */</comment>\
+
+        "packssdw %%mm4, %%mm2          \n\t" <comment type="block" pos:start="623:47" pos:end="623:80">/* A0-B0  a0-b0   A1-B1   a1-b1 */</comment>\
+
+        "movq %%mm7, " #dst "           \n\t"\
+
+        "movq " #src1 ", %%mm1          \n\t" <comment type="block" pos:start="627:47" pos:end="627:77">/* R3     R1      r3      r1 */</comment>\
+
+        "movq 80(%2), %%mm4             \n\t" <comment type="block" pos:start="629:47" pos:end="629:77">/* -C1    C5      -C1     C5 */</comment>\
+
+        "movq %%mm2, 24+" #dst "        \n\t"\
+
+        "pmaddwd %%mm1, %%mm4           \n\t" <comment type="block" pos:start="633:47" pos:end="633:77">/* -C1R3+C5R1     -C1r3+C5r1 */</comment>\
+
+        "movq 88(%2), %%mm7             \n\t" <comment type="block" pos:start="635:47" pos:end="635:77">/* C3     C7      C3      C7 */</comment>\
+
+        "pmaddwd 96(%2), %%mm1          \n\t" <comment type="block" pos:start="637:47" pos:end="637:77">/* -C5R3+C7R1     -C5r3+C7r1 */</comment>\
+
+        "pmaddwd %%mm3, %%mm7           \n\t" <comment type="block" pos:start="639:47" pos:end="639:76">/* C3R7+C7R5      C3r7+C7r5 */</comment>\
+
+        "movq %%mm0, %%mm2              \n\t" <comment type="block" pos:start="641:47" pos:end="641:69">/* A2             a2 */</comment>\
+
+        "pmaddwd 104(%2), %%mm3         \n\t" <comment type="block" pos:start="643:47" pos:end="643:77">/* -C1R7+C3R5     -C1r7+C3r5 */</comment>\
+
+        "paddd %%mm7, %%mm4             \n\t" <comment type="block" pos:start="645:47" pos:end="645:69">/* B2             b2 */</comment>\
+
+        "paddd %%mm4, %%mm2             \n\t" <comment type="block" pos:start="647:47" pos:end="647:72">/* A2+B2          a2+b2 */</comment>\
+
+        "psubd %%mm4, %%mm0             \n\t" <comment type="block" pos:start="649:47" pos:end="649:72">/* a2-B2          a2-b2 */</comment>\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "psrad $" #shift ", %%mm0       \n\t"\
+
+        "movq %%mm6, %%mm4              \n\t" <comment type="block" pos:start="655:47" pos:end="655:69">/* A3             a3 */</comment>\
+
+        "paddd %%mm1, %%mm3             \n\t" <comment type="block" pos:start="657:47" pos:end="657:69">/* B3             b3 */</comment>\
+
+        "paddd %%mm3, %%mm6             \n\t" <comment type="block" pos:start="659:47" pos:end="659:72">/* A3+B3          a3+b3 */</comment>\
+
+        "psubd %%mm3, %%mm4             \n\t" <comment type="block" pos:start="661:47" pos:end="661:72">/* a3-B3          a3-b3 */</comment>\
+
+        "psrad $" #shift ", %%mm6       \n\t"\
+
+        "packssdw %%mm6, %%mm2          \n\t" <comment type="block" pos:start="665:47" pos:end="665:80">/* A3+B3  a3+b3   A2+B2   a2+b2 */</comment>\
+
+        "movq %%mm2, 8+" #dst "         \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "packssdw %%mm0, %%mm4          \n\t" <comment type="block" pos:start="671:47" pos:end="671:80">/* A2-B2  a2-b2   A3-B3   a3-b3 */</comment>\
+
+        "movq %%mm4, 16+" #dst "        \n\t"\
+
+        "jmp 2f                         \n\t"\
+
+        "1:                             \n\t"\
+
+        "pslld $16, %%mm0               \n\t"\
+
+        "paddd "MANGLE(d40000)", %%mm0  \n\t"\
+
+        "psrad $13, %%mm0               \n\t"\
+
+        "packssdw %%mm0, %%mm0          \n\t"\
+
+        "movq %%mm0, " #dst "           \n\t"\
+
+        "movq %%mm0, 8+" #dst "         \n\t"\
+
+        "movq %%mm0, 16+" #dst "        \n\t"\
+
+        "movq %%mm0, 24+" #dst "        \n\t"\
+
+        "2:                             \n\t"</cpp:value></cpp:define>
+
+
+
+<cpp:define pos:start="699:1" pos:end="983:45">#<cpp:directive pos:start="699:2" pos:end="699:7">define</cpp:directive> <cpp:macro pos:start="699:9" pos:end="699:68"><name pos:start="699:9" pos:end="699:19">Z_COND_IDCT</name><parameter_list pos:start="699:20" pos:end="699:68">(<parameter pos:start="699:21" pos:end="699:24"><type pos:start="699:21" pos:end="699:24"><name pos:start="699:21" pos:end="699:24">src0</name></type></parameter>, <parameter pos:start="699:27" pos:end="699:30"><type pos:start="699:27" pos:end="699:30"><name pos:start="699:27" pos:end="699:30">src4</name></type></parameter>, <parameter pos:start="699:33" pos:end="699:36"><type pos:start="699:33" pos:end="699:36"><name pos:start="699:33" pos:end="699:36">src1</name></type></parameter>, <parameter pos:start="699:39" pos:end="699:42"><type pos:start="699:39" pos:end="699:42"><name pos:start="699:39" pos:end="699:42">src5</name></type></parameter>, <parameter pos:start="699:45" pos:end="699:47"><type pos:start="699:45" pos:end="699:47"><name pos:start="699:45" pos:end="699:47">dst</name></type></parameter>, <parameter pos:start="699:50" pos:end="699:56"><type pos:start="699:50" pos:end="699:56"><name pos:start="699:50" pos:end="699:56">rounder</name></type></parameter>, <parameter pos:start="699:59" pos:end="699:63"><type pos:start="699:59" pos:end="699:63"><name pos:start="699:59" pos:end="699:63">shift</name></type></parameter>, <parameter pos:start="699:66" pos:end="699:67"><type pos:start="699:66" pos:end="699:67"><name pos:start="699:66" pos:end="699:67">bt</name></type></parameter>)</parameter_list></cpp:macro> \
+
+        <cpp:value pos:start="701:9" pos:end="983:45">"movq " #src0 ", %%mm0          \n\t" <comment type="block" pos:start="701:47" pos:end="701:77">/* R4     R0      r4      r0 */</comment>\
+
+        "movq " #src4 ", %%mm1          \n\t" <comment type="block" pos:start="703:47" pos:end="703:77">/* R6     R2      r6      r2 */</comment>\
+
+        "movq " #src1 ", %%mm2          \n\t" <comment type="block" pos:start="705:47" pos:end="705:77">/* R3     R1      r3      r1 */</comment>\
+
+        "movq " #src5 ", %%mm3          \n\t" <comment type="block" pos:start="707:47" pos:end="707:77">/* R7     R5      r7      r5 */</comment>\
+
+        "movq %%mm0, %%mm4              \n\t"\
+
+        "por %%mm1, %%mm4               \n\t"\
+
+        "por %%mm2, %%mm4               \n\t"\
+
+        "por %%mm3, %%mm4               \n\t"\
+
+        "packssdw %%mm4,%%mm4           \n\t"\
+
+        "movd %%mm4, %%eax              \n\t"\
+
+        "orl %%eax, %%eax               \n\t"\
+
+        "jz " #bt "                     \n\t"\
+
+        "movq 16(%2), %%mm4             \n\t" <comment type="block" pos:start="725:47" pos:end="725:77">/* C4     C4      C4      C4 */</comment>\
+
+        "pmaddwd %%mm0, %%mm4           \n\t" <comment type="block" pos:start="727:47" pos:end="727:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 24(%2), %%mm5             \n\t" <comment type="block" pos:start="729:47" pos:end="729:77">/* -C4    C4      -C4     C4 */</comment>\
+
+        "pmaddwd %%mm5, %%mm0           \n\t" <comment type="block" pos:start="731:47" pos:end="731:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "movq 32(%2), %%mm5             \n\t" <comment type="block" pos:start="733:47" pos:end="733:77">/* C6     C2      C6      C2 */</comment>\
+
+        "pmaddwd %%mm1, %%mm5           \n\t" <comment type="block" pos:start="735:47" pos:end="735:76">/* C6R6+C2R2      C6r6+C2r2 */</comment>\
+
+        "movq 40(%2), %%mm6             \n\t" <comment type="block" pos:start="737:47" pos:end="737:77">/* -C2    C6      -C2     C6 */</comment>\
+
+        "pmaddwd %%mm6, %%mm1           \n\t" <comment type="block" pos:start="739:47" pos:end="739:77">/* -C2R6+C6R2     -C2r6+C6r2 */</comment>\
+
+        "movq 48(%2), %%mm7             \n\t" <comment type="block" pos:start="741:47" pos:end="741:77">/* C3     C1      C3      C1 */</comment>\
+
+        "pmaddwd %%mm2, %%mm7           \n\t" <comment type="block" pos:start="743:47" pos:end="743:76">/* C3R3+C1R1      C3r3+C1r1 */</comment>\
+
+        #rounder ", %%mm4               \n\t"\
+
+        "movq %%mm4, %%mm6              \n\t" <comment type="block" pos:start="747:47" pos:end="747:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "paddd %%mm5, %%mm4             \n\t" <comment type="block" pos:start="749:47" pos:end="749:69">/* A0             a0 */</comment>\
+
+        "psubd %%mm5, %%mm6             \n\t" <comment type="block" pos:start="751:47" pos:end="751:69">/* A3             a3 */</comment>\
+
+        "movq 56(%2), %%mm5             \n\t" <comment type="block" pos:start="753:47" pos:end="753:77">/* C7     C5      C7      C5 */</comment>\
+
+        "pmaddwd %%mm3, %%mm5           \n\t" <comment type="block" pos:start="755:47" pos:end="755:76">/* C7R7+C5R5      C7r7+C5r5 */</comment>\
+
+        #rounder ", %%mm0               \n\t"\
+
+        "paddd %%mm0, %%mm1             \n\t" <comment type="block" pos:start="759:47" pos:end="759:69">/* A1             a1 */</comment>\
+
+        "paddd %%mm0, %%mm0             \n\t" \
+
+        "psubd %%mm1, %%mm0             \n\t" <comment type="block" pos:start="763:47" pos:end="763:69">/* A2             a2 */</comment>\
+
+        "pmaddwd 64(%2), %%mm2          \n\t" <comment type="block" pos:start="765:47" pos:end="765:77">/* -C7R3+C3R1     -C7r3+C3r1 */</comment>\
+
+        "paddd %%mm5, %%mm7             \n\t" <comment type="block" pos:start="767:47" pos:end="767:69">/* B0             b0 */</comment>\
+
+        "movq 72(%2), %%mm5             \n\t" <comment type="block" pos:start="769:47" pos:end="769:78">/* -C5    -C1     -C5     -C1 */</comment>\
+
+        "pmaddwd %%mm3, %%mm5           \n\t" <comment type="block" pos:start="771:47" pos:end="771:77">/* -C5R7-C1R5     -C5r7-C1r5 */</comment>\
+
+        "paddd %%mm4, %%mm7             \n\t" <comment type="block" pos:start="773:47" pos:end="773:72">/* A0+B0          a0+b0 */</comment>\
+
+        "paddd %%mm4, %%mm4             \n\t" <comment type="block" pos:start="775:47" pos:end="775:70">/* 2A0            2a0 */</comment>\
+
+        "psubd %%mm7, %%mm4             \n\t" <comment type="block" pos:start="777:47" pos:end="777:72">/* A0-B0          a0-b0 */</comment>\
+
+        "paddd %%mm2, %%mm5             \n\t" <comment type="block" pos:start="779:47" pos:end="779:69">/* B1             b1 */</comment>\
+
+        "psrad $" #shift ", %%mm7       \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "movq %%mm1, %%mm2              \n\t" <comment type="block" pos:start="785:47" pos:end="785:69">/* A1             a1 */</comment>\
+
+        "paddd %%mm5, %%mm1             \n\t" <comment type="block" pos:start="787:47" pos:end="787:72">/* A1+B1          a1+b1 */</comment>\
+
+        "psubd %%mm5, %%mm2             \n\t" <comment type="block" pos:start="789:47" pos:end="789:72">/* A1-B1          a1-b1 */</comment>\
+
+        "psrad $" #shift ", %%mm1       \n\t"\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "packssdw %%mm1, %%mm7          \n\t" <comment type="block" pos:start="795:47" pos:end="795:80">/* A1+B1  a1+b1   A0+B0   a0+b0 */</comment>\
+
+        "packssdw %%mm4, %%mm2          \n\t" <comment type="block" pos:start="797:47" pos:end="797:80">/* A0-B0  a0-b0   A1-B1   a1-b1 */</comment>\
+
+        "movq %%mm7, " #dst "           \n\t"\
+
+        "movq " #src1 ", %%mm1          \n\t" <comment type="block" pos:start="801:47" pos:end="801:77">/* R3     R1      r3      r1 */</comment>\
+
+        "movq 80(%2), %%mm4             \n\t" <comment type="block" pos:start="803:47" pos:end="803:77">/* -C1    C5      -C1     C5 */</comment>\
+
+        "movq %%mm2, 24+" #dst "        \n\t"\
+
+        "pmaddwd %%mm1, %%mm4           \n\t" <comment type="block" pos:start="807:47" pos:end="807:77">/* -C1R3+C5R1     -C1r3+C5r1 */</comment>\
+
+        "movq 88(%2), %%mm7             \n\t" <comment type="block" pos:start="809:47" pos:end="809:77">/* C3     C7      C3      C7 */</comment>\
+
+        "pmaddwd 96(%2), %%mm1          \n\t" <comment type="block" pos:start="811:47" pos:end="811:77">/* -C5R3+C7R1     -C5r3+C7r1 */</comment>\
+
+        "pmaddwd %%mm3, %%mm7           \n\t" <comment type="block" pos:start="813:47" pos:end="813:76">/* C3R7+C7R5      C3r7+C7r5 */</comment>\
+
+        "movq %%mm0, %%mm2              \n\t" <comment type="block" pos:start="815:47" pos:end="815:69">/* A2             a2 */</comment>\
+
+        "pmaddwd 104(%2), %%mm3         \n\t" <comment type="block" pos:start="817:47" pos:end="817:77">/* -C1R7+C3R5     -C1r7+C3r5 */</comment>\
+
+        "paddd %%mm7, %%mm4             \n\t" <comment type="block" pos:start="819:47" pos:end="819:69">/* B2             b2 */</comment>\
+
+        "paddd %%mm4, %%mm2             \n\t" <comment type="block" pos:start="821:47" pos:end="821:72">/* A2+B2          a2+b2 */</comment>\
+
+        "psubd %%mm4, %%mm0             \n\t" <comment type="block" pos:start="823:47" pos:end="823:72">/* a2-B2          a2-b2 */</comment>\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "psrad $" #shift ", %%mm0       \n\t"\
+
+        "movq %%mm6, %%mm4              \n\t" <comment type="block" pos:start="829:47" pos:end="829:69">/* A3             a3 */</comment>\
+
+        "paddd %%mm1, %%mm3             \n\t" <comment type="block" pos:start="831:47" pos:end="831:69">/* B3             b3 */</comment>\
+
+        "paddd %%mm3, %%mm6             \n\t" <comment type="block" pos:start="833:47" pos:end="833:72">/* A3+B3          a3+b3 */</comment>\
+
+        "psubd %%mm3, %%mm4             \n\t" <comment type="block" pos:start="835:47" pos:end="835:72">/* a3-B3          a3-b3 */</comment>\
+
+        "psrad $" #shift ", %%mm6       \n\t"\
+
+        "packssdw %%mm6, %%mm2          \n\t" <comment type="block" pos:start="839:47" pos:end="839:80">/* A3+B3  a3+b3   A2+B2   a2+b2 */</comment>\
+
+        "movq %%mm2, 8+" #dst "         \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "packssdw %%mm0, %%mm4          \n\t" <comment type="block" pos:start="845:47" pos:end="845:80">/* A2-B2  a2-b2   A3-B3   a3-b3 */</comment>\
+
+        "movq %%mm4, 16+" #dst "        \n\t"\
+
+
+
+#define ROW_IDCT(src0, src4, src1, src5, dst, rounder, shift) \
+
+        "movq " #src0 ", %%mm0          \n\t" <comment type="block" pos:start="853:47" pos:end="853:77">/* R4     R0      r4      r0 */</comment>\
+
+        "movq " #src4 ", %%mm1          \n\t" <comment type="block" pos:start="855:47" pos:end="855:77">/* R6     R2      r6      r2 */</comment>\
+
+        "movq " #src1 ", %%mm2          \n\t" <comment type="block" pos:start="857:47" pos:end="857:77">/* R3     R1      r3      r1 */</comment>\
+
+        "movq " #src5 ", %%mm3          \n\t" <comment type="block" pos:start="859:47" pos:end="859:77">/* R7     R5      r7      r5 */</comment>\
+
+        "movq 16(%2), %%mm4             \n\t" <comment type="block" pos:start="861:47" pos:end="861:77">/* C4     C4      C4      C4 */</comment>\
+
+        "pmaddwd %%mm0, %%mm4           \n\t" <comment type="block" pos:start="863:47" pos:end="863:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 24(%2), %%mm5             \n\t" <comment type="block" pos:start="865:47" pos:end="865:77">/* -C4    C4      -C4     C4 */</comment>\
+
+        "pmaddwd %%mm5, %%mm0           \n\t" <comment type="block" pos:start="867:47" pos:end="867:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "movq 32(%2), %%mm5             \n\t" <comment type="block" pos:start="869:47" pos:end="869:77">/* C6     C2      C6      C2 */</comment>\
+
+        "pmaddwd %%mm1, %%mm5           \n\t" <comment type="block" pos:start="871:47" pos:end="871:76">/* C6R6+C2R2      C6r6+C2r2 */</comment>\
+
+        "movq 40(%2), %%mm6             \n\t" <comment type="block" pos:start="873:47" pos:end="873:77">/* -C2    C6      -C2     C6 */</comment>\
+
+        "pmaddwd %%mm6, %%mm1           \n\t" <comment type="block" pos:start="875:47" pos:end="875:77">/* -C2R6+C6R2     -C2r6+C6r2 */</comment>\
+
+        "movq 48(%2), %%mm7             \n\t" <comment type="block" pos:start="877:47" pos:end="877:77">/* C3     C1      C3      C1 */</comment>\
+
+        "pmaddwd %%mm2, %%mm7           \n\t" <comment type="block" pos:start="879:47" pos:end="879:76">/* C3R3+C1R1      C3r3+C1r1 */</comment>\
+
+        #rounder ", %%mm4               \n\t"\
+
+        "movq %%mm4, %%mm6              \n\t" <comment type="block" pos:start="883:47" pos:end="883:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "paddd %%mm5, %%mm4             \n\t" <comment type="block" pos:start="885:47" pos:end="885:69">/* A0             a0 */</comment>\
+
+        "psubd %%mm5, %%mm6             \n\t" <comment type="block" pos:start="887:47" pos:end="887:69">/* A3             a3 */</comment>\
+
+        "movq 56(%2), %%mm5             \n\t" <comment type="block" pos:start="889:47" pos:end="889:77">/* C7     C5      C7      C5 */</comment>\
+
+        "pmaddwd %%mm3, %%mm5           \n\t" <comment type="block" pos:start="891:47" pos:end="891:76">/* C7R7+C5R5      C7r7+C5r5 */</comment>\
+
+        #rounder ", %%mm0               \n\t"\
+
+        "paddd %%mm0, %%mm1             \n\t" <comment type="block" pos:start="895:47" pos:end="895:69">/* A1             a1 */</comment>\
+
+        "paddd %%mm0, %%mm0             \n\t" \
+
+        "psubd %%mm1, %%mm0             \n\t" <comment type="block" pos:start="899:47" pos:end="899:69">/* A2             a2 */</comment>\
+
+        "pmaddwd 64(%2), %%mm2          \n\t" <comment type="block" pos:start="901:47" pos:end="901:77">/* -C7R3+C3R1     -C7r3+C3r1 */</comment>\
+
+        "paddd %%mm5, %%mm7             \n\t" <comment type="block" pos:start="903:47" pos:end="903:69">/* B0             b0 */</comment>\
+
+        "movq 72(%2), %%mm5             \n\t" <comment type="block" pos:start="905:47" pos:end="905:78">/* -C5    -C1     -C5     -C1 */</comment>\
+
+        "pmaddwd %%mm3, %%mm5           \n\t" <comment type="block" pos:start="907:47" pos:end="907:77">/* -C5R7-C1R5     -C5r7-C1r5 */</comment>\
+
+        "paddd %%mm4, %%mm7             \n\t" <comment type="block" pos:start="909:47" pos:end="909:72">/* A0+B0          a0+b0 */</comment>\
+
+        "paddd %%mm4, %%mm4             \n\t" <comment type="block" pos:start="911:47" pos:end="911:70">/* 2A0            2a0 */</comment>\
+
+        "psubd %%mm7, %%mm4             \n\t" <comment type="block" pos:start="913:47" pos:end="913:72">/* A0-B0          a0-b0 */</comment>\
+
+        "paddd %%mm2, %%mm5             \n\t" <comment type="block" pos:start="915:47" pos:end="915:69">/* B1             b1 */</comment>\
+
+        "psrad $" #shift ", %%mm7       \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "movq %%mm1, %%mm2              \n\t" <comment type="block" pos:start="921:47" pos:end="921:69">/* A1             a1 */</comment>\
+
+        "paddd %%mm5, %%mm1             \n\t" <comment type="block" pos:start="923:47" pos:end="923:72">/* A1+B1          a1+b1 */</comment>\
+
+        "psubd %%mm5, %%mm2             \n\t" <comment type="block" pos:start="925:47" pos:end="925:72">/* A1-B1          a1-b1 */</comment>\
+
+        "psrad $" #shift ", %%mm1       \n\t"\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "packssdw %%mm1, %%mm7          \n\t" <comment type="block" pos:start="931:47" pos:end="931:80">/* A1+B1  a1+b1   A0+B0   a0+b0 */</comment>\
+
+        "packssdw %%mm4, %%mm2          \n\t" <comment type="block" pos:start="933:47" pos:end="933:80">/* A0-B0  a0-b0   A1-B1   a1-b1 */</comment>\
+
+        "movq %%mm7, " #dst "           \n\t"\
+
+        "movq " #src1 ", %%mm1          \n\t" <comment type="block" pos:start="937:47" pos:end="937:77">/* R3     R1      r3      r1 */</comment>\
+
+        "movq 80(%2), %%mm4             \n\t" <comment type="block" pos:start="939:47" pos:end="939:77">/* -C1    C5      -C1     C5 */</comment>\
+
+        "movq %%mm2, 24+" #dst "        \n\t"\
+
+        "pmaddwd %%mm1, %%mm4           \n\t" <comment type="block" pos:start="943:47" pos:end="943:77">/* -C1R3+C5R1     -C1r3+C5r1 */</comment>\
+
+        "movq 88(%2), %%mm7             \n\t" <comment type="block" pos:start="945:47" pos:end="945:77">/* C3     C7      C3      C7 */</comment>\
+
+        "pmaddwd 96(%2), %%mm1          \n\t" <comment type="block" pos:start="947:47" pos:end="947:77">/* -C5R3+C7R1     -C5r3+C7r1 */</comment>\
+
+        "pmaddwd %%mm3, %%mm7           \n\t" <comment type="block" pos:start="949:47" pos:end="949:76">/* C3R7+C7R5      C3r7+C7r5 */</comment>\
+
+        "movq %%mm0, %%mm2              \n\t" <comment type="block" pos:start="951:47" pos:end="951:69">/* A2             a2 */</comment>\
+
+        "pmaddwd 104(%2), %%mm3         \n\t" <comment type="block" pos:start="953:47" pos:end="953:77">/* -C1R7+C3R5     -C1r7+C3r5 */</comment>\
+
+        "paddd %%mm7, %%mm4             \n\t" <comment type="block" pos:start="955:47" pos:end="955:69">/* B2             b2 */</comment>\
+
+        "paddd %%mm4, %%mm2             \n\t" <comment type="block" pos:start="957:47" pos:end="957:72">/* A2+B2          a2+b2 */</comment>\
+
+        "psubd %%mm4, %%mm0             \n\t" <comment type="block" pos:start="959:47" pos:end="959:72">/* a2-B2          a2-b2 */</comment>\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "psrad $" #shift ", %%mm0       \n\t"\
+
+        "movq %%mm6, %%mm4              \n\t" <comment type="block" pos:start="965:47" pos:end="965:69">/* A3             a3 */</comment>\
+
+        "paddd %%mm1, %%mm3             \n\t" <comment type="block" pos:start="967:47" pos:end="967:69">/* B3             b3 */</comment>\
+
+        "paddd %%mm3, %%mm6             \n\t" <comment type="block" pos:start="969:47" pos:end="969:72">/* A3+B3          a3+b3 */</comment>\
+
+        "psubd %%mm3, %%mm4             \n\t" <comment type="block" pos:start="971:47" pos:end="971:72">/* a3-B3          a3-b3 */</comment>\
+
+        "psrad $" #shift ", %%mm6       \n\t"\
+
+        "packssdw %%mm6, %%mm2          \n\t" <comment type="block" pos:start="975:47" pos:end="975:80">/* A3+B3  a3+b3   A2+B2   a2+b2 */</comment>\
+
+        "movq %%mm2, 8+" #dst "         \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "packssdw %%mm0, %%mm4          \n\t" <comment type="block" pos:start="981:47" pos:end="981:80">/* A2-B2  a2-b2   A3-B3   a3-b3 */</comment>\
+
+        "movq %%mm4, 16+" #dst "        \n\t"</cpp:value></cpp:define>\
+
+
+
+<comment type="line" pos:start="987:1" pos:end="987:71">//IDCT(         src0,   src4,   src1,   src5,    dst,   rounder, shift)</comment>
+
+DC_COND_IDCT(  0(%0),  8(%0), 16(%0), 24(%0),  0(%1),paddd 8(%2), 11)
+
+Z_COND_IDCT(  32(%0), 40(%0), 48(%0), 56(%0), 32(%1),paddd (%2), 11, 4f)
+
+Z_COND_IDCT(  64(%0), 72(%0), 80(%0), 88(%0), 64(%1),paddd (%2), 11, 2f)
+
+Z_COND_IDCT(  96(%0),104(%0),112(%0),120(%0), 96(%1),paddd (%2), 11, 1f)
+
+
+
+<cpp:undef pos:start="999:1" pos:end="999:11">#<cpp:directive pos:start="999:2" pos:end="999:6">undef</cpp:directive> <name pos:start="999:8" pos:end="999:11">IDCT</name></cpp:undef>
+
+<cpp:define pos:start="1001:1" pos:end="1149:45">#<cpp:directive pos:start="1001:2" pos:end="1001:7">define</cpp:directive> <cpp:macro pos:start="1001:9" pos:end="1001:57"><name pos:start="1001:9" pos:end="1001:12">IDCT</name><parameter_list pos:start="1001:13" pos:end="1001:57">(<parameter pos:start="1001:14" pos:end="1001:17"><type pos:start="1001:14" pos:end="1001:17"><name pos:start="1001:14" pos:end="1001:17">src0</name></type></parameter>, <parameter pos:start="1001:20" pos:end="1001:23"><type pos:start="1001:20" pos:end="1001:23"><name pos:start="1001:20" pos:end="1001:23">src4</name></type></parameter>, <parameter pos:start="1001:26" pos:end="1001:29"><type pos:start="1001:26" pos:end="1001:29"><name pos:start="1001:26" pos:end="1001:29">src1</name></type></parameter>, <parameter pos:start="1001:32" pos:end="1001:35"><type pos:start="1001:32" pos:end="1001:35"><name pos:start="1001:32" pos:end="1001:35">src5</name></type></parameter>, <parameter pos:start="1001:38" pos:end="1001:40"><type pos:start="1001:38" pos:end="1001:40"><name pos:start="1001:38" pos:end="1001:40">dst</name></type></parameter>, <parameter pos:start="1001:43" pos:end="1001:49"><type pos:start="1001:43" pos:end="1001:49"><name pos:start="1001:43" pos:end="1001:49">rounder</name></type></parameter>, <parameter pos:start="1001:52" pos:end="1001:56"><type pos:start="1001:52" pos:end="1001:56"><name pos:start="1001:52" pos:end="1001:56">shift</name></type></parameter>)</parameter_list></cpp:macro> \
+
+        <cpp:value pos:start="1003:9" pos:end="1149:45">"movq " #src0 ", %%mm0          \n\t" <comment type="block" pos:start="1003:47" pos:end="1003:77">/* R4     R0      r4      r0 */</comment>\
+
+        "movq " #src4 ", %%mm1          \n\t" <comment type="block" pos:start="1005:47" pos:end="1005:77">/* R6     R2      r6      r2 */</comment>\
+
+        "movq " #src1 ", %%mm2          \n\t" <comment type="block" pos:start="1007:47" pos:end="1007:77">/* R3     R1      r3      r1 */</comment>\
+
+        "movq " #src5 ", %%mm3          \n\t" <comment type="block" pos:start="1009:47" pos:end="1009:77">/* R7     R5      r7      r5 */</comment>\
+
+        "movq 16(%2), %%mm4             \n\t" <comment type="block" pos:start="1011:47" pos:end="1011:77">/* C4     C4      C4      C4 */</comment>\
+
+        "pmaddwd %%mm0, %%mm4           \n\t" <comment type="block" pos:start="1013:47" pos:end="1013:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 24(%2), %%mm5             \n\t" <comment type="block" pos:start="1015:47" pos:end="1015:77">/* -C4    C4      -C4     C4 */</comment>\
+
+        "pmaddwd %%mm5, %%mm0           \n\t" <comment type="block" pos:start="1017:47" pos:end="1017:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "movq 32(%2), %%mm5             \n\t" <comment type="block" pos:start="1019:47" pos:end="1019:77">/* C6     C2      C6      C2 */</comment>\
+
+        "pmaddwd %%mm1, %%mm5           \n\t" <comment type="block" pos:start="1021:47" pos:end="1021:76">/* C6R6+C2R2      C6r6+C2r2 */</comment>\
+
+        "movq 40(%2), %%mm6             \n\t" <comment type="block" pos:start="1023:47" pos:end="1023:77">/* -C2    C6      -C2     C6 */</comment>\
+
+        "pmaddwd %%mm6, %%mm1           \n\t" <comment type="block" pos:start="1025:47" pos:end="1025:77">/* -C2R6+C6R2     -C2r6+C6r2 */</comment>\
+
+        #rounder ", %%mm4               \n\t"\
+
+        "movq %%mm4, %%mm6              \n\t" <comment type="block" pos:start="1029:47" pos:end="1029:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 48(%2), %%mm7             \n\t" <comment type="block" pos:start="1031:47" pos:end="1031:77">/* C3     C1      C3      C1 */</comment>\
+
+        #rounder ", %%mm0               \n\t"\
+
+        "pmaddwd %%mm2, %%mm7           \n\t" <comment type="block" pos:start="1035:47" pos:end="1035:76">/* C3R3+C1R1      C3r3+C1r1 */</comment>\
+
+        "paddd %%mm5, %%mm4             \n\t" <comment type="block" pos:start="1037:47" pos:end="1037:69">/* A0             a0 */</comment>\
+
+        "psubd %%mm5, %%mm6             \n\t" <comment type="block" pos:start="1039:47" pos:end="1039:69">/* A3             a3 */</comment>\
+
+        "movq %%mm0, %%mm5              \n\t" <comment type="block" pos:start="1041:47" pos:end="1041:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "paddd %%mm1, %%mm0             \n\t" <comment type="block" pos:start="1043:47" pos:end="1043:69">/* A1             a1 */</comment>\
+
+        "psubd %%mm1, %%mm5             \n\t" <comment type="block" pos:start="1045:47" pos:end="1045:69">/* A2             a2 */</comment>\
+
+        "movq 56(%2), %%mm1             \n\t" <comment type="block" pos:start="1047:47" pos:end="1047:77">/* C7     C5      C7      C5 */</comment>\
+
+        "pmaddwd %%mm3, %%mm1           \n\t" <comment type="block" pos:start="1049:47" pos:end="1049:76">/* C7R7+C5R5      C7r7+C5r5 */</comment>\
+
+        "pmaddwd 64(%2), %%mm2          \n\t" <comment type="block" pos:start="1051:47" pos:end="1051:77">/* -C7R3+C3R1     -C7r3+C3r1 */</comment>\
+
+        "paddd %%mm1, %%mm7             \n\t" <comment type="block" pos:start="1053:47" pos:end="1053:69">/* B0             b0 */</comment>\
+
+        "movq 72(%2), %%mm1             \n\t" <comment type="block" pos:start="1055:47" pos:end="1055:78">/* -C5    -C1     -C5     -C1 */</comment>\
+
+        "pmaddwd %%mm3, %%mm1           \n\t" <comment type="block" pos:start="1057:47" pos:end="1057:77">/* -C5R7-C1R5     -C5r7-C1r5 */</comment>\
+
+        "paddd %%mm4, %%mm7             \n\t" <comment type="block" pos:start="1059:47" pos:end="1059:72">/* A0+B0          a0+b0 */</comment>\
+
+        "paddd %%mm4, %%mm4             \n\t" <comment type="block" pos:start="1061:47" pos:end="1061:70">/* 2A0            2a0 */</comment>\
+
+        "psubd %%mm7, %%mm4             \n\t" <comment type="block" pos:start="1063:47" pos:end="1063:72">/* A0-B0          a0-b0 */</comment>\
+
+        "paddd %%mm2, %%mm1             \n\t" <comment type="block" pos:start="1065:47" pos:end="1065:69">/* B1             b1 */</comment>\
+
+        "psrad $" #shift ", %%mm7       \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "movq %%mm0, %%mm2              \n\t" <comment type="block" pos:start="1071:47" pos:end="1071:69">/* A1             a1 */</comment>\
+
+        "paddd %%mm1, %%mm0             \n\t" <comment type="block" pos:start="1073:47" pos:end="1073:72">/* A1+B1          a1+b1 */</comment>\
+
+        "psubd %%mm1, %%mm2             \n\t" <comment type="block" pos:start="1075:47" pos:end="1075:72">/* A1-B1          a1-b1 */</comment>\
+
+        "psrad $" #shift ", %%mm0       \n\t"\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "packssdw %%mm7, %%mm7          \n\t" <comment type="block" pos:start="1081:47" pos:end="1081:64">/* A0+B0  a0+b0 */</comment>\
+
+        "movd %%mm7, " #dst "           \n\t"\
+
+        "packssdw %%mm0, %%mm0          \n\t" <comment type="block" pos:start="1085:47" pos:end="1085:64">/* A1+B1  a1+b1 */</comment>\
+
+        "movd %%mm0, 16+" #dst "        \n\t"\
+
+        "packssdw %%mm2, %%mm2          \n\t" <comment type="block" pos:start="1089:47" pos:end="1089:64">/* A1-B1  a1-b1 */</comment>\
+
+        "movd %%mm2, 96+" #dst "        \n\t"\
+
+        "packssdw %%mm4, %%mm4          \n\t" <comment type="block" pos:start="1093:47" pos:end="1093:64">/* A0-B0  a0-b0 */</comment>\
+
+        "movd %%mm4, 112+" #dst "       \n\t"\
+
+        "movq " #src1 ", %%mm0          \n\t" <comment type="block" pos:start="1097:47" pos:end="1097:77">/* R3     R1      r3      r1 */</comment>\
+
+        "movq 80(%2), %%mm4             \n\t" <comment type="block" pos:start="1099:47" pos:end="1099:77">/* -C1    C5      -C1     C5 */</comment>\
+
+        "pmaddwd %%mm0, %%mm4           \n\t" <comment type="block" pos:start="1101:47" pos:end="1101:77">/* -C1R3+C5R1     -C1r3+C5r1 */</comment>\
+
+        "movq 88(%2), %%mm7             \n\t" <comment type="block" pos:start="1103:47" pos:end="1103:77">/* C3     C7      C3      C7 */</comment>\
+
+        "pmaddwd 96(%2), %%mm0          \n\t" <comment type="block" pos:start="1105:47" pos:end="1105:77">/* -C5R3+C7R1     -C5r3+C7r1 */</comment>\
+
+        "pmaddwd %%mm3, %%mm7           \n\t" <comment type="block" pos:start="1107:47" pos:end="1107:76">/* C3R7+C7R5      C3r7+C7r5 */</comment>\
+
+        "movq %%mm5, %%mm2              \n\t" <comment type="block" pos:start="1109:47" pos:end="1109:69">/* A2             a2 */</comment>\
+
+        "pmaddwd 104(%2), %%mm3         \n\t" <comment type="block" pos:start="1111:47" pos:end="1111:77">/* -C1R7+C3R5     -C1r7+C3r5 */</comment>\
+
+        "paddd %%mm7, %%mm4             \n\t" <comment type="block" pos:start="1113:47" pos:end="1113:69">/* B2             b2 */</comment>\
+
+        "paddd %%mm4, %%mm2             \n\t" <comment type="block" pos:start="1115:47" pos:end="1115:72">/* A2+B2          a2+b2 */</comment>\
+
+        "psubd %%mm4, %%mm5             \n\t" <comment type="block" pos:start="1117:47" pos:end="1117:72">/* a2-B2          a2-b2 */</comment>\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "psrad $" #shift ", %%mm5       \n\t"\
+
+        "movq %%mm6, %%mm4              \n\t" <comment type="block" pos:start="1123:47" pos:end="1123:69">/* A3             a3 */</comment>\
+
+        "paddd %%mm0, %%mm3             \n\t" <comment type="block" pos:start="1125:47" pos:end="1125:69">/* B3             b3 */</comment>\
+
+        "paddd %%mm3, %%mm6             \n\t" <comment type="block" pos:start="1127:47" pos:end="1127:72">/* A3+B3          a3+b3 */</comment>\
+
+        "psubd %%mm3, %%mm4             \n\t" <comment type="block" pos:start="1129:47" pos:end="1129:72">/* a3-B3          a3-b3 */</comment>\
+
+        "psrad $" #shift ", %%mm6       \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "packssdw %%mm2, %%mm2          \n\t" <comment type="block" pos:start="1135:47" pos:end="1135:64">/* A2+B2  a2+b2 */</comment>\
+
+        "packssdw %%mm6, %%mm6          \n\t" <comment type="block" pos:start="1137:47" pos:end="1137:64">/* A3+B3  a3+b3 */</comment>\
+
+        "movd %%mm2, 32+" #dst "        \n\t"\
+
+        "packssdw %%mm4, %%mm4          \n\t" <comment type="block" pos:start="1141:47" pos:end="1141:64">/* A3-B3  a3-b3 */</comment>\
+
+        "packssdw %%mm5, %%mm5          \n\t" <comment type="block" pos:start="1143:47" pos:end="1143:64">/* A2-B2  a2-b2 */</comment>\
+
+        "movd %%mm6, 48+" #dst "        \n\t"\
+
+        "movd %%mm4, 64+" #dst "        \n\t"\
+
+        "movd %%mm5, 80+" #dst "        \n\t"</cpp:value></cpp:define>
+
+
+
+
+
+<comment type="line" pos:start="1155:1" pos:end="1155:63">//IDCT(  src0,   src4,   src1,    src5,    dst, rounder, shift)</comment>
+
+IDCT(    (%1), 64(%1), 32(%1),  96(%1),  0(%0),/nop, 20)
+
+IDCT(   8(%1), 72(%1), 40(%1), 104(%1),  4(%0),/nop, 20)
+
+IDCT(  16(%1), 80(%1), 48(%1), 112(%1),  8(%0),/nop, 20)
+
+IDCT(  24(%1), 88(%1), 56(%1), 120(%1), 12(%0),/nop, 20)
+
+        "jmp 9f                         \n\t"
+
+
+
+        "#.balign 16                    \n\t"\
+
+        "4:                             \n\t"
+
+Z_COND_IDCT(  64(%0), 72(%0), 80(%0), 88(%0), 64(%1),paddd (%2), 11, 6f)
+
+Z_COND_IDCT(  96(%0),104(%0),112(%0),120(%0), 96(%1),paddd (%2), 11, 5f)
+
+
+
+<cpp:undef pos:start="1179:1" pos:end="1179:11">#<cpp:directive pos:start="1179:2" pos:end="1179:6">undef</cpp:directive> <name pos:start="1179:8" pos:end="1179:11">IDCT</name></cpp:undef>
+
+<cpp:define pos:start="1181:1" pos:end="1305:45">#<cpp:directive pos:start="1181:2" pos:end="1181:7">define</cpp:directive> <cpp:macro pos:start="1181:9" pos:end="1181:57"><name pos:start="1181:9" pos:end="1181:12">IDCT</name><parameter_list pos:start="1181:13" pos:end="1181:57">(<parameter pos:start="1181:14" pos:end="1181:17"><type pos:start="1181:14" pos:end="1181:17"><name pos:start="1181:14" pos:end="1181:17">src0</name></type></parameter>, <parameter pos:start="1181:20" pos:end="1181:23"><type pos:start="1181:20" pos:end="1181:23"><name pos:start="1181:20" pos:end="1181:23">src4</name></type></parameter>, <parameter pos:start="1181:26" pos:end="1181:29"><type pos:start="1181:26" pos:end="1181:29"><name pos:start="1181:26" pos:end="1181:29">src1</name></type></parameter>, <parameter pos:start="1181:32" pos:end="1181:35"><type pos:start="1181:32" pos:end="1181:35"><name pos:start="1181:32" pos:end="1181:35">src5</name></type></parameter>, <parameter pos:start="1181:38" pos:end="1181:40"><type pos:start="1181:38" pos:end="1181:40"><name pos:start="1181:38" pos:end="1181:40">dst</name></type></parameter>, <parameter pos:start="1181:43" pos:end="1181:49"><type pos:start="1181:43" pos:end="1181:49"><name pos:start="1181:43" pos:end="1181:49">rounder</name></type></parameter>, <parameter pos:start="1181:52" pos:end="1181:56"><type pos:start="1181:52" pos:end="1181:56"><name pos:start="1181:52" pos:end="1181:56">shift</name></type></parameter>)</parameter_list></cpp:macro> \
+
+        <cpp:value pos:start="1183:9" pos:end="1305:45">"movq " #src0 ", %%mm0          \n\t" <comment type="block" pos:start="1183:47" pos:end="1183:77">/* R4     R0      r4      r0 */</comment>\
+
+        "movq " #src4 ", %%mm1          \n\t" <comment type="block" pos:start="1185:47" pos:end="1185:77">/* R6     R2      r6      r2 */</comment>\
+
+        "movq " #src5 ", %%mm3          \n\t" <comment type="block" pos:start="1187:47" pos:end="1187:77">/* R7     R5      r7      r5 */</comment>\
+
+        "movq 16(%2), %%mm4             \n\t" <comment type="block" pos:start="1189:47" pos:end="1189:77">/* C4     C4      C4      C4 */</comment>\
+
+        "pmaddwd %%mm0, %%mm4           \n\t" <comment type="block" pos:start="1191:47" pos:end="1191:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 24(%2), %%mm5             \n\t" <comment type="block" pos:start="1193:47" pos:end="1193:77">/* -C4    C4      -C4     C4 */</comment>\
+
+        "pmaddwd %%mm5, %%mm0           \n\t" <comment type="block" pos:start="1195:47" pos:end="1195:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "movq 32(%2), %%mm5             \n\t" <comment type="block" pos:start="1197:47" pos:end="1197:77">/* C6     C2      C6      C2 */</comment>\
+
+        "pmaddwd %%mm1, %%mm5           \n\t" <comment type="block" pos:start="1199:47" pos:end="1199:76">/* C6R6+C2R2      C6r6+C2r2 */</comment>\
+
+        "movq 40(%2), %%mm6             \n\t" <comment type="block" pos:start="1201:47" pos:end="1201:77">/* -C2    C6      -C2     C6 */</comment>\
+
+        "pmaddwd %%mm6, %%mm1           \n\t" <comment type="block" pos:start="1203:47" pos:end="1203:77">/* -C2R6+C6R2     -C2r6+C6r2 */</comment>\
+
+        #rounder ", %%mm4               \n\t"\
+
+        "movq %%mm4, %%mm6              \n\t" <comment type="block" pos:start="1207:47" pos:end="1207:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        #rounder ", %%mm0               \n\t"\
+
+        "paddd %%mm5, %%mm4             \n\t" <comment type="block" pos:start="1211:47" pos:end="1211:69">/* A0             a0 */</comment>\
+
+        "psubd %%mm5, %%mm6             \n\t" <comment type="block" pos:start="1213:47" pos:end="1213:69">/* A3             a3 */</comment>\
+
+        "movq %%mm0, %%mm5              \n\t" <comment type="block" pos:start="1215:47" pos:end="1215:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "paddd %%mm1, %%mm0             \n\t" <comment type="block" pos:start="1217:47" pos:end="1217:69">/* A1             a1 */</comment>\
+
+        "psubd %%mm1, %%mm5             \n\t" <comment type="block" pos:start="1219:47" pos:end="1219:69">/* A2             a2 */</comment>\
+
+        "movq 56(%2), %%mm1             \n\t" <comment type="block" pos:start="1221:47" pos:end="1221:77">/* C7     C5      C7      C5 */</comment>\
+
+        "pmaddwd %%mm3, %%mm1           \n\t" <comment type="block" pos:start="1223:47" pos:end="1223:76">/* C7R7+C5R5      C7r7+C5r5 */</comment>\
+
+        "movq 72(%2), %%mm7             \n\t" <comment type="block" pos:start="1225:47" pos:end="1225:78">/* -C5    -C1     -C5     -C1 */</comment>\
+
+        "pmaddwd %%mm3, %%mm7           \n\t" <comment type="block" pos:start="1227:47" pos:end="1227:77">/* -C5R7-C1R5     -C5r7-C1r5 */</comment>\
+
+        "paddd %%mm4, %%mm1             \n\t" <comment type="block" pos:start="1229:47" pos:end="1229:72">/* A0+B0          a0+b0 */</comment>\
+
+        "paddd %%mm4, %%mm4             \n\t" <comment type="block" pos:start="1231:47" pos:end="1231:70">/* 2A0            2a0 */</comment>\
+
+        "psubd %%mm1, %%mm4             \n\t" <comment type="block" pos:start="1233:47" pos:end="1233:72">/* A0-B0          a0-b0 */</comment>\
+
+        "psrad $" #shift ", %%mm1       \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "movq %%mm0, %%mm2              \n\t" <comment type="block" pos:start="1239:47" pos:end="1239:69">/* A1             a1 */</comment>\
+
+        "paddd %%mm7, %%mm0             \n\t" <comment type="block" pos:start="1241:47" pos:end="1241:72">/* A1+B1          a1+b1 */</comment>\
+
+        "psubd %%mm7, %%mm2             \n\t" <comment type="block" pos:start="1243:47" pos:end="1243:72">/* A1-B1          a1-b1 */</comment>\
+
+        "psrad $" #shift ", %%mm0       \n\t"\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "packssdw %%mm1, %%mm1          \n\t" <comment type="block" pos:start="1249:47" pos:end="1249:64">/* A0+B0  a0+b0 */</comment>\
+
+        "movd %%mm1, " #dst "           \n\t"\
+
+        "packssdw %%mm0, %%mm0          \n\t" <comment type="block" pos:start="1253:47" pos:end="1253:64">/* A1+B1  a1+b1 */</comment>\
+
+        "movd %%mm0, 16+" #dst "        \n\t"\
+
+        "packssdw %%mm2, %%mm2          \n\t" <comment type="block" pos:start="1257:47" pos:end="1257:64">/* A1-B1  a1-b1 */</comment>\
+
+        "movd %%mm2, 96+" #dst "        \n\t"\
+
+        "packssdw %%mm4, %%mm4          \n\t" <comment type="block" pos:start="1261:47" pos:end="1261:64">/* A0-B0  a0-b0 */</comment>\
+
+        "movd %%mm4, 112+" #dst "       \n\t"\
+
+        "movq 88(%2), %%mm1             \n\t" <comment type="block" pos:start="1265:47" pos:end="1265:77">/* C3     C7      C3      C7 */</comment>\
+
+        "pmaddwd %%mm3, %%mm1           \n\t" <comment type="block" pos:start="1267:47" pos:end="1267:76">/* C3R7+C7R5      C3r7+C7r5 */</comment>\
+
+        "movq %%mm5, %%mm2              \n\t" <comment type="block" pos:start="1269:47" pos:end="1269:69">/* A2             a2 */</comment>\
+
+        "pmaddwd 104(%2), %%mm3         \n\t" <comment type="block" pos:start="1271:47" pos:end="1271:77">/* -C1R7+C3R5     -C1r7+C3r5 */</comment>\
+
+        "paddd %%mm1, %%mm2             \n\t" <comment type="block" pos:start="1273:47" pos:end="1273:72">/* A2+B2          a2+b2 */</comment>\
+
+        "psubd %%mm1, %%mm5             \n\t" <comment type="block" pos:start="1275:47" pos:end="1275:72">/* a2-B2          a2-b2 */</comment>\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "psrad $" #shift ", %%mm5       \n\t"\
+
+        "movq %%mm6, %%mm1              \n\t" <comment type="block" pos:start="1281:47" pos:end="1281:69">/* A3             a3 */</comment>\
+
+        "paddd %%mm3, %%mm6             \n\t" <comment type="block" pos:start="1283:47" pos:end="1283:72">/* A3+B3          a3+b3 */</comment>\
+
+        "psubd %%mm3, %%mm1             \n\t" <comment type="block" pos:start="1285:47" pos:end="1285:72">/* a3-B3          a3-b3 */</comment>\
+
+        "psrad $" #shift ", %%mm6       \n\t"\
+
+        "psrad $" #shift ", %%mm1       \n\t"\
+
+        "packssdw %%mm2, %%mm2          \n\t" <comment type="block" pos:start="1291:47" pos:end="1291:64">/* A2+B2  a2+b2 */</comment>\
+
+        "packssdw %%mm6, %%mm6          \n\t" <comment type="block" pos:start="1293:47" pos:end="1293:64">/* A3+B3  a3+b3 */</comment>\
+
+        "movd %%mm2, 32+" #dst "        \n\t"\
+
+        "packssdw %%mm1, %%mm1          \n\t" <comment type="block" pos:start="1297:47" pos:end="1297:64">/* A3-B3  a3-b3 */</comment>\
+
+        "packssdw %%mm5, %%mm5          \n\t" <comment type="block" pos:start="1299:47" pos:end="1299:64">/* A2-B2  a2-b2 */</comment>\
+
+        "movd %%mm6, 48+" #dst "        \n\t"\
+
+        "movd %%mm1, 64+" #dst "        \n\t"\
+
+        "movd %%mm5, 80+" #dst "        \n\t"</cpp:value></cpp:define>
+
+
+
+<comment type="line" pos:start="1309:1" pos:end="1309:63">//IDCT(  src0,   src4,   src1,    src5,    dst, rounder, shift)</comment>
+
+IDCT(    (%1), 64(%1), 32(%1),  96(%1),  0(%0),/nop, 20)
+
+IDCT(   8(%1), 72(%1), 40(%1), 104(%1),  4(%0),/nop, 20)
+
+IDCT(  16(%1), 80(%1), 48(%1), 112(%1),  8(%0),/nop, 20)
+
+IDCT(  24(%1), 88(%1), 56(%1), 120(%1), 12(%0),/nop, 20)
+
+        "jmp 9f                         \n\t"
+
+
+
+        "#.balign 16                    \n\t"\
+
+        "6:                             \n\t"
+
+Z_COND_IDCT(  96(%0),104(%0),112(%0),120(%0), 96(%1),paddd (%2), 11, 7f)
+
+
+
+<cpp:undef pos:start="1331:1" pos:end="1331:11">#<cpp:directive pos:start="1331:2" pos:end="1331:6">undef</cpp:directive> <name pos:start="1331:8" pos:end="1331:11">IDCT</name></cpp:undef>
+
+<cpp:define pos:start="1333:1" pos:end="1439:45">#<cpp:directive pos:start="1333:2" pos:end="1333:7">define</cpp:directive> <cpp:macro pos:start="1333:9" pos:end="1333:57"><name pos:start="1333:9" pos:end="1333:12">IDCT</name><parameter_list pos:start="1333:13" pos:end="1333:57">(<parameter pos:start="1333:14" pos:end="1333:17"><type pos:start="1333:14" pos:end="1333:17"><name pos:start="1333:14" pos:end="1333:17">src0</name></type></parameter>, <parameter pos:start="1333:20" pos:end="1333:23"><type pos:start="1333:20" pos:end="1333:23"><name pos:start="1333:20" pos:end="1333:23">src4</name></type></parameter>, <parameter pos:start="1333:26" pos:end="1333:29"><type pos:start="1333:26" pos:end="1333:29"><name pos:start="1333:26" pos:end="1333:29">src1</name></type></parameter>, <parameter pos:start="1333:32" pos:end="1333:35"><type pos:start="1333:32" pos:end="1333:35"><name pos:start="1333:32" pos:end="1333:35">src5</name></type></parameter>, <parameter pos:start="1333:38" pos:end="1333:40"><type pos:start="1333:38" pos:end="1333:40"><name pos:start="1333:38" pos:end="1333:40">dst</name></type></parameter>, <parameter pos:start="1333:43" pos:end="1333:49"><type pos:start="1333:43" pos:end="1333:49"><name pos:start="1333:43" pos:end="1333:49">rounder</name></type></parameter>, <parameter pos:start="1333:52" pos:end="1333:56"><type pos:start="1333:52" pos:end="1333:56"><name pos:start="1333:52" pos:end="1333:56">shift</name></type></parameter>)</parameter_list></cpp:macro> \
+
+        <cpp:value pos:start="1335:9" pos:end="1439:45">"movq " #src0 ", %%mm0          \n\t" <comment type="block" pos:start="1335:47" pos:end="1335:77">/* R4     R0      r4      r0 */</comment>\
+
+        "movq " #src5 ", %%mm3          \n\t" <comment type="block" pos:start="1337:47" pos:end="1337:77">/* R7     R5      r7      r5 */</comment>\
+
+        "movq 16(%2), %%mm4             \n\t" <comment type="block" pos:start="1339:47" pos:end="1339:77">/* C4     C4      C4      C4 */</comment>\
+
+        "pmaddwd %%mm0, %%mm4           \n\t" <comment type="block" pos:start="1341:47" pos:end="1341:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 24(%2), %%mm5             \n\t" <comment type="block" pos:start="1343:47" pos:end="1343:77">/* -C4    C4      -C4     C4 */</comment>\
+
+        "pmaddwd %%mm5, %%mm0           \n\t" <comment type="block" pos:start="1345:47" pos:end="1345:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        #rounder ", %%mm4               \n\t"\
+
+        "movq %%mm4, %%mm6              \n\t" <comment type="block" pos:start="1349:47" pos:end="1349:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        #rounder ", %%mm0               \n\t"\
+
+        "movq %%mm0, %%mm5              \n\t" <comment type="block" pos:start="1353:47" pos:end="1353:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "movq 56(%2), %%mm1             \n\t" <comment type="block" pos:start="1355:47" pos:end="1355:77">/* C7     C5      C7      C5 */</comment>\
+
+        "pmaddwd %%mm3, %%mm1           \n\t" <comment type="block" pos:start="1357:47" pos:end="1357:76">/* C7R7+C5R5      C7r7+C5r5 */</comment>\
+
+        "movq 72(%2), %%mm7             \n\t" <comment type="block" pos:start="1359:47" pos:end="1359:78">/* -C5    -C1     -C5     -C1 */</comment>\
+
+        "pmaddwd %%mm3, %%mm7           \n\t" <comment type="block" pos:start="1361:47" pos:end="1361:77">/* -C5R7-C1R5     -C5r7-C1r5 */</comment>\
+
+        "paddd %%mm4, %%mm1             \n\t" <comment type="block" pos:start="1363:47" pos:end="1363:72">/* A0+B0          a0+b0 */</comment>\
+
+        "paddd %%mm4, %%mm4             \n\t" <comment type="block" pos:start="1365:47" pos:end="1365:70">/* 2A0            2a0 */</comment>\
+
+        "psubd %%mm1, %%mm4             \n\t" <comment type="block" pos:start="1367:47" pos:end="1367:72">/* A0-B0          a0-b0 */</comment>\
+
+        "psrad $" #shift ", %%mm1       \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "movq %%mm0, %%mm2              \n\t" <comment type="block" pos:start="1373:47" pos:end="1373:69">/* A1             a1 */</comment>\
+
+        "paddd %%mm7, %%mm0             \n\t" <comment type="block" pos:start="1375:47" pos:end="1375:72">/* A1+B1          a1+b1 */</comment>\
+
+        "psubd %%mm7, %%mm2             \n\t" <comment type="block" pos:start="1377:47" pos:end="1377:72">/* A1-B1          a1-b1 */</comment>\
+
+        "psrad $" #shift ", %%mm0       \n\t"\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "packssdw %%mm1, %%mm1          \n\t" <comment type="block" pos:start="1383:47" pos:end="1383:64">/* A0+B0  a0+b0 */</comment>\
+
+        "movd %%mm1, " #dst "           \n\t"\
+
+        "packssdw %%mm0, %%mm0          \n\t" <comment type="block" pos:start="1387:47" pos:end="1387:64">/* A1+B1  a1+b1 */</comment>\
+
+        "movd %%mm0, 16+" #dst "        \n\t"\
+
+        "packssdw %%mm2, %%mm2          \n\t" <comment type="block" pos:start="1391:47" pos:end="1391:64">/* A1-B1  a1-b1 */</comment>\
+
+        "movd %%mm2, 96+" #dst "        \n\t"\
+
+        "packssdw %%mm4, %%mm4          \n\t" <comment type="block" pos:start="1395:47" pos:end="1395:64">/* A0-B0  a0-b0 */</comment>\
+
+        "movd %%mm4, 112+" #dst "       \n\t"\
+
+        "movq 88(%2), %%mm1             \n\t" <comment type="block" pos:start="1399:47" pos:end="1399:77">/* C3     C7      C3      C7 */</comment>\
+
+        "pmaddwd %%mm3, %%mm1           \n\t" <comment type="block" pos:start="1401:47" pos:end="1401:76">/* C3R7+C7R5      C3r7+C7r5 */</comment>\
+
+        "movq %%mm5, %%mm2              \n\t" <comment type="block" pos:start="1403:47" pos:end="1403:69">/* A2             a2 */</comment>\
+
+        "pmaddwd 104(%2), %%mm3         \n\t" <comment type="block" pos:start="1405:47" pos:end="1405:77">/* -C1R7+C3R5     -C1r7+C3r5 */</comment>\
+
+        "paddd %%mm1, %%mm2             \n\t" <comment type="block" pos:start="1407:47" pos:end="1407:72">/* A2+B2          a2+b2 */</comment>\
+
+        "psubd %%mm1, %%mm5             \n\t" <comment type="block" pos:start="1409:47" pos:end="1409:72">/* a2-B2          a2-b2 */</comment>\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "psrad $" #shift ", %%mm5       \n\t"\
+
+        "movq %%mm6, %%mm1              \n\t" <comment type="block" pos:start="1415:47" pos:end="1415:69">/* A3             a3 */</comment>\
+
+        "paddd %%mm3, %%mm6             \n\t" <comment type="block" pos:start="1417:47" pos:end="1417:72">/* A3+B3          a3+b3 */</comment>\
+
+        "psubd %%mm3, %%mm1             \n\t" <comment type="block" pos:start="1419:47" pos:end="1419:72">/* a3-B3          a3-b3 */</comment>\
+
+        "psrad $" #shift ", %%mm6       \n\t"\
+
+        "psrad $" #shift ", %%mm1       \n\t"\
+
+        "packssdw %%mm2, %%mm2          \n\t" <comment type="block" pos:start="1425:47" pos:end="1425:64">/* A2+B2  a2+b2 */</comment>\
+
+        "packssdw %%mm6, %%mm6          \n\t" <comment type="block" pos:start="1427:47" pos:end="1427:64">/* A3+B3  a3+b3 */</comment>\
+
+        "movd %%mm2, 32+" #dst "        \n\t"\
+
+        "packssdw %%mm1, %%mm1          \n\t" <comment type="block" pos:start="1431:47" pos:end="1431:64">/* A3-B3  a3-b3 */</comment>\
+
+        "packssdw %%mm5, %%mm5          \n\t" <comment type="block" pos:start="1433:47" pos:end="1433:64">/* A2-B2  a2-b2 */</comment>\
+
+        "movd %%mm6, 48+" #dst "        \n\t"\
+
+        "movd %%mm1, 64+" #dst "        \n\t"\
+
+        "movd %%mm5, 80+" #dst "        \n\t"</cpp:value></cpp:define>
+
+
+
+
+
+<comment type="line" pos:start="1445:1" pos:end="1445:63">//IDCT(  src0,   src4,   src1,    src5,    dst, rounder, shift)</comment>
+
+IDCT(    (%1), 64(%1), 32(%1),  96(%1),  0(%0),/nop, 20)
+
+IDCT(   8(%1), 72(%1), 40(%1), 104(%1),  4(%0),/nop, 20)
+
+IDCT(  16(%1), 80(%1), 48(%1), 112(%1),  8(%0),/nop, 20)
+
+IDCT(  24(%1), 88(%1), 56(%1), 120(%1), 12(%0),/nop, 20)
+
+        "jmp 9f                         \n\t"
+
+
+
+        "#.balign 16                    \n\t"\
+
+        "2:                             \n\t"
+
+Z_COND_IDCT(  96(%0),104(%0),112(%0),120(%0), 96(%1),paddd (%2), 11, 3f)
+
+
+
+<cpp:undef pos:start="1467:1" pos:end="1467:11">#<cpp:directive pos:start="1467:2" pos:end="1467:6">undef</cpp:directive> <name pos:start="1467:8" pos:end="1467:11">IDCT</name></cpp:undef>
+
+<cpp:define pos:start="1469:1" pos:end="1599:45">#<cpp:directive pos:start="1469:2" pos:end="1469:7">define</cpp:directive> <cpp:macro pos:start="1469:9" pos:end="1469:57"><name pos:start="1469:9" pos:end="1469:12">IDCT</name><parameter_list pos:start="1469:13" pos:end="1469:57">(<parameter pos:start="1469:14" pos:end="1469:17"><type pos:start="1469:14" pos:end="1469:17"><name pos:start="1469:14" pos:end="1469:17">src0</name></type></parameter>, <parameter pos:start="1469:20" pos:end="1469:23"><type pos:start="1469:20" pos:end="1469:23"><name pos:start="1469:20" pos:end="1469:23">src4</name></type></parameter>, <parameter pos:start="1469:26" pos:end="1469:29"><type pos:start="1469:26" pos:end="1469:29"><name pos:start="1469:26" pos:end="1469:29">src1</name></type></parameter>, <parameter pos:start="1469:32" pos:end="1469:35"><type pos:start="1469:32" pos:end="1469:35"><name pos:start="1469:32" pos:end="1469:35">src5</name></type></parameter>, <parameter pos:start="1469:38" pos:end="1469:40"><type pos:start="1469:38" pos:end="1469:40"><name pos:start="1469:38" pos:end="1469:40">dst</name></type></parameter>, <parameter pos:start="1469:43" pos:end="1469:49"><type pos:start="1469:43" pos:end="1469:49"><name pos:start="1469:43" pos:end="1469:49">rounder</name></type></parameter>, <parameter pos:start="1469:52" pos:end="1469:56"><type pos:start="1469:52" pos:end="1469:56"><name pos:start="1469:52" pos:end="1469:56">shift</name></type></parameter>)</parameter_list></cpp:macro> \
+
+        <cpp:value pos:start="1471:9" pos:end="1599:45">"movq " #src0 ", %%mm0          \n\t" <comment type="block" pos:start="1471:47" pos:end="1471:77">/* R4     R0      r4      r0 */</comment>\
+
+        "movq " #src1 ", %%mm2          \n\t" <comment type="block" pos:start="1473:47" pos:end="1473:77">/* R3     R1      r3      r1 */</comment>\
+
+        "movq " #src5 ", %%mm3          \n\t" <comment type="block" pos:start="1475:47" pos:end="1475:77">/* R7     R5      r7      r5 */</comment>\
+
+        "movq 16(%2), %%mm4             \n\t" <comment type="block" pos:start="1477:47" pos:end="1477:77">/* C4     C4      C4      C4 */</comment>\
+
+        "pmaddwd %%mm0, %%mm4           \n\t" <comment type="block" pos:start="1479:47" pos:end="1479:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 24(%2), %%mm5             \n\t" <comment type="block" pos:start="1481:47" pos:end="1481:77">/* -C4    C4      -C4     C4 */</comment>\
+
+        "pmaddwd %%mm5, %%mm0           \n\t" <comment type="block" pos:start="1483:47" pos:end="1483:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        #rounder ", %%mm4               \n\t"\
+
+        "movq %%mm4, %%mm6              \n\t" <comment type="block" pos:start="1487:47" pos:end="1487:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 48(%2), %%mm7             \n\t" <comment type="block" pos:start="1489:47" pos:end="1489:77">/* C3     C1      C3      C1 */</comment>\
+
+        #rounder ", %%mm0               \n\t"\
+
+        "pmaddwd %%mm2, %%mm7           \n\t" <comment type="block" pos:start="1493:47" pos:end="1493:76">/* C3R3+C1R1      C3r3+C1r1 */</comment>\
+
+        "movq %%mm0, %%mm5              \n\t" <comment type="block" pos:start="1495:47" pos:end="1495:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "movq 56(%2), %%mm1             \n\t" <comment type="block" pos:start="1497:47" pos:end="1497:77">/* C7     C5      C7      C5 */</comment>\
+
+        "pmaddwd %%mm3, %%mm1           \n\t" <comment type="block" pos:start="1499:47" pos:end="1499:76">/* C7R7+C5R5      C7r7+C5r5 */</comment>\
+
+        "pmaddwd 64(%2), %%mm2          \n\t" <comment type="block" pos:start="1501:47" pos:end="1501:77">/* -C7R3+C3R1     -C7r3+C3r1 */</comment>\
+
+        "paddd %%mm1, %%mm7             \n\t" <comment type="block" pos:start="1503:47" pos:end="1503:69">/* B0             b0 */</comment>\
+
+        "movq 72(%2), %%mm1             \n\t" <comment type="block" pos:start="1505:47" pos:end="1505:78">/* -C5    -C1     -C5     -C1 */</comment>\
+
+        "pmaddwd %%mm3, %%mm1           \n\t" <comment type="block" pos:start="1507:47" pos:end="1507:77">/* -C5R7-C1R5     -C5r7-C1r5 */</comment>\
+
+        "paddd %%mm4, %%mm7             \n\t" <comment type="block" pos:start="1509:47" pos:end="1509:72">/* A0+B0          a0+b0 */</comment>\
+
+        "paddd %%mm4, %%mm4             \n\t" <comment type="block" pos:start="1511:47" pos:end="1511:70">/* 2A0            2a0 */</comment>\
+
+        "psubd %%mm7, %%mm4             \n\t" <comment type="block" pos:start="1513:47" pos:end="1513:72">/* A0-B0          a0-b0 */</comment>\
+
+        "paddd %%mm2, %%mm1             \n\t" <comment type="block" pos:start="1515:47" pos:end="1515:69">/* B1             b1 */</comment>\
+
+        "psrad $" #shift ", %%mm7       \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "movq %%mm0, %%mm2              \n\t" <comment type="block" pos:start="1521:47" pos:end="1521:69">/* A1             a1 */</comment>\
+
+        "paddd %%mm1, %%mm0             \n\t" <comment type="block" pos:start="1523:47" pos:end="1523:72">/* A1+B1          a1+b1 */</comment>\
+
+        "psubd %%mm1, %%mm2             \n\t" <comment type="block" pos:start="1525:47" pos:end="1525:72">/* A1-B1          a1-b1 */</comment>\
+
+        "psrad $" #shift ", %%mm0       \n\t"\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "packssdw %%mm7, %%mm7          \n\t" <comment type="block" pos:start="1531:47" pos:end="1531:64">/* A0+B0  a0+b0 */</comment>\
+
+        "movd %%mm7, " #dst "           \n\t"\
+
+        "packssdw %%mm0, %%mm0          \n\t" <comment type="block" pos:start="1535:47" pos:end="1535:64">/* A1+B1  a1+b1 */</comment>\
+
+        "movd %%mm0, 16+" #dst "        \n\t"\
+
+        "packssdw %%mm2, %%mm2          \n\t" <comment type="block" pos:start="1539:47" pos:end="1539:64">/* A1-B1  a1-b1 */</comment>\
+
+        "movd %%mm2, 96+" #dst "        \n\t"\
+
+        "packssdw %%mm4, %%mm4          \n\t" <comment type="block" pos:start="1543:47" pos:end="1543:64">/* A0-B0  a0-b0 */</comment>\
+
+        "movd %%mm4, 112+" #dst "       \n\t"\
+
+        "movq " #src1 ", %%mm0          \n\t" <comment type="block" pos:start="1547:47" pos:end="1547:77">/* R3     R1      r3      r1 */</comment>\
+
+        "movq 80(%2), %%mm4             \n\t" <comment type="block" pos:start="1549:47" pos:end="1549:77">/* -C1    C5      -C1     C5 */</comment>\
+
+        "pmaddwd %%mm0, %%mm4           \n\t" <comment type="block" pos:start="1551:47" pos:end="1551:77">/* -C1R3+C5R1     -C1r3+C5r1 */</comment>\
+
+        "movq 88(%2), %%mm7             \n\t" <comment type="block" pos:start="1553:47" pos:end="1553:77">/* C3     C7      C3      C7 */</comment>\
+
+        "pmaddwd 96(%2), %%mm0          \n\t" <comment type="block" pos:start="1555:47" pos:end="1555:77">/* -C5R3+C7R1     -C5r3+C7r1 */</comment>\
+
+        "pmaddwd %%mm3, %%mm7           \n\t" <comment type="block" pos:start="1557:47" pos:end="1557:76">/* C3R7+C7R5      C3r7+C7r5 */</comment>\
+
+        "movq %%mm5, %%mm2              \n\t" <comment type="block" pos:start="1559:47" pos:end="1559:69">/* A2             a2 */</comment>\
+
+        "pmaddwd 104(%2), %%mm3         \n\t" <comment type="block" pos:start="1561:47" pos:end="1561:77">/* -C1R7+C3R5     -C1r7+C3r5 */</comment>\
+
+        "paddd %%mm7, %%mm4             \n\t" <comment type="block" pos:start="1563:47" pos:end="1563:69">/* B2             b2 */</comment>\
+
+        "paddd %%mm4, %%mm2             \n\t" <comment type="block" pos:start="1565:47" pos:end="1565:72">/* A2+B2          a2+b2 */</comment>\
+
+        "psubd %%mm4, %%mm5             \n\t" <comment type="block" pos:start="1567:47" pos:end="1567:72">/* a2-B2          a2-b2 */</comment>\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "psrad $" #shift ", %%mm5       \n\t"\
+
+        "movq %%mm6, %%mm4              \n\t" <comment type="block" pos:start="1573:47" pos:end="1573:69">/* A3             a3 */</comment>\
+
+        "paddd %%mm0, %%mm3             \n\t" <comment type="block" pos:start="1575:47" pos:end="1575:69">/* B3             b3 */</comment>\
+
+        "paddd %%mm3, %%mm6             \n\t" <comment type="block" pos:start="1577:47" pos:end="1577:72">/* A3+B3          a3+b3 */</comment>\
+
+        "psubd %%mm3, %%mm4             \n\t" <comment type="block" pos:start="1579:47" pos:end="1579:72">/* a3-B3          a3-b3 */</comment>\
+
+        "psrad $" #shift ", %%mm6       \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "packssdw %%mm2, %%mm2          \n\t" <comment type="block" pos:start="1585:47" pos:end="1585:64">/* A2+B2  a2+b2 */</comment>\
+
+        "packssdw %%mm6, %%mm6          \n\t" <comment type="block" pos:start="1587:47" pos:end="1587:64">/* A3+B3  a3+b3 */</comment>\
+
+        "movd %%mm2, 32+" #dst "        \n\t"\
+
+        "packssdw %%mm4, %%mm4          \n\t" <comment type="block" pos:start="1591:47" pos:end="1591:64">/* A3-B3  a3-b3 */</comment>\
+
+        "packssdw %%mm5, %%mm5          \n\t" <comment type="block" pos:start="1593:47" pos:end="1593:64">/* A2-B2  a2-b2 */</comment>\
+
+        "movd %%mm6, 48+" #dst "        \n\t"\
+
+        "movd %%mm4, 64+" #dst "        \n\t"\
+
+        "movd %%mm5, 80+" #dst "        \n\t"</cpp:value></cpp:define>
+
+
+
+<comment type="line" pos:start="1603:1" pos:end="1603:63">//IDCT(  src0,   src4,   src1,    src5,    dst, rounder, shift)</comment>
+
+IDCT(    (%1), 64(%1), 32(%1),  96(%1),  0(%0),/nop, 20)
+
+IDCT(   8(%1), 72(%1), 40(%1), 104(%1),  4(%0),/nop, 20)
+
+IDCT(  16(%1), 80(%1), 48(%1), 112(%1),  8(%0),/nop, 20)
+
+IDCT(  24(%1), 88(%1), 56(%1), 120(%1), 12(%0),/nop, 20)
+
+        "jmp 9f                         \n\t"
+
+
+
+        "#.balign 16                    \n\t"\
+
+        "3:                             \n\t"
+
+<cpp:undef pos:start="1621:1" pos:end="1621:11">#<cpp:directive pos:start="1621:2" pos:end="1621:6">undef</cpp:directive> <name pos:start="1621:8" pos:end="1621:11">IDCT</name></cpp:undef>
+
+<cpp:define pos:start="1623:1" pos:end="1729:45">#<cpp:directive pos:start="1623:2" pos:end="1623:7">define</cpp:directive> <cpp:macro pos:start="1623:9" pos:end="1623:57"><name pos:start="1623:9" pos:end="1623:12">IDCT</name><parameter_list pos:start="1623:13" pos:end="1623:57">(<parameter pos:start="1623:14" pos:end="1623:17"><type pos:start="1623:14" pos:end="1623:17"><name pos:start="1623:14" pos:end="1623:17">src0</name></type></parameter>, <parameter pos:start="1623:20" pos:end="1623:23"><type pos:start="1623:20" pos:end="1623:23"><name pos:start="1623:20" pos:end="1623:23">src4</name></type></parameter>, <parameter pos:start="1623:26" pos:end="1623:29"><type pos:start="1623:26" pos:end="1623:29"><name pos:start="1623:26" pos:end="1623:29">src1</name></type></parameter>, <parameter pos:start="1623:32" pos:end="1623:35"><type pos:start="1623:32" pos:end="1623:35"><name pos:start="1623:32" pos:end="1623:35">src5</name></type></parameter>, <parameter pos:start="1623:38" pos:end="1623:40"><type pos:start="1623:38" pos:end="1623:40"><name pos:start="1623:38" pos:end="1623:40">dst</name></type></parameter>, <parameter pos:start="1623:43" pos:end="1623:49"><type pos:start="1623:43" pos:end="1623:49"><name pos:start="1623:43" pos:end="1623:49">rounder</name></type></parameter>, <parameter pos:start="1623:52" pos:end="1623:56"><type pos:start="1623:52" pos:end="1623:56"><name pos:start="1623:52" pos:end="1623:56">shift</name></type></parameter>)</parameter_list></cpp:macro> \
+
+        <cpp:value pos:start="1625:9" pos:end="1729:45">"movq " #src0 ", %%mm0          \n\t" <comment type="block" pos:start="1625:47" pos:end="1625:77">/* R4     R0      r4      r0 */</comment>\
+
+        "movq " #src1 ", %%mm2          \n\t" <comment type="block" pos:start="1627:47" pos:end="1627:77">/* R3     R1      r3      r1 */</comment>\
+
+        "movq 16(%2), %%mm4             \n\t" <comment type="block" pos:start="1629:47" pos:end="1629:77">/* C4     C4      C4      C4 */</comment>\
+
+        "pmaddwd %%mm0, %%mm4           \n\t" <comment type="block" pos:start="1631:47" pos:end="1631:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 24(%2), %%mm5             \n\t" <comment type="block" pos:start="1633:47" pos:end="1633:77">/* -C4    C4      -C4     C4 */</comment>\
+
+        "pmaddwd %%mm5, %%mm0           \n\t" <comment type="block" pos:start="1635:47" pos:end="1635:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        #rounder ", %%mm4               \n\t"\
+
+        "movq %%mm4, %%mm6              \n\t" <comment type="block" pos:start="1639:47" pos:end="1639:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 48(%2), %%mm7             \n\t" <comment type="block" pos:start="1641:47" pos:end="1641:77">/* C3     C1      C3      C1 */</comment>\
+
+        #rounder ", %%mm0               \n\t"\
+
+        "pmaddwd %%mm2, %%mm7           \n\t" <comment type="block" pos:start="1645:47" pos:end="1645:76">/* C3R3+C1R1      C3r3+C1r1 */</comment>\
+
+        "movq %%mm0, %%mm5              \n\t" <comment type="block" pos:start="1647:47" pos:end="1647:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "movq 64(%2), %%mm3             \n\t"\
+
+        "pmaddwd %%mm2, %%mm3           \n\t" <comment type="block" pos:start="1651:47" pos:end="1651:77">/* -C7R3+C3R1     -C7r3+C3r1 */</comment>\
+
+        "paddd %%mm4, %%mm7             \n\t" <comment type="block" pos:start="1653:47" pos:end="1653:72">/* A0+B0          a0+b0 */</comment>\
+
+        "paddd %%mm4, %%mm4             \n\t" <comment type="block" pos:start="1655:47" pos:end="1655:70">/* 2A0            2a0 */</comment>\
+
+        "psubd %%mm7, %%mm4             \n\t" <comment type="block" pos:start="1657:47" pos:end="1657:72">/* A0-B0          a0-b0 */</comment>\
+
+        "psrad $" #shift ", %%mm7       \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "movq %%mm0, %%mm1              \n\t" <comment type="block" pos:start="1663:47" pos:end="1663:69">/* A1             a1 */</comment>\
+
+        "paddd %%mm3, %%mm0             \n\t" <comment type="block" pos:start="1665:47" pos:end="1665:72">/* A1+B1          a1+b1 */</comment>\
+
+        "psubd %%mm3, %%mm1             \n\t" <comment type="block" pos:start="1667:47" pos:end="1667:72">/* A1-B1          a1-b1 */</comment>\
+
+        "psrad $" #shift ", %%mm0       \n\t"\
+
+        "psrad $" #shift ", %%mm1       \n\t"\
+
+        "packssdw %%mm7, %%mm7          \n\t" <comment type="block" pos:start="1673:47" pos:end="1673:64">/* A0+B0  a0+b0 */</comment>\
+
+        "movd %%mm7, " #dst "           \n\t"\
+
+        "packssdw %%mm0, %%mm0          \n\t" <comment type="block" pos:start="1677:47" pos:end="1677:64">/* A1+B1  a1+b1 */</comment>\
+
+        "movd %%mm0, 16+" #dst "        \n\t"\
+
+        "packssdw %%mm1, %%mm1          \n\t" <comment type="block" pos:start="1681:47" pos:end="1681:64">/* A1-B1  a1-b1 */</comment>\
+
+        "movd %%mm1, 96+" #dst "        \n\t"\
+
+        "packssdw %%mm4, %%mm4          \n\t" <comment type="block" pos:start="1685:47" pos:end="1685:64">/* A0-B0  a0-b0 */</comment>\
+
+        "movd %%mm4, 112+" #dst "       \n\t"\
+
+        "movq 80(%2), %%mm4             \n\t" <comment type="block" pos:start="1689:47" pos:end="1689:77">/* -C1    C5      -C1     C5 */</comment>\
+
+        "pmaddwd %%mm2, %%mm4           \n\t" <comment type="block" pos:start="1691:47" pos:end="1691:77">/* -C1R3+C5R1     -C1r3+C5r1 */</comment>\
+
+        "pmaddwd 96(%2), %%mm2          \n\t" <comment type="block" pos:start="1693:47" pos:end="1693:77">/* -C5R3+C7R1     -C5r3+C7r1 */</comment>\
+
+        "movq %%mm5, %%mm1              \n\t" <comment type="block" pos:start="1695:47" pos:end="1695:69">/* A2             a2 */</comment>\
+
+        "paddd %%mm4, %%mm1             \n\t" <comment type="block" pos:start="1697:47" pos:end="1697:72">/* A2+B2          a2+b2 */</comment>\
+
+        "psubd %%mm4, %%mm5             \n\t" <comment type="block" pos:start="1699:47" pos:end="1699:72">/* a2-B2          a2-b2 */</comment>\
+
+        "psrad $" #shift ", %%mm1       \n\t"\
+
+        "psrad $" #shift ", %%mm5       \n\t"\
+
+        "movq %%mm6, %%mm4              \n\t" <comment type="block" pos:start="1705:47" pos:end="1705:69">/* A3             a3 */</comment>\
+
+        "paddd %%mm2, %%mm6             \n\t" <comment type="block" pos:start="1707:47" pos:end="1707:72">/* A3+B3          a3+b3 */</comment>\
+
+        "psubd %%mm2, %%mm4             \n\t" <comment type="block" pos:start="1709:47" pos:end="1709:72">/* a3-B3          a3-b3 */</comment>\
+
+        "psrad $" #shift ", %%mm6       \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "packssdw %%mm1, %%mm1          \n\t" <comment type="block" pos:start="1715:47" pos:end="1715:64">/* A2+B2  a2+b2 */</comment>\
+
+        "packssdw %%mm6, %%mm6          \n\t" <comment type="block" pos:start="1717:47" pos:end="1717:64">/* A3+B3  a3+b3 */</comment>\
+
+        "movd %%mm1, 32+" #dst "        \n\t"\
+
+        "packssdw %%mm4, %%mm4          \n\t" <comment type="block" pos:start="1721:47" pos:end="1721:64">/* A3-B3  a3-b3 */</comment>\
+
+        "packssdw %%mm5, %%mm5          \n\t" <comment type="block" pos:start="1723:47" pos:end="1723:64">/* A2-B2  a2-b2 */</comment>\
+
+        "movd %%mm6, 48+" #dst "        \n\t"\
+
+        "movd %%mm4, 64+" #dst "        \n\t"\
+
+        "movd %%mm5, 80+" #dst "        \n\t"</cpp:value></cpp:define>
+
+
+
+
+
+<comment type="line" pos:start="1735:1" pos:end="1735:63">//IDCT(  src0,   src4,   src1,    src5,    dst, rounder, shift)</comment>
+
+IDCT(    (%1), 64(%1), 32(%1),  96(%1),  0(%0),/nop, 20)
+
+IDCT(   8(%1), 72(%1), 40(%1), 104(%1),  4(%0),/nop, 20)
+
+IDCT(  16(%1), 80(%1), 48(%1), 112(%1),  8(%0),/nop, 20)
+
+IDCT(  24(%1), 88(%1), 56(%1), 120(%1), 12(%0),/nop, 20)
+
+        "jmp 9f                         \n\t"
+
+
+
+        "#.balign 16                    \n\t"\
+
+        "5:                             \n\t"
+
+<cpp:undef pos:start="1753:1" pos:end="1753:11">#<cpp:directive pos:start="1753:2" pos:end="1753:6">undef</cpp:directive> <name pos:start="1753:8" pos:end="1753:11">IDCT</name></cpp:undef>
+
+<cpp:define pos:start="1755:1" pos:end="1865:45">#<cpp:directive pos:start="1755:2" pos:end="1755:7">define</cpp:directive> <cpp:macro pos:start="1755:9" pos:end="1755:57"><name pos:start="1755:9" pos:end="1755:12">IDCT</name><parameter_list pos:start="1755:13" pos:end="1755:57">(<parameter pos:start="1755:14" pos:end="1755:17"><type pos:start="1755:14" pos:end="1755:17"><name pos:start="1755:14" pos:end="1755:17">src0</name></type></parameter>, <parameter pos:start="1755:20" pos:end="1755:23"><type pos:start="1755:20" pos:end="1755:23"><name pos:start="1755:20" pos:end="1755:23">src4</name></type></parameter>, <parameter pos:start="1755:26" pos:end="1755:29"><type pos:start="1755:26" pos:end="1755:29"><name pos:start="1755:26" pos:end="1755:29">src1</name></type></parameter>, <parameter pos:start="1755:32" pos:end="1755:35"><type pos:start="1755:32" pos:end="1755:35"><name pos:start="1755:32" pos:end="1755:35">src5</name></type></parameter>, <parameter pos:start="1755:38" pos:end="1755:40"><type pos:start="1755:38" pos:end="1755:40"><name pos:start="1755:38" pos:end="1755:40">dst</name></type></parameter>, <parameter pos:start="1755:43" pos:end="1755:49"><type pos:start="1755:43" pos:end="1755:49"><name pos:start="1755:43" pos:end="1755:49">rounder</name></type></parameter>, <parameter pos:start="1755:52" pos:end="1755:56"><type pos:start="1755:52" pos:end="1755:56"><name pos:start="1755:52" pos:end="1755:56">shift</name></type></parameter>)</parameter_list></cpp:macro> \
+
+        <cpp:value pos:start="1757:9" pos:end="1865:45">"movq " #src0 ", %%mm0          \n\t" <comment type="block" pos:start="1757:47" pos:end="1757:77">/* R4     R0      r4      r0 */</comment>\
+
+        "movq " #src4 ", %%mm1          \n\t" <comment type="block" pos:start="1759:47" pos:end="1759:77">/* R6     R2      r6      r2 */</comment>\
+
+        "movq 16(%2), %%mm4             \n\t" <comment type="block" pos:start="1761:47" pos:end="1761:77">/* C4     C4      C4      C4 */</comment>\
+
+        "pmaddwd %%mm0, %%mm4           \n\t" <comment type="block" pos:start="1763:47" pos:end="1763:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 24(%2), %%mm5             \n\t" <comment type="block" pos:start="1765:47" pos:end="1765:77">/* -C4    C4      -C4     C4 */</comment>\
+
+        "pmaddwd %%mm5, %%mm0           \n\t" <comment type="block" pos:start="1767:47" pos:end="1767:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "movq 32(%2), %%mm5             \n\t" <comment type="block" pos:start="1769:47" pos:end="1769:77">/* C6     C2      C6      C2 */</comment>\
+
+        "pmaddwd %%mm1, %%mm5           \n\t" <comment type="block" pos:start="1771:47" pos:end="1771:76">/* C6R6+C2R2      C6r6+C2r2 */</comment>\
+
+        "movq 40(%2), %%mm6             \n\t" <comment type="block" pos:start="1773:47" pos:end="1773:77">/* -C2    C6      -C2     C6 */</comment>\
+
+        "pmaddwd %%mm6, %%mm1           \n\t" <comment type="block" pos:start="1775:47" pos:end="1775:77">/* -C2R6+C6R2     -C2r6+C6r2 */</comment>\
+
+        #rounder ", %%mm4               \n\t"\
+
+        "movq %%mm4, %%mm6              \n\t" <comment type="block" pos:start="1779:47" pos:end="1779:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "paddd %%mm5, %%mm4             \n\t" <comment type="block" pos:start="1781:47" pos:end="1781:69">/* A0             a0 */</comment>\
+
+        #rounder ", %%mm0               \n\t"\
+
+        "psubd %%mm5, %%mm6             \n\t" <comment type="block" pos:start="1785:47" pos:end="1785:69">/* A3             a3 */</comment>\
+
+        "movq %%mm0, %%mm5              \n\t" <comment type="block" pos:start="1787:47" pos:end="1787:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "paddd %%mm1, %%mm0             \n\t" <comment type="block" pos:start="1789:47" pos:end="1789:69">/* A1             a1 */</comment>\
+
+        "psubd %%mm1, %%mm5             \n\t" <comment type="block" pos:start="1791:47" pos:end="1791:69">/* A2             a2 */</comment>\
+
+        "movq 8+" #src0 ", %%mm2        \n\t" <comment type="block" pos:start="1793:47" pos:end="1793:77">/* R4     R0      r4      r0 */</comment>\
+
+        "movq 8+" #src4 ", %%mm3        \n\t" <comment type="block" pos:start="1795:47" pos:end="1795:77">/* R6     R2      r6      r2 */</comment>\
+
+        "movq 16(%2), %%mm1             \n\t" <comment type="block" pos:start="1797:47" pos:end="1797:77">/* C4     C4      C4      C4 */</comment>\
+
+        "pmaddwd %%mm2, %%mm1           \n\t" <comment type="block" pos:start="1799:47" pos:end="1799:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 24(%2), %%mm7             \n\t" <comment type="block" pos:start="1801:47" pos:end="1801:77">/* -C4    C4      -C4     C4 */</comment>\
+
+        "pmaddwd %%mm7, %%mm2           \n\t" <comment type="block" pos:start="1803:47" pos:end="1803:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "movq 32(%2), %%mm7             \n\t" <comment type="block" pos:start="1805:47" pos:end="1805:77">/* C6     C2      C6      C2 */</comment>\
+
+        "pmaddwd %%mm3, %%mm7           \n\t" <comment type="block" pos:start="1807:47" pos:end="1807:76">/* C6R6+C2R2      C6r6+C2r2 */</comment>\
+
+        "pmaddwd 40(%2), %%mm3          \n\t" <comment type="block" pos:start="1809:47" pos:end="1809:77">/* -C2R6+C6R2     -C2r6+C6r2 */</comment>\
+
+        #rounder ", %%mm1               \n\t"\
+
+        "paddd %%mm1, %%mm7             \n\t" <comment type="block" pos:start="1813:47" pos:end="1813:69">/* A0             a0 */</comment>\
+
+        "paddd %%mm1, %%mm1             \n\t" <comment type="block" pos:start="1815:47" pos:end="1815:70">/* 2C0            2c0 */</comment>\
+
+        #rounder ", %%mm2               \n\t"\
+
+        "psubd %%mm7, %%mm1             \n\t" <comment type="block" pos:start="1819:47" pos:end="1819:69">/* A3             a3 */</comment>\
+
+        "paddd %%mm2, %%mm3             \n\t" <comment type="block" pos:start="1821:47" pos:end="1821:69">/* A1             a1 */</comment>\
+
+        "paddd %%mm2, %%mm2             \n\t" <comment type="block" pos:start="1823:47" pos:end="1823:70">/* 2C1            2c1 */</comment>\
+
+        "psubd %%mm3, %%mm2             \n\t" <comment type="block" pos:start="1825:47" pos:end="1825:69">/* A2             a2 */</comment>\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "psrad $" #shift ", %%mm7       \n\t"\
+
+        "psrad $" #shift ", %%mm3       \n\t"\
+
+        "packssdw %%mm7, %%mm4          \n\t" <comment type="block" pos:start="1833:47" pos:end="1833:61">/* A0     a0 */</comment>\
+
+        "movq %%mm4, " #dst "           \n\t"\
+
+        "psrad $" #shift ", %%mm0       \n\t"\
+
+        "packssdw %%mm3, %%mm0          \n\t" <comment type="block" pos:start="1839:47" pos:end="1839:61">/* A1     a1 */</comment>\
+
+        "movq %%mm0, 16+" #dst "        \n\t"\
+
+        "movq %%mm0, 96+" #dst "        \n\t"\
+
+        "movq %%mm4, 112+" #dst "       \n\t"\
+
+        "psrad $" #shift ", %%mm5       \n\t"\
+
+        "psrad $" #shift ", %%mm6       \n\t"\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "packssdw %%mm2, %%mm5          \n\t" <comment type="block" pos:start="1853:47" pos:end="1853:64">/* A2-B2  a2-b2 */</comment>\
+
+        "movq %%mm5, 32+" #dst "        \n\t"\
+
+        "psrad $" #shift ", %%mm1       \n\t"\
+
+        "packssdw %%mm1, %%mm6          \n\t" <comment type="block" pos:start="1859:47" pos:end="1859:64">/* A3+B3  a3+b3 */</comment>\
+
+        "movq %%mm6, 48+" #dst "        \n\t"\
+
+        "movq %%mm6, 64+" #dst "        \n\t"\
+
+        "movq %%mm5, 80+" #dst "        \n\t"</cpp:value></cpp:define>
+
+
+
+
+
+<comment type="line" pos:start="1871:1" pos:end="1871:63">//IDCT(  src0,   src4,   src1,    src5,    dst, rounder, shift)</comment>
+
+IDCT(    0(%1), 64(%1), 32(%1),  96(%1),  0(%0),/nop, 20)
+
+<comment type="line" pos:start="1875:1" pos:end="1875:58">//IDCT(   8(%1), 72(%1), 40(%1), 104(%1),  4(%0),/nop, 20)</comment>
+
+IDCT(  16(%1), 80(%1), 48(%1), 112(%1),  8(%0),/nop, 20)
+
+<comment type="line" pos:start="1879:1" pos:end="1879:58">//IDCT(  24(%1), 88(%1), 56(%1), 120(%1), 12(%0),/nop, 20)</comment>
+
+        "jmp 9f                         \n\t"
+
+
+
+
+
+        "#.balign 16                    \n\t"\
+
+        "1:                             \n\t"
+
+<cpp:undef pos:start="1891:1" pos:end="1891:11">#<cpp:directive pos:start="1891:2" pos:end="1891:6">undef</cpp:directive> <name pos:start="1891:8" pos:end="1891:11">IDCT</name></cpp:undef>
+
+<cpp:define pos:start="1893:1" pos:end="2017:45">#<cpp:directive pos:start="1893:2" pos:end="1893:7">define</cpp:directive> <cpp:macro pos:start="1893:9" pos:end="1893:57"><name pos:start="1893:9" pos:end="1893:12">IDCT</name><parameter_list pos:start="1893:13" pos:end="1893:57">(<parameter pos:start="1893:14" pos:end="1893:17"><type pos:start="1893:14" pos:end="1893:17"><name pos:start="1893:14" pos:end="1893:17">src0</name></type></parameter>, <parameter pos:start="1893:20" pos:end="1893:23"><type pos:start="1893:20" pos:end="1893:23"><name pos:start="1893:20" pos:end="1893:23">src4</name></type></parameter>, <parameter pos:start="1893:26" pos:end="1893:29"><type pos:start="1893:26" pos:end="1893:29"><name pos:start="1893:26" pos:end="1893:29">src1</name></type></parameter>, <parameter pos:start="1893:32" pos:end="1893:35"><type pos:start="1893:32" pos:end="1893:35"><name pos:start="1893:32" pos:end="1893:35">src5</name></type></parameter>, <parameter pos:start="1893:38" pos:end="1893:40"><type pos:start="1893:38" pos:end="1893:40"><name pos:start="1893:38" pos:end="1893:40">dst</name></type></parameter>, <parameter pos:start="1893:43" pos:end="1893:49"><type pos:start="1893:43" pos:end="1893:49"><name pos:start="1893:43" pos:end="1893:49">rounder</name></type></parameter>, <parameter pos:start="1893:52" pos:end="1893:56"><type pos:start="1893:52" pos:end="1893:56"><name pos:start="1893:52" pos:end="1893:56">shift</name></type></parameter>)</parameter_list></cpp:macro> \
+
+        <cpp:value pos:start="1895:9" pos:end="2017:45">"movq " #src0 ", %%mm0          \n\t" <comment type="block" pos:start="1895:47" pos:end="1895:77">/* R4     R0      r4      r0 */</comment>\
+
+        "movq " #src4 ", %%mm1          \n\t" <comment type="block" pos:start="1897:47" pos:end="1897:77">/* R6     R2      r6      r2 */</comment>\
+
+        "movq " #src1 ", %%mm2          \n\t" <comment type="block" pos:start="1899:47" pos:end="1899:77">/* R3     R1      r3      r1 */</comment>\
+
+        "movq 16(%2), %%mm4             \n\t" <comment type="block" pos:start="1901:47" pos:end="1901:77">/* C4     C4      C4      C4 */</comment>\
+
+        "pmaddwd %%mm0, %%mm4           \n\t" <comment type="block" pos:start="1903:47" pos:end="1903:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 24(%2), %%mm5             \n\t" <comment type="block" pos:start="1905:47" pos:end="1905:77">/* -C4    C4      -C4     C4 */</comment>\
+
+        "pmaddwd %%mm5, %%mm0           \n\t" <comment type="block" pos:start="1907:47" pos:end="1907:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "movq 32(%2), %%mm5             \n\t" <comment type="block" pos:start="1909:47" pos:end="1909:77">/* C6     C2      C6      C2 */</comment>\
+
+        "pmaddwd %%mm1, %%mm5           \n\t" <comment type="block" pos:start="1911:47" pos:end="1911:76">/* C6R6+C2R2      C6r6+C2r2 */</comment>\
+
+        "movq 40(%2), %%mm6             \n\t" <comment type="block" pos:start="1913:47" pos:end="1913:77">/* -C2    C6      -C2     C6 */</comment>\
+
+        "pmaddwd %%mm6, %%mm1           \n\t" <comment type="block" pos:start="1915:47" pos:end="1915:77">/* -C2R6+C6R2     -C2r6+C6r2 */</comment>\
+
+        #rounder ", %%mm4               \n\t"\
+
+        "movq %%mm4, %%mm6              \n\t" <comment type="block" pos:start="1919:47" pos:end="1919:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 48(%2), %%mm7             \n\t" <comment type="block" pos:start="1921:47" pos:end="1921:77">/* C3     C1      C3      C1 */</comment>\
+
+        #rounder ", %%mm0               \n\t"\
+
+        "pmaddwd %%mm2, %%mm7           \n\t" <comment type="block" pos:start="1925:47" pos:end="1925:76">/* C3R3+C1R1      C3r3+C1r1 */</comment>\
+
+        "paddd %%mm5, %%mm4             \n\t" <comment type="block" pos:start="1927:47" pos:end="1927:69">/* A0             a0 */</comment>\
+
+        "psubd %%mm5, %%mm6             \n\t" <comment type="block" pos:start="1929:47" pos:end="1929:69">/* A3             a3 */</comment>\
+
+        "movq %%mm0, %%mm5              \n\t" <comment type="block" pos:start="1931:47" pos:end="1931:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "paddd %%mm1, %%mm0             \n\t" <comment type="block" pos:start="1933:47" pos:end="1933:69">/* A1             a1 */</comment>\
+
+        "psubd %%mm1, %%mm5             \n\t" <comment type="block" pos:start="1935:47" pos:end="1935:69">/* A2             a2 */</comment>\
+
+        "movq 64(%2), %%mm1             \n\t"\
+
+        "pmaddwd %%mm2, %%mm1           \n\t" <comment type="block" pos:start="1939:47" pos:end="1939:77">/* -C7R3+C3R1     -C7r3+C3r1 */</comment>\
+
+        "paddd %%mm4, %%mm7             \n\t" <comment type="block" pos:start="1941:47" pos:end="1941:72">/* A0+B0          a0+b0 */</comment>\
+
+        "paddd %%mm4, %%mm4             \n\t" <comment type="block" pos:start="1943:47" pos:end="1943:70">/* 2A0            2a0 */</comment>\
+
+        "psubd %%mm7, %%mm4             \n\t" <comment type="block" pos:start="1945:47" pos:end="1945:72">/* A0-B0          a0-b0 */</comment>\
+
+        "psrad $" #shift ", %%mm7       \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "movq %%mm0, %%mm3              \n\t" <comment type="block" pos:start="1951:47" pos:end="1951:69">/* A1             a1 */</comment>\
+
+        "paddd %%mm1, %%mm0             \n\t" <comment type="block" pos:start="1953:47" pos:end="1953:72">/* A1+B1          a1+b1 */</comment>\
+
+        "psubd %%mm1, %%mm3             \n\t" <comment type="block" pos:start="1955:47" pos:end="1955:72">/* A1-B1          a1-b1 */</comment>\
+
+        "psrad $" #shift ", %%mm0       \n\t"\
+
+        "psrad $" #shift ", %%mm3       \n\t"\
+
+        "packssdw %%mm7, %%mm7          \n\t" <comment type="block" pos:start="1961:47" pos:end="1961:64">/* A0+B0  a0+b0 */</comment>\
+
+        "movd %%mm7, " #dst "           \n\t"\
+
+        "packssdw %%mm0, %%mm0          \n\t" <comment type="block" pos:start="1965:47" pos:end="1965:64">/* A1+B1  a1+b1 */</comment>\
+
+        "movd %%mm0, 16+" #dst "        \n\t"\
+
+        "packssdw %%mm3, %%mm3          \n\t" <comment type="block" pos:start="1969:47" pos:end="1969:64">/* A1-B1  a1-b1 */</comment>\
+
+        "movd %%mm3, 96+" #dst "        \n\t"\
+
+        "packssdw %%mm4, %%mm4          \n\t" <comment type="block" pos:start="1973:47" pos:end="1973:64">/* A0-B0  a0-b0 */</comment>\
+
+        "movd %%mm4, 112+" #dst "       \n\t"\
+
+        "movq 80(%2), %%mm4             \n\t" <comment type="block" pos:start="1977:47" pos:end="1977:77">/* -C1    C5      -C1     C5 */</comment>\
+
+        "pmaddwd %%mm2, %%mm4           \n\t" <comment type="block" pos:start="1979:47" pos:end="1979:77">/* -C1R3+C5R1     -C1r3+C5r1 */</comment>\
+
+        "pmaddwd 96(%2), %%mm2          \n\t" <comment type="block" pos:start="1981:47" pos:end="1981:77">/* -C5R3+C7R1     -C5r3+C7r1 */</comment>\
+
+        "movq %%mm5, %%mm3              \n\t" <comment type="block" pos:start="1983:47" pos:end="1983:69">/* A2             a2 */</comment>\
+
+        "paddd %%mm4, %%mm3             \n\t" <comment type="block" pos:start="1985:47" pos:end="1985:72">/* A2+B2          a2+b2 */</comment>\
+
+        "psubd %%mm4, %%mm5             \n\t" <comment type="block" pos:start="1987:47" pos:end="1987:72">/* a2-B2          a2-b2 */</comment>\
+
+        "psrad $" #shift ", %%mm3       \n\t"\
+
+        "psrad $" #shift ", %%mm5       \n\t"\
+
+        "movq %%mm6, %%mm4              \n\t" <comment type="block" pos:start="1993:47" pos:end="1993:69">/* A3             a3 */</comment>\
+
+        "paddd %%mm2, %%mm6             \n\t" <comment type="block" pos:start="1995:47" pos:end="1995:72">/* A3+B3          a3+b3 */</comment>\
+
+        "psubd %%mm2, %%mm4             \n\t" <comment type="block" pos:start="1997:47" pos:end="1997:72">/* a3-B3          a3-b3 */</comment>\
+
+        "psrad $" #shift ", %%mm6       \n\t"\
+
+        "packssdw %%mm3, %%mm3          \n\t" <comment type="block" pos:start="2001:47" pos:end="2001:64">/* A2+B2  a2+b2 */</comment>\
+
+        "movd %%mm3, 32+" #dst "        \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "packssdw %%mm6, %%mm6          \n\t" <comment type="block" pos:start="2007:47" pos:end="2007:64">/* A3+B3  a3+b3 */</comment>\
+
+        "movd %%mm6, 48+" #dst "        \n\t"\
+
+        "packssdw %%mm4, %%mm4          \n\t" <comment type="block" pos:start="2011:47" pos:end="2011:64">/* A3-B3  a3-b3 */</comment>\
+
+        "packssdw %%mm5, %%mm5          \n\t" <comment type="block" pos:start="2013:47" pos:end="2013:64">/* A2-B2  a2-b2 */</comment>\
+
+        "movd %%mm4, 64+" #dst "        \n\t"\
+
+        "movd %%mm5, 80+" #dst "        \n\t"</cpp:value></cpp:define>
+
+
+
+
+
+<comment type="line" pos:start="2023:1" pos:end="2023:63">//IDCT(  src0,   src4,   src1,    src5,    dst, rounder, shift)</comment>
+
+IDCT(    (%1), 64(%1), 32(%1),  96(%1),  0(%0),/nop, 20)
+
+IDCT(   8(%1), 72(%1), 40(%1), 104(%1),  4(%0),/nop, 20)
+
+IDCT(  16(%1), 80(%1), 48(%1), 112(%1),  8(%0),/nop, 20)
+
+IDCT(  24(%1), 88(%1), 56(%1), 120(%1), 12(%0),/nop, 20)
+
+        "jmp 9f                         \n\t"
+
+
+
+
+
+        "#.balign 16                    \n\t"
+
+        "7:                             \n\t"
+
+<cpp:undef pos:start="2043:1" pos:end="2043:11">#<cpp:directive pos:start="2043:2" pos:end="2043:6">undef</cpp:directive> <name pos:start="2043:8" pos:end="2043:11">IDCT</name></cpp:undef>
+
+<cpp:define pos:start="2045:1" pos:end="2103:45">#<cpp:directive pos:start="2045:2" pos:end="2045:7">define</cpp:directive> <cpp:macro pos:start="2045:9" pos:end="2045:57"><name pos:start="2045:9" pos:end="2045:12">IDCT</name><parameter_list pos:start="2045:13" pos:end="2045:57">(<parameter pos:start="2045:14" pos:end="2045:17"><type pos:start="2045:14" pos:end="2045:17"><name pos:start="2045:14" pos:end="2045:17">src0</name></type></parameter>, <parameter pos:start="2045:20" pos:end="2045:23"><type pos:start="2045:20" pos:end="2045:23"><name pos:start="2045:20" pos:end="2045:23">src4</name></type></parameter>, <parameter pos:start="2045:26" pos:end="2045:29"><type pos:start="2045:26" pos:end="2045:29"><name pos:start="2045:26" pos:end="2045:29">src1</name></type></parameter>, <parameter pos:start="2045:32" pos:end="2045:35"><type pos:start="2045:32" pos:end="2045:35"><name pos:start="2045:32" pos:end="2045:35">src5</name></type></parameter>, <parameter pos:start="2045:38" pos:end="2045:40"><type pos:start="2045:38" pos:end="2045:40"><name pos:start="2045:38" pos:end="2045:40">dst</name></type></parameter>, <parameter pos:start="2045:43" pos:end="2045:49"><type pos:start="2045:43" pos:end="2045:49"><name pos:start="2045:43" pos:end="2045:49">rounder</name></type></parameter>, <parameter pos:start="2045:52" pos:end="2045:56"><type pos:start="2045:52" pos:end="2045:56"><name pos:start="2045:52" pos:end="2045:56">shift</name></type></parameter>)</parameter_list></cpp:macro> \
+
+        <cpp:value pos:start="2047:9" pos:end="2103:45">"movq " #src0 ", %%mm0          \n\t" <comment type="block" pos:start="2047:47" pos:end="2047:77">/* R4     R0      r4      r0 */</comment>\
+
+        "movq 16(%2), %%mm4             \n\t" <comment type="block" pos:start="2049:47" pos:end="2049:77">/* C4     C4      C4      C4 */</comment>\
+
+        "pmaddwd %%mm0, %%mm4           \n\t" <comment type="block" pos:start="2051:47" pos:end="2051:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 24(%2), %%mm5             \n\t" <comment type="block" pos:start="2053:47" pos:end="2053:77">/* -C4    C4      -C4     C4 */</comment>\
+
+        "pmaddwd %%mm5, %%mm0           \n\t" <comment type="block" pos:start="2055:47" pos:end="2055:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        #rounder ", %%mm4               \n\t"\
+
+        #rounder ", %%mm0               \n\t"\
+
+        "psrad $" #shift ", %%mm4       \n\t"\
+
+        "psrad $" #shift ", %%mm0       \n\t"\
+
+        "movq 8+" #src0 ", %%mm2        \n\t" <comment type="block" pos:start="2065:47" pos:end="2065:77">/* R4     R0      r4      r0 */</comment>\
+
+        "movq 16(%2), %%mm1             \n\t" <comment type="block" pos:start="2067:47" pos:end="2067:77">/* C4     C4      C4      C4 */</comment>\
+
+        "pmaddwd %%mm2, %%mm1           \n\t" <comment type="block" pos:start="2069:47" pos:end="2069:76">/* C4R4+C4R0      C4r4+C4r0 */</comment>\
+
+        "movq 24(%2), %%mm7             \n\t" <comment type="block" pos:start="2071:47" pos:end="2071:77">/* -C4    C4      -C4     C4 */</comment>\
+
+        "pmaddwd %%mm7, %%mm2           \n\t" <comment type="block" pos:start="2073:47" pos:end="2073:77">/* -C4R4+C4R0     -C4r4+C4r0 */</comment>\
+
+        "movq 32(%2), %%mm7             \n\t" <comment type="block" pos:start="2075:47" pos:end="2075:77">/* C6     C2      C6      C2 */</comment>\
+
+        #rounder ", %%mm1               \n\t"\
+
+        #rounder ", %%mm2               \n\t"\
+
+        "psrad $" #shift ", %%mm1       \n\t"\
+
+        "packssdw %%mm1, %%mm4          \n\t" <comment type="block" pos:start="2083:47" pos:end="2083:61">/* A0     a0 */</comment>\
+
+        "movq %%mm4, " #dst "           \n\t"\
+
+        "psrad $" #shift ", %%mm2       \n\t"\
+
+        "packssdw %%mm2, %%mm0          \n\t" <comment type="block" pos:start="2089:47" pos:end="2089:61">/* A1     a1 */</comment>\
+
+        "movq %%mm0, 16+" #dst "        \n\t"\
+
+        "movq %%mm0, 96+" #dst "        \n\t"\
+
+        "movq %%mm4, 112+" #dst "       \n\t"\
+
+        "movq %%mm0, 32+" #dst "        \n\t"\
+
+        "movq %%mm4, 48+" #dst "        \n\t"\
+
+        "movq %%mm4, 64+" #dst "        \n\t"\
+
+        "movq %%mm0, 80+" #dst "        \n\t"</cpp:value></cpp:define>
+
+
+
+<comment type="line" pos:start="2107:1" pos:end="2107:63">//IDCT(  src0,   src4,   src1,    src5,    dst, rounder, shift)</comment>
+
+IDCT(   0(%1), 64(%1), 32(%1),  96(%1),  0(%0),/nop, 20)
+
+<comment type="line" pos:start="2111:1" pos:end="2111:58">//IDCT(   8(%1), 72(%1), 40(%1), 104(%1),  4(%0),/nop, 20)</comment>
+
+IDCT(  16(%1), 80(%1), 48(%1), 112(%1),  8(%0),/nop, 20)
+
+<comment type="line" pos:start="2115:1" pos:end="2115:58">//IDCT(  24(%1), 88(%1), 56(%1), 120(%1), 12(%0),/nop, 20)</comment>
+
+
+
+
+
+<cpp:endif pos:start="2121:1" pos:end="2121:6">#<cpp:directive pos:start="2121:2" pos:end="2121:6">endif</cpp:directive></cpp:endif>
+
+
+
+<comment type="block" pos:start="2125:1" pos:end="2165:2">/*
+
+Input
+
+ 00 40 04 44 20 60 24 64
+
+ 10 30 14 34 50 70 54 74
+
+ 01 41 03 43 21 61 23 63
+
+ 11 31 13 33 51 71 53 73
+
+ 02 42 06 46 22 62 26 66
+
+ 12 32 16 36 52 72 56 76
+
+ 05 45 07 47 25 65 27 67
+
+ 15 35 17 37 55 75 57 77
+
+
+
+Temp
+
+ 00 04 10 14 20 24 30 34
+
+ 40 44 50 54 60 64 70 74
+
+ 01 03 11 13 21 23 31 33
+
+ 41 43 51 53 61 63 71 73
+
+ 02 06 12 16 22 26 32 36
+
+ 42 46 52 56 62 66 72 76
+
+ 05 07 15 17 25 27 35 37
+
+ 45 47 55 57 65 67 75 77
+
+*/</comment>
+
+
+
+"9: \n\t"
+
+                :: "r" (block), "r" (temp), "r" (coeffs)
+
+                : "%eax"
+
+        );</asm>
+
+</block_content>}</block></function>
+</unit>

@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/13514.c" pos:tabs="8"><function pos:start="1:1" pos:end="339:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:34">parse_source_parameters</name><parameter_list pos:start="1:35" pos:end="3:63">(<parameter pos:start="1:36" pos:end="1:56"><decl pos:start="1:36" pos:end="1:56"><type pos:start="1:36" pos:end="1:56"><name pos:start="1:36" pos:end="1:49">AVCodecContext</name> <modifier pos:start="1:51" pos:end="1:51">*</modifier></type><name pos:start="1:52" pos:end="1:56">avctx</name></decl></parameter>, <parameter pos:start="1:59" pos:end="1:75"><decl pos:start="1:59" pos:end="1:75"><type pos:start="1:59" pos:end="1:75"><name pos:start="1:59" pos:end="1:71">GetBitContext</name> <modifier pos:start="1:73" pos:end="1:73">*</modifier></type><name pos:start="1:74" pos:end="1:75">gb</name></decl></parameter>,
+
+                                   <parameter pos:start="3:36" pos:end="3:62"><decl pos:start="3:36" pos:end="3:62"><type pos:start="3:36" pos:end="3:62"><name pos:start="3:36" pos:end="3:54">dirac_source_params</name> <modifier pos:start="3:56" pos:end="3:56">*</modifier></type><name pos:start="3:57" pos:end="3:62">source</name></decl></parameter>)</parameter_list>
+
+<block pos:start="5:1" pos:end="339:1">{<block_content pos:start="7:5" pos:end="337:13">
+
+    <decl_stmt pos:start="7:5" pos:end="7:34"><decl pos:start="7:5" pos:end="7:33"><type pos:start="7:5" pos:end="7:14"><name pos:start="7:5" pos:end="7:14">AVRational</name></type> <name pos:start="7:16" pos:end="7:25">frame_rate</name> <init pos:start="7:27" pos:end="7:33">= <expr pos:start="7:29" pos:end="7:33"><block pos:start="7:29" pos:end="7:33">{<expr pos:start="7:30" pos:end="7:30"><literal type="number" pos:start="7:30" pos:end="7:30">0</literal></expr>,<expr pos:start="7:32" pos:end="7:32"><literal type="number" pos:start="7:32" pos:end="7:32">0</literal></expr>}</block></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:46"><decl pos:start="9:5" pos:end="9:27"><type pos:start="9:5" pos:end="9:12"><name pos:start="9:5" pos:end="9:12">unsigned</name></type> <name pos:start="9:14" pos:end="9:23">luma_depth</name> <init pos:start="9:25" pos:end="9:27">= <expr pos:start="9:27" pos:end="9:27"><literal type="number" pos:start="9:27" pos:end="9:27">8</literal></expr></init></decl>, <decl pos:start="9:30" pos:end="9:45"><type ref="prev" pos:start="9:5" pos:end="9:12"/><name pos:start="9:30" pos:end="9:40">luma_offset</name> <init pos:start="9:42" pos:end="9:45">= <expr pos:start="9:44" pos:end="9:45"><literal type="number" pos:start="9:44" pos:end="9:45">16</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:12"><decl pos:start="11:5" pos:end="11:11"><type pos:start="11:5" pos:end="11:7"><name pos:start="11:5" pos:end="11:7">int</name></type> <name pos:start="11:9" pos:end="11:11">idx</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:39"><decl pos:start="13:5" pos:end="13:22"><type pos:start="13:5" pos:end="13:7"><name pos:start="13:5" pos:end="13:7">int</name></type> <name pos:start="13:9" pos:end="13:22">chroma_x_shift</name></decl>, <decl pos:start="13:25" pos:end="13:38"><type ref="prev" pos:start="13:5" pos:end="13:7"/><name pos:start="13:25" pos:end="13:38">chroma_y_shift</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="17:5" pos:end="17:65">/* [DIRAC_STD] 10.3.2 Frame size. frame_size(video_params) */</comment>
+
+    <comment type="block" pos:start="19:5" pos:end="19:44">/* [DIRAC_STD] custom_dimensions_flag */</comment>
+
+    <if_stmt pos:start="21:5" pos:end="27:5"><if pos:start="21:5" pos:end="27:5">if <condition pos:start="21:8" pos:end="21:22">(<expr pos:start="21:9" pos:end="21:21"><call pos:start="21:9" pos:end="21:21"><name pos:start="21:9" pos:end="21:17">get_bits1</name><argument_list pos:start="21:18" pos:end="21:21">(<argument pos:start="21:19" pos:end="21:20"><expr pos:start="21:19" pos:end="21:20"><name pos:start="21:19" pos:end="21:20">gb</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="21:24" pos:end="27:5">{<block_content pos:start="23:9" pos:end="25:48">
+
+        <expr_stmt pos:start="23:9" pos:end="23:48"><expr pos:start="23:9" pos:end="23:47"><name pos:start="23:9" pos:end="23:21"><name pos:start="23:9" pos:end="23:14">source</name><operator pos:start="23:15" pos:end="23:16">-&gt;</operator><name pos:start="23:17" pos:end="23:21">width</name></name>  <operator pos:start="23:24" pos:end="23:24">=</operator> <call pos:start="23:26" pos:end="23:47"><name pos:start="23:26" pos:end="23:43">svq3_get_ue_golomb</name><argument_list pos:start="23:44" pos:end="23:47">(<argument pos:start="23:45" pos:end="23:46"><expr pos:start="23:45" pos:end="23:46"><name pos:start="23:45" pos:end="23:46">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="block" pos:start="23:50" pos:end="23:79">/* [DIRAC_STD] FRAME_WIDTH  */</comment>
+
+        <expr_stmt pos:start="25:9" pos:end="25:48"><expr pos:start="25:9" pos:end="25:47"><name pos:start="25:9" pos:end="25:22"><name pos:start="25:9" pos:end="25:14">source</name><operator pos:start="25:15" pos:end="25:16">-&gt;</operator><name pos:start="25:17" pos:end="25:22">height</name></name> <operator pos:start="25:24" pos:end="25:24">=</operator> <call pos:start="25:26" pos:end="25:47"><name pos:start="25:26" pos:end="25:43">svq3_get_ue_golomb</name><argument_list pos:start="25:44" pos:end="25:47">(<argument pos:start="25:45" pos:end="25:46"><expr pos:start="25:45" pos:end="25:46"><name pos:start="25:45" pos:end="25:46">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="block" pos:start="25:50" pos:end="25:79">/* [DIRAC_STD] FRAME_HEIGHT */</comment>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="31:5" pos:end="33:47">/* [DIRAC_STD] 10.3.3 Chroma Sampling Format.
+
+     *  chroma_sampling_format(video_params) */</comment>
+
+    <comment type="block" pos:start="35:5" pos:end="35:47">/* [DIRAC_STD] custom_chroma_format_flag */</comment>
+
+    <if_stmt pos:start="37:5" pos:end="41:55"><if pos:start="37:5" pos:end="41:55">if <condition pos:start="37:8" pos:end="37:22">(<expr pos:start="37:9" pos:end="37:21"><call pos:start="37:9" pos:end="37:21"><name pos:start="37:9" pos:end="37:17">get_bits1</name><argument_list pos:start="37:18" pos:end="37:21">(<argument pos:start="37:19" pos:end="37:20"><expr pos:start="37:19" pos:end="37:20"><name pos:start="37:19" pos:end="37:20">gb</name></expr></argument>)</argument_list></call></expr>)</condition><block type="pseudo" pos:start="41:9" pos:end="41:55"><block_content pos:start="41:9" pos:end="41:55">
+
+        <comment type="block" pos:start="39:9" pos:end="39:45">/* [DIRAC_STD] CHROMA_FORMAT_INDEX */</comment>
+
+        <expr_stmt pos:start="41:9" pos:end="41:55"><expr pos:start="41:9" pos:end="41:54"><name pos:start="41:9" pos:end="41:29"><name pos:start="41:9" pos:end="41:14">source</name><operator pos:start="41:15" pos:end="41:16">-&gt;</operator><name pos:start="41:17" pos:end="41:29">chroma_format</name></name> <operator pos:start="41:31" pos:end="41:31">=</operator> <call pos:start="41:33" pos:end="41:54"><name pos:start="41:33" pos:end="41:50">svq3_get_ue_golomb</name><argument_list pos:start="41:51" pos:end="41:54">(<argument pos:start="41:52" pos:end="41:53"><expr pos:start="41:52" pos:end="41:53"><name pos:start="41:52" pos:end="41:53">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+    <if_stmt pos:start="43:5" pos:end="51:5"><if pos:start="43:5" pos:end="51:5">if <condition pos:start="43:8" pos:end="43:35">(<expr pos:start="43:9" pos:end="43:34"><name pos:start="43:9" pos:end="43:29"><name pos:start="43:9" pos:end="43:14">source</name><operator pos:start="43:15" pos:end="43:16">-&gt;</operator><name pos:start="43:17" pos:end="43:29">chroma_format</name></name> <operator pos:start="43:31" pos:end="43:31">&gt;</operator> <literal type="number" pos:start="43:33" pos:end="43:34">2U</literal></expr>)</condition> <block pos:start="43:37" pos:end="51:5">{<block_content pos:start="45:9" pos:end="49:35">
+
+        <expr_stmt pos:start="45:9" pos:end="47:38"><expr pos:start="45:9" pos:end="47:37"><call pos:start="45:9" pos:end="47:37"><name pos:start="45:9" pos:end="45:14">av_log</name><argument_list pos:start="45:15" pos:end="47:37">(<argument pos:start="45:16" pos:end="45:20"><expr pos:start="45:16" pos:end="45:20"><name pos:start="45:16" pos:end="45:20">avctx</name></expr></argument>, <argument pos:start="45:23" pos:end="45:34"><expr pos:start="45:23" pos:end="45:34"><name pos:start="45:23" pos:end="45:34">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="45:37" pos:end="45:64"><expr pos:start="45:37" pos:end="45:64"><literal type="string" pos:start="45:37" pos:end="45:64">"Unknown chroma format %d\n"</literal></expr></argument>,
+
+               <argument pos:start="47:16" pos:end="47:36"><expr pos:start="47:16" pos:end="47:36"><name pos:start="47:16" pos:end="47:36"><name pos:start="47:16" pos:end="47:21">source</name><operator pos:start="47:22" pos:end="47:23">-&gt;</operator><name pos:start="47:24" pos:end="47:36">chroma_format</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="49:9" pos:end="49:35">return <expr pos:start="49:16" pos:end="49:34"><name pos:start="49:16" pos:end="49:34">AVERROR_INVALIDDATA</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="55:5" pos:end="55:67">/* [DIRAC_STD] 10.3.4 Scan Format. scan_format(video_params) */</comment>
+
+    <comment type="block" pos:start="57:5" pos:end="57:45">/* [DIRAC_STD] custom_scan_format_flag */</comment>
+
+    <if_stmt pos:start="59:5" pos:end="63:52"><if pos:start="59:5" pos:end="63:52">if <condition pos:start="59:8" pos:end="59:22">(<expr pos:start="59:9" pos:end="59:21"><call pos:start="59:9" pos:end="59:21"><name pos:start="59:9" pos:end="59:17">get_bits1</name><argument_list pos:start="59:18" pos:end="59:21">(<argument pos:start="59:19" pos:end="59:20"><expr pos:start="59:19" pos:end="59:20"><name pos:start="59:19" pos:end="59:20">gb</name></expr></argument>)</argument_list></call></expr>)</condition><block type="pseudo" pos:start="63:9" pos:end="63:52"><block_content pos:start="63:9" pos:end="63:52">
+
+        <comment type="block" pos:start="61:9" pos:end="61:41">/* [DIRAC_STD] SOURCE_SAMPLING */</comment>
+
+        <expr_stmt pos:start="63:9" pos:end="63:52"><expr pos:start="63:9" pos:end="63:51"><name pos:start="63:9" pos:end="63:26"><name pos:start="63:9" pos:end="63:14">source</name><operator pos:start="63:15" pos:end="63:16">-&gt;</operator><name pos:start="63:17" pos:end="63:26">interlaced</name></name> <operator pos:start="63:28" pos:end="63:28">=</operator> <call pos:start="63:30" pos:end="63:51"><name pos:start="63:30" pos:end="63:47">svq3_get_ue_golomb</name><argument_list pos:start="63:48" pos:end="63:51">(<argument pos:start="63:49" pos:end="63:50"><expr pos:start="63:49" pos:end="63:50"><name pos:start="63:49" pos:end="63:50">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+    <if_stmt pos:start="65:5" pos:end="67:35"><if pos:start="65:5" pos:end="67:35">if <condition pos:start="65:8" pos:end="65:32">(<expr pos:start="65:9" pos:end="65:31"><name pos:start="65:9" pos:end="65:26"><name pos:start="65:9" pos:end="65:14">source</name><operator pos:start="65:15" pos:end="65:16">-&gt;</operator><name pos:start="65:17" pos:end="65:26">interlaced</name></name> <operator pos:start="65:28" pos:end="65:28">&gt;</operator> <literal type="number" pos:start="65:30" pos:end="65:31">1U</literal></expr>)</condition><block type="pseudo" pos:start="67:9" pos:end="67:35"><block_content pos:start="67:9" pos:end="67:35">
+
+        <return pos:start="67:9" pos:end="67:35">return <expr pos:start="67:16" pos:end="67:34"><name pos:start="67:16" pos:end="67:34">AVERROR_INVALIDDATA</name></expr>;</return></block_content></block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="71:5" pos:end="71:65">/* [DIRAC_STD] 10.3.5 Frame Rate. frame_rate(video_params) */</comment>
+
+    <if_stmt pos:start="73:5" pos:end="97:5"><if pos:start="73:5" pos:end="97:5">if <condition pos:start="73:8" pos:end="73:22">(<expr pos:start="73:9" pos:end="73:21"><call pos:start="73:9" pos:end="73:21"><name pos:start="73:9" pos:end="73:17">get_bits1</name><argument_list pos:start="73:18" pos:end="73:21">(<argument pos:start="73:19" pos:end="73:20"><expr pos:start="73:19" pos:end="73:20"><name pos:start="73:19" pos:end="73:20">gb</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="73:24" pos:end="97:5">{<block_content pos:start="75:9" pos:end="95:9"> <comment type="block" pos:start="73:26" pos:end="73:65">/* [DIRAC_STD] custom_frame_rate_flag */</comment>
+
+        <expr_stmt pos:start="75:9" pos:end="75:58"><expr pos:start="75:9" pos:end="75:57"><name pos:start="75:9" pos:end="75:32"><name pos:start="75:9" pos:end="75:14">source</name><operator pos:start="75:15" pos:end="75:16">-&gt;</operator><name pos:start="75:17" pos:end="75:32">frame_rate_index</name></name> <operator pos:start="75:34" pos:end="75:34">=</operator> <call pos:start="75:36" pos:end="75:57"><name pos:start="75:36" pos:end="75:53">svq3_get_ue_golomb</name><argument_list pos:start="75:54" pos:end="75:57">(<argument pos:start="75:55" pos:end="75:56"><expr pos:start="75:55" pos:end="75:56"><name pos:start="75:55" pos:end="75:56">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="79:9" pos:end="81:39"><if pos:start="79:9" pos:end="81:39">if <condition pos:start="79:12" pos:end="79:43">(<expr pos:start="79:13" pos:end="79:42"><name pos:start="79:13" pos:end="79:36"><name pos:start="79:13" pos:end="79:18">source</name><operator pos:start="79:19" pos:end="79:20">-&gt;</operator><name pos:start="79:21" pos:end="79:36">frame_rate_index</name></name> <operator pos:start="79:38" pos:end="79:38">&gt;</operator> <literal type="number" pos:start="79:40" pos:end="79:42">10U</literal></expr>)</condition><block type="pseudo" pos:start="81:13" pos:end="81:39"><block_content pos:start="81:13" pos:end="81:39">
+
+            <return pos:start="81:13" pos:end="81:39">return <expr pos:start="81:20" pos:end="81:38"><name pos:start="81:20" pos:end="81:38">AVERROR_INVALIDDATA</name></expr>;</return></block_content></block></if></if_stmt>
+
+
+
+        <if_stmt pos:start="85:9" pos:end="95:9"><if pos:start="85:9" pos:end="95:9">if <condition pos:start="85:12" pos:end="85:38">(<expr pos:start="85:13" pos:end="85:37"><operator pos:start="85:13" pos:end="85:13">!</operator><name pos:start="85:14" pos:end="85:37"><name pos:start="85:14" pos:end="85:19">source</name><operator pos:start="85:20" pos:end="85:21">-&gt;</operator><name pos:start="85:22" pos:end="85:37">frame_rate_index</name></name></expr>)</condition> <block pos:start="85:40" pos:end="95:9">{<block_content pos:start="89:13" pos:end="93:52">
+
+            <comment type="block" pos:start="87:13" pos:end="87:46">/* [DIRAC_STD] FRAME_RATE_NUMER */</comment>
+
+            <expr_stmt pos:start="89:13" pos:end="89:52"><expr pos:start="89:13" pos:end="89:51"><name pos:start="89:13" pos:end="89:26"><name pos:start="89:13" pos:end="89:22">frame_rate</name><operator pos:start="89:23" pos:end="89:23">.</operator><name pos:start="89:24" pos:end="89:26">num</name></name> <operator pos:start="89:28" pos:end="89:28">=</operator> <call pos:start="89:30" pos:end="89:51"><name pos:start="89:30" pos:end="89:47">svq3_get_ue_golomb</name><argument_list pos:start="89:48" pos:end="89:51">(<argument pos:start="89:49" pos:end="89:50"><expr pos:start="89:49" pos:end="89:50"><name pos:start="89:49" pos:end="89:50">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <comment type="block" pos:start="91:13" pos:end="91:46">/* [DIRAC_STD] FRAME_RATE_DENOM */</comment>
+
+            <expr_stmt pos:start="93:13" pos:end="93:52"><expr pos:start="93:13" pos:end="93:51"><name pos:start="93:13" pos:end="93:26"><name pos:start="93:13" pos:end="93:22">frame_rate</name><operator pos:start="93:23" pos:end="93:23">.</operator><name pos:start="93:24" pos:end="93:26">den</name></name> <operator pos:start="93:28" pos:end="93:28">=</operator> <call pos:start="93:30" pos:end="93:51"><name pos:start="93:30" pos:end="93:47">svq3_get_ue_golomb</name><argument_list pos:start="93:48" pos:end="93:51">(<argument pos:start="93:49" pos:end="93:50"><expr pos:start="93:49" pos:end="93:50"><name pos:start="93:49" pos:end="93:50">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <comment type="block" pos:start="99:5" pos:end="99:60">/* [DIRAC_STD] preset_frame_rate(video_params, index) */</comment>
+
+    <if_stmt pos:start="101:5" pos:end="113:5"><if pos:start="101:5" pos:end="113:5">if <condition pos:start="101:8" pos:end="101:37">(<expr pos:start="101:9" pos:end="101:36"><name pos:start="101:9" pos:end="101:32"><name pos:start="101:9" pos:end="101:14">source</name><operator pos:start="101:15" pos:end="101:16">-&gt;</operator><name pos:start="101:17" pos:end="101:32">frame_rate_index</name></name> <operator pos:start="101:34" pos:end="101:34">&gt;</operator> <literal type="number" pos:start="101:36" pos:end="101:36">0</literal></expr>)</condition> <block pos:start="101:39" pos:end="113:5">{<block_content pos:start="103:9" pos:end="111:70">
+
+        <if_stmt pos:start="103:9" pos:end="111:70"><if pos:start="103:9" pos:end="105:76">if <condition pos:start="103:12" pos:end="103:42">(<expr pos:start="103:13" pos:end="103:41"><name pos:start="103:13" pos:end="103:36"><name pos:start="103:13" pos:end="103:18">source</name><operator pos:start="103:19" pos:end="103:20">-&gt;</operator><name pos:start="103:21" pos:end="103:36">frame_rate_index</name></name> <operator pos:start="103:38" pos:end="103:39">&lt;=</operator> <literal type="number" pos:start="103:41" pos:end="103:41">8</literal></expr>)</condition><block type="pseudo" pos:start="105:13" pos:end="105:76"><block_content pos:start="105:13" pos:end="105:76">
+
+            <expr_stmt pos:start="105:13" pos:end="105:76"><expr pos:start="105:13" pos:end="105:75"><name pos:start="105:13" pos:end="105:22">frame_rate</name> <operator pos:start="105:24" pos:end="105:24">=</operator> <name pos:start="105:26" pos:end="105:75"><name pos:start="105:26" pos:end="105:49">ff_mpeg12_frame_rate_tab</name><index pos:start="105:50" pos:end="105:75">[<expr pos:start="105:51" pos:end="105:74"><name pos:start="105:51" pos:end="105:74"><name pos:start="105:51" pos:end="105:56">source</name><operator pos:start="105:57" pos:end="105:58">-&gt;</operator><name pos:start="105:59" pos:end="105:74">frame_rate_index</name></name></expr>]</index></name></expr>;</expr_stmt></block_content></block></if>
+
+        <else pos:start="107:9" pos:end="111:70">else<block type="pseudo" pos:start="111:13" pos:end="111:70"><block_content pos:start="111:13" pos:end="111:70">
+
+             <comment type="block" pos:start="109:14" pos:end="109:53">/* [DIRAC_STD] Table 10.3 values 9-10 */</comment>
+
+            <expr_stmt pos:start="111:13" pos:end="111:70"><expr pos:start="111:13" pos:end="111:69"><name pos:start="111:13" pos:end="111:22">frame_rate</name> <operator pos:start="111:24" pos:end="111:24">=</operator> <name pos:start="111:26" pos:end="111:69"><name pos:start="111:26" pos:end="111:41">dirac_frame_rate</name><index pos:start="111:42" pos:end="111:69">[<expr pos:start="111:43" pos:end="111:68"><name pos:start="111:43" pos:end="111:66"><name pos:start="111:43" pos:end="111:48">source</name><operator pos:start="111:49" pos:end="111:50">-&gt;</operator><name pos:start="111:51" pos:end="111:66">frame_rate_index</name></name><operator pos:start="111:67" pos:end="111:67">-</operator><literal type="number" pos:start="111:68" pos:end="111:68">9</literal></expr>]</index></name></expr>;</expr_stmt></block_content></block></else></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <expr_stmt pos:start="115:5" pos:end="117:53"><expr pos:start="115:5" pos:end="117:52"><call pos:start="115:5" pos:end="117:52"><name pos:start="115:5" pos:end="115:13">av_reduce</name><argument_list pos:start="115:14" pos:end="117:52">(<argument pos:start="115:15" pos:end="115:35"><expr pos:start="115:15" pos:end="115:35"><operator pos:start="115:15" pos:end="115:15">&amp;</operator><name pos:start="115:16" pos:end="115:35"><name pos:start="115:16" pos:end="115:20">avctx</name><operator pos:start="115:21" pos:end="115:22">-&gt;</operator><name pos:start="115:23" pos:end="115:31">time_base</name><operator pos:start="115:32" pos:end="115:32">.</operator><name pos:start="115:33" pos:end="115:35">num</name></name></expr></argument>, <argument pos:start="115:38" pos:end="115:58"><expr pos:start="115:38" pos:end="115:58"><operator pos:start="115:38" pos:end="115:38">&amp;</operator><name pos:start="115:39" pos:end="115:58"><name pos:start="115:39" pos:end="115:43">avctx</name><operator pos:start="115:44" pos:end="115:45">-&gt;</operator><name pos:start="115:46" pos:end="115:54">time_base</name><operator pos:start="115:55" pos:end="115:55">.</operator><name pos:start="115:56" pos:end="115:58">den</name></name></expr></argument>,
+
+              <argument pos:start="117:15" pos:end="117:28"><expr pos:start="117:15" pos:end="117:28"><name pos:start="117:15" pos:end="117:28"><name pos:start="117:15" pos:end="117:24">frame_rate</name><operator pos:start="117:25" pos:end="117:25">.</operator><name pos:start="117:26" pos:end="117:28">den</name></name></expr></argument>, <argument pos:start="117:31" pos:end="117:44"><expr pos:start="117:31" pos:end="117:44"><name pos:start="117:31" pos:end="117:44"><name pos:start="117:31" pos:end="117:40">frame_rate</name><operator pos:start="117:41" pos:end="117:41">.</operator><name pos:start="117:42" pos:end="117:44">num</name></name></expr></argument>, <argument pos:start="117:47" pos:end="117:51"><expr pos:start="117:47" pos:end="117:51"><literal type="number" pos:start="117:47" pos:end="117:47">1</literal><operator pos:start="117:48" pos:end="117:49">&lt;&lt;</operator><literal type="number" pos:start="117:50" pos:end="117:51">30</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="121:5" pos:end="123:42">/* [DIRAC_STD] 10.3.6 Pixel Aspect Ratio.
+
+     * pixel_aspect_ratio(video_params) */</comment>
+
+    <if_stmt pos:start="125:5" pos:end="147:5"><if pos:start="125:5" pos:end="147:5">if <condition pos:start="125:8" pos:end="125:22">(<expr pos:start="125:9" pos:end="125:21"><call pos:start="125:9" pos:end="125:21"><name pos:start="125:9" pos:end="125:17">get_bits1</name><argument_list pos:start="125:18" pos:end="125:21">(<argument pos:start="125:19" pos:end="125:20"><expr pos:start="125:19" pos:end="125:20"><name pos:start="125:19" pos:end="125:20">gb</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="125:24" pos:end="147:5">{<block_content pos:start="129:9" pos:end="145:9"> <comment type="block" pos:start="125:26" pos:end="125:73">/* [DIRAC_STD] custom_pixel_aspect_ratio_flag */</comment>
+
+         <comment type="block" pos:start="127:10" pos:end="127:32">/* [DIRAC_STD] index */</comment>
+
+        <expr_stmt pos:start="129:9" pos:end="129:60"><expr pos:start="129:9" pos:end="129:59"><name pos:start="129:9" pos:end="129:34"><name pos:start="129:9" pos:end="129:14">source</name><operator pos:start="129:15" pos:end="129:16">-&gt;</operator><name pos:start="129:17" pos:end="129:34">aspect_ratio_index</name></name> <operator pos:start="129:36" pos:end="129:36">=</operator> <call pos:start="129:38" pos:end="129:59"><name pos:start="129:38" pos:end="129:55">svq3_get_ue_golomb</name><argument_list pos:start="129:56" pos:end="129:59">(<argument pos:start="129:57" pos:end="129:58"><expr pos:start="129:57" pos:end="129:58"><name pos:start="129:57" pos:end="129:58">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="133:9" pos:end="135:39"><if pos:start="133:9" pos:end="135:39">if <condition pos:start="133:12" pos:end="133:44">(<expr pos:start="133:13" pos:end="133:43"><name pos:start="133:13" pos:end="133:38"><name pos:start="133:13" pos:end="133:18">source</name><operator pos:start="133:19" pos:end="133:20">-&gt;</operator><name pos:start="133:21" pos:end="133:38">aspect_ratio_index</name></name> <operator pos:start="133:40" pos:end="133:40">&gt;</operator> <literal type="number" pos:start="133:42" pos:end="133:43">6U</literal></expr>)</condition><block type="pseudo" pos:start="135:13" pos:end="135:39"><block_content pos:start="135:13" pos:end="135:39">
+
+            <return pos:start="135:13" pos:end="135:39">return <expr pos:start="135:20" pos:end="135:38"><name pos:start="135:20" pos:end="135:38">AVERROR_INVALIDDATA</name></expr>;</return></block_content></block></if></if_stmt>
+
+
+
+        <if_stmt pos:start="139:9" pos:end="145:9"><if pos:start="139:9" pos:end="145:9">if <condition pos:start="139:12" pos:end="139:40">(<expr pos:start="139:13" pos:end="139:39"><operator pos:start="139:13" pos:end="139:13">!</operator><name pos:start="139:14" pos:end="139:39"><name pos:start="139:14" pos:end="139:19">source</name><operator pos:start="139:20" pos:end="139:21">-&gt;</operator><name pos:start="139:22" pos:end="139:39">aspect_ratio_index</name></name></expr>)</condition> <block pos:start="139:42" pos:end="145:9">{<block_content pos:start="141:13" pos:end="143:68">
+
+            <expr_stmt pos:start="141:13" pos:end="141:68"><expr pos:start="141:13" pos:end="141:67"><name pos:start="141:13" pos:end="141:42"><name pos:start="141:13" pos:end="141:17">avctx</name><operator pos:start="141:18" pos:end="141:19">-&gt;</operator><name pos:start="141:20" pos:end="141:38">sample_aspect_ratio</name><operator pos:start="141:39" pos:end="141:39">.</operator><name pos:start="141:40" pos:end="141:42">num</name></name> <operator pos:start="141:44" pos:end="141:44">=</operator> <call pos:start="141:46" pos:end="141:67"><name pos:start="141:46" pos:end="141:63">svq3_get_ue_golomb</name><argument_list pos:start="141:64" pos:end="141:67">(<argument pos:start="141:65" pos:end="141:66"><expr pos:start="141:65" pos:end="141:66"><name pos:start="141:65" pos:end="141:66">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="143:13" pos:end="143:68"><expr pos:start="143:13" pos:end="143:67"><name pos:start="143:13" pos:end="143:42"><name pos:start="143:13" pos:end="143:17">avctx</name><operator pos:start="143:18" pos:end="143:19">-&gt;</operator><name pos:start="143:20" pos:end="143:38">sample_aspect_ratio</name><operator pos:start="143:39" pos:end="143:39">.</operator><name pos:start="143:40" pos:end="143:42">den</name></name> <operator pos:start="143:44" pos:end="143:44">=</operator> <call pos:start="143:46" pos:end="143:67"><name pos:start="143:46" pos:end="143:63">svq3_get_ue_golomb</name><argument_list pos:start="143:64" pos:end="143:67">(<argument pos:start="143:65" pos:end="143:66"><expr pos:start="143:65" pos:end="143:66"><name pos:start="143:65" pos:end="143:66">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <comment type="block" pos:start="149:5" pos:end="151:30">/* [DIRAC_STD] Take value from Table 10.4 Available preset pixel
+
+     *  aspect ratio values */</comment>
+
+    <if_stmt pos:start="153:5" pos:end="157:69"><if pos:start="153:5" pos:end="157:69">if <condition pos:start="153:8" pos:end="153:39">(<expr pos:start="153:9" pos:end="153:38"><name pos:start="153:9" pos:end="153:34"><name pos:start="153:9" pos:end="153:14">source</name><operator pos:start="153:15" pos:end="153:16">-&gt;</operator><name pos:start="153:17" pos:end="153:34">aspect_ratio_index</name></name> <operator pos:start="153:36" pos:end="153:36">&gt;</operator> <literal type="number" pos:start="153:38" pos:end="153:38">0</literal></expr>)</condition><block type="pseudo" pos:start="155:9" pos:end="157:69"><block_content pos:start="155:9" pos:end="157:69">
+
+        <expr_stmt pos:start="155:9" pos:end="157:69"><expr pos:start="155:9" pos:end="157:68"><name pos:start="155:9" pos:end="155:34"><name pos:start="155:9" pos:end="155:13">avctx</name><operator pos:start="155:14" pos:end="155:15">-&gt;</operator><name pos:start="155:16" pos:end="155:34">sample_aspect_ratio</name></name> <operator pos:start="155:36" pos:end="155:36">=</operator>
+
+            <name pos:start="157:13" pos:end="157:68"><name pos:start="157:13" pos:end="157:38">dirac_preset_aspect_ratios</name><index pos:start="157:39" pos:end="157:68">[<expr pos:start="157:40" pos:end="157:67"><name pos:start="157:40" pos:end="157:65"><name pos:start="157:40" pos:end="157:45">source</name><operator pos:start="157:46" pos:end="157:47">-&gt;</operator><name pos:start="157:48" pos:end="157:65">aspect_ratio_index</name></name><operator pos:start="157:66" pos:end="157:66">-</operator><literal type="number" pos:start="157:67" pos:end="157:67">1</literal></expr>]</index></name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="161:5" pos:end="161:65">/* [DIRAC_STD] 10.3.7 Clean area. clean_area(video_params) */</comment>
+
+    <if_stmt pos:start="163:5" pos:end="181:5"><if pos:start="163:5" pos:end="181:5">if <condition pos:start="163:8" pos:end="163:22">(<expr pos:start="163:9" pos:end="163:21"><call pos:start="163:9" pos:end="163:21"><name pos:start="163:9" pos:end="163:17">get_bits1</name><argument_list pos:start="163:18" pos:end="163:21">(<argument pos:start="163:19" pos:end="163:20"><expr pos:start="163:19" pos:end="163:20"><name pos:start="163:19" pos:end="163:20">gb</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="163:24" pos:end="181:5">{<block_content pos:start="167:9" pos:end="179:60"> <comment type="block" pos:start="163:26" pos:end="163:65">/* [DIRAC_STD] custom_clean_area_flag */</comment>
+
+        <comment type="block" pos:start="165:9" pos:end="165:37">/* [DIRAC_STD] CLEAN_WIDTH */</comment>
+
+        <expr_stmt pos:start="167:9" pos:end="167:60"><expr pos:start="167:9" pos:end="167:59"><name pos:start="167:9" pos:end="167:27"><name pos:start="167:9" pos:end="167:14">source</name><operator pos:start="167:15" pos:end="167:16">-&gt;</operator><name pos:start="167:17" pos:end="167:27">clean_width</name></name>        <operator pos:start="167:36" pos:end="167:36">=</operator> <call pos:start="167:38" pos:end="167:59"><name pos:start="167:38" pos:end="167:55">svq3_get_ue_golomb</name><argument_list pos:start="167:56" pos:end="167:59">(<argument pos:start="167:57" pos:end="167:58"><expr pos:start="167:57" pos:end="167:58"><name pos:start="167:57" pos:end="167:58">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+         <comment type="block" pos:start="169:10" pos:end="169:39">/* [DIRAC_STD] CLEAN_HEIGHT */</comment>
+
+        <expr_stmt pos:start="171:9" pos:end="171:60"><expr pos:start="171:9" pos:end="171:59"><name pos:start="171:9" pos:end="171:28"><name pos:start="171:9" pos:end="171:14">source</name><operator pos:start="171:15" pos:end="171:16">-&gt;</operator><name pos:start="171:17" pos:end="171:28">clean_height</name></name>       <operator pos:start="171:36" pos:end="171:36">=</operator> <call pos:start="171:38" pos:end="171:59"><name pos:start="171:38" pos:end="171:55">svq3_get_ue_golomb</name><argument_list pos:start="171:56" pos:end="171:59">(<argument pos:start="171:57" pos:end="171:58"><expr pos:start="171:57" pos:end="171:58"><name pos:start="171:57" pos:end="171:58">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+         <comment type="block" pos:start="173:10" pos:end="173:44">/* [DIRAC_STD] CLEAN_LEFT_OFFSET */</comment>
+
+        <expr_stmt pos:start="175:9" pos:end="175:60"><expr pos:start="175:9" pos:end="175:59"><name pos:start="175:9" pos:end="175:33"><name pos:start="175:9" pos:end="175:14">source</name><operator pos:start="175:15" pos:end="175:16">-&gt;</operator><name pos:start="175:17" pos:end="175:33">clean_left_offset</name></name>  <operator pos:start="175:36" pos:end="175:36">=</operator> <call pos:start="175:38" pos:end="175:59"><name pos:start="175:38" pos:end="175:55">svq3_get_ue_golomb</name><argument_list pos:start="175:56" pos:end="175:59">(<argument pos:start="175:57" pos:end="175:58"><expr pos:start="175:57" pos:end="175:58"><name pos:start="175:57" pos:end="175:58">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <comment type="block" pos:start="177:9" pos:end="177:44">/* [DIRAC_STD] CLEAN_RIGHT_OFFSET */</comment>
+
+        <expr_stmt pos:start="179:9" pos:end="179:60"><expr pos:start="179:9" pos:end="179:59"><name pos:start="179:9" pos:end="179:34"><name pos:start="179:9" pos:end="179:14">source</name><operator pos:start="179:15" pos:end="179:16">-&gt;</operator><name pos:start="179:17" pos:end="179:34">clean_right_offset</name></name> <operator pos:start="179:36" pos:end="179:36">=</operator> <call pos:start="179:38" pos:end="179:59"><name pos:start="179:38" pos:end="179:55">svq3_get_ue_golomb</name><argument_list pos:start="179:56" pos:end="179:59">(<argument pos:start="179:57" pos:end="179:58"><expr pos:start="179:57" pos:end="179:58"><name pos:start="179:57" pos:end="179:58">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="185:5" pos:end="189:38">/* [DIRAC_STD] 10.3.8 Signal range. signal_range(video_params)
+
+     * WARNING: Some adaptation seems to be done using the
+
+     * AVCOL_RANGE_MPEG/JPEG values */</comment>
+
+    <if_stmt pos:start="191:5" pos:end="221:5"><if pos:start="191:5" pos:end="221:5">if <condition pos:start="191:8" pos:end="191:22">(<expr pos:start="191:9" pos:end="191:21"><call pos:start="191:9" pos:end="191:21"><name pos:start="191:9" pos:end="191:17">get_bits1</name><argument_list pos:start="191:18" pos:end="191:21">(<argument pos:start="191:19" pos:end="191:20"><expr pos:start="191:19" pos:end="191:20"><name pos:start="191:19" pos:end="191:20">gb</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="191:24" pos:end="221:5">{<block_content pos:start="195:9" pos:end="219:9"> <comment type="block" pos:start="191:26" pos:end="191:67">/* [DIRAC_STD] custom_signal_range_flag */</comment>
+
+        <comment type="block" pos:start="193:9" pos:end="193:31">/* [DIRAC_STD] index */</comment>
+
+        <expr_stmt pos:start="195:9" pos:end="195:59"><expr pos:start="195:9" pos:end="195:58"><name pos:start="195:9" pos:end="195:33"><name pos:start="195:9" pos:end="195:14">source</name><operator pos:start="195:15" pos:end="195:16">-&gt;</operator><name pos:start="195:17" pos:end="195:33">pixel_range_index</name></name> <operator pos:start="195:35" pos:end="195:35">=</operator> <call pos:start="195:37" pos:end="195:58"><name pos:start="195:37" pos:end="195:54">svq3_get_ue_golomb</name><argument_list pos:start="195:55" pos:end="195:58">(<argument pos:start="195:56" pos:end="195:57"><expr pos:start="195:56" pos:end="195:57"><name pos:start="195:56" pos:end="195:57">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="199:9" pos:end="201:39"><if pos:start="199:9" pos:end="201:39">if <condition pos:start="199:12" pos:end="199:43">(<expr pos:start="199:13" pos:end="199:42"><name pos:start="199:13" pos:end="199:37"><name pos:start="199:13" pos:end="199:18">source</name><operator pos:start="199:19" pos:end="199:20">-&gt;</operator><name pos:start="199:21" pos:end="199:37">pixel_range_index</name></name> <operator pos:start="199:39" pos:end="199:39">&gt;</operator> <literal type="number" pos:start="199:41" pos:end="199:42">4U</literal></expr>)</condition><block type="pseudo" pos:start="201:13" pos:end="201:39"><block_content pos:start="201:13" pos:end="201:39">
+
+            <return pos:start="201:13" pos:end="201:39">return <expr pos:start="201:20" pos:end="201:38"><name pos:start="201:20" pos:end="201:38">AVERROR_INVALIDDATA</name></expr>;</return></block_content></block></if></if_stmt>
+
+
+
+        <comment type="block" pos:start="205:9" pos:end="205:63">/* This assumes either fullrange or MPEG levels only */</comment>
+
+        <if_stmt pos:start="207:9" pos:end="219:9"><if pos:start="207:9" pos:end="219:9">if <condition pos:start="207:12" pos:end="207:39">(<expr pos:start="207:13" pos:end="207:38"><operator pos:start="207:13" pos:end="207:13">!</operator><name pos:start="207:14" pos:end="207:38"><name pos:start="207:14" pos:end="207:19">source</name><operator pos:start="207:20" pos:end="207:21">-&gt;</operator><name pos:start="207:22" pos:end="207:38">pixel_range_index</name></name></expr>)</condition> <block pos:start="207:41" pos:end="219:9">{<block_content pos:start="209:13" pos:end="217:83">
+
+            <expr_stmt pos:start="209:13" pos:end="209:49"><expr pos:start="209:13" pos:end="209:48"><name pos:start="209:13" pos:end="209:23">luma_offset</name> <operator pos:start="209:25" pos:end="209:25">=</operator> <call pos:start="209:27" pos:end="209:48"><name pos:start="209:27" pos:end="209:44">svq3_get_ue_golomb</name><argument_list pos:start="209:45" pos:end="209:48">(<argument pos:start="209:46" pos:end="209:47"><expr pos:start="209:46" pos:end="209:47"><name pos:start="209:46" pos:end="209:47">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="211:13" pos:end="211:60"><expr pos:start="211:13" pos:end="211:59"><name pos:start="211:13" pos:end="211:22">luma_depth</name>  <operator pos:start="211:25" pos:end="211:25">=</operator> <call pos:start="211:27" pos:end="211:57"><name pos:start="211:27" pos:end="211:33">av_log2</name><argument_list pos:start="211:34" pos:end="211:57">(<argument pos:start="211:35" pos:end="211:56"><expr pos:start="211:35" pos:end="211:56"><call pos:start="211:35" pos:end="211:56"><name pos:start="211:35" pos:end="211:52">svq3_get_ue_golomb</name><argument_list pos:start="211:53" pos:end="211:56">(<argument pos:start="211:54" pos:end="211:55"><expr pos:start="211:54" pos:end="211:55"><name pos:start="211:54" pos:end="211:55">gb</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call><operator pos:start="211:58" pos:end="211:58">+</operator><literal type="number" pos:start="211:59" pos:end="211:59">1</literal></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="213:13" pos:end="213:35"><expr pos:start="213:13" pos:end="213:34"><call pos:start="213:13" pos:end="213:34"><name pos:start="213:13" pos:end="213:30">svq3_get_ue_golomb</name><argument_list pos:start="213:31" pos:end="213:34">(<argument pos:start="213:32" pos:end="213:33"><expr pos:start="213:32" pos:end="213:33"><name pos:start="213:32" pos:end="213:33">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="block" pos:start="213:37" pos:end="213:58">/* chroma offset    */</comment>
+
+            <expr_stmt pos:start="215:13" pos:end="215:35"><expr pos:start="215:13" pos:end="215:34"><call pos:start="215:13" pos:end="215:34"><name pos:start="215:13" pos:end="215:30">svq3_get_ue_golomb</name><argument_list pos:start="215:31" pos:end="215:34">(<argument pos:start="215:32" pos:end="215:33"><expr pos:start="215:32" pos:end="215:33"><name pos:start="215:32" pos:end="215:33">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="block" pos:start="215:37" pos:end="215:58">/* chroma excursion */</comment>
+
+            <expr_stmt pos:start="217:13" pos:end="217:83"><expr pos:start="217:13" pos:end="217:82"><name pos:start="217:13" pos:end="217:30"><name pos:start="217:13" pos:end="217:17">avctx</name><operator pos:start="217:18" pos:end="217:19">-&gt;</operator><name pos:start="217:20" pos:end="217:30">color_range</name></name> <operator pos:start="217:32" pos:end="217:32">=</operator> <ternary pos:start="217:34" pos:end="217:82"><condition pos:start="217:34" pos:end="217:46"><expr pos:start="217:34" pos:end="217:44"><name pos:start="217:34" pos:end="217:44">luma_offset</name></expr> ?</condition><then pos:start="217:48" pos:end="217:63"> <expr pos:start="217:48" pos:end="217:63"><name pos:start="217:48" pos:end="217:63">AVCOL_RANGE_MPEG</name></expr> </then><else pos:start="217:65" pos:end="217:82">: <expr pos:start="217:67" pos:end="217:82"><name pos:start="217:67" pos:end="217:82">AVCOL_RANGE_JPEG</name></expr></else></ternary></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <comment type="block" pos:start="223:5" pos:end="225:65">/* [DIRAC_STD] Table 10.5
+
+     * Available signal range presets &lt;--&gt; pixel_range_presets */</comment>
+
+    <if_stmt pos:start="227:5" pos:end="235:5"><if pos:start="227:5" pos:end="235:5">if <condition pos:start="227:8" pos:end="227:38">(<expr pos:start="227:9" pos:end="227:37"><name pos:start="227:9" pos:end="227:33"><name pos:start="227:9" pos:end="227:14">source</name><operator pos:start="227:15" pos:end="227:16">-&gt;</operator><name pos:start="227:17" pos:end="227:33">pixel_range_index</name></name> <operator pos:start="227:35" pos:end="227:35">&gt;</operator> <literal type="number" pos:start="227:37" pos:end="227:37">0</literal></expr>)</condition> <block pos:start="227:40" pos:end="235:5">{<block_content pos:start="229:9" pos:end="233:66">
+
+        <expr_stmt pos:start="229:9" pos:end="229:57"><expr pos:start="229:9" pos:end="229:56"><name pos:start="229:9" pos:end="229:11">idx</name>                <operator pos:start="229:28" pos:end="229:28">=</operator> <name pos:start="229:30" pos:end="229:54"><name pos:start="229:30" pos:end="229:35">source</name><operator pos:start="229:36" pos:end="229:37">-&gt;</operator><name pos:start="229:38" pos:end="229:54">pixel_range_index</name></name><operator pos:start="229:55" pos:end="229:55">-</operator><literal type="number" pos:start="229:56" pos:end="229:56">1</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="231:9" pos:end="231:63"><expr pos:start="231:9" pos:end="231:62"><name pos:start="231:9" pos:end="231:18">luma_depth</name>         <operator pos:start="231:28" pos:end="231:28">=</operator> <name pos:start="231:30" pos:end="231:53"><name pos:start="231:30" pos:end="231:48">pixel_range_presets</name><index pos:start="231:49" pos:end="231:53">[<expr pos:start="231:50" pos:end="231:52"><name pos:start="231:50" pos:end="231:52">idx</name></expr>]</index></name><operator pos:start="231:54" pos:end="231:54">.</operator><name pos:start="231:55" pos:end="231:62">bitdepth</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="233:9" pos:end="233:66"><expr pos:start="233:9" pos:end="233:65"><name pos:start="233:9" pos:end="233:26"><name pos:start="233:9" pos:end="233:13">avctx</name><operator pos:start="233:14" pos:end="233:15">-&gt;</operator><name pos:start="233:16" pos:end="233:26">color_range</name></name> <operator pos:start="233:28" pos:end="233:28">=</operator> <name pos:start="233:30" pos:end="233:53"><name pos:start="233:30" pos:end="233:48">pixel_range_presets</name><index pos:start="233:49" pos:end="233:53">[<expr pos:start="233:50" pos:end="233:52"><name pos:start="233:50" pos:end="233:52">idx</name></expr>]</index></name><operator pos:start="233:54" pos:end="233:54">.</operator><name pos:start="233:55" pos:end="233:65">color_range</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="239:5" pos:end="241:67"><if pos:start="239:5" pos:end="241:67">if <condition pos:start="239:8" pos:end="239:23">(<expr pos:start="239:9" pos:end="239:22"><name pos:start="239:9" pos:end="239:18">luma_depth</name> <operator pos:start="239:20" pos:end="239:20">&gt;</operator> <literal type="number" pos:start="239:22" pos:end="239:22">8</literal></expr>)</condition><block type="pseudo" pos:start="241:9" pos:end="241:67"><block_content pos:start="241:9" pos:end="241:67">
+
+        <expr_stmt pos:start="241:9" pos:end="241:67"><expr pos:start="241:9" pos:end="241:66"><call pos:start="241:9" pos:end="241:66"><name pos:start="241:9" pos:end="241:14">av_log</name><argument_list pos:start="241:15" pos:end="241:66">(<argument pos:start="241:16" pos:end="241:20"><expr pos:start="241:16" pos:end="241:20"><name pos:start="241:16" pos:end="241:20">avctx</name></expr></argument>, <argument pos:start="241:23" pos:end="241:36"><expr pos:start="241:23" pos:end="241:36"><name pos:start="241:23" pos:end="241:36">AV_LOG_WARNING</name></expr></argument>, <argument pos:start="241:39" pos:end="241:65"><expr pos:start="241:39" pos:end="241:65"><literal type="string" pos:start="241:39" pos:end="241:65">"Bitdepth greater than 8\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="245:5" pos:end="245:72"><expr pos:start="245:5" pos:end="245:71"><name pos:start="245:5" pos:end="245:18"><name pos:start="245:5" pos:end="245:9">avctx</name><operator pos:start="245:10" pos:end="245:11">-&gt;</operator><name pos:start="245:12" pos:end="245:18">pix_fmt</name></name> <operator pos:start="245:20" pos:end="245:20">=</operator> <name pos:start="245:22" pos:end="245:71"><name pos:start="245:22" pos:end="245:34">dirac_pix_fmt</name><index pos:start="245:35" pos:end="245:48">[<expr pos:start="245:36" pos:end="245:47"><operator pos:start="245:36" pos:end="245:36">!</operator><name pos:start="245:37" pos:end="245:47">luma_offset</name></expr>]</index><index pos:start="245:49" pos:end="245:71">[<expr pos:start="245:50" pos:end="245:70"><name pos:start="245:50" pos:end="245:70"><name pos:start="245:50" pos:end="245:55">source</name><operator pos:start="245:56" pos:end="245:57">-&gt;</operator><name pos:start="245:58" pos:end="245:70">chroma_format</name></name></expr>]</index></name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="247:5" pos:end="247:84"><expr pos:start="247:5" pos:end="247:83"><call pos:start="247:5" pos:end="247:83"><name pos:start="247:5" pos:end="247:33">avcodec_get_chroma_sub_sample</name><argument_list pos:start="247:34" pos:end="247:83">(<argument pos:start="247:35" pos:end="247:48"><expr pos:start="247:35" pos:end="247:48"><name pos:start="247:35" pos:end="247:48"><name pos:start="247:35" pos:end="247:39">avctx</name><operator pos:start="247:40" pos:end="247:41">-&gt;</operator><name pos:start="247:42" pos:end="247:48">pix_fmt</name></name></expr></argument>, <argument pos:start="247:51" pos:end="247:65"><expr pos:start="247:51" pos:end="247:65"><operator pos:start="247:51" pos:end="247:51">&amp;</operator><name pos:start="247:52" pos:end="247:65">chroma_x_shift</name></expr></argument>, <argument pos:start="247:68" pos:end="247:82"><expr pos:start="247:68" pos:end="247:82"><operator pos:start="247:68" pos:end="247:68">&amp;</operator><name pos:start="247:69" pos:end="247:82">chroma_y_shift</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="249:5" pos:end="255:5"><if pos:start="249:5" pos:end="255:5">if <condition pos:start="249:8" pos:end="249:90">(<expr pos:start="249:9" pos:end="249:89"><operator pos:start="249:9" pos:end="249:9">!</operator><operator pos:start="249:10" pos:end="249:10">(</operator><name pos:start="249:11" pos:end="249:23"><name pos:start="249:11" pos:end="249:16">source</name><operator pos:start="249:17" pos:end="249:18">-&gt;</operator><name pos:start="249:19" pos:end="249:23">width</name></name> <operator pos:start="249:25" pos:end="249:25">%</operator> <operator pos:start="249:27" pos:end="249:27">(</operator><literal type="number" pos:start="249:28" pos:end="249:28">1</literal><operator pos:start="249:29" pos:end="249:30">&lt;&lt;</operator><name pos:start="249:31" pos:end="249:44">chroma_x_shift</name><operator pos:start="249:45" pos:end="249:45">)</operator><operator pos:start="249:46" pos:end="249:46">)</operator> <operator pos:start="249:48" pos:end="249:49">||</operator> <operator pos:start="249:51" pos:end="249:51">!</operator><operator pos:start="249:52" pos:end="249:52">(</operator><name pos:start="249:53" pos:end="249:66"><name pos:start="249:53" pos:end="249:58">source</name><operator pos:start="249:59" pos:end="249:60">-&gt;</operator><name pos:start="249:61" pos:end="249:66">height</name></name> <operator pos:start="249:68" pos:end="249:68">%</operator> <operator pos:start="249:70" pos:end="249:70">(</operator><literal type="number" pos:start="249:71" pos:end="249:71">1</literal><operator pos:start="249:72" pos:end="249:73">&lt;&lt;</operator><name pos:start="249:74" pos:end="249:87">chroma_y_shift</name><operator pos:start="249:88" pos:end="249:88">)</operator><operator pos:start="249:89" pos:end="249:89">)</operator></expr>)</condition> <block pos:start="249:92" pos:end="255:5">{<block_content pos:start="251:9" pos:end="253:35">
+
+        <expr_stmt pos:start="251:9" pos:end="251:105"><expr pos:start="251:9" pos:end="251:104"><call pos:start="251:9" pos:end="251:104"><name pos:start="251:9" pos:end="251:14">av_log</name><argument_list pos:start="251:15" pos:end="251:104">(<argument pos:start="251:16" pos:end="251:20"><expr pos:start="251:16" pos:end="251:20"><name pos:start="251:16" pos:end="251:20">avctx</name></expr></argument>, <argument pos:start="251:23" pos:end="251:34"><expr pos:start="251:23" pos:end="251:34"><name pos:start="251:23" pos:end="251:34">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="251:37" pos:end="251:103"><expr pos:start="251:37" pos:end="251:103"><literal type="string" pos:start="251:37" pos:end="251:103">"Dimensions must be a integer multiply of the chroma subsampling\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="253:9" pos:end="253:35">return <expr pos:start="253:16" pos:end="253:34"><name pos:start="253:16" pos:end="253:34">AVERROR_INVALIDDATA</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+
+
+    <comment type="block" pos:start="261:5" pos:end="261:76">/* [DIRAC_STD] 10.3.9 Colour specification. colour_spec(video_params) */</comment>
+
+    <if_stmt pos:start="263:5" pos:end="333:5"><if pos:start="263:5" pos:end="323:5">if <condition pos:start="263:8" pos:end="263:22">(<expr pos:start="263:9" pos:end="263:21"><call pos:start="263:9" pos:end="263:21"><name pos:start="263:9" pos:end="263:17">get_bits1</name><argument_list pos:start="263:18" pos:end="263:21">(<argument pos:start="263:19" pos:end="263:20"><expr pos:start="263:19" pos:end="263:20"><name pos:start="263:19" pos:end="263:20">gb</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="263:24" pos:end="323:5">{<block_content pos:start="267:9" pos:end="321:9"> <comment type="block" pos:start="263:26" pos:end="263:66">/* [DIRAC_STD] custom_colour_spec_flag */</comment>
+
+         <comment type="block" pos:start="265:10" pos:end="265:32">/* [DIRAC_STD] index */</comment>
+
+        <expr_stmt pos:start="267:9" pos:end="267:64"><expr pos:start="267:9" pos:end="267:63"><name pos:start="267:9" pos:end="267:11">idx</name> <operator pos:start="267:13" pos:end="267:13">=</operator> <name pos:start="267:15" pos:end="267:38"><name pos:start="267:15" pos:end="267:20">source</name><operator pos:start="267:21" pos:end="267:22">-&gt;</operator><name pos:start="267:23" pos:end="267:38">color_spec_index</name></name> <operator pos:start="267:40" pos:end="267:40">=</operator> <call pos:start="267:42" pos:end="267:63"><name pos:start="267:42" pos:end="267:59">svq3_get_ue_golomb</name><argument_list pos:start="267:60" pos:end="267:63">(<argument pos:start="267:61" pos:end="267:62"><expr pos:start="267:61" pos:end="267:62"><name pos:start="267:61" pos:end="267:62">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="271:9" pos:end="273:39"><if pos:start="271:9" pos:end="273:39">if <condition pos:start="271:12" pos:end="271:42">(<expr pos:start="271:13" pos:end="271:41"><name pos:start="271:13" pos:end="271:36"><name pos:start="271:13" pos:end="271:18">source</name><operator pos:start="271:19" pos:end="271:20">-&gt;</operator><name pos:start="271:21" pos:end="271:36">color_spec_index</name></name> <operator pos:start="271:38" pos:end="271:38">&gt;</operator> <literal type="number" pos:start="271:40" pos:end="271:41">4U</literal></expr>)</condition><block type="pseudo" pos:start="273:13" pos:end="273:39"><block_content pos:start="273:13" pos:end="273:39">
+
+            <return pos:start="273:13" pos:end="273:39">return <expr pos:start="273:20" pos:end="273:38"><name pos:start="273:20" pos:end="273:38">AVERROR_INVALIDDATA</name></expr>;</return></block_content></block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="277:9" pos:end="277:74"><expr pos:start="277:9" pos:end="277:73"><name pos:start="277:9" pos:end="277:30"><name pos:start="277:9" pos:end="277:13">avctx</name><operator pos:start="277:14" pos:end="277:15">-&gt;</operator><name pos:start="277:16" pos:end="277:30">color_primaries</name></name> <operator pos:start="277:32" pos:end="277:32">=</operator> <name pos:start="277:34" pos:end="277:57"><name pos:start="277:34" pos:end="277:52">dirac_color_presets</name><index pos:start="277:53" pos:end="277:57">[<expr pos:start="277:54" pos:end="277:56"><name pos:start="277:54" pos:end="277:56">idx</name></expr>]</index></name><operator pos:start="277:58" pos:end="277:58">.</operator><name pos:start="277:59" pos:end="277:73">color_primaries</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="279:9" pos:end="279:69"><expr pos:start="279:9" pos:end="279:68"><name pos:start="279:9" pos:end="279:25"><name pos:start="279:9" pos:end="279:13">avctx</name><operator pos:start="279:14" pos:end="279:15">-&gt;</operator><name pos:start="279:16" pos:end="279:25">colorspace</name></name>      <operator pos:start="279:32" pos:end="279:32">=</operator> <name pos:start="279:34" pos:end="279:57"><name pos:start="279:34" pos:end="279:52">dirac_color_presets</name><index pos:start="279:53" pos:end="279:57">[<expr pos:start="279:54" pos:end="279:56"><name pos:start="279:54" pos:end="279:56">idx</name></expr>]</index></name><operator pos:start="279:58" pos:end="279:58">.</operator><name pos:start="279:59" pos:end="279:68">colorspace</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="281:9" pos:end="281:68"><expr pos:start="281:9" pos:end="281:67"><name pos:start="281:9" pos:end="281:24"><name pos:start="281:9" pos:end="281:13">avctx</name><operator pos:start="281:14" pos:end="281:15">-&gt;</operator><name pos:start="281:16" pos:end="281:24">color_trc</name></name>       <operator pos:start="281:32" pos:end="281:32">=</operator> <name pos:start="281:34" pos:end="281:57"><name pos:start="281:34" pos:end="281:52">dirac_color_presets</name><index pos:start="281:53" pos:end="281:57">[<expr pos:start="281:54" pos:end="281:56"><name pos:start="281:54" pos:end="281:56">idx</name></expr>]</index></name><operator pos:start="281:58" pos:end="281:58">.</operator><name pos:start="281:59" pos:end="281:67">color_trc</name></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="285:9" pos:end="321:9"><if pos:start="285:9" pos:end="321:9">if <condition pos:start="285:12" pos:end="285:38">(<expr pos:start="285:13" pos:end="285:37"><operator pos:start="285:13" pos:end="285:13">!</operator><name pos:start="285:14" pos:end="285:37"><name pos:start="285:14" pos:end="285:19">source</name><operator pos:start="285:20" pos:end="285:21">-&gt;</operator><name pos:start="285:22" pos:end="285:37">color_spec_index</name></name></expr>)</condition> <block pos:start="285:40" pos:end="321:9">{<block_content pos:start="289:13" pos:end="319:51">
+
+            <comment type="block" pos:start="287:13" pos:end="287:55">/* [DIRAC_STD] 10.3.9.1 Colour primaries */</comment>
+
+            <if_stmt pos:start="289:13" pos:end="297:13"><if pos:start="289:13" pos:end="297:13">if <condition pos:start="289:16" pos:end="289:30">(<expr pos:start="289:17" pos:end="289:29"><call pos:start="289:17" pos:end="289:29"><name pos:start="289:17" pos:end="289:25">get_bits1</name><argument_list pos:start="289:26" pos:end="289:29">(<argument pos:start="289:27" pos:end="289:28"><expr pos:start="289:27" pos:end="289:28"><name pos:start="289:27" pos:end="289:28">gb</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="289:32" pos:end="297:13">{<block_content pos:start="291:17" pos:end="295:66">
+
+                <expr_stmt pos:start="291:17" pos:end="291:45"><expr pos:start="291:17" pos:end="291:44"><name pos:start="291:17" pos:end="291:19">idx</name> <operator pos:start="291:21" pos:end="291:21">=</operator> <call pos:start="291:23" pos:end="291:44"><name pos:start="291:23" pos:end="291:40">svq3_get_ue_golomb</name><argument_list pos:start="291:41" pos:end="291:44">(<argument pos:start="291:42" pos:end="291:43"><expr pos:start="291:42" pos:end="291:43"><name pos:start="291:42" pos:end="291:43">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <if_stmt pos:start="293:17" pos:end="295:66"><if pos:start="293:17" pos:end="295:66">if <condition pos:start="293:20" pos:end="293:29">(<expr pos:start="293:21" pos:end="293:28"><name pos:start="293:21" pos:end="293:23">idx</name> <operator pos:start="293:25" pos:end="293:25">&lt;</operator> <literal type="number" pos:start="293:27" pos:end="293:28">3U</literal></expr>)</condition><block type="pseudo" pos:start="295:21" pos:end="295:66"><block_content pos:start="295:21" pos:end="295:66">
+
+                    <expr_stmt pos:start="295:21" pos:end="295:66"><expr pos:start="295:21" pos:end="295:65"><name pos:start="295:21" pos:end="295:42"><name pos:start="295:21" pos:end="295:25">avctx</name><operator pos:start="295:26" pos:end="295:27">-&gt;</operator><name pos:start="295:28" pos:end="295:42">color_primaries</name></name> <operator pos:start="295:44" pos:end="295:44">=</operator> <name pos:start="295:46" pos:end="295:65"><name pos:start="295:46" pos:end="295:60">dirac_primaries</name><index pos:start="295:61" pos:end="295:65">[<expr pos:start="295:62" pos:end="295:64"><name pos:start="295:62" pos:end="295:64">idx</name></expr>]</index></name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <comment type="block" pos:start="299:13" pos:end="299:52">/* [DIRAC_STD] 10.3.9.2 Colour matrix */</comment>
+
+            <if_stmt pos:start="301:13" pos:end="313:13"><if pos:start="301:13" pos:end="313:13">if <condition pos:start="301:16" pos:end="301:30">(<expr pos:start="301:17" pos:end="301:29"><call pos:start="301:17" pos:end="301:29"><name pos:start="301:17" pos:end="301:25">get_bits1</name><argument_list pos:start="301:26" pos:end="301:29">(<argument pos:start="301:27" pos:end="301:28"><expr pos:start="301:27" pos:end="301:28"><name pos:start="301:27" pos:end="301:28">gb</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="301:32" pos:end="313:13">{<block_content pos:start="303:17" pos:end="311:58">
+
+                <expr_stmt pos:start="303:17" pos:end="303:45"><expr pos:start="303:17" pos:end="303:44"><name pos:start="303:17" pos:end="303:19">idx</name> <operator pos:start="303:21" pos:end="303:21">=</operator> <call pos:start="303:23" pos:end="303:44"><name pos:start="303:23" pos:end="303:40">svq3_get_ue_golomb</name><argument_list pos:start="303:41" pos:end="303:44">(<argument pos:start="303:42" pos:end="303:43"><expr pos:start="303:42" pos:end="303:43"><name pos:start="303:42" pos:end="303:43">gb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <if_stmt pos:start="305:17" pos:end="311:58"><if pos:start="305:17" pos:end="307:56">if <condition pos:start="305:20" pos:end="305:25">(<expr pos:start="305:21" pos:end="305:24"><operator pos:start="305:21" pos:end="305:21">!</operator><name pos:start="305:22" pos:end="305:24">idx</name></expr>)</condition><block type="pseudo" pos:start="307:21" pos:end="307:56"><block_content pos:start="307:21" pos:end="307:56">
+
+                    <expr_stmt pos:start="307:21" pos:end="307:56"><expr pos:start="307:21" pos:end="307:55"><name pos:start="307:21" pos:end="307:37"><name pos:start="307:21" pos:end="307:25">avctx</name><operator pos:start="307:26" pos:end="307:27">-&gt;</operator><name pos:start="307:28" pos:end="307:37">colorspace</name></name> <operator pos:start="307:39" pos:end="307:39">=</operator> <name pos:start="307:41" pos:end="307:55">AVCOL_SPC_BT709</name></expr>;</expr_stmt></block_content></block></if>
+
+                <if type="elseif" pos:start="309:17" pos:end="311:58">else if <condition pos:start="309:25" pos:end="309:34">(<expr pos:start="309:26" pos:end="309:33"><name pos:start="309:26" pos:end="309:28">idx</name> <operator pos:start="309:30" pos:end="309:31">==</operator> <literal type="number" pos:start="309:33" pos:end="309:33">1</literal></expr>)</condition><block type="pseudo" pos:start="311:21" pos:end="311:58"><block_content pos:start="311:21" pos:end="311:58">
+
+                    <expr_stmt pos:start="311:21" pos:end="311:58"><expr pos:start="311:21" pos:end="311:57"><name pos:start="311:21" pos:end="311:37"><name pos:start="311:21" pos:end="311:25">avctx</name><operator pos:start="311:26" pos:end="311:27">-&gt;</operator><name pos:start="311:28" pos:end="311:37">colorspace</name></name> <operator pos:start="311:39" pos:end="311:39">=</operator> <name pos:start="311:41" pos:end="311:57">AVCOL_SPC_BT470BG</name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <comment type="block" pos:start="315:13" pos:end="315:56">/* [DIRAC_STD] 10.3.9.3 Transfer function */</comment>
+
+            <if_stmt pos:start="317:13" pos:end="319:51"><if pos:start="317:13" pos:end="319:51">if <condition pos:start="317:16" pos:end="317:57">(<expr pos:start="317:17" pos:end="317:56"><call pos:start="317:17" pos:end="317:29"><name pos:start="317:17" pos:end="317:25">get_bits1</name><argument_list pos:start="317:26" pos:end="317:29">(<argument pos:start="317:27" pos:end="317:28"><expr pos:start="317:27" pos:end="317:28"><name pos:start="317:27" pos:end="317:28">gb</name></expr></argument>)</argument_list></call> <operator pos:start="317:31" pos:end="317:32">&amp;&amp;</operator> <operator pos:start="317:34" pos:end="317:34">!</operator><call pos:start="317:35" pos:end="317:56"><name pos:start="317:35" pos:end="317:52">svq3_get_ue_golomb</name><argument_list pos:start="317:53" pos:end="317:56">(<argument pos:start="317:54" pos:end="317:55"><expr pos:start="317:54" pos:end="317:55"><name pos:start="317:54" pos:end="317:55">gb</name></expr></argument>)</argument_list></call></expr>)</condition><block type="pseudo" pos:start="319:17" pos:end="319:51"><block_content pos:start="319:17" pos:end="319:51">
+
+                <expr_stmt pos:start="319:17" pos:end="319:51"><expr pos:start="319:17" pos:end="319:50"><name pos:start="319:17" pos:end="319:32"><name pos:start="319:17" pos:end="319:21">avctx</name><operator pos:start="319:22" pos:end="319:23">-&gt;</operator><name pos:start="319:24" pos:end="319:32">color_trc</name></name> <operator pos:start="319:34" pos:end="319:34">=</operator> <name pos:start="319:36" pos:end="319:50">AVCOL_TRC_BT709</name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if> <else pos:start="323:7" pos:end="333:5">else <block pos:start="323:12" pos:end="333:5">{<block_content pos:start="325:9" pos:end="331:68">
+
+        <expr_stmt pos:start="325:9" pos:end="325:39"><expr pos:start="325:9" pos:end="325:38"><name pos:start="325:9" pos:end="325:11">idx</name> <operator pos:start="325:13" pos:end="325:13">=</operator> <name pos:start="325:15" pos:end="325:38"><name pos:start="325:15" pos:end="325:20">source</name><operator pos:start="325:21" pos:end="325:22">-&gt;</operator><name pos:start="325:23" pos:end="325:38">color_spec_index</name></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="327:9" pos:end="327:74"><expr pos:start="327:9" pos:end="327:73"><name pos:start="327:9" pos:end="327:30"><name pos:start="327:9" pos:end="327:13">avctx</name><operator pos:start="327:14" pos:end="327:15">-&gt;</operator><name pos:start="327:16" pos:end="327:30">color_primaries</name></name> <operator pos:start="327:32" pos:end="327:32">=</operator> <name pos:start="327:34" pos:end="327:57"><name pos:start="327:34" pos:end="327:52">dirac_color_presets</name><index pos:start="327:53" pos:end="327:57">[<expr pos:start="327:54" pos:end="327:56"><name pos:start="327:54" pos:end="327:56">idx</name></expr>]</index></name><operator pos:start="327:58" pos:end="327:58">.</operator><name pos:start="327:59" pos:end="327:73">color_primaries</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="329:9" pos:end="329:69"><expr pos:start="329:9" pos:end="329:68"><name pos:start="329:9" pos:end="329:25"><name pos:start="329:9" pos:end="329:13">avctx</name><operator pos:start="329:14" pos:end="329:15">-&gt;</operator><name pos:start="329:16" pos:end="329:25">colorspace</name></name>      <operator pos:start="329:32" pos:end="329:32">=</operator> <name pos:start="329:34" pos:end="329:57"><name pos:start="329:34" pos:end="329:52">dirac_color_presets</name><index pos:start="329:53" pos:end="329:57">[<expr pos:start="329:54" pos:end="329:56"><name pos:start="329:54" pos:end="329:56">idx</name></expr>]</index></name><operator pos:start="329:58" pos:end="329:58">.</operator><name pos:start="329:59" pos:end="329:68">colorspace</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="331:9" pos:end="331:68"><expr pos:start="331:9" pos:end="331:67"><name pos:start="331:9" pos:end="331:24"><name pos:start="331:9" pos:end="331:13">avctx</name><operator pos:start="331:14" pos:end="331:15">-&gt;</operator><name pos:start="331:16" pos:end="331:24">color_trc</name></name>       <operator pos:start="331:32" pos:end="331:32">=</operator> <name pos:start="331:34" pos:end="331:57"><name pos:start="331:34" pos:end="331:52">dirac_color_presets</name><index pos:start="331:53" pos:end="331:57">[<expr pos:start="331:54" pos:end="331:56"><name pos:start="331:54" pos:end="331:56">idx</name></expr>]</index></name><operator pos:start="331:58" pos:end="331:58">.</operator><name pos:start="331:59" pos:end="331:67">color_trc</name></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <return pos:start="337:5" pos:end="337:13">return <expr pos:start="337:12" pos:end="337:12"><literal type="number" pos:start="337:12" pos:end="337:12">0</literal></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

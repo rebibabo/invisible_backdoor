@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/24462.c" pos:tabs="8"><function pos:start="1:1" pos:end="145:1"><type pos:start="1:1" pos:end="1:14"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:14">ssize_t</name></type> <name pos:start="1:16" pos:end="1:30">handle_aiocb_rw</name><parameter_list pos:start="1:31" pos:end="1:54">(<parameter pos:start="1:32" pos:end="1:53"><decl pos:start="1:32" pos:end="1:53"><type pos:start="1:32" pos:end="1:48"><name pos:start="1:32" pos:end="1:46">RawPosixAIOData</name> <modifier pos:start="1:48" pos:end="1:48">*</modifier></type><name pos:start="1:49" pos:end="1:53">aiocb</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="145:1">{<block_content pos:start="5:5" pos:end="143:18">
+
+    <decl_stmt pos:start="5:5" pos:end="5:19"><decl pos:start="5:5" pos:end="5:18"><type pos:start="5:5" pos:end="5:11"><name pos:start="5:5" pos:end="5:11">ssize_t</name></type> <name pos:start="5:13" pos:end="5:18">nbytes</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:14"><decl pos:start="7:5" pos:end="7:13"><type pos:start="7:5" pos:end="7:10"><name pos:start="7:5" pos:end="7:8">char</name> <modifier pos:start="7:10" pos:end="7:10">*</modifier></type><name pos:start="7:11" pos:end="7:13">buf</name></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="11:5" pos:end="67:5"><if pos:start="11:5" pos:end="67:5">if <condition pos:start="11:8" pos:end="11:49">(<expr pos:start="11:9" pos:end="11:48"><operator pos:start="11:9" pos:end="11:9">!</operator><operator pos:start="11:10" pos:end="11:10">(</operator><name pos:start="11:11" pos:end="11:25"><name pos:start="11:11" pos:end="11:15">aiocb</name><operator pos:start="11:16" pos:end="11:17">-&gt;</operator><name pos:start="11:18" pos:end="11:25">aio_type</name></name> <operator pos:start="11:27" pos:end="11:27">&amp;</operator> <name pos:start="11:29" pos:end="11:47">QEMU_AIO_MISALIGNED</name><operator pos:start="11:48" pos:end="11:48">)</operator></expr>)</condition> <block pos:start="11:51" pos:end="67:5">{<block_content pos:start="21:9" pos:end="53:9">
+
+        <comment type="block" pos:start="13:9" pos:end="19:11">/*
+
+         * If there is just a single buffer, and it is properly aligned
+
+         * we can just use plain pread/pwrite without any problems.
+
+         */</comment>
+
+        <if_stmt pos:start="21:9" pos:end="25:9"><if pos:start="21:9" pos:end="25:9">if <condition pos:start="21:12" pos:end="21:33">(<expr pos:start="21:13" pos:end="21:32"><name pos:start="21:13" pos:end="21:27"><name pos:start="21:13" pos:end="21:17">aiocb</name><operator pos:start="21:18" pos:end="21:19">-&gt;</operator><name pos:start="21:20" pos:end="21:27">aio_niov</name></name> <operator pos:start="21:29" pos:end="21:30">==</operator> <literal type="number" pos:start="21:32" pos:end="21:32">1</literal></expr>)</condition> <block pos:start="21:35" pos:end="25:9">{<block_content pos:start="23:14" pos:end="23:76">
+
+             <return pos:start="23:14" pos:end="23:76">return <expr pos:start="23:21" pos:end="23:75"><call pos:start="23:21" pos:end="23:75"><name pos:start="23:21" pos:end="23:42">handle_aiocb_rw_linear</name><argument_list pos:start="23:43" pos:end="23:75">(<argument pos:start="23:44" pos:end="23:48"><expr pos:start="23:44" pos:end="23:48"><name pos:start="23:44" pos:end="23:48">aiocb</name></expr></argument>, <argument pos:start="23:51" pos:end="23:74"><expr pos:start="23:51" pos:end="23:74"><name pos:start="23:51" pos:end="23:74"><name pos:start="23:51" pos:end="23:55">aiocb</name><operator pos:start="23:56" pos:end="23:57">-&gt;</operator><name pos:start="23:58" pos:end="23:64">aio_iov</name><operator pos:start="23:65" pos:end="23:66">-&gt;</operator><name pos:start="23:67" pos:end="23:74">iov_base</name></name></expr></argument>)</argument_list></call></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <comment type="block" pos:start="27:9" pos:end="37:11">/*
+
+         * We have more than one iovec, and all are properly aligned.
+
+         *
+
+         * Try preadv/pwritev first and fall back to linearizing the
+
+         * buffer if it's not supported.
+
+         */</comment>
+
+        <if_stmt pos:start="39:9" pos:end="53:9"><if pos:start="39:9" pos:end="53:9">if <condition pos:start="39:12" pos:end="39:27">(<expr pos:start="39:13" pos:end="39:26"><name pos:start="39:13" pos:end="39:26">preadv_present</name></expr>)</condition> <block pos:start="39:29" pos:end="53:9">{<block_content pos:start="41:13" pos:end="51:35">
+
+            <expr_stmt pos:start="41:13" pos:end="41:51"><expr pos:start="41:13" pos:end="41:50"><name pos:start="41:13" pos:end="41:18">nbytes</name> <operator pos:start="41:20" pos:end="41:20">=</operator> <call pos:start="41:22" pos:end="41:50"><name pos:start="41:22" pos:end="41:43">handle_aiocb_rw_vector</name><argument_list pos:start="41:44" pos:end="41:50">(<argument pos:start="41:45" pos:end="41:49"><expr pos:start="41:45" pos:end="41:49"><name pos:start="41:45" pos:end="41:49">aiocb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <if_stmt pos:start="43:13" pos:end="49:13"><if pos:start="43:13" pos:end="49:13">if <condition pos:start="43:16" pos:end="45:50">(<expr pos:start="43:17" pos:end="45:49"><name pos:start="43:17" pos:end="43:22">nbytes</name> <operator pos:start="43:24" pos:end="43:25">==</operator> <name pos:start="43:27" pos:end="43:43"><name pos:start="43:27" pos:end="43:31">aiocb</name><operator pos:start="43:32" pos:end="43:33">-&gt;</operator><name pos:start="43:34" pos:end="43:43">aio_nbytes</name></name> <operator pos:start="43:45" pos:end="43:46">||</operator>
+
+                <operator pos:start="45:17" pos:end="45:17">(</operator><name pos:start="45:18" pos:end="45:23">nbytes</name> <operator pos:start="45:25" pos:end="45:25">&lt;</operator> <literal type="number" pos:start="45:27" pos:end="45:27">0</literal> <operator pos:start="45:29" pos:end="45:30">&amp;&amp;</operator> <name pos:start="45:32" pos:end="45:37">nbytes</name> <operator pos:start="45:39" pos:end="45:40">!=</operator> <operator pos:start="45:42" pos:end="45:42">-</operator><name pos:start="45:43" pos:end="45:48">ENOSYS</name><operator pos:start="45:49" pos:end="45:49">)</operator></expr>)</condition> <block pos:start="45:52" pos:end="49:13">{<block_content pos:start="47:17" pos:end="47:30">
+
+                <return pos:start="47:17" pos:end="47:30">return <expr pos:start="47:24" pos:end="47:29"><name pos:start="47:24" pos:end="47:29">nbytes</name></expr>;</return>
+
+            </block_content>}</block></if></if_stmt>
+
+            <expr_stmt pos:start="51:13" pos:end="51:35"><expr pos:start="51:13" pos:end="51:34"><name pos:start="51:13" pos:end="51:26">preadv_present</name> <operator pos:start="51:28" pos:end="51:28">=</operator> <name pos:start="51:30" pos:end="51:34">false</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <comment type="block" pos:start="57:9" pos:end="65:11">/*
+
+         * XXX(hch): short read/write.  no easy way to handle the reminder
+
+         * using these interfaces.  For now retry using plain
+
+         * pread/pwrite?
+
+         */</comment>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="71:5" pos:end="77:7">/*
+
+     * Ok, we have to do it the hard way, copy all segments into
+
+     * a single aligned buffer.
+
+     */</comment>
+
+    <expr_stmt pos:start="79:5" pos:end="79:56"><expr pos:start="79:5" pos:end="79:55"><name pos:start="79:5" pos:end="79:7">buf</name> <operator pos:start="79:9" pos:end="79:9">=</operator> <call pos:start="79:11" pos:end="79:55"><name pos:start="79:11" pos:end="79:25">qemu_blockalign</name><argument_list pos:start="79:26" pos:end="79:55">(<argument pos:start="79:27" pos:end="79:35"><expr pos:start="79:27" pos:end="79:35"><name pos:start="79:27" pos:end="79:35"><name pos:start="79:27" pos:end="79:31">aiocb</name><operator pos:start="79:32" pos:end="79:33">-&gt;</operator><name pos:start="79:34" pos:end="79:35">bs</name></name></expr></argument>, <argument pos:start="79:38" pos:end="79:54"><expr pos:start="79:38" pos:end="79:54"><name pos:start="79:38" pos:end="79:54"><name pos:start="79:38" pos:end="79:42">aiocb</name><operator pos:start="79:43" pos:end="79:44">-&gt;</operator><name pos:start="79:45" pos:end="79:54">aio_nbytes</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="81:5" pos:end="99:5"><if pos:start="81:5" pos:end="99:5">if <condition pos:start="81:8" pos:end="81:41">(<expr pos:start="81:9" pos:end="81:40"><name pos:start="81:9" pos:end="81:23"><name pos:start="81:9" pos:end="81:13">aiocb</name><operator pos:start="81:14" pos:end="81:15">-&gt;</operator><name pos:start="81:16" pos:end="81:23">aio_type</name></name> <operator pos:start="81:25" pos:end="81:25">&amp;</operator> <name pos:start="81:27" pos:end="81:40">QEMU_AIO_WRITE</name></expr>)</condition> <block pos:start="81:43" pos:end="99:5">{<block_content pos:start="83:9" pos:end="97:45">
+
+        <decl_stmt pos:start="83:9" pos:end="83:22"><decl pos:start="83:9" pos:end="83:21"><type pos:start="83:9" pos:end="83:14"><name pos:start="83:9" pos:end="83:12">char</name> <modifier pos:start="83:14" pos:end="83:14">*</modifier></type><name pos:start="83:15" pos:end="83:15">p</name> <init pos:start="83:17" pos:end="83:21">= <expr pos:start="83:19" pos:end="83:21"><name pos:start="83:19" pos:end="83:21">buf</name></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="85:9" pos:end="85:14"><decl pos:start="85:9" pos:end="85:13"><type pos:start="85:9" pos:end="85:11"><name pos:start="85:9" pos:end="85:11">int</name></type> <name pos:start="85:13" pos:end="85:13">i</name></decl>;</decl_stmt>
+
+
+
+        <for pos:start="89:9" pos:end="95:9">for <control pos:start="89:13" pos:end="89:45">(<init pos:start="89:14" pos:end="89:19"><expr pos:start="89:14" pos:end="89:18"><name pos:start="89:14" pos:end="89:14">i</name> <operator pos:start="89:16" pos:end="89:16">=</operator> <literal type="number" pos:start="89:18" pos:end="89:18">0</literal></expr>;</init> <condition pos:start="89:21" pos:end="89:40"><expr pos:start="89:21" pos:end="89:39"><name pos:start="89:21" pos:end="89:21">i</name> <operator pos:start="89:23" pos:end="89:23">&lt;</operator> <name pos:start="89:25" pos:end="89:39"><name pos:start="89:25" pos:end="89:29">aiocb</name><operator pos:start="89:30" pos:end="89:31">-&gt;</operator><name pos:start="89:32" pos:end="89:39">aio_niov</name></name></expr>;</condition> <incr pos:start="89:42" pos:end="89:44"><expr pos:start="89:42" pos:end="89:44"><operator pos:start="89:42" pos:end="89:43">++</operator><name pos:start="89:44" pos:end="89:44">i</name></expr></incr>)</control> <block pos:start="89:47" pos:end="95:9">{<block_content pos:start="91:13" pos:end="93:43">
+
+            <expr_stmt pos:start="91:13" pos:end="91:77"><expr pos:start="91:13" pos:end="91:76"><call pos:start="91:13" pos:end="91:76"><name pos:start="91:13" pos:end="91:18">memcpy</name><argument_list pos:start="91:19" pos:end="91:76">(<argument pos:start="91:20" pos:end="91:20"><expr pos:start="91:20" pos:end="91:20"><name pos:start="91:20" pos:end="91:20">p</name></expr></argument>, <argument pos:start="91:23" pos:end="91:48"><expr pos:start="91:23" pos:end="91:48"><name pos:start="91:23" pos:end="91:39"><name pos:start="91:23" pos:end="91:27">aiocb</name><operator pos:start="91:28" pos:end="91:29">-&gt;</operator><name pos:start="91:30" pos:end="91:36">aio_iov</name><index pos:start="91:37" pos:end="91:39">[<expr pos:start="91:38" pos:end="91:38"><name pos:start="91:38" pos:end="91:38">i</name></expr>]</index></name><operator pos:start="91:40" pos:end="91:40">.</operator><name pos:start="91:41" pos:end="91:48">iov_base</name></expr></argument>, <argument pos:start="91:51" pos:end="91:75"><expr pos:start="91:51" pos:end="91:75"><name pos:start="91:51" pos:end="91:67"><name pos:start="91:51" pos:end="91:55">aiocb</name><operator pos:start="91:56" pos:end="91:57">-&gt;</operator><name pos:start="91:58" pos:end="91:64">aio_iov</name><index pos:start="91:65" pos:end="91:67">[<expr pos:start="91:66" pos:end="91:66"><name pos:start="91:66" pos:end="91:66">i</name></expr>]</index></name><operator pos:start="91:68" pos:end="91:68">.</operator><name pos:start="91:69" pos:end="91:75">iov_len</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="93:13" pos:end="93:43"><expr pos:start="93:13" pos:end="93:42"><name pos:start="93:13" pos:end="93:13">p</name> <operator pos:start="93:15" pos:end="93:16">+=</operator> <name pos:start="93:18" pos:end="93:34"><name pos:start="93:18" pos:end="93:22">aiocb</name><operator pos:start="93:23" pos:end="93:24">-&gt;</operator><name pos:start="93:25" pos:end="93:31">aio_iov</name><index pos:start="93:32" pos:end="93:34">[<expr pos:start="93:33" pos:end="93:33"><name pos:start="93:33" pos:end="93:33">i</name></expr>]</index></name><operator pos:start="93:35" pos:end="93:35">.</operator><name pos:start="93:36" pos:end="93:42">iov_len</name></expr>;</expr_stmt>
+
+        </block_content>}</block></for>
+
+        <expr_stmt pos:start="97:9" pos:end="97:45"><expr pos:start="97:9" pos:end="97:44"><call pos:start="97:9" pos:end="97:44"><name pos:start="97:9" pos:end="97:14">assert</name><argument_list pos:start="97:15" pos:end="97:44">(<argument pos:start="97:16" pos:end="97:43"><expr pos:start="97:16" pos:end="97:43"><name pos:start="97:16" pos:end="97:16">p</name> <operator pos:start="97:18" pos:end="97:18">-</operator> <name pos:start="97:20" pos:end="97:22">buf</name> <operator pos:start="97:24" pos:end="97:25">==</operator> <name pos:start="97:27" pos:end="97:43"><name pos:start="97:27" pos:end="97:31">aiocb</name><operator pos:start="97:32" pos:end="97:33">-&gt;</operator><name pos:start="97:34" pos:end="97:43">aio_nbytes</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="103:5" pos:end="103:48"><expr pos:start="103:5" pos:end="103:47"><name pos:start="103:5" pos:end="103:10">nbytes</name> <operator pos:start="103:12" pos:end="103:12">=</operator> <call pos:start="103:14" pos:end="103:47"><name pos:start="103:14" pos:end="103:35">handle_aiocb_rw_linear</name><argument_list pos:start="103:36" pos:end="103:47">(<argument pos:start="103:37" pos:end="103:41"><expr pos:start="103:37" pos:end="103:41"><name pos:start="103:37" pos:end="103:41">aiocb</name></expr></argument>, <argument pos:start="103:44" pos:end="103:46"><expr pos:start="103:44" pos:end="103:46"><name pos:start="103:44" pos:end="103:46">buf</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="105:5" pos:end="137:5"><if pos:start="105:5" pos:end="137:5">if <condition pos:start="105:8" pos:end="105:44">(<expr pos:start="105:9" pos:end="105:43"><operator pos:start="105:9" pos:end="105:9">!</operator><operator pos:start="105:10" pos:end="105:10">(</operator><name pos:start="105:11" pos:end="105:25"><name pos:start="105:11" pos:end="105:15">aiocb</name><operator pos:start="105:16" pos:end="105:17">-&gt;</operator><name pos:start="105:18" pos:end="105:25">aio_type</name></name> <operator pos:start="105:27" pos:end="105:27">&amp;</operator> <name pos:start="105:29" pos:end="105:42">QEMU_AIO_WRITE</name><operator pos:start="105:43" pos:end="105:43">)</operator></expr>)</condition> <block pos:start="105:46" pos:end="137:5">{<block_content pos:start="107:9" pos:end="135:27">
+
+        <decl_stmt pos:start="107:9" pos:end="107:22"><decl pos:start="107:9" pos:end="107:21"><type pos:start="107:9" pos:end="107:14"><name pos:start="107:9" pos:end="107:12">char</name> <modifier pos:start="107:14" pos:end="107:14">*</modifier></type><name pos:start="107:15" pos:end="107:15">p</name> <init pos:start="107:17" pos:end="107:21">= <expr pos:start="107:19" pos:end="107:21"><name pos:start="107:19" pos:end="107:21">buf</name></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="109:9" pos:end="109:47"><decl pos:start="109:9" pos:end="109:40"><type pos:start="109:9" pos:end="109:14"><name pos:start="109:9" pos:end="109:14">size_t</name></type> <name pos:start="109:16" pos:end="109:20">count</name> <init pos:start="109:22" pos:end="109:40">= <expr pos:start="109:24" pos:end="109:40"><name pos:start="109:24" pos:end="109:40"><name pos:start="109:24" pos:end="109:28">aiocb</name><operator pos:start="109:29" pos:end="109:30">-&gt;</operator><name pos:start="109:31" pos:end="109:40">aio_nbytes</name></name></expr></init></decl>, <decl pos:start="109:43" pos:end="109:46"><type ref="prev" pos:start="109:9" pos:end="109:14"/><name pos:start="109:43" pos:end="109:46">copy</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="111:9" pos:end="111:14"><decl pos:start="111:9" pos:end="111:13"><type pos:start="111:9" pos:end="111:11"><name pos:start="111:9" pos:end="111:11">int</name></type> <name pos:start="111:13" pos:end="111:13">i</name></decl>;</decl_stmt>
+
+
+
+        <for pos:start="115:9" pos:end="133:9">for <control pos:start="115:13" pos:end="115:54">(<init pos:start="115:14" pos:end="115:19"><expr pos:start="115:14" pos:end="115:18"><name pos:start="115:14" pos:end="115:14">i</name> <operator pos:start="115:16" pos:end="115:16">=</operator> <literal type="number" pos:start="115:18" pos:end="115:18">0</literal></expr>;</init> <condition pos:start="115:21" pos:end="115:49"><expr pos:start="115:21" pos:end="115:48"><name pos:start="115:21" pos:end="115:21">i</name> <operator pos:start="115:23" pos:end="115:23">&lt;</operator> <name pos:start="115:25" pos:end="115:39"><name pos:start="115:25" pos:end="115:29">aiocb</name><operator pos:start="115:30" pos:end="115:31">-&gt;</operator><name pos:start="115:32" pos:end="115:39">aio_niov</name></name> <operator pos:start="115:41" pos:end="115:42">&amp;&amp;</operator> <name pos:start="115:44" pos:end="115:48">count</name></expr>;</condition> <incr pos:start="115:51" pos:end="115:53"><expr pos:start="115:51" pos:end="115:53"><operator pos:start="115:51" pos:end="115:52">++</operator><name pos:start="115:53" pos:end="115:53">i</name></expr></incr>)</control> <block pos:start="115:56" pos:end="133:9">{<block_content pos:start="117:13" pos:end="131:26">
+
+            <expr_stmt pos:start="117:13" pos:end="117:25"><expr pos:start="117:13" pos:end="117:24"><name pos:start="117:13" pos:end="117:16">copy</name> <operator pos:start="117:18" pos:end="117:18">=</operator> <name pos:start="117:20" pos:end="117:24">count</name></expr>;</expr_stmt>
+
+            <if_stmt pos:start="119:13" pos:end="123:13"><if pos:start="119:13" pos:end="123:13">if <condition pos:start="119:16" pos:end="119:49">(<expr pos:start="119:17" pos:end="119:48"><name pos:start="119:17" pos:end="119:20">copy</name> <operator pos:start="119:22" pos:end="119:22">&gt;</operator> <name pos:start="119:24" pos:end="119:40"><name pos:start="119:24" pos:end="119:28">aiocb</name><operator pos:start="119:29" pos:end="119:30">-&gt;</operator><name pos:start="119:31" pos:end="119:37">aio_iov</name><index pos:start="119:38" pos:end="119:40">[<expr pos:start="119:39" pos:end="119:39"><name pos:start="119:39" pos:end="119:39">i</name></expr>]</index></name><operator pos:start="119:41" pos:end="119:41">.</operator><name pos:start="119:42" pos:end="119:48">iov_len</name></expr>)</condition> <block pos:start="119:51" pos:end="123:13">{<block_content pos:start="121:17" pos:end="121:49">
+
+                <expr_stmt pos:start="121:17" pos:end="121:49"><expr pos:start="121:17" pos:end="121:48"><name pos:start="121:17" pos:end="121:20">copy</name> <operator pos:start="121:22" pos:end="121:22">=</operator> <name pos:start="121:24" pos:end="121:40"><name pos:start="121:24" pos:end="121:28">aiocb</name><operator pos:start="121:29" pos:end="121:30">-&gt;</operator><name pos:start="121:31" pos:end="121:37">aio_iov</name><index pos:start="121:38" pos:end="121:40">[<expr pos:start="121:39" pos:end="121:39"><name pos:start="121:39" pos:end="121:39">i</name></expr>]</index></name><operator pos:start="121:41" pos:end="121:41">.</operator><name pos:start="121:42" pos:end="121:48">iov_len</name></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <expr_stmt pos:start="125:13" pos:end="125:56"><expr pos:start="125:13" pos:end="125:55"><call pos:start="125:13" pos:end="125:55"><name pos:start="125:13" pos:end="125:18">memcpy</name><argument_list pos:start="125:19" pos:end="125:55">(<argument pos:start="125:20" pos:end="125:45"><expr pos:start="125:20" pos:end="125:45"><name pos:start="125:20" pos:end="125:36"><name pos:start="125:20" pos:end="125:24">aiocb</name><operator pos:start="125:25" pos:end="125:26">-&gt;</operator><name pos:start="125:27" pos:end="125:33">aio_iov</name><index pos:start="125:34" pos:end="125:36">[<expr pos:start="125:35" pos:end="125:35"><name pos:start="125:35" pos:end="125:35">i</name></expr>]</index></name><operator pos:start="125:37" pos:end="125:37">.</operator><name pos:start="125:38" pos:end="125:45">iov_base</name></expr></argument>, <argument pos:start="125:48" pos:end="125:48"><expr pos:start="125:48" pos:end="125:48"><name pos:start="125:48" pos:end="125:48">p</name></expr></argument>, <argument pos:start="125:51" pos:end="125:54"><expr pos:start="125:51" pos:end="125:54"><name pos:start="125:51" pos:end="125:54">copy</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="127:13" pos:end="127:34"><expr pos:start="127:13" pos:end="127:33"><call pos:start="127:13" pos:end="127:33"><name pos:start="127:13" pos:end="127:18">assert</name><argument_list pos:start="127:19" pos:end="127:33">(<argument pos:start="127:20" pos:end="127:32"><expr pos:start="127:20" pos:end="127:32"><name pos:start="127:20" pos:end="127:24">count</name> <operator pos:start="127:26" pos:end="127:27">&gt;=</operator> <name pos:start="127:29" pos:end="127:32">copy</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="129:13" pos:end="129:26"><expr pos:start="129:13" pos:end="129:25"><name pos:start="129:13" pos:end="129:13">p</name>     <operator pos:start="129:19" pos:end="129:20">+=</operator> <name pos:start="129:22" pos:end="129:25">copy</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="131:13" pos:end="131:26"><expr pos:start="131:13" pos:end="131:25"><name pos:start="131:13" pos:end="131:17">count</name> <operator pos:start="131:19" pos:end="131:20">-=</operator> <name pos:start="131:22" pos:end="131:25">copy</name></expr>;</expr_stmt>
+
+        </block_content>}</block></for>
+
+        <expr_stmt pos:start="135:9" pos:end="135:27"><expr pos:start="135:9" pos:end="135:26"><call pos:start="135:9" pos:end="135:26"><name pos:start="135:9" pos:end="135:14">assert</name><argument_list pos:start="135:15" pos:end="135:26">(<argument pos:start="135:16" pos:end="135:25"><expr pos:start="135:16" pos:end="135:25"><name pos:start="135:16" pos:end="135:20">count</name> <operator pos:start="135:22" pos:end="135:23">==</operator> <literal type="number" pos:start="135:25" pos:end="135:25">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <expr_stmt pos:start="139:5" pos:end="139:20"><expr pos:start="139:5" pos:end="139:19"><call pos:start="139:5" pos:end="139:19"><name pos:start="139:5" pos:end="139:14">qemu_vfree</name><argument_list pos:start="139:15" pos:end="139:19">(<argument pos:start="139:16" pos:end="139:18"><expr pos:start="139:16" pos:end="139:18"><name pos:start="139:16" pos:end="139:18">buf</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <return pos:start="143:5" pos:end="143:18">return <expr pos:start="143:12" pos:end="143:17"><name pos:start="143:12" pos:end="143:17">nbytes</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

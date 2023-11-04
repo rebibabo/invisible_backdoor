@@ -1,0 +1,621 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/15853.c" pos:tabs="8"><function pos:start="1:1" pos:end="619:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:32">process_ipmovie_chunk</name><parameter_list pos:start="1:33" pos:end="3:18">(<parameter pos:start="1:34" pos:end="1:48"><decl pos:start="1:34" pos:end="1:48"><type pos:start="1:34" pos:end="1:48"><name pos:start="1:34" pos:end="1:45">IPMVEContext</name> <modifier pos:start="1:47" pos:end="1:47">*</modifier></type><name pos:start="1:48" pos:end="1:48">s</name></decl></parameter>, <parameter pos:start="1:51" pos:end="1:65"><decl pos:start="1:51" pos:end="1:65"><type pos:start="1:51" pos:end="1:65"><name pos:start="1:51" pos:end="1:61">AVIOContext</name> <modifier pos:start="1:63" pos:end="1:63">*</modifier></type><name pos:start="1:64" pos:end="1:65">pb</name></decl></parameter>,
+
+    <parameter pos:start="3:5" pos:end="3:17"><decl pos:start="3:5" pos:end="3:17"><type pos:start="3:5" pos:end="3:17"><name pos:start="3:5" pos:end="3:12">AVPacket</name> <modifier pos:start="3:14" pos:end="3:14">*</modifier></type><name pos:start="3:15" pos:end="3:17">pkt</name></decl></parameter>)</parameter_list>
+
+<block pos:start="5:1" pos:end="619:1">{<block_content pos:start="7:5" pos:end="617:22">
+
+    <decl_stmt pos:start="7:5" pos:end="7:54"><decl pos:start="7:5" pos:end="7:53"><type pos:start="7:5" pos:end="7:17"><name pos:start="7:5" pos:end="7:12">unsigned</name> <name pos:start="7:14" pos:end="7:17">char</name></type> <name pos:start="7:19" pos:end="7:53"><name pos:start="7:19" pos:end="7:32">chunk_preamble</name><index pos:start="7:33" pos:end="7:53">[<expr pos:start="7:34" pos:end="7:52"><name pos:start="7:34" pos:end="7:52">CHUNK_PREAMBLE_SIZE</name></expr>]</index></name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:19"><decl pos:start="9:5" pos:end="9:18"><type pos:start="9:5" pos:end="9:7"><name pos:start="9:5" pos:end="9:7">int</name></type> <name pos:start="9:9" pos:end="9:18">chunk_type</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:19"><decl pos:start="11:5" pos:end="11:18"><type pos:start="11:5" pos:end="11:7"><name pos:start="11:5" pos:end="11:7">int</name></type> <name pos:start="11:9" pos:end="11:18">chunk_size</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:56"><decl pos:start="13:5" pos:end="13:55"><type pos:start="13:5" pos:end="13:17"><name pos:start="13:5" pos:end="13:12">unsigned</name> <name pos:start="13:14" pos:end="13:17">char</name></type> <name pos:start="13:19" pos:end="13:55"><name pos:start="13:19" pos:end="13:33">opcode_preamble</name><index pos:start="13:34" pos:end="13:55">[<expr pos:start="13:35" pos:end="13:54"><name pos:start="13:35" pos:end="13:54">OPCODE_PREAMBLE_SIZE</name></expr>]</index></name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:30"><decl pos:start="15:5" pos:end="15:29"><type pos:start="15:5" pos:end="15:17"><name pos:start="15:5" pos:end="15:12">unsigned</name> <name pos:start="15:14" pos:end="15:17">char</name></type> <name pos:start="15:19" pos:end="15:29">opcode_type</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="17:5" pos:end="17:33"><decl pos:start="17:5" pos:end="17:32"><type pos:start="17:5" pos:end="17:17"><name pos:start="17:5" pos:end="17:12">unsigned</name> <name pos:start="17:14" pos:end="17:17">char</name></type> <name pos:start="17:19" pos:end="17:32">opcode_version</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:20"><decl pos:start="19:5" pos:end="19:19"><type pos:start="19:5" pos:end="19:7"><name pos:start="19:5" pos:end="19:7">int</name></type> <name pos:start="19:9" pos:end="19:19">opcode_size</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="21:5" pos:end="21:32"><decl pos:start="21:5" pos:end="21:31"><type pos:start="21:5" pos:end="21:17"><name pos:start="21:5" pos:end="21:12">unsigned</name> <name pos:start="21:14" pos:end="21:17">char</name></type> <name pos:start="21:19" pos:end="21:31"><name pos:start="21:19" pos:end="21:25">scratch</name><index pos:start="21:26" pos:end="21:31">[<expr pos:start="21:27" pos:end="21:30"><literal type="number" pos:start="21:27" pos:end="21:30">1024</literal></expr>]</index></name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="23:5" pos:end="23:13"><decl pos:start="23:5" pos:end="23:9"><type pos:start="23:5" pos:end="23:7"><name pos:start="23:5" pos:end="23:7">int</name></type> <name pos:start="23:9" pos:end="23:9">i</name></decl>, <decl pos:start="23:12" pos:end="23:12"><type ref="prev" pos:start="23:5" pos:end="23:7"/><name pos:start="23:12" pos:end="23:12">j</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="25:5" pos:end="25:32"><decl pos:start="25:5" pos:end="25:19"><type pos:start="25:5" pos:end="25:7"><name pos:start="25:5" pos:end="25:7">int</name></type> <name pos:start="25:9" pos:end="25:19">first_color</name></decl>, <decl pos:start="25:22" pos:end="25:31"><type ref="prev" pos:start="25:5" pos:end="25:7"/><name pos:start="25:22" pos:end="25:31">last_color</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="27:5" pos:end="27:20"><decl pos:start="27:5" pos:end="27:19"><type pos:start="27:5" pos:end="27:7"><name pos:start="27:5" pos:end="27:7">int</name></type> <name pos:start="27:9" pos:end="27:19">audio_flags</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="29:5" pos:end="29:26"><decl pos:start="29:5" pos:end="29:19"><type pos:start="29:5" pos:end="29:17"><name pos:start="29:5" pos:end="29:12">unsigned</name> <name pos:start="29:14" pos:end="29:17">char</name></type> <name pos:start="29:19" pos:end="29:19">r</name></decl>, <decl pos:start="29:22" pos:end="29:22"><type ref="prev" pos:start="29:5" pos:end="29:17"/><name pos:start="29:22" pos:end="29:22">g</name></decl>, <decl pos:start="29:25" pos:end="29:25"><type ref="prev" pos:start="29:5" pos:end="29:17"/><name pos:start="29:25" pos:end="29:25">b</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="31:5" pos:end="31:31"><decl pos:start="31:5" pos:end="31:22"><type pos:start="31:5" pos:end="31:16"><name pos:start="31:5" pos:end="31:12">unsigned</name> <name pos:start="31:14" pos:end="31:16">int</name></type> <name pos:start="31:18" pos:end="31:22">width</name></decl>, <decl pos:start="31:25" pos:end="31:30"><type ref="prev" pos:start="31:5" pos:end="31:16"/><name pos:start="31:25" pos:end="31:30">height</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="35:5" pos:end="35:46">/* see if there are any pending packets */</comment>
+
+    <expr_stmt pos:start="37:5" pos:end="37:49"><expr pos:start="37:5" pos:end="37:48"><name pos:start="37:5" pos:end="37:14">chunk_type</name> <operator pos:start="37:16" pos:end="37:16">=</operator> <call pos:start="37:18" pos:end="37:48"><name pos:start="37:18" pos:end="37:36">load_ipmovie_packet</name><argument_list pos:start="37:37" pos:end="37:48">(<argument pos:start="37:38" pos:end="37:38"><expr pos:start="37:38" pos:end="37:38"><name pos:start="37:38" pos:end="37:38">s</name></expr></argument>, <argument pos:start="37:41" pos:end="37:42"><expr pos:start="37:41" pos:end="37:42"><name pos:start="37:41" pos:end="37:42">pb</name></expr></argument>, <argument pos:start="37:45" pos:end="37:47"><expr pos:start="37:45" pos:end="37:47"><name pos:start="37:45" pos:end="37:47">pkt</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="39:5" pos:end="41:26"><if pos:start="39:5" pos:end="41:26">if <condition pos:start="39:8" pos:end="39:33">(<expr pos:start="39:9" pos:end="39:32"><name pos:start="39:9" pos:end="39:18">chunk_type</name> <operator pos:start="39:20" pos:end="39:21">!=</operator> <name pos:start="39:23" pos:end="39:32">CHUNK_DONE</name></expr>)</condition><block type="pseudo" pos:start="41:9" pos:end="41:26"><block_content pos:start="41:9" pos:end="41:26">
+
+        <return pos:start="41:9" pos:end="41:26">return <expr pos:start="41:16" pos:end="41:25"><name pos:start="41:16" pos:end="41:25">chunk_type</name></expr>;</return></block_content></block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="45:5" pos:end="45:71">/* read the next chunk, wherever the file happens to be pointing */</comment>
+
+    <if_stmt pos:start="47:5" pos:end="49:25"><if pos:start="47:5" pos:end="49:25">if <condition pos:start="47:8" pos:end="47:21">(<expr pos:start="47:9" pos:end="47:20"><call pos:start="47:9" pos:end="47:20"><name pos:start="47:9" pos:end="47:16">url_feof</name><argument_list pos:start="47:17" pos:end="47:20">(<argument pos:start="47:18" pos:end="47:19"><expr pos:start="47:18" pos:end="47:19"><name pos:start="47:18" pos:end="47:19">pb</name></expr></argument>)</argument_list></call></expr>)</condition><block type="pseudo" pos:start="49:9" pos:end="49:25"><block_content pos:start="49:9" pos:end="49:25">
+
+        <return pos:start="49:9" pos:end="49:25">return <expr pos:start="49:16" pos:end="49:24"><name pos:start="49:16" pos:end="49:24">CHUNK_EOF</name></expr>;</return></block_content></block></if></if_stmt>
+
+    <if_stmt pos:start="51:5" pos:end="55:25"><if pos:start="51:5" pos:end="55:25">if <condition pos:start="51:8" pos:end="53:28">(<expr pos:start="51:9" pos:end="53:27"><call pos:start="51:9" pos:end="51:58"><name pos:start="51:9" pos:end="51:17">avio_read</name><argument_list pos:start="51:18" pos:end="51:58">(<argument pos:start="51:19" pos:end="51:20"><expr pos:start="51:19" pos:end="51:20"><name pos:start="51:19" pos:end="51:20">pb</name></expr></argument>, <argument pos:start="51:23" pos:end="51:36"><expr pos:start="51:23" pos:end="51:36"><name pos:start="51:23" pos:end="51:36">chunk_preamble</name></expr></argument>, <argument pos:start="51:39" pos:end="51:57"><expr pos:start="51:39" pos:end="51:57"><name pos:start="51:39" pos:end="51:57">CHUNK_PREAMBLE_SIZE</name></expr></argument>)</argument_list></call> <operator pos:start="51:60" pos:end="51:61">!=</operator>
+
+        <name pos:start="53:9" pos:end="53:27">CHUNK_PREAMBLE_SIZE</name></expr>)</condition><block type="pseudo" pos:start="55:9" pos:end="55:25"><block_content pos:start="55:9" pos:end="55:25">
+
+        <return pos:start="55:9" pos:end="55:25">return <expr pos:start="55:16" pos:end="55:24"><name pos:start="55:16" pos:end="55:24">CHUNK_BAD</name></expr>;</return></block_content></block></if></if_stmt>
+
+    <expr_stmt pos:start="57:5" pos:end="57:45"><expr pos:start="57:5" pos:end="57:44"><name pos:start="57:5" pos:end="57:14">chunk_size</name> <operator pos:start="57:16" pos:end="57:16">=</operator> <call pos:start="57:18" pos:end="57:44"><name pos:start="57:18" pos:end="57:24">AV_RL16</name><argument_list pos:start="57:25" pos:end="57:44">(<argument pos:start="57:26" pos:end="57:43"><expr pos:start="57:26" pos:end="57:43"><operator pos:start="57:26" pos:end="57:26">&amp;</operator><name pos:start="57:27" pos:end="57:43"><name pos:start="57:27" pos:end="57:40">chunk_preamble</name><index pos:start="57:41" pos:end="57:43">[<expr pos:start="57:42" pos:end="57:42"><literal type="number" pos:start="57:42" pos:end="57:42">0</literal></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="59:5" pos:end="59:45"><expr pos:start="59:5" pos:end="59:44"><name pos:start="59:5" pos:end="59:14">chunk_type</name> <operator pos:start="59:16" pos:end="59:16">=</operator> <call pos:start="59:18" pos:end="59:44"><name pos:start="59:18" pos:end="59:24">AV_RL16</name><argument_list pos:start="59:25" pos:end="59:44">(<argument pos:start="59:26" pos:end="59:43"><expr pos:start="59:26" pos:end="59:43"><operator pos:start="59:26" pos:end="59:26">&amp;</operator><name pos:start="59:27" pos:end="59:43"><name pos:start="59:27" pos:end="59:40">chunk_preamble</name><index pos:start="59:41" pos:end="59:43">[<expr pos:start="59:42" pos:end="59:42"><literal type="number" pos:start="59:42" pos:end="59:42">2</literal></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="63:5" pos:end="63:79"><expr pos:start="63:5" pos:end="63:78"><call pos:start="63:5" pos:end="63:78"><name pos:start="63:5" pos:end="63:11">av_dlog</name><argument_list pos:start="63:12" pos:end="63:78">(<argument pos:start="63:13" pos:end="63:16"><expr pos:start="63:13" pos:end="63:16"><name pos:start="63:13" pos:end="63:16">NULL</name></expr></argument>, <argument pos:start="63:19" pos:end="63:53"><expr pos:start="63:19" pos:end="63:53"><literal type="string" pos:start="63:19" pos:end="63:53">"chunk type 0x%04X, 0x%04X bytes: "</literal></expr></argument>, <argument pos:start="63:56" pos:end="63:65"><expr pos:start="63:56" pos:end="63:65"><name pos:start="63:56" pos:end="63:65">chunk_type</name></expr></argument>, <argument pos:start="63:68" pos:end="63:77"><expr pos:start="63:68" pos:end="63:77"><name pos:start="63:68" pos:end="63:77">chunk_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <switch pos:start="67:5" pos:end="129:5">switch <condition pos:start="67:12" pos:end="67:23">(<expr pos:start="67:13" pos:end="67:22"><name pos:start="67:13" pos:end="67:22">chunk_type</name></expr>)</condition> <block pos:start="67:25" pos:end="129:5">{<block_content pos:start="71:5" pos:end="125:14">
+
+
+
+    <case pos:start="71:5" pos:end="71:26">case <expr pos:start="71:10" pos:end="71:25"><name pos:start="71:10" pos:end="71:25">CHUNK_INIT_AUDIO</name></expr>:</case>
+
+        <expr_stmt pos:start="73:9" pos:end="73:44"><expr pos:start="73:9" pos:end="73:43"><call pos:start="73:9" pos:end="73:43"><name pos:start="73:9" pos:end="73:15">av_dlog</name><argument_list pos:start="73:16" pos:end="73:43">(<argument pos:start="73:17" pos:end="73:20"><expr pos:start="73:17" pos:end="73:20"><name pos:start="73:17" pos:end="73:20">NULL</name></expr></argument>, <argument pos:start="73:23" pos:end="73:42"><expr pos:start="73:23" pos:end="73:42"><literal type="string" pos:start="73:23" pos:end="73:42">"initialize audio\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <break pos:start="75:9" pos:end="75:14">break;</break>
+
+
+
+    <case pos:start="79:5" pos:end="79:26">case <expr pos:start="79:10" pos:end="79:25"><name pos:start="79:10" pos:end="79:25">CHUNK_AUDIO_ONLY</name></expr>:</case>
+
+        <expr_stmt pos:start="81:9" pos:end="81:38"><expr pos:start="81:9" pos:end="81:37"><call pos:start="81:9" pos:end="81:37"><name pos:start="81:9" pos:end="81:15">av_dlog</name><argument_list pos:start="81:16" pos:end="81:37">(<argument pos:start="81:17" pos:end="81:20"><expr pos:start="81:17" pos:end="81:20"><name pos:start="81:17" pos:end="81:20">NULL</name></expr></argument>, <argument pos:start="81:23" pos:end="81:36"><expr pos:start="81:23" pos:end="81:36"><literal type="string" pos:start="81:23" pos:end="81:36">"audio only\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <break pos:start="83:9" pos:end="83:14">break;</break>
+
+
+
+    <case pos:start="87:5" pos:end="87:26">case <expr pos:start="87:10" pos:end="87:25"><name pos:start="87:10" pos:end="87:25">CHUNK_INIT_VIDEO</name></expr>:</case>
+
+        <expr_stmt pos:start="89:9" pos:end="89:44"><expr pos:start="89:9" pos:end="89:43"><call pos:start="89:9" pos:end="89:43"><name pos:start="89:9" pos:end="89:15">av_dlog</name><argument_list pos:start="89:16" pos:end="89:43">(<argument pos:start="89:17" pos:end="89:20"><expr pos:start="89:17" pos:end="89:20"><name pos:start="89:17" pos:end="89:20">NULL</name></expr></argument>, <argument pos:start="89:23" pos:end="89:42"><expr pos:start="89:23" pos:end="89:42"><literal type="string" pos:start="89:23" pos:end="89:42">"initialize video\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <break pos:start="91:9" pos:end="91:14">break;</break>
+
+
+
+    <case pos:start="95:5" pos:end="95:21">case <expr pos:start="95:10" pos:end="95:20"><name pos:start="95:10" pos:end="95:20">CHUNK_VIDEO</name></expr>:</case>
+
+        <expr_stmt pos:start="97:9" pos:end="97:45"><expr pos:start="97:9" pos:end="97:44"><call pos:start="97:9" pos:end="97:44"><name pos:start="97:9" pos:end="97:15">av_dlog</name><argument_list pos:start="97:16" pos:end="97:44">(<argument pos:start="97:17" pos:end="97:20"><expr pos:start="97:17" pos:end="97:20"><name pos:start="97:17" pos:end="97:20">NULL</name></expr></argument>, <argument pos:start="97:23" pos:end="97:43"><expr pos:start="97:23" pos:end="97:43"><literal type="string" pos:start="97:23" pos:end="97:43">"video (and audio)\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <break pos:start="99:9" pos:end="99:14">break;</break>
+
+
+
+    <case pos:start="103:5" pos:end="103:24">case <expr pos:start="103:10" pos:end="103:23"><name pos:start="103:10" pos:end="103:23">CHUNK_SHUTDOWN</name></expr>:</case>
+
+        <expr_stmt pos:start="105:9" pos:end="105:36"><expr pos:start="105:9" pos:end="105:35"><call pos:start="105:9" pos:end="105:35"><name pos:start="105:9" pos:end="105:15">av_dlog</name><argument_list pos:start="105:16" pos:end="105:35">(<argument pos:start="105:17" pos:end="105:20"><expr pos:start="105:17" pos:end="105:20"><name pos:start="105:17" pos:end="105:20">NULL</name></expr></argument>, <argument pos:start="105:23" pos:end="105:34"><expr pos:start="105:23" pos:end="105:34"><literal type="string" pos:start="105:23" pos:end="105:34">"shutdown\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <break pos:start="107:9" pos:end="107:14">break;</break>
+
+
+
+    <case pos:start="111:5" pos:end="111:19">case <expr pos:start="111:10" pos:end="111:18"><name pos:start="111:10" pos:end="111:18">CHUNK_END</name></expr>:</case>
+
+        <expr_stmt pos:start="113:9" pos:end="113:31"><expr pos:start="113:9" pos:end="113:30"><call pos:start="113:9" pos:end="113:30"><name pos:start="113:9" pos:end="113:15">av_dlog</name><argument_list pos:start="113:16" pos:end="113:30">(<argument pos:start="113:17" pos:end="113:20"><expr pos:start="113:17" pos:end="113:20"><name pos:start="113:17" pos:end="113:20">NULL</name></expr></argument>, <argument pos:start="113:23" pos:end="113:29"><expr pos:start="113:23" pos:end="113:29"><literal type="string" pos:start="113:23" pos:end="113:29">"end\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <break pos:start="115:9" pos:end="115:14">break;</break>
+
+
+
+    <default pos:start="119:5" pos:end="119:12">default:</default>
+
+        <expr_stmt pos:start="121:9" pos:end="121:41"><expr pos:start="121:9" pos:end="121:40"><call pos:start="121:9" pos:end="121:40"><name pos:start="121:9" pos:end="121:15">av_dlog</name><argument_list pos:start="121:16" pos:end="121:40">(<argument pos:start="121:17" pos:end="121:20"><expr pos:start="121:17" pos:end="121:20"><name pos:start="121:17" pos:end="121:20">NULL</name></expr></argument>, <argument pos:start="121:23" pos:end="121:39"><expr pos:start="121:23" pos:end="121:39"><literal type="string" pos:start="121:23" pos:end="121:39">"invalid chunk\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="123:9" pos:end="123:31"><expr pos:start="123:9" pos:end="123:30"><name pos:start="123:9" pos:end="123:18">chunk_type</name> <operator pos:start="123:20" pos:end="123:20">=</operator> <name pos:start="123:22" pos:end="123:30">CHUNK_BAD</name></expr>;</expr_stmt>
+
+        <break pos:start="125:9" pos:end="125:14">break;</break>
+
+
+
+    </block_content>}</block></switch>
+
+
+
+    <while pos:start="133:5" pos:end="599:5">while <condition pos:start="133:11" pos:end="133:57">(<expr pos:start="133:12" pos:end="133:56"><operator pos:start="133:12" pos:end="133:12">(</operator><name pos:start="133:13" pos:end="133:22">chunk_size</name> <operator pos:start="133:24" pos:end="133:24">&gt;</operator> <literal type="number" pos:start="133:26" pos:end="133:26">0</literal><operator pos:start="133:27" pos:end="133:27">)</operator> <operator pos:start="133:29" pos:end="133:30">&amp;&amp;</operator> <operator pos:start="133:32" pos:end="133:32">(</operator><name pos:start="133:33" pos:end="133:42">chunk_type</name> <operator pos:start="133:44" pos:end="133:45">!=</operator> <name pos:start="133:47" pos:end="133:55">CHUNK_BAD</name><operator pos:start="133:56" pos:end="133:56">)</operator></expr>)</condition> <block pos:start="133:59" pos:end="599:5">{<block_content pos:start="139:9" pos:end="597:9">
+
+
+
+        <comment type="block" pos:start="137:9" pos:end="137:75">/* read the next chunk, wherever the file happens to be pointing */</comment>
+
+        <if_stmt pos:start="139:9" pos:end="145:9"><if pos:start="139:9" pos:end="145:9">if <condition pos:start="139:12" pos:end="139:25">(<expr pos:start="139:13" pos:end="139:24"><call pos:start="139:13" pos:end="139:24"><name pos:start="139:13" pos:end="139:20">url_feof</name><argument_list pos:start="139:21" pos:end="139:24">(<argument pos:start="139:22" pos:end="139:23"><expr pos:start="139:22" pos:end="139:23"><name pos:start="139:22" pos:end="139:23">pb</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="139:27" pos:end="145:9">{<block_content pos:start="141:13" pos:end="143:18">
+
+            <expr_stmt pos:start="141:13" pos:end="141:35"><expr pos:start="141:13" pos:end="141:34"><name pos:start="141:13" pos:end="141:22">chunk_type</name> <operator pos:start="141:24" pos:end="141:24">=</operator> <name pos:start="141:26" pos:end="141:34">CHUNK_EOF</name></expr>;</expr_stmt>
+
+            <break pos:start="143:13" pos:end="143:18">break;</break>
+
+        </block_content>}</block></if></if_stmt>
+
+        <if_stmt pos:start="147:9" pos:end="155:9"><if pos:start="147:9" pos:end="155:9">if <condition pos:start="147:12" pos:end="149:32">(<expr pos:start="147:13" pos:end="149:31"><call pos:start="147:13" pos:end="147:63"><name pos:start="147:13" pos:end="147:21">avio_read</name><argument_list pos:start="147:22" pos:end="147:63">(<argument pos:start="147:23" pos:end="147:24"><expr pos:start="147:23" pos:end="147:24"><name pos:start="147:23" pos:end="147:24">pb</name></expr></argument>, <argument pos:start="147:27" pos:end="147:41"><expr pos:start="147:27" pos:end="147:41"><name pos:start="147:27" pos:end="147:41">opcode_preamble</name></expr></argument>, <argument pos:start="147:44" pos:end="147:62"><expr pos:start="147:44" pos:end="147:62"><name pos:start="147:44" pos:end="147:62">CHUNK_PREAMBLE_SIZE</name></expr></argument>)</argument_list></call> <operator pos:start="147:65" pos:end="147:66">!=</operator>
+
+            <name pos:start="149:13" pos:end="149:31">CHUNK_PREAMBLE_SIZE</name></expr>)</condition> <block pos:start="149:34" pos:end="155:9">{<block_content pos:start="151:13" pos:end="153:18">
+
+            <expr_stmt pos:start="151:13" pos:end="151:35"><expr pos:start="151:13" pos:end="151:34"><name pos:start="151:13" pos:end="151:22">chunk_type</name> <operator pos:start="151:24" pos:end="151:24">=</operator> <name pos:start="151:26" pos:end="151:34">CHUNK_BAD</name></expr>;</expr_stmt>
+
+            <break pos:start="153:13" pos:end="153:18">break;</break>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="159:9" pos:end="159:51"><expr pos:start="159:9" pos:end="159:50"><name pos:start="159:9" pos:end="159:19">opcode_size</name> <operator pos:start="159:21" pos:end="159:21">=</operator> <call pos:start="159:23" pos:end="159:50"><name pos:start="159:23" pos:end="159:29">AV_RL16</name><argument_list pos:start="159:30" pos:end="159:50">(<argument pos:start="159:31" pos:end="159:49"><expr pos:start="159:31" pos:end="159:49"><operator pos:start="159:31" pos:end="159:31">&amp;</operator><name pos:start="159:32" pos:end="159:49"><name pos:start="159:32" pos:end="159:46">opcode_preamble</name><index pos:start="159:47" pos:end="159:49">[<expr pos:start="159:48" pos:end="159:48"><literal type="number" pos:start="159:48" pos:end="159:48">0</literal></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="161:9" pos:end="161:41"><expr pos:start="161:9" pos:end="161:40"><name pos:start="161:9" pos:end="161:19">opcode_type</name> <operator pos:start="161:21" pos:end="161:21">=</operator> <name pos:start="161:23" pos:end="161:40"><name pos:start="161:23" pos:end="161:37">opcode_preamble</name><index pos:start="161:38" pos:end="161:40">[<expr pos:start="161:39" pos:end="161:39"><literal type="number" pos:start="161:39" pos:end="161:39">2</literal></expr>]</index></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="163:9" pos:end="163:44"><expr pos:start="163:9" pos:end="163:43"><name pos:start="163:9" pos:end="163:22">opcode_version</name> <operator pos:start="163:24" pos:end="163:24">=</operator> <name pos:start="163:26" pos:end="163:43"><name pos:start="163:26" pos:end="163:40">opcode_preamble</name><index pos:start="163:41" pos:end="163:43">[<expr pos:start="163:42" pos:end="163:42"><literal type="number" pos:start="163:42" pos:end="163:42">3</literal></expr>]</index></name></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="167:9" pos:end="167:43"><expr pos:start="167:9" pos:end="167:42"><name pos:start="167:9" pos:end="167:18">chunk_size</name> <operator pos:start="167:20" pos:end="167:21">-=</operator> <name pos:start="167:23" pos:end="167:42">OPCODE_PREAMBLE_SIZE</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="169:9" pos:end="169:34"><expr pos:start="169:9" pos:end="169:33"><name pos:start="169:9" pos:end="169:18">chunk_size</name> <operator pos:start="169:20" pos:end="169:21">-=</operator> <name pos:start="169:23" pos:end="169:33">opcode_size</name></expr>;</expr_stmt>
+
+        <if_stmt pos:start="171:9" pos:end="179:9"><if pos:start="171:9" pos:end="179:9">if <condition pos:start="171:12" pos:end="171:27">(<expr pos:start="171:13" pos:end="171:26"><name pos:start="171:13" pos:end="171:22">chunk_size</name> <operator pos:start="171:24" pos:end="171:24">&lt;</operator> <literal type="number" pos:start="171:26" pos:end="171:26">0</literal></expr>)</condition> <block pos:start="171:29" pos:end="179:9">{<block_content pos:start="173:13" pos:end="177:18">
+
+            <expr_stmt pos:start="173:13" pos:end="173:71"><expr pos:start="173:13" pos:end="173:70"><call pos:start="173:13" pos:end="173:70"><name pos:start="173:13" pos:end="173:19">av_dlog</name><argument_list pos:start="173:20" pos:end="173:70">(<argument pos:start="173:21" pos:end="173:24"><expr pos:start="173:21" pos:end="173:24"><name pos:start="173:21" pos:end="173:24">NULL</name></expr></argument>, <argument pos:start="173:27" pos:end="173:69"><expr pos:start="173:27" pos:end="173:69"><literal type="string" pos:start="173:27" pos:end="173:69">"chunk_size countdown just went negative\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="175:13" pos:end="175:35"><expr pos:start="175:13" pos:end="175:34"><name pos:start="175:13" pos:end="175:22">chunk_type</name> <operator pos:start="175:24" pos:end="175:24">=</operator> <name pos:start="175:26" pos:end="175:34">CHUNK_BAD</name></expr>;</expr_stmt>
+
+            <break pos:start="177:13" pos:end="177:18">break;</break>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="183:9" pos:end="185:58"><expr pos:start="183:9" pos:end="185:57"><call pos:start="183:9" pos:end="185:57"><name pos:start="183:9" pos:end="183:15">av_dlog</name><argument_list pos:start="183:16" pos:end="185:57">(<argument pos:start="183:17" pos:end="183:20"><expr pos:start="183:17" pos:end="183:20"><name pos:start="183:17" pos:end="183:20">NULL</name></expr></argument>, <argument pos:start="183:23" pos:end="183:70"><expr pos:start="183:23" pos:end="183:70"><literal type="string" pos:start="183:23" pos:end="183:70">"  opcode type %02X, version %d, 0x%04X bytes: "</literal></expr></argument>,
+
+                <argument pos:start="185:17" pos:end="185:27"><expr pos:start="185:17" pos:end="185:27"><name pos:start="185:17" pos:end="185:27">opcode_type</name></expr></argument>, <argument pos:start="185:30" pos:end="185:43"><expr pos:start="185:30" pos:end="185:43"><name pos:start="185:30" pos:end="185:43">opcode_version</name></expr></argument>, <argument pos:start="185:46" pos:end="185:56"><expr pos:start="185:46" pos:end="185:56"><name pos:start="185:46" pos:end="185:56">opcode_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <switch pos:start="187:9" pos:end="597:9">switch <condition pos:start="187:16" pos:end="187:28">(<expr pos:start="187:17" pos:end="187:27"><name pos:start="187:17" pos:end="187:27">opcode_type</name></expr>)</condition> <block pos:start="187:30" pos:end="597:9">{<block_content pos:start="191:9" pos:end="593:18">
+
+
+
+        <case pos:start="191:9" pos:end="191:34">case <expr pos:start="191:14" pos:end="191:33"><name pos:start="191:14" pos:end="191:33">OPCODE_END_OF_STREAM</name></expr>:</case>
+
+            <expr_stmt pos:start="193:13" pos:end="193:45"><expr pos:start="193:13" pos:end="193:44"><call pos:start="193:13" pos:end="193:44"><name pos:start="193:13" pos:end="193:19">av_dlog</name><argument_list pos:start="193:20" pos:end="193:44">(<argument pos:start="193:21" pos:end="193:24"><expr pos:start="193:21" pos:end="193:24"><name pos:start="193:21" pos:end="193:24">NULL</name></expr></argument>, <argument pos:start="193:27" pos:end="193:43"><expr pos:start="193:27" pos:end="193:43"><literal type="string" pos:start="193:27" pos:end="193:43">"end of stream\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="195:13" pos:end="195:39"><expr pos:start="195:13" pos:end="195:38"><call pos:start="195:13" pos:end="195:38"><name pos:start="195:13" pos:end="195:21">avio_skip</name><argument_list pos:start="195:22" pos:end="195:38">(<argument pos:start="195:23" pos:end="195:24"><expr pos:start="195:23" pos:end="195:24"><name pos:start="195:23" pos:end="195:24">pb</name></expr></argument>, <argument pos:start="195:27" pos:end="195:37"><expr pos:start="195:27" pos:end="195:37"><name pos:start="195:27" pos:end="195:37">opcode_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="197:13" pos:end="197:18">break;</break>
+
+
+
+        <case pos:start="201:9" pos:end="201:33">case <expr pos:start="201:14" pos:end="201:32"><name pos:start="201:14" pos:end="201:32">OPCODE_END_OF_CHUNK</name></expr>:</case>
+
+            <expr_stmt pos:start="203:13" pos:end="203:44"><expr pos:start="203:13" pos:end="203:43"><call pos:start="203:13" pos:end="203:43"><name pos:start="203:13" pos:end="203:19">av_dlog</name><argument_list pos:start="203:20" pos:end="203:43">(<argument pos:start="203:21" pos:end="203:24"><expr pos:start="203:21" pos:end="203:24"><name pos:start="203:21" pos:end="203:24">NULL</name></expr></argument>, <argument pos:start="203:27" pos:end="203:42"><expr pos:start="203:27" pos:end="203:42"><literal type="string" pos:start="203:27" pos:end="203:42">"end of chunk\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="205:13" pos:end="205:39"><expr pos:start="205:13" pos:end="205:38"><call pos:start="205:13" pos:end="205:38"><name pos:start="205:13" pos:end="205:21">avio_skip</name><argument_list pos:start="205:22" pos:end="205:38">(<argument pos:start="205:23" pos:end="205:24"><expr pos:start="205:23" pos:end="205:24"><name pos:start="205:23" pos:end="205:24">pb</name></expr></argument>, <argument pos:start="205:27" pos:end="205:37"><expr pos:start="205:27" pos:end="205:37"><name pos:start="205:27" pos:end="205:37">opcode_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="207:13" pos:end="207:18">break;</break>
+
+
+
+        <case pos:start="211:9" pos:end="211:33">case <expr pos:start="211:14" pos:end="211:32"><name pos:start="211:14" pos:end="211:32">OPCODE_CREATE_TIMER</name></expr>:</case>
+
+            <expr_stmt pos:start="213:13" pos:end="213:44"><expr pos:start="213:13" pos:end="213:43"><call pos:start="213:13" pos:end="213:43"><name pos:start="213:13" pos:end="213:19">av_dlog</name><argument_list pos:start="213:20" pos:end="213:43">(<argument pos:start="213:21" pos:end="213:24"><expr pos:start="213:21" pos:end="213:24"><name pos:start="213:21" pos:end="213:24">NULL</name></expr></argument>, <argument pos:start="213:27" pos:end="213:42"><expr pos:start="213:27" pos:end="213:42"><literal type="string" pos:start="213:27" pos:end="213:42">"create timer\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <if_stmt pos:start="215:13" pos:end="223:13"><if pos:start="215:13" pos:end="223:13">if <condition pos:start="215:16" pos:end="215:59">(<expr pos:start="215:17" pos:end="215:58"><operator pos:start="215:17" pos:end="215:17">(</operator><name pos:start="215:18" pos:end="215:31">opcode_version</name> <operator pos:start="215:33" pos:end="215:33">&gt;</operator> <literal type="number" pos:start="215:35" pos:end="215:35">0</literal><operator pos:start="215:36" pos:end="215:36">)</operator> <operator pos:start="215:38" pos:end="215:39">||</operator> <operator pos:start="215:41" pos:end="215:41">(</operator><name pos:start="215:42" pos:end="215:52">opcode_size</name> <operator pos:start="215:54" pos:end="215:55">!=</operator> <literal type="number" pos:start="215:57" pos:end="215:57">6</literal><operator pos:start="215:58" pos:end="215:58">)</operator></expr>)</condition> <block pos:start="215:61" pos:end="223:13">{<block_content pos:start="217:17" pos:end="221:22">
+
+                <expr_stmt pos:start="217:17" pos:end="217:59"><expr pos:start="217:17" pos:end="217:58"><call pos:start="217:17" pos:end="217:58"><name pos:start="217:17" pos:end="217:23">av_dlog</name><argument_list pos:start="217:24" pos:end="217:58">(<argument pos:start="217:25" pos:end="217:28"><expr pos:start="217:25" pos:end="217:28"><name pos:start="217:25" pos:end="217:28">NULL</name></expr></argument>, <argument pos:start="217:31" pos:end="217:57"><expr pos:start="217:31" pos:end="217:57"><literal type="string" pos:start="217:31" pos:end="217:57">"bad create_timer opcode\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="219:17" pos:end="219:39"><expr pos:start="219:17" pos:end="219:38"><name pos:start="219:17" pos:end="219:26">chunk_type</name> <operator pos:start="219:28" pos:end="219:28">=</operator> <name pos:start="219:30" pos:end="219:38">CHUNK_BAD</name></expr>;</expr_stmt>
+
+                <break pos:start="221:17" pos:end="221:22">break;</break>
+
+            </block_content>}</block></if></if_stmt>
+
+            <if_stmt pos:start="225:13" pos:end="233:13"><if pos:start="225:13" pos:end="233:13">if <condition pos:start="225:16" pos:end="227:28">(<expr pos:start="225:17" pos:end="227:27"><call pos:start="225:17" pos:end="225:51"><name pos:start="225:17" pos:end="225:25">avio_read</name><argument_list pos:start="225:26" pos:end="225:51">(<argument pos:start="225:27" pos:end="225:28"><expr pos:start="225:27" pos:end="225:28"><name pos:start="225:27" pos:end="225:28">pb</name></expr></argument>, <argument pos:start="225:31" pos:end="225:37"><expr pos:start="225:31" pos:end="225:37"><name pos:start="225:31" pos:end="225:37">scratch</name></expr></argument>, <argument pos:start="225:40" pos:end="225:50"><expr pos:start="225:40" pos:end="225:50"><name pos:start="225:40" pos:end="225:50">opcode_size</name></expr></argument>)</argument_list></call> <operator pos:start="225:53" pos:end="225:54">!=</operator>
+
+                <name pos:start="227:17" pos:end="227:27">opcode_size</name></expr>)</condition> <block pos:start="227:30" pos:end="233:13">{<block_content pos:start="229:17" pos:end="231:22">
+
+                <expr_stmt pos:start="229:17" pos:end="229:39"><expr pos:start="229:17" pos:end="229:38"><name pos:start="229:17" pos:end="229:26">chunk_type</name> <operator pos:start="229:28" pos:end="229:28">=</operator> <name pos:start="229:30" pos:end="229:38">CHUNK_BAD</name></expr>;</expr_stmt>
+
+                <break pos:start="231:17" pos:end="231:22">break;</break>
+
+            </block_content>}</block></if></if_stmt>
+
+            <expr_stmt pos:start="235:13" pos:end="235:87"><expr pos:start="235:13" pos:end="235:86"><name pos:start="235:13" pos:end="235:28"><name pos:start="235:13" pos:end="235:13">s</name><operator pos:start="235:14" pos:end="235:15">-&gt;</operator><name pos:start="235:16" pos:end="235:28">frame_pts_inc</name></name> <operator pos:start="235:30" pos:end="235:30">=</operator> <operator pos:start="235:32" pos:end="235:32">(</operator><operator pos:start="235:33" pos:end="235:33">(</operator><name pos:start="235:34" pos:end="235:41">uint64_t</name><operator pos:start="235:42" pos:end="235:42">)</operator><call pos:start="235:43" pos:end="235:62"><name pos:start="235:43" pos:end="235:49">AV_RL32</name><argument_list pos:start="235:50" pos:end="235:62">(<argument pos:start="235:51" pos:end="235:61"><expr pos:start="235:51" pos:end="235:61"><operator pos:start="235:51" pos:end="235:51">&amp;</operator><name pos:start="235:52" pos:end="235:61"><name pos:start="235:52" pos:end="235:58">scratch</name><index pos:start="235:59" pos:end="235:61">[<expr pos:start="235:60" pos:end="235:60"><literal type="number" pos:start="235:60" pos:end="235:60">0</literal></expr>]</index></name></expr></argument>)</argument_list></call><operator pos:start="235:63" pos:end="235:63">)</operator> <operator pos:start="235:65" pos:end="235:65">*</operator> <call pos:start="235:67" pos:end="235:86"><name pos:start="235:67" pos:end="235:73">AV_RL16</name><argument_list pos:start="235:74" pos:end="235:86">(<argument pos:start="235:75" pos:end="235:85"><expr pos:start="235:75" pos:end="235:85"><operator pos:start="235:75" pos:end="235:75">&amp;</operator><name pos:start="235:76" pos:end="235:85"><name pos:start="235:76" pos:end="235:82">scratch</name><index pos:start="235:83" pos:end="235:85">[<expr pos:start="235:84" pos:end="235:84"><literal type="number" pos:start="235:84" pos:end="235:84">4</literal></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="237:13" pos:end="241:42"><expr pos:start="237:13" pos:end="241:41"><call pos:start="237:13" pos:end="241:41"><name pos:start="237:13" pos:end="237:19">av_dlog</name><argument_list pos:start="237:20" pos:end="241:41">(<argument pos:start="237:21" pos:end="237:24"><expr pos:start="237:21" pos:end="237:24"><name pos:start="237:21" pos:end="237:24">NULL</name></expr></argument>, <argument pos:start="237:27" pos:end="237:80"><expr pos:start="237:27" pos:end="237:80"><literal type="string" pos:start="237:27" pos:end="237:80">"  %.2f frames/second (timer div = %d, subdiv = %d)\n"</literal></expr></argument>,
+
+                    <argument pos:start="239:21" pos:end="239:48"><expr pos:start="239:21" pos:end="239:48"><literal type="number" pos:start="239:21" pos:end="239:29">1000000.0</literal> <operator pos:start="239:31" pos:end="239:31">/</operator> <name pos:start="239:33" pos:end="239:48"><name pos:start="239:33" pos:end="239:33">s</name><operator pos:start="239:34" pos:end="239:35">-&gt;</operator><name pos:start="239:36" pos:end="239:48">frame_pts_inc</name></name></expr></argument>, <argument pos:start="239:51" pos:end="239:70"><expr pos:start="239:51" pos:end="239:70"><call pos:start="239:51" pos:end="239:70"><name pos:start="239:51" pos:end="239:57">AV_RL32</name><argument_list pos:start="239:58" pos:end="239:70">(<argument pos:start="239:59" pos:end="239:69"><expr pos:start="239:59" pos:end="239:69"><operator pos:start="239:59" pos:end="239:59">&amp;</operator><name pos:start="239:60" pos:end="239:69"><name pos:start="239:60" pos:end="239:66">scratch</name><index pos:start="239:67" pos:end="239:69">[<expr pos:start="239:68" pos:end="239:68"><literal type="number" pos:start="239:68" pos:end="239:68">0</literal></expr>]</index></name></expr></argument>)</argument_list></call></expr></argument>,
+
+                    <argument pos:start="241:21" pos:end="241:40"><expr pos:start="241:21" pos:end="241:40"><call pos:start="241:21" pos:end="241:40"><name pos:start="241:21" pos:end="241:27">AV_RL16</name><argument_list pos:start="241:28" pos:end="241:40">(<argument pos:start="241:29" pos:end="241:39"><expr pos:start="241:29" pos:end="241:39"><operator pos:start="241:29" pos:end="241:29">&amp;</operator><name pos:start="241:30" pos:end="241:39"><name pos:start="241:30" pos:end="241:36">scratch</name><index pos:start="241:37" pos:end="241:39">[<expr pos:start="241:38" pos:end="241:38"><literal type="number" pos:start="241:38" pos:end="241:38">4</literal></expr>]</index></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="243:13" pos:end="243:18">break;</break>
+
+
+
+        <case pos:start="247:9" pos:end="247:39">case <expr pos:start="247:14" pos:end="247:38"><name pos:start="247:14" pos:end="247:38">OPCODE_INIT_AUDIO_BUFFERS</name></expr>:</case>
+
+            <expr_stmt pos:start="249:13" pos:end="249:56"><expr pos:start="249:13" pos:end="249:55"><call pos:start="249:13" pos:end="249:55"><name pos:start="249:13" pos:end="249:19">av_dlog</name><argument_list pos:start="249:20" pos:end="249:55">(<argument pos:start="249:21" pos:end="249:24"><expr pos:start="249:21" pos:end="249:24"><name pos:start="249:21" pos:end="249:24">NULL</name></expr></argument>, <argument pos:start="249:27" pos:end="249:54"><expr pos:start="249:27" pos:end="249:54"><literal type="string" pos:start="249:27" pos:end="249:54">"initialize audio buffers\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <if_stmt pos:start="251:13" pos:end="259:13"><if pos:start="251:13" pos:end="259:13">if <condition pos:start="251:16" pos:end="251:59">(<expr pos:start="251:17" pos:end="251:58"><operator pos:start="251:17" pos:end="251:17">(</operator><name pos:start="251:18" pos:end="251:31">opcode_version</name> <operator pos:start="251:33" pos:end="251:33">&gt;</operator> <literal type="number" pos:start="251:35" pos:end="251:35">1</literal><operator pos:start="251:36" pos:end="251:36">)</operator> <operator pos:start="251:38" pos:end="251:39">||</operator> <operator pos:start="251:41" pos:end="251:41">(</operator><name pos:start="251:42" pos:end="251:52">opcode_size</name> <operator pos:start="251:54" pos:end="251:54">&gt;</operator> <literal type="number" pos:start="251:56" pos:end="251:57">10</literal><operator pos:start="251:58" pos:end="251:58">)</operator></expr>)</condition> <block pos:start="251:61" pos:end="259:13">{<block_content pos:start="253:17" pos:end="257:22">
+
+                <expr_stmt pos:start="253:17" pos:end="253:65"><expr pos:start="253:17" pos:end="253:64"><call pos:start="253:17" pos:end="253:64"><name pos:start="253:17" pos:end="253:23">av_dlog</name><argument_list pos:start="253:24" pos:end="253:64">(<argument pos:start="253:25" pos:end="253:28"><expr pos:start="253:25" pos:end="253:28"><name pos:start="253:25" pos:end="253:28">NULL</name></expr></argument>, <argument pos:start="253:31" pos:end="253:63"><expr pos:start="253:31" pos:end="253:63"><literal type="string" pos:start="253:31" pos:end="253:63">"bad init_audio_buffers opcode\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="255:17" pos:end="255:39"><expr pos:start="255:17" pos:end="255:38"><name pos:start="255:17" pos:end="255:26">chunk_type</name> <operator pos:start="255:28" pos:end="255:28">=</operator> <name pos:start="255:30" pos:end="255:38">CHUNK_BAD</name></expr>;</expr_stmt>
+
+                <break pos:start="257:17" pos:end="257:22">break;</break>
+
+            </block_content>}</block></if></if_stmt>
+
+            <if_stmt pos:start="261:13" pos:end="269:13"><if pos:start="261:13" pos:end="269:13">if <condition pos:start="261:16" pos:end="263:28">(<expr pos:start="261:17" pos:end="263:27"><call pos:start="261:17" pos:end="261:51"><name pos:start="261:17" pos:end="261:25">avio_read</name><argument_list pos:start="261:26" pos:end="261:51">(<argument pos:start="261:27" pos:end="261:28"><expr pos:start="261:27" pos:end="261:28"><name pos:start="261:27" pos:end="261:28">pb</name></expr></argument>, <argument pos:start="261:31" pos:end="261:37"><expr pos:start="261:31" pos:end="261:37"><name pos:start="261:31" pos:end="261:37">scratch</name></expr></argument>, <argument pos:start="261:40" pos:end="261:50"><expr pos:start="261:40" pos:end="261:50"><name pos:start="261:40" pos:end="261:50">opcode_size</name></expr></argument>)</argument_list></call> <operator pos:start="261:53" pos:end="261:54">!=</operator>
+
+                <name pos:start="263:17" pos:end="263:27">opcode_size</name></expr>)</condition> <block pos:start="263:30" pos:end="269:13">{<block_content pos:start="265:17" pos:end="267:22">
+
+                <expr_stmt pos:start="265:17" pos:end="265:39"><expr pos:start="265:17" pos:end="265:38"><name pos:start="265:17" pos:end="265:26">chunk_type</name> <operator pos:start="265:28" pos:end="265:28">=</operator> <name pos:start="265:30" pos:end="265:38">CHUNK_BAD</name></expr>;</expr_stmt>
+
+                <break pos:start="267:17" pos:end="267:22">break;</break>
+
+            </block_content>}</block></if></if_stmt>
+
+            <expr_stmt pos:start="271:13" pos:end="271:56"><expr pos:start="271:13" pos:end="271:55"><name pos:start="271:13" pos:end="271:32"><name pos:start="271:13" pos:end="271:13">s</name><operator pos:start="271:14" pos:end="271:15">-&gt;</operator><name pos:start="271:16" pos:end="271:32">audio_sample_rate</name></name> <operator pos:start="271:34" pos:end="271:34">=</operator> <call pos:start="271:36" pos:end="271:55"><name pos:start="271:36" pos:end="271:42">AV_RL16</name><argument_list pos:start="271:43" pos:end="271:55">(<argument pos:start="271:44" pos:end="271:54"><expr pos:start="271:44" pos:end="271:54"><operator pos:start="271:44" pos:end="271:44">&amp;</operator><name pos:start="271:45" pos:end="271:54"><name pos:start="271:45" pos:end="271:51">scratch</name><index pos:start="271:52" pos:end="271:54">[<expr pos:start="271:53" pos:end="271:53"><literal type="number" pos:start="271:53" pos:end="271:53">4</literal></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="273:13" pos:end="273:47"><expr pos:start="273:13" pos:end="273:46"><name pos:start="273:13" pos:end="273:23">audio_flags</name> <operator pos:start="273:25" pos:end="273:25">=</operator> <call pos:start="273:27" pos:end="273:46"><name pos:start="273:27" pos:end="273:33">AV_RL16</name><argument_list pos:start="273:34" pos:end="273:46">(<argument pos:start="273:35" pos:end="273:45"><expr pos:start="273:35" pos:end="273:45"><operator pos:start="273:35" pos:end="273:35">&amp;</operator><name pos:start="273:36" pos:end="273:45"><name pos:start="273:36" pos:end="273:42">scratch</name><index pos:start="273:43" pos:end="273:45">[<expr pos:start="273:44" pos:end="273:44"><literal type="number" pos:start="273:44" pos:end="273:44">2</literal></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <comment type="block" pos:start="275:13" pos:end="275:58">/* bit 0 of the flags: 0 = mono, 1 = stereo */</comment>
+
+            <expr_stmt pos:start="277:13" pos:end="277:54"><expr pos:start="277:13" pos:end="277:53"><name pos:start="277:13" pos:end="277:29"><name pos:start="277:13" pos:end="277:13">s</name><operator pos:start="277:14" pos:end="277:15">-&gt;</operator><name pos:start="277:16" pos:end="277:29">audio_channels</name></name> <operator pos:start="277:31" pos:end="277:31">=</operator> <operator pos:start="277:33" pos:end="277:33">(</operator><name pos:start="277:34" pos:end="277:44">audio_flags</name> <operator pos:start="277:46" pos:end="277:46">&amp;</operator> <literal type="number" pos:start="277:48" pos:end="277:48">1</literal><operator pos:start="277:49" pos:end="277:49">)</operator> <operator pos:start="277:51" pos:end="277:51">+</operator> <literal type="number" pos:start="277:53" pos:end="277:53">1</literal></expr>;</expr_stmt>
+
+            <comment type="block" pos:start="279:13" pos:end="279:59">/* bit 1 of the flags: 0 = 8 bit, 1 = 16 bit */</comment>
+
+            <expr_stmt pos:start="281:13" pos:end="281:63"><expr pos:start="281:13" pos:end="281:62"><name pos:start="281:13" pos:end="281:25"><name pos:start="281:13" pos:end="281:13">s</name><operator pos:start="281:14" pos:end="281:15">-&gt;</operator><name pos:start="281:16" pos:end="281:25">audio_bits</name></name> <operator pos:start="281:27" pos:end="281:27">=</operator> <operator pos:start="281:29" pos:end="281:29">(</operator><operator pos:start="281:30" pos:end="281:30">(</operator><operator pos:start="281:31" pos:end="281:31">(</operator><name pos:start="281:32" pos:end="281:42">audio_flags</name> <operator pos:start="281:44" pos:end="281:45">&gt;&gt;</operator> <literal type="number" pos:start="281:47" pos:end="281:47">1</literal><operator pos:start="281:48" pos:end="281:48">)</operator> <operator pos:start="281:50" pos:end="281:50">&amp;</operator> <literal type="number" pos:start="281:52" pos:end="281:52">1</literal><operator pos:start="281:53" pos:end="281:53">)</operator> <operator pos:start="281:55" pos:end="281:55">+</operator> <literal type="number" pos:start="281:57" pos:end="281:57">1</literal><operator pos:start="281:58" pos:end="281:58">)</operator> <operator pos:start="281:60" pos:end="281:60">*</operator> <literal type="number" pos:start="281:62" pos:end="281:62">8</literal></expr>;</expr_stmt>
+
+            <comment type="block" pos:start="283:13" pos:end="283:70">/* bit 2 indicates compressed audio in version 1 opcode */</comment>
+
+            <if_stmt pos:start="285:13" pos:end="295:51"><if pos:start="285:13" pos:end="287:59">if <condition pos:start="285:16" pos:end="285:61">(<expr pos:start="285:17" pos:end="285:60"><operator pos:start="285:17" pos:end="285:17">(</operator><name pos:start="285:18" pos:end="285:31">opcode_version</name> <operator pos:start="285:33" pos:end="285:34">==</operator> <literal type="number" pos:start="285:36" pos:end="285:36">1</literal><operator pos:start="285:37" pos:end="285:37">)</operator> <operator pos:start="285:39" pos:end="285:40">&amp;&amp;</operator> <operator pos:start="285:42" pos:end="285:42">(</operator><name pos:start="285:43" pos:end="285:53">audio_flags</name> <operator pos:start="285:55" pos:end="285:55">&amp;</operator> <literal type="number" pos:start="285:57" pos:end="285:59">0x4</literal><operator pos:start="285:60" pos:end="285:60">)</operator></expr>)</condition><block type="pseudo" pos:start="287:17" pos:end="287:59"><block_content pos:start="287:17" pos:end="287:59">
+
+                <expr_stmt pos:start="287:17" pos:end="287:59"><expr pos:start="287:17" pos:end="287:58"><name pos:start="287:17" pos:end="287:29"><name pos:start="287:17" pos:end="287:17">s</name><operator pos:start="287:18" pos:end="287:19">-&gt;</operator><name pos:start="287:20" pos:end="287:29">audio_type</name></name> <operator pos:start="287:31" pos:end="287:31">=</operator> <name pos:start="287:33" pos:end="287:58">AV_CODEC_ID_INTERPLAY_DPCM</name></expr>;</expr_stmt></block_content></block></if>
+
+            <if type="elseif" pos:start="289:13" pos:end="291:54">else if <condition pos:start="289:21" pos:end="289:41">(<expr pos:start="289:22" pos:end="289:40"><name pos:start="289:22" pos:end="289:34"><name pos:start="289:22" pos:end="289:22">s</name><operator pos:start="289:23" pos:end="289:24">-&gt;</operator><name pos:start="289:25" pos:end="289:34">audio_bits</name></name> <operator pos:start="289:36" pos:end="289:37">==</operator> <literal type="number" pos:start="289:39" pos:end="289:40">16</literal></expr>)</condition><block type="pseudo" pos:start="291:17" pos:end="291:54"><block_content pos:start="291:17" pos:end="291:54">
+
+                <expr_stmt pos:start="291:17" pos:end="291:54"><expr pos:start="291:17" pos:end="291:53"><name pos:start="291:17" pos:end="291:29"><name pos:start="291:17" pos:end="291:17">s</name><operator pos:start="291:18" pos:end="291:19">-&gt;</operator><name pos:start="291:20" pos:end="291:29">audio_type</name></name> <operator pos:start="291:31" pos:end="291:31">=</operator> <name pos:start="291:33" pos:end="291:53">AV_CODEC_ID_PCM_S16LE</name></expr>;</expr_stmt></block_content></block></if>
+
+            <else pos:start="293:13" pos:end="295:51">else<block type="pseudo" pos:start="295:17" pos:end="295:51"><block_content pos:start="295:17" pos:end="295:51">
+
+                <expr_stmt pos:start="295:17" pos:end="295:51"><expr pos:start="295:17" pos:end="295:50"><name pos:start="295:17" pos:end="295:29"><name pos:start="295:17" pos:end="295:17">s</name><operator pos:start="295:18" pos:end="295:19">-&gt;</operator><name pos:start="295:20" pos:end="295:29">audio_type</name></name> <operator pos:start="295:31" pos:end="295:31">=</operator> <name pos:start="295:33" pos:end="295:50">AV_CODEC_ID_PCM_U8</name></expr>;</expr_stmt></block_content></block></else></if_stmt>
+
+            <expr_stmt pos:start="297:13" pos:end="305:47"><expr pos:start="297:13" pos:end="305:46"><call pos:start="297:13" pos:end="305:46"><name pos:start="297:13" pos:end="297:19">av_dlog</name><argument_list pos:start="297:20" pos:end="305:46">(<argument pos:start="297:21" pos:end="297:24"><expr pos:start="297:21" pos:end="297:24"><name pos:start="297:21" pos:end="297:24">NULL</name></expr></argument>, <argument pos:start="297:27" pos:end="297:66"><expr pos:start="297:27" pos:end="297:66"><literal type="string" pos:start="297:27" pos:end="297:66">"audio: %d bits, %d Hz, %s, %s format\n"</literal></expr></argument>,
+
+                    <argument pos:start="299:21" pos:end="299:33"><expr pos:start="299:21" pos:end="299:33"><name pos:start="299:21" pos:end="299:33"><name pos:start="299:21" pos:end="299:21">s</name><operator pos:start="299:22" pos:end="299:23">-&gt;</operator><name pos:start="299:24" pos:end="299:33">audio_bits</name></name></expr></argument>, <argument pos:start="299:36" pos:end="299:55"><expr pos:start="299:36" pos:end="299:55"><name pos:start="299:36" pos:end="299:55"><name pos:start="299:36" pos:end="299:36">s</name><operator pos:start="299:37" pos:end="299:38">-&gt;</operator><name pos:start="299:39" pos:end="299:55">audio_sample_rate</name></name></expr></argument>,
+
+                    <argument pos:start="301:21" pos:end="301:64"><expr pos:start="301:21" pos:end="301:64"><ternary pos:start="301:21" pos:end="301:64"><condition pos:start="301:21" pos:end="301:46"><expr pos:start="301:21" pos:end="301:44"><operator pos:start="301:21" pos:end="301:21">(</operator><name pos:start="301:22" pos:end="301:38"><name pos:start="301:22" pos:end="301:22">s</name><operator pos:start="301:23" pos:end="301:24">-&gt;</operator><name pos:start="301:25" pos:end="301:38">audio_channels</name></name> <operator pos:start="301:40" pos:end="301:41">==</operator> <literal type="number" pos:start="301:43" pos:end="301:43">2</literal><operator pos:start="301:44" pos:end="301:44">)</operator></expr> ?</condition><then pos:start="301:48" pos:end="301:55"> <expr pos:start="301:48" pos:end="301:55"><literal type="string" pos:start="301:48" pos:end="301:55">"stereo"</literal></expr> </then><else pos:start="301:57" pos:end="301:64">: <expr pos:start="301:59" pos:end="301:64"><literal type="string" pos:start="301:59" pos:end="301:64">"mono"</literal></expr></else></ternary></expr></argument>,
+
+                    <argument pos:start="303:21" pos:end="305:45"><expr pos:start="303:21" pos:end="305:45"><ternary pos:start="303:21" pos:end="305:45"><condition pos:start="303:21" pos:end="303:67"><expr pos:start="303:21" pos:end="303:65"><operator pos:start="303:21" pos:end="303:21">(</operator><name pos:start="303:22" pos:end="303:34"><name pos:start="303:22" pos:end="303:22">s</name><operator pos:start="303:23" pos:end="303:24">-&gt;</operator><name pos:start="303:25" pos:end="303:34">audio_type</name></name> <operator pos:start="303:36" pos:end="303:37">==</operator> <name pos:start="303:39" pos:end="303:64">AV_CODEC_ID_INTERPLAY_DPCM</name><operator pos:start="303:65" pos:end="303:65">)</operator></expr> ?</condition><then pos:start="305:21" pos:end="305:37">
+
+                    <expr pos:start="305:21" pos:end="305:37"><literal type="string" pos:start="305:21" pos:end="305:37">"Interplay audio"</literal></expr> </then><else pos:start="305:39" pos:end="305:45">: <expr pos:start="305:41" pos:end="305:45"><literal type="string" pos:start="305:41" pos:end="305:45">"PCM"</literal></expr></else></ternary></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="307:13" pos:end="307:18">break;</break>
+
+
+
+        <case pos:start="311:9" pos:end="311:37">case <expr pos:start="311:14" pos:end="311:36"><name pos:start="311:14" pos:end="311:36">OPCODE_START_STOP_AUDIO</name></expr>:</case>
+
+            <expr_stmt pos:start="313:13" pos:end="313:48"><expr pos:start="313:13" pos:end="313:47"><call pos:start="313:13" pos:end="313:47"><name pos:start="313:13" pos:end="313:19">av_dlog</name><argument_list pos:start="313:20" pos:end="313:47">(<argument pos:start="313:21" pos:end="313:24"><expr pos:start="313:21" pos:end="313:24"><name pos:start="313:21" pos:end="313:24">NULL</name></expr></argument>, <argument pos:start="313:27" pos:end="313:46"><expr pos:start="313:27" pos:end="313:46"><literal type="string" pos:start="313:27" pos:end="313:46">"start/stop audio\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="315:13" pos:end="315:39"><expr pos:start="315:13" pos:end="315:38"><call pos:start="315:13" pos:end="315:38"><name pos:start="315:13" pos:end="315:21">avio_skip</name><argument_list pos:start="315:22" pos:end="315:38">(<argument pos:start="315:23" pos:end="315:24"><expr pos:start="315:23" pos:end="315:24"><name pos:start="315:23" pos:end="315:24">pb</name></expr></argument>, <argument pos:start="315:27" pos:end="315:37"><expr pos:start="315:27" pos:end="315:37"><name pos:start="315:27" pos:end="315:37">opcode_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="317:13" pos:end="317:18">break;</break>
+
+
+
+        <case pos:start="321:9" pos:end="321:39">case <expr pos:start="321:14" pos:end="321:38"><name pos:start="321:14" pos:end="321:38">OPCODE_INIT_VIDEO_BUFFERS</name></expr>:</case>
+
+            <expr_stmt pos:start="323:13" pos:end="323:56"><expr pos:start="323:13" pos:end="323:55"><call pos:start="323:13" pos:end="323:55"><name pos:start="323:13" pos:end="323:19">av_dlog</name><argument_list pos:start="323:20" pos:end="323:55">(<argument pos:start="323:21" pos:end="323:24"><expr pos:start="323:21" pos:end="323:24"><name pos:start="323:21" pos:end="323:24">NULL</name></expr></argument>, <argument pos:start="323:27" pos:end="323:54"><expr pos:start="323:27" pos:end="323:54"><literal type="string" pos:start="323:27" pos:end="323:54">"initialize video buffers\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <if_stmt pos:start="325:13" pos:end="337:13"><if pos:start="325:13" pos:end="337:13">if <condition pos:start="325:16" pos:end="329:13">(<expr pos:start="325:17" pos:end="327:57"><operator pos:start="325:17" pos:end="325:17">(</operator><name pos:start="325:18" pos:end="325:31">opcode_version</name> <operator pos:start="325:33" pos:end="325:33">&gt;</operator> <literal type="number" pos:start="325:35" pos:end="325:35">2</literal><operator pos:start="325:36" pos:end="325:36">)</operator> <operator pos:start="325:38" pos:end="325:39">||</operator> <operator pos:start="325:41" pos:end="325:41">(</operator><name pos:start="325:42" pos:end="325:52">opcode_size</name> <operator pos:start="325:54" pos:end="325:54">&gt;</operator> <literal type="number" pos:start="325:56" pos:end="325:56">8</literal><operator pos:start="325:57" pos:end="325:57">)</operator> <operator pos:start="325:59" pos:end="325:60">||</operator> <name pos:start="325:62" pos:end="325:72">opcode_size</name> <operator pos:start="325:74" pos:end="325:74">&lt;</operator> <literal type="number" pos:start="325:76" pos:end="325:76">4</literal>
+
+                <operator pos:start="327:17" pos:end="327:18">||</operator> <name pos:start="327:20" pos:end="327:33">opcode_version</name> <operator pos:start="327:35" pos:end="327:36">==</operator> <literal type="number" pos:start="327:38" pos:end="327:38">2</literal> <operator pos:start="327:40" pos:end="327:41">&amp;&amp;</operator> <name pos:start="327:43" pos:end="327:53">opcode_size</name> <operator pos:start="327:55" pos:end="327:55">&lt;</operator> <literal type="number" pos:start="327:57" pos:end="327:57">8</literal></expr>
+
+            )</condition> <block pos:start="329:15" pos:end="337:13">{<block_content pos:start="331:17" pos:end="335:22">
+
+                <expr_stmt pos:start="331:17" pos:end="331:65"><expr pos:start="331:17" pos:end="331:64"><call pos:start="331:17" pos:end="331:64"><name pos:start="331:17" pos:end="331:23">av_dlog</name><argument_list pos:start="331:24" pos:end="331:64">(<argument pos:start="331:25" pos:end="331:28"><expr pos:start="331:25" pos:end="331:28"><name pos:start="331:25" pos:end="331:28">NULL</name></expr></argument>, <argument pos:start="331:31" pos:end="331:63"><expr pos:start="331:31" pos:end="331:63"><literal type="string" pos:start="331:31" pos:end="331:63">"bad init_video_buffers opcode\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="333:17" pos:end="333:39"><expr pos:start="333:17" pos:end="333:38"><name pos:start="333:17" pos:end="333:26">chunk_type</name> <operator pos:start="333:28" pos:end="333:28">=</operator> <name pos:start="333:30" pos:end="333:38">CHUNK_BAD</name></expr>;</expr_stmt>
+
+                <break pos:start="335:17" pos:end="335:22">break;</break>
+
+            </block_content>}</block></if></if_stmt>
+
+            <if_stmt pos:start="339:13" pos:end="347:13"><if pos:start="339:13" pos:end="347:13">if <condition pos:start="339:16" pos:end="341:28">(<expr pos:start="339:17" pos:end="341:27"><call pos:start="339:17" pos:end="339:51"><name pos:start="339:17" pos:end="339:25">avio_read</name><argument_list pos:start="339:26" pos:end="339:51">(<argument pos:start="339:27" pos:end="339:28"><expr pos:start="339:27" pos:end="339:28"><name pos:start="339:27" pos:end="339:28">pb</name></expr></argument>, <argument pos:start="339:31" pos:end="339:37"><expr pos:start="339:31" pos:end="339:37"><name pos:start="339:31" pos:end="339:37">scratch</name></expr></argument>, <argument pos:start="339:40" pos:end="339:50"><expr pos:start="339:40" pos:end="339:50"><name pos:start="339:40" pos:end="339:50">opcode_size</name></expr></argument>)</argument_list></call> <operator pos:start="339:53" pos:end="339:54">!=</operator>
+
+                <name pos:start="341:17" pos:end="341:27">opcode_size</name></expr>)</condition> <block pos:start="341:30" pos:end="347:13">{<block_content pos:start="343:17" pos:end="345:22">
+
+                <expr_stmt pos:start="343:17" pos:end="343:39"><expr pos:start="343:17" pos:end="343:38"><name pos:start="343:17" pos:end="343:26">chunk_type</name> <operator pos:start="343:28" pos:end="343:28">=</operator> <name pos:start="343:30" pos:end="343:38">CHUNK_BAD</name></expr>;</expr_stmt>
+
+                <break pos:start="345:17" pos:end="345:22">break;</break>
+
+            </block_content>}</block></if></if_stmt>
+
+            <expr_stmt pos:start="349:13" pos:end="349:46"><expr pos:start="349:13" pos:end="349:45"><name pos:start="349:13" pos:end="349:17">width</name>  <operator pos:start="349:20" pos:end="349:20">=</operator> <call pos:start="349:22" pos:end="349:41"><name pos:start="349:22" pos:end="349:28">AV_RL16</name><argument_list pos:start="349:29" pos:end="349:41">(<argument pos:start="349:30" pos:end="349:40"><expr pos:start="349:30" pos:end="349:40"><operator pos:start="349:30" pos:end="349:30">&amp;</operator><name pos:start="349:31" pos:end="349:40"><name pos:start="349:31" pos:end="349:37">scratch</name><index pos:start="349:38" pos:end="349:40">[<expr pos:start="349:39" pos:end="349:39"><literal type="number" pos:start="349:39" pos:end="349:39">0</literal></expr>]</index></name></expr></argument>)</argument_list></call> <operator pos:start="349:43" pos:end="349:43">*</operator> <literal type="number" pos:start="349:45" pos:end="349:45">8</literal></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="351:13" pos:end="351:46"><expr pos:start="351:13" pos:end="351:45"><name pos:start="351:13" pos:end="351:18">height</name> <operator pos:start="351:20" pos:end="351:20">=</operator> <call pos:start="351:22" pos:end="351:41"><name pos:start="351:22" pos:end="351:28">AV_RL16</name><argument_list pos:start="351:29" pos:end="351:41">(<argument pos:start="351:30" pos:end="351:40"><expr pos:start="351:30" pos:end="351:40"><operator pos:start="351:30" pos:end="351:30">&amp;</operator><name pos:start="351:31" pos:end="351:40"><name pos:start="351:31" pos:end="351:37">scratch</name><index pos:start="351:38" pos:end="351:40">[<expr pos:start="351:39" pos:end="351:39"><literal type="number" pos:start="351:39" pos:end="351:39">2</literal></expr>]</index></name></expr></argument>)</argument_list></call> <operator pos:start="351:43" pos:end="351:43">*</operator> <literal type="number" pos:start="351:45" pos:end="351:45">8</literal></expr>;</expr_stmt>
+
+            <if_stmt pos:start="353:13" pos:end="359:13"><if pos:start="353:13" pos:end="359:13">if <condition pos:start="353:16" pos:end="353:40">(<expr pos:start="353:17" pos:end="353:39"><name pos:start="353:17" pos:end="353:21">width</name> <operator pos:start="353:23" pos:end="353:24">!=</operator> <name pos:start="353:26" pos:end="353:39"><name pos:start="353:26" pos:end="353:26">s</name><operator pos:start="353:27" pos:end="353:28">-&gt;</operator><name pos:start="353:29" pos:end="353:39">video_width</name></name></expr>)</condition> <block pos:start="353:42" pos:end="359:13">{<block_content pos:start="355:17" pos:end="357:29">
+
+                <expr_stmt pos:start="355:17" pos:end="355:39"><expr pos:start="355:17" pos:end="355:38"><name pos:start="355:17" pos:end="355:30"><name pos:start="355:17" pos:end="355:17">s</name><operator pos:start="355:18" pos:end="355:19">-&gt;</operator><name pos:start="355:20" pos:end="355:30">video_width</name></name> <operator pos:start="355:32" pos:end="355:32">=</operator> <name pos:start="355:34" pos:end="355:38">width</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="357:17" pos:end="357:29"><expr pos:start="357:17" pos:end="357:28"><name pos:start="357:17" pos:end="357:26"><name pos:start="357:17" pos:end="357:17">s</name><operator pos:start="357:18" pos:end="357:19">-&gt;</operator><name pos:start="357:20" pos:end="357:26">changed</name></name><operator pos:start="357:27" pos:end="357:28">++</operator></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <if_stmt pos:start="361:13" pos:end="367:13"><if pos:start="361:13" pos:end="367:13">if <condition pos:start="361:16" pos:end="361:42">(<expr pos:start="361:17" pos:end="361:41"><name pos:start="361:17" pos:end="361:22">height</name> <operator pos:start="361:24" pos:end="361:25">!=</operator> <name pos:start="361:27" pos:end="361:41"><name pos:start="361:27" pos:end="361:27">s</name><operator pos:start="361:28" pos:end="361:29">-&gt;</operator><name pos:start="361:30" pos:end="361:41">video_height</name></name></expr>)</condition> <block pos:start="361:44" pos:end="367:13">{<block_content pos:start="363:17" pos:end="365:29">
+
+                <expr_stmt pos:start="363:17" pos:end="363:41"><expr pos:start="363:17" pos:end="363:40"><name pos:start="363:17" pos:end="363:31"><name pos:start="363:17" pos:end="363:17">s</name><operator pos:start="363:18" pos:end="363:19">-&gt;</operator><name pos:start="363:20" pos:end="363:31">video_height</name></name> <operator pos:start="363:33" pos:end="363:33">=</operator> <name pos:start="363:35" pos:end="363:40">height</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="365:17" pos:end="365:29"><expr pos:start="365:17" pos:end="365:28"><name pos:start="365:17" pos:end="365:26"><name pos:start="365:17" pos:end="365:17">s</name><operator pos:start="365:18" pos:end="365:19">-&gt;</operator><name pos:start="365:20" pos:end="365:26">changed</name></name><operator pos:start="365:27" pos:end="365:28">++</operator></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <if_stmt pos:start="369:13" pos:end="377:13"><if pos:start="369:13" pos:end="373:13">if <condition pos:start="369:16" pos:end="369:60">(<expr pos:start="369:17" pos:end="369:59"><name pos:start="369:17" pos:end="369:30">opcode_version</name> <operator pos:start="369:32" pos:end="369:32">&lt;</operator> <literal type="number" pos:start="369:34" pos:end="369:34">2</literal> <operator pos:start="369:36" pos:end="369:37">||</operator> <operator pos:start="369:39" pos:end="369:39">!</operator><call pos:start="369:40" pos:end="369:59"><name pos:start="369:40" pos:end="369:46">AV_RL16</name><argument_list pos:start="369:47" pos:end="369:59">(<argument pos:start="369:48" pos:end="369:58"><expr pos:start="369:48" pos:end="369:58"><operator pos:start="369:48" pos:end="369:48">&amp;</operator><name pos:start="369:49" pos:end="369:58"><name pos:start="369:49" pos:end="369:55">scratch</name><index pos:start="369:56" pos:end="369:58">[<expr pos:start="369:57" pos:end="369:57"><literal type="number" pos:start="369:57" pos:end="369:57">6</literal></expr>]</index></name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="369:62" pos:end="373:13">{<block_content pos:start="371:17" pos:end="371:33">
+
+                <expr_stmt pos:start="371:17" pos:end="371:33"><expr pos:start="371:17" pos:end="371:32"><name pos:start="371:17" pos:end="371:28"><name pos:start="371:17" pos:end="371:17">s</name><operator pos:start="371:18" pos:end="371:19">-&gt;</operator><name pos:start="371:20" pos:end="371:28">video_bpp</name></name> <operator pos:start="371:30" pos:end="371:30">=</operator> <literal type="number" pos:start="371:32" pos:end="371:32">8</literal></expr>;</expr_stmt>
+
+            </block_content>}</block></if> <else pos:start="373:15" pos:end="377:13">else <block pos:start="373:20" pos:end="377:13">{<block_content pos:start="375:17" pos:end="375:34">
+
+                <expr_stmt pos:start="375:17" pos:end="375:34"><expr pos:start="375:17" pos:end="375:33"><name pos:start="375:17" pos:end="375:28"><name pos:start="375:17" pos:end="375:17">s</name><operator pos:start="375:18" pos:end="375:19">-&gt;</operator><name pos:start="375:20" pos:end="375:28">video_bpp</name></name> <operator pos:start="375:30" pos:end="375:30">=</operator> <literal type="number" pos:start="375:32" pos:end="375:33">16</literal></expr>;</expr_stmt>
+
+            </block_content>}</block></else></if_stmt>
+
+            <expr_stmt pos:start="379:13" pos:end="381:53"><expr pos:start="379:13" pos:end="381:52"><call pos:start="379:13" pos:end="381:52"><name pos:start="379:13" pos:end="379:19">av_dlog</name><argument_list pos:start="379:20" pos:end="381:52">(<argument pos:start="379:21" pos:end="379:24"><expr pos:start="379:21" pos:end="379:24"><name pos:start="379:21" pos:end="379:24">NULL</name></expr></argument>, <argument pos:start="379:27" pos:end="379:55"><expr pos:start="379:27" pos:end="379:55"><literal type="string" pos:start="379:27" pos:end="379:55">"video resolution: %d x %d\n"</literal></expr></argument>,
+
+                    <argument pos:start="381:21" pos:end="381:34"><expr pos:start="381:21" pos:end="381:34"><name pos:start="381:21" pos:end="381:34"><name pos:start="381:21" pos:end="381:21">s</name><operator pos:start="381:22" pos:end="381:23">-&gt;</operator><name pos:start="381:24" pos:end="381:34">video_width</name></name></expr></argument>, <argument pos:start="381:37" pos:end="381:51"><expr pos:start="381:37" pos:end="381:51"><name pos:start="381:37" pos:end="381:51"><name pos:start="381:37" pos:end="381:37">s</name><operator pos:start="381:38" pos:end="381:39">-&gt;</operator><name pos:start="381:40" pos:end="381:51">video_height</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="383:13" pos:end="383:18">break;</break>
+
+
+
+        <case pos:start="387:9" pos:end="387:31">case <expr pos:start="387:14" pos:end="387:30"><name pos:start="387:14" pos:end="387:30">OPCODE_UNKNOWN_06</name></expr>:</case>
+
+        <case pos:start="389:9" pos:end="389:31">case <expr pos:start="389:14" pos:end="389:30"><name pos:start="389:14" pos:end="389:30">OPCODE_UNKNOWN_0E</name></expr>:</case>
+
+        <case pos:start="391:9" pos:end="391:31">case <expr pos:start="391:14" pos:end="391:30"><name pos:start="391:14" pos:end="391:30">OPCODE_UNKNOWN_10</name></expr>:</case>
+
+        <case pos:start="393:9" pos:end="393:31">case <expr pos:start="393:14" pos:end="393:30"><name pos:start="393:14" pos:end="393:30">OPCODE_UNKNOWN_12</name></expr>:</case>
+
+        <case pos:start="395:9" pos:end="395:31">case <expr pos:start="395:14" pos:end="395:30"><name pos:start="395:14" pos:end="395:30">OPCODE_UNKNOWN_13</name></expr>:</case>
+
+        <case pos:start="397:9" pos:end="397:31">case <expr pos:start="397:14" pos:end="397:30"><name pos:start="397:14" pos:end="397:30">OPCODE_UNKNOWN_14</name></expr>:</case>
+
+        <case pos:start="399:9" pos:end="399:31">case <expr pos:start="399:14" pos:end="399:30"><name pos:start="399:14" pos:end="399:30">OPCODE_UNKNOWN_15</name></expr>:</case>
+
+            <expr_stmt pos:start="401:13" pos:end="401:81"><expr pos:start="401:13" pos:end="401:80"><call pos:start="401:13" pos:end="401:80"><name pos:start="401:13" pos:end="401:19">av_dlog</name><argument_list pos:start="401:20" pos:end="401:80">(<argument pos:start="401:21" pos:end="401:24"><expr pos:start="401:21" pos:end="401:24"><name pos:start="401:21" pos:end="401:24">NULL</name></expr></argument>, <argument pos:start="401:27" pos:end="401:66"><expr pos:start="401:27" pos:end="401:66"><literal type="string" pos:start="401:27" pos:end="401:66">"unknown (but documented) opcode %02X\n"</literal></expr></argument>, <argument pos:start="401:69" pos:end="401:79"><expr pos:start="401:69" pos:end="401:79"><name pos:start="401:69" pos:end="401:79">opcode_type</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="403:13" pos:end="403:39"><expr pos:start="403:13" pos:end="403:38"><call pos:start="403:13" pos:end="403:38"><name pos:start="403:13" pos:end="403:21">avio_skip</name><argument_list pos:start="403:22" pos:end="403:38">(<argument pos:start="403:23" pos:end="403:24"><expr pos:start="403:23" pos:end="403:24"><name pos:start="403:23" pos:end="403:24">pb</name></expr></argument>, <argument pos:start="403:27" pos:end="403:37"><expr pos:start="403:27" pos:end="403:37"><name pos:start="403:27" pos:end="403:37">opcode_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="405:13" pos:end="405:18">break;</break>
+
+
+
+        <case pos:start="409:9" pos:end="409:32">case <expr pos:start="409:14" pos:end="409:31"><name pos:start="409:14" pos:end="409:31">OPCODE_SEND_BUFFER</name></expr>:</case>
+
+            <expr_stmt pos:start="411:13" pos:end="411:43"><expr pos:start="411:13" pos:end="411:42"><call pos:start="411:13" pos:end="411:42"><name pos:start="411:13" pos:end="411:19">av_dlog</name><argument_list pos:start="411:20" pos:end="411:42">(<argument pos:start="411:21" pos:end="411:24"><expr pos:start="411:21" pos:end="411:24"><name pos:start="411:21" pos:end="411:24">NULL</name></expr></argument>, <argument pos:start="411:27" pos:end="411:41"><expr pos:start="411:27" pos:end="411:41"><literal type="string" pos:start="411:27" pos:end="411:41">"send buffer\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="413:13" pos:end="413:39"><expr pos:start="413:13" pos:end="413:38"><call pos:start="413:13" pos:end="413:38"><name pos:start="413:13" pos:end="413:21">avio_skip</name><argument_list pos:start="413:22" pos:end="413:38">(<argument pos:start="413:23" pos:end="413:24"><expr pos:start="413:23" pos:end="413:24"><name pos:start="413:23" pos:end="413:24">pb</name></expr></argument>, <argument pos:start="413:27" pos:end="413:37"><expr pos:start="413:27" pos:end="413:37"><name pos:start="413:27" pos:end="413:37">opcode_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="415:13" pos:end="415:18">break;</break>
+
+
+
+        <case pos:start="419:9" pos:end="419:32">case <expr pos:start="419:14" pos:end="419:31"><name pos:start="419:14" pos:end="419:31">OPCODE_AUDIO_FRAME</name></expr>:</case>
+
+            <expr_stmt pos:start="421:13" pos:end="421:43"><expr pos:start="421:13" pos:end="421:42"><call pos:start="421:13" pos:end="421:42"><name pos:start="421:13" pos:end="421:19">av_dlog</name><argument_list pos:start="421:20" pos:end="421:42">(<argument pos:start="421:21" pos:end="421:24"><expr pos:start="421:21" pos:end="421:24"><name pos:start="421:21" pos:end="421:24">NULL</name></expr></argument>, <argument pos:start="421:27" pos:end="421:41"><expr pos:start="421:27" pos:end="421:41"><literal type="string" pos:start="421:27" pos:end="421:41">"audio frame\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <comment type="block" pos:start="425:13" pos:end="425:50">/* log position and move on for now */</comment>
+
+            <expr_stmt pos:start="427:13" pos:end="427:50"><expr pos:start="427:13" pos:end="427:49"><name pos:start="427:13" pos:end="427:33"><name pos:start="427:13" pos:end="427:13">s</name><operator pos:start="427:14" pos:end="427:15">-&gt;</operator><name pos:start="427:16" pos:end="427:33">audio_chunk_offset</name></name> <operator pos:start="427:35" pos:end="427:35">=</operator> <call pos:start="427:37" pos:end="427:49"><name pos:start="427:37" pos:end="427:45">avio_tell</name><argument_list pos:start="427:46" pos:end="427:49">(<argument pos:start="427:47" pos:end="427:48"><expr pos:start="427:47" pos:end="427:48"><name pos:start="427:47" pos:end="427:48">pb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="429:13" pos:end="429:46"><expr pos:start="429:13" pos:end="429:45"><name pos:start="429:13" pos:end="429:31"><name pos:start="429:13" pos:end="429:13">s</name><operator pos:start="429:14" pos:end="429:15">-&gt;</operator><name pos:start="429:16" pos:end="429:31">audio_chunk_size</name></name> <operator pos:start="429:33" pos:end="429:33">=</operator> <name pos:start="429:35" pos:end="429:45">opcode_size</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="431:13" pos:end="431:39"><expr pos:start="431:13" pos:end="431:38"><call pos:start="431:13" pos:end="431:38"><name pos:start="431:13" pos:end="431:21">avio_skip</name><argument_list pos:start="431:22" pos:end="431:38">(<argument pos:start="431:23" pos:end="431:24"><expr pos:start="431:23" pos:end="431:24"><name pos:start="431:23" pos:end="431:24">pb</name></expr></argument>, <argument pos:start="431:27" pos:end="431:37"><expr pos:start="431:27" pos:end="431:37"><name pos:start="431:27" pos:end="431:37">opcode_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="433:13" pos:end="433:18">break;</break>
+
+
+
+        <case pos:start="437:9" pos:end="437:34">case <expr pos:start="437:14" pos:end="437:33"><name pos:start="437:14" pos:end="437:33">OPCODE_SILENCE_FRAME</name></expr>:</case>
+
+            <expr_stmt pos:start="439:13" pos:end="439:45"><expr pos:start="439:13" pos:end="439:44"><call pos:start="439:13" pos:end="439:44"><name pos:start="439:13" pos:end="439:19">av_dlog</name><argument_list pos:start="439:20" pos:end="439:44">(<argument pos:start="439:21" pos:end="439:24"><expr pos:start="439:21" pos:end="439:24"><name pos:start="439:21" pos:end="439:24">NULL</name></expr></argument>, <argument pos:start="439:27" pos:end="439:43"><expr pos:start="439:27" pos:end="439:43"><literal type="string" pos:start="439:27" pos:end="439:43">"silence frame\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="441:13" pos:end="441:39"><expr pos:start="441:13" pos:end="441:38"><call pos:start="441:13" pos:end="441:38"><name pos:start="441:13" pos:end="441:21">avio_skip</name><argument_list pos:start="441:22" pos:end="441:38">(<argument pos:start="441:23" pos:end="441:24"><expr pos:start="441:23" pos:end="441:24"><name pos:start="441:23" pos:end="441:24">pb</name></expr></argument>, <argument pos:start="441:27" pos:end="441:37"><expr pos:start="441:27" pos:end="441:37"><name pos:start="441:27" pos:end="441:37">opcode_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="443:13" pos:end="443:18">break;</break>
+
+
+
+        <case pos:start="447:9" pos:end="447:36">case <expr pos:start="447:14" pos:end="447:35"><name pos:start="447:14" pos:end="447:35">OPCODE_INIT_VIDEO_MODE</name></expr>:</case>
+
+            <expr_stmt pos:start="449:13" pos:end="449:53"><expr pos:start="449:13" pos:end="449:52"><call pos:start="449:13" pos:end="449:52"><name pos:start="449:13" pos:end="449:19">av_dlog</name><argument_list pos:start="449:20" pos:end="449:52">(<argument pos:start="449:21" pos:end="449:24"><expr pos:start="449:21" pos:end="449:24"><name pos:start="449:21" pos:end="449:24">NULL</name></expr></argument>, <argument pos:start="449:27" pos:end="449:51"><expr pos:start="449:27" pos:end="449:51"><literal type="string" pos:start="449:27" pos:end="449:51">"initialize video mode\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="451:13" pos:end="451:39"><expr pos:start="451:13" pos:end="451:38"><call pos:start="451:13" pos:end="451:38"><name pos:start="451:13" pos:end="451:21">avio_skip</name><argument_list pos:start="451:22" pos:end="451:38">(<argument pos:start="451:23" pos:end="451:24"><expr pos:start="451:23" pos:end="451:24"><name pos:start="451:23" pos:end="451:24">pb</name></expr></argument>, <argument pos:start="451:27" pos:end="451:37"><expr pos:start="451:27" pos:end="451:37"><name pos:start="451:27" pos:end="451:37">opcode_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="453:13" pos:end="453:18">break;</break>
+
+
+
+        <case pos:start="457:9" pos:end="457:36">case <expr pos:start="457:14" pos:end="457:35"><name pos:start="457:14" pos:end="457:35">OPCODE_CREATE_GRADIENT</name></expr>:</case>
+
+            <expr_stmt pos:start="459:13" pos:end="459:47"><expr pos:start="459:13" pos:end="459:46"><call pos:start="459:13" pos:end="459:46"><name pos:start="459:13" pos:end="459:19">av_dlog</name><argument_list pos:start="459:20" pos:end="459:46">(<argument pos:start="459:21" pos:end="459:24"><expr pos:start="459:21" pos:end="459:24"><name pos:start="459:21" pos:end="459:24">NULL</name></expr></argument>, <argument pos:start="459:27" pos:end="459:45"><expr pos:start="459:27" pos:end="459:45"><literal type="string" pos:start="459:27" pos:end="459:45">"create gradient\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="461:13" pos:end="461:39"><expr pos:start="461:13" pos:end="461:38"><call pos:start="461:13" pos:end="461:38"><name pos:start="461:13" pos:end="461:21">avio_skip</name><argument_list pos:start="461:22" pos:end="461:38">(<argument pos:start="461:23" pos:end="461:24"><expr pos:start="461:23" pos:end="461:24"><name pos:start="461:23" pos:end="461:24">pb</name></expr></argument>, <argument pos:start="461:27" pos:end="461:37"><expr pos:start="461:27" pos:end="461:37"><name pos:start="461:27" pos:end="461:37">opcode_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="463:13" pos:end="463:18">break;</break>
+
+
+
+        <case pos:start="467:9" pos:end="467:32">case <expr pos:start="467:14" pos:end="467:31"><name pos:start="467:14" pos:end="467:31">OPCODE_SET_PALETTE</name></expr>:</case>
+
+            <expr_stmt pos:start="469:13" pos:end="469:43"><expr pos:start="469:13" pos:end="469:42"><call pos:start="469:13" pos:end="469:42"><name pos:start="469:13" pos:end="469:19">av_dlog</name><argument_list pos:start="469:20" pos:end="469:42">(<argument pos:start="469:21" pos:end="469:24"><expr pos:start="469:21" pos:end="469:24"><name pos:start="469:21" pos:end="469:24">NULL</name></expr></argument>, <argument pos:start="469:27" pos:end="469:41"><expr pos:start="469:27" pos:end="469:41"><literal type="string" pos:start="469:27" pos:end="469:41">"set palette\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <comment type="block" pos:start="471:13" pos:end="473:37">/* check for the logical maximum palette size
+
+             * (3 * 256 + 4 bytes) */</comment>
+
+            <if_stmt pos:start="475:13" pos:end="483:13"><if pos:start="475:13" pos:end="483:13">if <condition pos:start="475:16" pos:end="475:36">(<expr pos:start="475:17" pos:end="475:35"><name pos:start="475:17" pos:end="475:27">opcode_size</name> <operator pos:start="475:29" pos:end="475:29">&gt;</operator> <literal type="number" pos:start="475:31" pos:end="475:35">0x304</literal></expr>)</condition> <block pos:start="475:38" pos:end="483:13">{<block_content pos:start="477:17" pos:end="481:22">
+
+                <expr_stmt pos:start="477:17" pos:end="477:79"><expr pos:start="477:17" pos:end="477:78"><call pos:start="477:17" pos:end="477:78"><name pos:start="477:17" pos:end="477:23">av_dlog</name><argument_list pos:start="477:24" pos:end="477:78">(<argument pos:start="477:25" pos:end="477:28"><expr pos:start="477:25" pos:end="477:28"><name pos:start="477:25" pos:end="477:28">NULL</name></expr></argument>, <argument pos:start="477:31" pos:end="477:77"><expr pos:start="477:31" pos:end="477:77"><literal type="string" pos:start="477:31" pos:end="477:77">"demux_ipmovie: set_palette opcode too large\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="479:17" pos:end="479:39"><expr pos:start="479:17" pos:end="479:38"><name pos:start="479:17" pos:end="479:26">chunk_type</name> <operator pos:start="479:28" pos:end="479:28">=</operator> <name pos:start="479:30" pos:end="479:38">CHUNK_BAD</name></expr>;</expr_stmt>
+
+                <break pos:start="481:17" pos:end="481:22">break;</break>
+
+            </block_content>}</block></if></if_stmt>
+
+            <if_stmt pos:start="485:13" pos:end="491:13"><if pos:start="485:13" pos:end="491:13">if <condition pos:start="485:16" pos:end="485:67">(<expr pos:start="485:17" pos:end="485:66"><call pos:start="485:17" pos:end="485:51"><name pos:start="485:17" pos:end="485:25">avio_read</name><argument_list pos:start="485:26" pos:end="485:51">(<argument pos:start="485:27" pos:end="485:28"><expr pos:start="485:27" pos:end="485:28"><name pos:start="485:27" pos:end="485:28">pb</name></expr></argument>, <argument pos:start="485:31" pos:end="485:37"><expr pos:start="485:31" pos:end="485:37"><name pos:start="485:31" pos:end="485:37">scratch</name></expr></argument>, <argument pos:start="485:40" pos:end="485:50"><expr pos:start="485:40" pos:end="485:50"><name pos:start="485:40" pos:end="485:50">opcode_size</name></expr></argument>)</argument_list></call> <operator pos:start="485:53" pos:end="485:54">!=</operator> <name pos:start="485:56" pos:end="485:66">opcode_size</name></expr>)</condition> <block pos:start="485:69" pos:end="491:13">{<block_content pos:start="487:17" pos:end="489:22">
+
+                <expr_stmt pos:start="487:17" pos:end="487:39"><expr pos:start="487:17" pos:end="487:38"><name pos:start="487:17" pos:end="487:26">chunk_type</name> <operator pos:start="487:28" pos:end="487:28">=</operator> <name pos:start="487:30" pos:end="487:38">CHUNK_BAD</name></expr>;</expr_stmt>
+
+                <break pos:start="489:17" pos:end="489:22">break;</break>
+
+            </block_content>}</block></if></if_stmt>
+
+
+
+            <comment type="block" pos:start="495:13" pos:end="495:63">/* load the palette into internal data structure */</comment>
+
+            <expr_stmt pos:start="497:13" pos:end="497:47"><expr pos:start="497:13" pos:end="497:46"><name pos:start="497:13" pos:end="497:23">first_color</name> <operator pos:start="497:25" pos:end="497:25">=</operator> <call pos:start="497:27" pos:end="497:46"><name pos:start="497:27" pos:end="497:33">AV_RL16</name><argument_list pos:start="497:34" pos:end="497:46">(<argument pos:start="497:35" pos:end="497:45"><expr pos:start="497:35" pos:end="497:45"><operator pos:start="497:35" pos:end="497:35">&amp;</operator><name pos:start="497:36" pos:end="497:45"><name pos:start="497:36" pos:end="497:42">scratch</name><index pos:start="497:43" pos:end="497:45">[<expr pos:start="497:44" pos:end="497:44"><literal type="number" pos:start="497:44" pos:end="497:44">0</literal></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="499:13" pos:end="499:64"><expr pos:start="499:13" pos:end="499:63"><name pos:start="499:13" pos:end="499:22">last_color</name> <operator pos:start="499:24" pos:end="499:24">=</operator> <name pos:start="499:26" pos:end="499:36">first_color</name> <operator pos:start="499:38" pos:end="499:38">+</operator> <call pos:start="499:40" pos:end="499:59"><name pos:start="499:40" pos:end="499:46">AV_RL16</name><argument_list pos:start="499:47" pos:end="499:59">(<argument pos:start="499:48" pos:end="499:58"><expr pos:start="499:48" pos:end="499:58"><operator pos:start="499:48" pos:end="499:48">&amp;</operator><name pos:start="499:49" pos:end="499:58"><name pos:start="499:49" pos:end="499:55">scratch</name><index pos:start="499:56" pos:end="499:58">[<expr pos:start="499:57" pos:end="499:57"><literal type="number" pos:start="499:57" pos:end="499:57">2</literal></expr>]</index></name></expr></argument>)</argument_list></call> <operator pos:start="499:61" pos:end="499:61">-</operator> <literal type="number" pos:start="499:63" pos:end="499:63">1</literal></expr>;</expr_stmt>
+
+            <comment type="block" pos:start="501:13" pos:end="501:61">/* sanity check (since they are 16 bit values) */</comment>
+
+            <if_stmt pos:start="503:13" pos:end="513:13"><if pos:start="503:13" pos:end="513:13">if <condition pos:start="503:16" pos:end="503:60">(<expr pos:start="503:17" pos:end="503:59"><operator pos:start="503:17" pos:end="503:17">(</operator><name pos:start="503:18" pos:end="503:28">first_color</name> <operator pos:start="503:30" pos:end="503:30">&gt;</operator> <literal type="number" pos:start="503:32" pos:end="503:35">0xFF</literal><operator pos:start="503:36" pos:end="503:36">)</operator> <operator pos:start="503:38" pos:end="503:39">||</operator> <operator pos:start="503:41" pos:end="503:41">(</operator><name pos:start="503:42" pos:end="503:51">last_color</name> <operator pos:start="503:53" pos:end="503:53">&gt;</operator> <literal type="number" pos:start="503:55" pos:end="503:58">0xFF</literal><operator pos:start="503:59" pos:end="503:59">)</operator></expr>)</condition> <block pos:start="503:62" pos:end="513:13">{<block_content pos:start="505:17" pos:end="511:22">
+
+                <expr_stmt pos:start="505:17" pos:end="507:45"><expr pos:start="505:17" pos:end="507:44"><call pos:start="505:17" pos:end="507:44"><name pos:start="505:17" pos:end="505:23">av_dlog</name><argument_list pos:start="505:24" pos:end="507:44">(<argument pos:start="505:25" pos:end="505:28"><expr pos:start="505:25" pos:end="505:28"><name pos:start="505:25" pos:end="505:28">NULL</name></expr></argument>, <argument pos:start="505:31" pos:end="505:92"><expr pos:start="505:31" pos:end="505:92"><literal type="string" pos:start="505:31" pos:end="505:92">"demux_ipmovie: set_palette indexes out of range (%d -&gt; %d)\n"</literal></expr></argument>,
+
+                    <argument pos:start="507:21" pos:end="507:31"><expr pos:start="507:21" pos:end="507:31"><name pos:start="507:21" pos:end="507:31">first_color</name></expr></argument>, <argument pos:start="507:34" pos:end="507:43"><expr pos:start="507:34" pos:end="507:43"><name pos:start="507:34" pos:end="507:43">last_color</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="509:17" pos:end="509:39"><expr pos:start="509:17" pos:end="509:38"><name pos:start="509:17" pos:end="509:26">chunk_type</name> <operator pos:start="509:28" pos:end="509:28">=</operator> <name pos:start="509:30" pos:end="509:38">CHUNK_BAD</name></expr>;</expr_stmt>
+
+                <break pos:start="511:17" pos:end="511:22">break;</break>
+
+            </block_content>}</block></if></if_stmt>
+
+            <expr_stmt pos:start="515:13" pos:end="515:18"><expr pos:start="515:13" pos:end="515:17"><name pos:start="515:13" pos:end="515:13">j</name> <operator pos:start="515:15" pos:end="515:15">=</operator> <literal type="number" pos:start="515:17" pos:end="515:17">4</literal></expr>;</expr_stmt>  <comment type="block" pos:start="515:21" pos:end="515:54">/* offset of first palette data */</comment>
+
+            <for pos:start="517:13" pos:end="533:13">for <control pos:start="517:17" pos:end="517:55">(<init pos:start="517:18" pos:end="517:33"><expr pos:start="517:18" pos:end="517:32"><name pos:start="517:18" pos:end="517:18">i</name> <operator pos:start="517:20" pos:end="517:20">=</operator> <name pos:start="517:22" pos:end="517:32">first_color</name></expr>;</init> <condition pos:start="517:35" pos:end="517:50"><expr pos:start="517:35" pos:end="517:49"><name pos:start="517:35" pos:end="517:35">i</name> <operator pos:start="517:37" pos:end="517:38">&lt;=</operator> <name pos:start="517:40" pos:end="517:49">last_color</name></expr>;</condition> <incr pos:start="517:52" pos:end="517:54"><expr pos:start="517:52" pos:end="517:54"><name pos:start="517:52" pos:end="517:52">i</name><operator pos:start="517:53" pos:end="517:54">++</operator></expr></incr>)</control> <block pos:start="517:57" pos:end="533:13">{<block_content pos:start="523:17" pos:end="531:62">
+
+                <comment type="block" pos:start="519:17" pos:end="521:62">/* the palette is stored as a 6-bit VGA palette, thus each
+
+                 * component is shifted up to a 8-bit range */</comment>
+
+                <expr_stmt pos:start="523:17" pos:end="523:37"><expr pos:start="523:17" pos:end="523:36"><name pos:start="523:17" pos:end="523:17">r</name> <operator pos:start="523:19" pos:end="523:19">=</operator> <name pos:start="523:21" pos:end="523:32"><name pos:start="523:21" pos:end="523:27">scratch</name><index pos:start="523:28" pos:end="523:32">[<expr pos:start="523:29" pos:end="523:31"><name pos:start="523:29" pos:end="523:29">j</name><operator pos:start="523:30" pos:end="523:31">++</operator></expr>]</index></name> <operator pos:start="523:34" pos:end="523:34">*</operator> <literal type="number" pos:start="523:36" pos:end="523:36">4</literal></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="525:17" pos:end="525:37"><expr pos:start="525:17" pos:end="525:36"><name pos:start="525:17" pos:end="525:17">g</name> <operator pos:start="525:19" pos:end="525:19">=</operator> <name pos:start="525:21" pos:end="525:32"><name pos:start="525:21" pos:end="525:27">scratch</name><index pos:start="525:28" pos:end="525:32">[<expr pos:start="525:29" pos:end="525:31"><name pos:start="525:29" pos:end="525:29">j</name><operator pos:start="525:30" pos:end="525:31">++</operator></expr>]</index></name> <operator pos:start="525:34" pos:end="525:34">*</operator> <literal type="number" pos:start="525:36" pos:end="525:36">4</literal></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="527:17" pos:end="527:37"><expr pos:start="527:17" pos:end="527:36"><name pos:start="527:17" pos:end="527:17">b</name> <operator pos:start="527:19" pos:end="527:19">=</operator> <name pos:start="527:21" pos:end="527:32"><name pos:start="527:21" pos:end="527:27">scratch</name><index pos:start="527:28" pos:end="527:32">[<expr pos:start="527:29" pos:end="527:31"><name pos:start="527:29" pos:end="527:29">j</name><operator pos:start="527:30" pos:end="527:31">++</operator></expr>]</index></name> <operator pos:start="527:34" pos:end="527:34">*</operator> <literal type="number" pos:start="527:36" pos:end="527:36">4</literal></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="529:17" pos:end="529:75"><expr pos:start="529:17" pos:end="529:74"><name pos:start="529:17" pos:end="529:29"><name pos:start="529:17" pos:end="529:17">s</name><operator pos:start="529:18" pos:end="529:19">-&gt;</operator><name pos:start="529:20" pos:end="529:26">palette</name><index pos:start="529:27" pos:end="529:29">[<expr pos:start="529:28" pos:end="529:28"><name pos:start="529:28" pos:end="529:28">i</name></expr>]</index></name> <operator pos:start="529:31" pos:end="529:31">=</operator> <operator pos:start="529:33" pos:end="529:33">(</operator><literal type="number" pos:start="529:34" pos:end="529:38">0xFFU</literal> <operator pos:start="529:40" pos:end="529:41">&lt;&lt;</operator> <literal type="number" pos:start="529:43" pos:end="529:44">24</literal><operator pos:start="529:45" pos:end="529:45">)</operator> <operator pos:start="529:47" pos:end="529:47">|</operator> <operator pos:start="529:49" pos:end="529:49">(</operator><name pos:start="529:50" pos:end="529:50">r</name> <operator pos:start="529:52" pos:end="529:53">&lt;&lt;</operator> <literal type="number" pos:start="529:55" pos:end="529:56">16</literal><operator pos:start="529:57" pos:end="529:57">)</operator> <operator pos:start="529:59" pos:end="529:59">|</operator> <operator pos:start="529:61" pos:end="529:61">(</operator><name pos:start="529:62" pos:end="529:62">g</name> <operator pos:start="529:64" pos:end="529:65">&lt;&lt;</operator> <literal type="number" pos:start="529:67" pos:end="529:67">8</literal><operator pos:start="529:68" pos:end="529:68">)</operator> <operator pos:start="529:70" pos:end="529:70">|</operator> <operator pos:start="529:72" pos:end="529:72">(</operator><name pos:start="529:73" pos:end="529:73">b</name><operator pos:start="529:74" pos:end="529:74">)</operator></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="531:17" pos:end="531:62"><expr pos:start="531:17" pos:end="531:61"><name pos:start="531:17" pos:end="531:29"><name pos:start="531:17" pos:end="531:17">s</name><operator pos:start="531:18" pos:end="531:19">-&gt;</operator><name pos:start="531:20" pos:end="531:26">palette</name><index pos:start="531:27" pos:end="531:29">[<expr pos:start="531:28" pos:end="531:28"><name pos:start="531:28" pos:end="531:28">i</name></expr>]</index></name> <operator pos:start="531:31" pos:end="531:32">|=</operator> <name pos:start="531:34" pos:end="531:46"><name pos:start="531:34" pos:end="531:34">s</name><operator pos:start="531:35" pos:end="531:36">-&gt;</operator><name pos:start="531:37" pos:end="531:43">palette</name><index pos:start="531:44" pos:end="531:46">[<expr pos:start="531:45" pos:end="531:45"><name pos:start="531:45" pos:end="531:45">i</name></expr>]</index></name> <operator pos:start="531:48" pos:end="531:49">&gt;&gt;</operator> <literal type="number" pos:start="531:51" pos:end="531:51">6</literal> <operator pos:start="531:53" pos:end="531:53">&amp;</operator> <literal type="number" pos:start="531:55" pos:end="531:61">0x30303</literal></expr>;</expr_stmt>
+
+            </block_content>}</block></for>
+
+            <expr_stmt pos:start="535:13" pos:end="535:31"><expr pos:start="535:13" pos:end="535:30"><name pos:start="535:13" pos:end="535:26"><name pos:start="535:13" pos:end="535:13">s</name><operator pos:start="535:14" pos:end="535:15">-&gt;</operator><name pos:start="535:16" pos:end="535:26">has_palette</name></name> <operator pos:start="535:28" pos:end="535:28">=</operator> <literal type="number" pos:start="535:30" pos:end="535:30">1</literal></expr>;</expr_stmt>
+
+            <break pos:start="537:13" pos:end="537:18">break;</break>
+
+
+
+        <case pos:start="541:9" pos:end="541:43">case <expr pos:start="541:14" pos:end="541:42"><name pos:start="541:14" pos:end="541:42">OPCODE_SET_PALETTE_COMPRESSED</name></expr>:</case>
+
+            <expr_stmt pos:start="543:13" pos:end="543:54"><expr pos:start="543:13" pos:end="543:53"><call pos:start="543:13" pos:end="543:53"><name pos:start="543:13" pos:end="543:19">av_dlog</name><argument_list pos:start="543:20" pos:end="543:53">(<argument pos:start="543:21" pos:end="543:24"><expr pos:start="543:21" pos:end="543:24"><name pos:start="543:21" pos:end="543:24">NULL</name></expr></argument>, <argument pos:start="543:27" pos:end="543:52"><expr pos:start="543:27" pos:end="543:52"><literal type="string" pos:start="543:27" pos:end="543:52">"set palette compressed\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="545:13" pos:end="545:39"><expr pos:start="545:13" pos:end="545:38"><call pos:start="545:13" pos:end="545:38"><name pos:start="545:13" pos:end="545:21">avio_skip</name><argument_list pos:start="545:22" pos:end="545:38">(<argument pos:start="545:23" pos:end="545:24"><expr pos:start="545:23" pos:end="545:24"><name pos:start="545:23" pos:end="545:24">pb</name></expr></argument>, <argument pos:start="545:27" pos:end="545:37"><expr pos:start="545:27" pos:end="545:37"><name pos:start="545:27" pos:end="545:37">opcode_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="547:13" pos:end="547:18">break;</break>
+
+
+
+        <case pos:start="551:9" pos:end="551:37">case <expr pos:start="551:14" pos:end="551:36"><name pos:start="551:14" pos:end="551:36">OPCODE_SET_DECODING_MAP</name></expr>:</case>
+
+            <expr_stmt pos:start="553:13" pos:end="553:48"><expr pos:start="553:13" pos:end="553:47"><call pos:start="553:13" pos:end="553:47"><name pos:start="553:13" pos:end="553:19">av_dlog</name><argument_list pos:start="553:20" pos:end="553:47">(<argument pos:start="553:21" pos:end="553:24"><expr pos:start="553:21" pos:end="553:24"><name pos:start="553:21" pos:end="553:24">NULL</name></expr></argument>, <argument pos:start="553:27" pos:end="553:46"><expr pos:start="553:27" pos:end="553:46"><literal type="string" pos:start="553:27" pos:end="553:46">"set decoding map\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <comment type="block" pos:start="557:13" pos:end="557:50">/* log position and move on for now */</comment>
+
+            <expr_stmt pos:start="559:13" pos:end="559:55"><expr pos:start="559:13" pos:end="559:54"><name pos:start="559:13" pos:end="559:38"><name pos:start="559:13" pos:end="559:13">s</name><operator pos:start="559:14" pos:end="559:15">-&gt;</operator><name pos:start="559:16" pos:end="559:38">decode_map_chunk_offset</name></name> <operator pos:start="559:40" pos:end="559:40">=</operator> <call pos:start="559:42" pos:end="559:54"><name pos:start="559:42" pos:end="559:50">avio_tell</name><argument_list pos:start="559:51" pos:end="559:54">(<argument pos:start="559:52" pos:end="559:53"><expr pos:start="559:52" pos:end="559:53"><name pos:start="559:52" pos:end="559:53">pb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="561:13" pos:end="561:51"><expr pos:start="561:13" pos:end="561:50"><name pos:start="561:13" pos:end="561:36"><name pos:start="561:13" pos:end="561:13">s</name><operator pos:start="561:14" pos:end="561:15">-&gt;</operator><name pos:start="561:16" pos:end="561:36">decode_map_chunk_size</name></name> <operator pos:start="561:38" pos:end="561:38">=</operator> <name pos:start="561:40" pos:end="561:50">opcode_size</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="563:13" pos:end="563:39"><expr pos:start="563:13" pos:end="563:38"><call pos:start="563:13" pos:end="563:38"><name pos:start="563:13" pos:end="563:21">avio_skip</name><argument_list pos:start="563:22" pos:end="563:38">(<argument pos:start="563:23" pos:end="563:24"><expr pos:start="563:23" pos:end="563:24"><name pos:start="563:23" pos:end="563:24">pb</name></expr></argument>, <argument pos:start="563:27" pos:end="563:37"><expr pos:start="563:27" pos:end="563:37"><name pos:start="563:27" pos:end="563:37">opcode_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="565:13" pos:end="565:18">break;</break>
+
+
+
+        <case pos:start="569:9" pos:end="569:31">case <expr pos:start="569:14" pos:end="569:30"><name pos:start="569:14" pos:end="569:30">OPCODE_VIDEO_DATA</name></expr>:</case>
+
+            <expr_stmt pos:start="571:13" pos:end="571:46"><expr pos:start="571:13" pos:end="571:45"><call pos:start="571:13" pos:end="571:45"><name pos:start="571:13" pos:end="571:19">av_dlog</name><argument_list pos:start="571:20" pos:end="571:45">(<argument pos:start="571:21" pos:end="571:24"><expr pos:start="571:21" pos:end="571:24"><name pos:start="571:21" pos:end="571:24">NULL</name></expr></argument>, <argument pos:start="571:27" pos:end="571:44"><expr pos:start="571:27" pos:end="571:44"><literal type="string" pos:start="571:27" pos:end="571:44">"set video data\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <comment type="block" pos:start="575:13" pos:end="575:50">/* log position and move on for now */</comment>
+
+            <expr_stmt pos:start="577:13" pos:end="577:50"><expr pos:start="577:13" pos:end="577:49"><name pos:start="577:13" pos:end="577:33"><name pos:start="577:13" pos:end="577:13">s</name><operator pos:start="577:14" pos:end="577:15">-&gt;</operator><name pos:start="577:16" pos:end="577:33">video_chunk_offset</name></name> <operator pos:start="577:35" pos:end="577:35">=</operator> <call pos:start="577:37" pos:end="577:49"><name pos:start="577:37" pos:end="577:45">avio_tell</name><argument_list pos:start="577:46" pos:end="577:49">(<argument pos:start="577:47" pos:end="577:48"><expr pos:start="577:47" pos:end="577:48"><name pos:start="577:47" pos:end="577:48">pb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="579:13" pos:end="579:46"><expr pos:start="579:13" pos:end="579:45"><name pos:start="579:13" pos:end="579:31"><name pos:start="579:13" pos:end="579:13">s</name><operator pos:start="579:14" pos:end="579:15">-&gt;</operator><name pos:start="579:16" pos:end="579:31">video_chunk_size</name></name> <operator pos:start="579:33" pos:end="579:33">=</operator> <name pos:start="579:35" pos:end="579:45">opcode_size</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="581:13" pos:end="581:39"><expr pos:start="581:13" pos:end="581:38"><call pos:start="581:13" pos:end="581:38"><name pos:start="581:13" pos:end="581:21">avio_skip</name><argument_list pos:start="581:22" pos:end="581:38">(<argument pos:start="581:23" pos:end="581:24"><expr pos:start="581:23" pos:end="581:24"><name pos:start="581:23" pos:end="581:24">pb</name></expr></argument>, <argument pos:start="581:27" pos:end="581:37"><expr pos:start="581:27" pos:end="581:37"><name pos:start="581:27" pos:end="581:37">opcode_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="583:13" pos:end="583:18">break;</break>
+
+
+
+        <default pos:start="587:9" pos:end="587:16">default:</default>
+
+            <expr_stmt pos:start="589:13" pos:end="589:55"><expr pos:start="589:13" pos:end="589:54"><call pos:start="589:13" pos:end="589:54"><name pos:start="589:13" pos:end="589:19">av_dlog</name><argument_list pos:start="589:20" pos:end="589:54">(<argument pos:start="589:21" pos:end="589:24"><expr pos:start="589:21" pos:end="589:24"><name pos:start="589:21" pos:end="589:24">NULL</name></expr></argument>, <argument pos:start="589:27" pos:end="589:53"><expr pos:start="589:27" pos:end="589:53"><literal type="string" pos:start="589:27" pos:end="589:53">"*** unknown opcode type\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="591:13" pos:end="591:35"><expr pos:start="591:13" pos:end="591:34"><name pos:start="591:13" pos:end="591:22">chunk_type</name> <operator pos:start="591:24" pos:end="591:24">=</operator> <name pos:start="591:26" pos:end="591:34">CHUNK_BAD</name></expr>;</expr_stmt>
+
+            <break pos:start="593:13" pos:end="593:18">break;</break>
+
+
+
+        </block_content>}</block></switch>
+
+    </block_content>}</block></while>
+
+
+
+    <comment type="block" pos:start="603:5" pos:end="603:52">/* make a note of where the stream is sitting */</comment>
+
+    <expr_stmt pos:start="605:5" pos:end="605:41"><expr pos:start="605:5" pos:end="605:40"><name pos:start="605:5" pos:end="605:24"><name pos:start="605:5" pos:end="605:5">s</name><operator pos:start="605:6" pos:end="605:7">-&gt;</operator><name pos:start="605:8" pos:end="605:24">next_chunk_offset</name></name> <operator pos:start="605:26" pos:end="605:26">=</operator> <call pos:start="605:28" pos:end="605:40"><name pos:start="605:28" pos:end="605:36">avio_tell</name><argument_list pos:start="605:37" pos:end="605:40">(<argument pos:start="605:38" pos:end="605:39"><expr pos:start="605:38" pos:end="605:39"><name pos:start="605:38" pos:end="605:39">pb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="609:5" pos:end="609:51">/* dispatch the first of any pending packets */</comment>
+
+    <if_stmt pos:start="611:5" pos:end="613:53"><if pos:start="611:5" pos:end="613:53">if <condition pos:start="611:8" pos:end="611:72">(<expr pos:start="611:9" pos:end="611:71"><operator pos:start="611:9" pos:end="611:9">(</operator><name pos:start="611:10" pos:end="611:19">chunk_type</name> <operator pos:start="611:21" pos:end="611:22">==</operator> <name pos:start="611:24" pos:end="611:34">CHUNK_VIDEO</name><operator pos:start="611:35" pos:end="611:35">)</operator> <operator pos:start="611:37" pos:end="611:38">||</operator> <operator pos:start="611:40" pos:end="611:40">(</operator><name pos:start="611:41" pos:end="611:50">chunk_type</name> <operator pos:start="611:52" pos:end="611:53">==</operator> <name pos:start="611:55" pos:end="611:70">CHUNK_AUDIO_ONLY</name><operator pos:start="611:71" pos:end="611:71">)</operator></expr>)</condition><block type="pseudo" pos:start="613:9" pos:end="613:53"><block_content pos:start="613:9" pos:end="613:53">
+
+        <expr_stmt pos:start="613:9" pos:end="613:53"><expr pos:start="613:9" pos:end="613:52"><name pos:start="613:9" pos:end="613:18">chunk_type</name> <operator pos:start="613:20" pos:end="613:20">=</operator> <call pos:start="613:22" pos:end="613:52"><name pos:start="613:22" pos:end="613:40">load_ipmovie_packet</name><argument_list pos:start="613:41" pos:end="613:52">(<argument pos:start="613:42" pos:end="613:42"><expr pos:start="613:42" pos:end="613:42"><name pos:start="613:42" pos:end="613:42">s</name></expr></argument>, <argument pos:start="613:45" pos:end="613:46"><expr pos:start="613:45" pos:end="613:46"><name pos:start="613:45" pos:end="613:46">pb</name></expr></argument>, <argument pos:start="613:49" pos:end="613:51"><expr pos:start="613:49" pos:end="613:51"><name pos:start="613:49" pos:end="613:51">pkt</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+
+
+    <return pos:start="617:5" pos:end="617:22">return <expr pos:start="617:12" pos:end="617:21"><name pos:start="617:12" pos:end="617:21">chunk_type</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

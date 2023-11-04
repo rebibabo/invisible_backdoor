@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/6184.c" pos:tabs="8"><function pos:start="1:1" pos:end="63:1"><type pos:start="1:1" pos:end="1:7"><name pos:start="1:1" pos:end="1:7">ssize_t</name></type> <name pos:start="1:9" pos:end="1:25">nbd_receive_reply</name><parameter_list pos:start="1:26" pos:end="1:61">(<parameter pos:start="1:27" pos:end="1:35"><decl pos:start="1:27" pos:end="1:35"><type pos:start="1:27" pos:end="1:35"><name pos:start="1:27" pos:end="1:29">int</name></type> <name pos:start="1:31" pos:end="1:35">csock</name></decl></parameter>, <parameter pos:start="1:38" pos:end="1:60"><decl pos:start="1:38" pos:end="1:60"><type pos:start="1:38" pos:end="1:60"><name pos:start="1:38" pos:end="1:53"><name pos:start="1:38" pos:end="1:43">struct</name> <name pos:start="1:45" pos:end="1:53">nbd_reply</name></name> <modifier pos:start="1:55" pos:end="1:55">*</modifier></type><name pos:start="1:56" pos:end="1:60">reply</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="63:1">{<block_content pos:start="5:5" pos:end="61:13">
+
+    <decl_stmt pos:start="5:5" pos:end="5:32"><decl pos:start="5:5" pos:end="5:31"><type pos:start="5:5" pos:end="5:11"><name pos:start="5:5" pos:end="5:11">uint8_t</name></type> <name pos:start="5:13" pos:end="5:31"><name pos:start="5:13" pos:end="5:15">buf</name><index pos:start="5:16" pos:end="5:31">[<expr pos:start="5:17" pos:end="5:30"><name pos:start="5:17" pos:end="5:30">NBD_REPLY_SIZE</name></expr>]</index></name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:19"><decl pos:start="7:5" pos:end="7:18"><type pos:start="7:5" pos:end="7:12"><name pos:start="7:5" pos:end="7:12">uint32_t</name></type> <name pos:start="7:14" pos:end="7:18">magic</name></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="11:5" pos:end="19:5"><if pos:start="11:5" pos:end="19:5">if <condition pos:start="11:8" pos:end="11:58">(<expr pos:start="11:9" pos:end="11:57"><call pos:start="11:9" pos:end="11:42"><name pos:start="11:9" pos:end="11:17">read_sync</name><argument_list pos:start="11:18" pos:end="11:42">(<argument pos:start="11:19" pos:end="11:23"><expr pos:start="11:19" pos:end="11:23"><name pos:start="11:19" pos:end="11:23">csock</name></expr></argument>, <argument pos:start="11:26" pos:end="11:28"><expr pos:start="11:26" pos:end="11:28"><name pos:start="11:26" pos:end="11:28">buf</name></expr></argument>, <argument pos:start="11:31" pos:end="11:41"><expr pos:start="11:31" pos:end="11:41"><sizeof pos:start="11:31" pos:end="11:41">sizeof<argument_list pos:start="11:37" pos:end="11:41">(<argument pos:start="11:38" pos:end="11:40"><expr pos:start="11:38" pos:end="11:40"><name pos:start="11:38" pos:end="11:40">buf</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call> <operator pos:start="11:44" pos:end="11:45">!=</operator> <sizeof pos:start="11:47" pos:end="11:57">sizeof<argument_list pos:start="11:53" pos:end="11:57">(<argument pos:start="11:54" pos:end="11:56"><expr pos:start="11:54" pos:end="11:56"><name pos:start="11:54" pos:end="11:56">buf</name></expr></argument>)</argument_list></sizeof></expr>)</condition> <block pos:start="11:60" pos:end="19:5">{<block_content pos:start="13:9" pos:end="17:18">
+
+        <expr_stmt pos:start="13:9" pos:end="13:27"><expr pos:start="13:9" pos:end="13:26"><call pos:start="13:9" pos:end="13:26"><name pos:start="13:9" pos:end="13:11">LOG</name><argument_list pos:start="13:12" pos:end="13:26">(<argument pos:start="13:13" pos:end="13:25"><expr pos:start="13:13" pos:end="13:25"><literal type="string" pos:start="13:13" pos:end="13:25">"read failed"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="15:9" pos:end="15:23"><expr pos:start="15:9" pos:end="15:22"><name pos:start="15:9" pos:end="15:13">errno</name> <operator pos:start="15:15" pos:end="15:15">=</operator> <name pos:start="15:17" pos:end="15:22">EINVAL</name></expr>;</expr_stmt>
+
+        <return pos:start="17:9" pos:end="17:18">return <expr pos:start="17:16" pos:end="17:17"><operator pos:start="17:16" pos:end="17:16">-</operator><literal type="number" pos:start="17:17" pos:end="17:17">1</literal></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="23:5" pos:end="31:7">/* Reply
+
+       [ 0 ..  3]    magic   (NBD_REPLY_MAGIC)
+
+       [ 4 ..  7]    error   (0 == no error)
+
+       [ 7 .. 15]    handle
+
+     */</comment>
+
+
+
+    <expr_stmt pos:start="35:5" pos:end="35:41"><expr pos:start="35:5" pos:end="35:40"><name pos:start="35:5" pos:end="35:9">magic</name> <operator pos:start="35:11" pos:end="35:11">=</operator> <call pos:start="35:13" pos:end="35:40"><name pos:start="35:13" pos:end="35:24">be32_to_cpup</name><argument_list pos:start="35:25" pos:end="35:40">(<argument pos:start="35:26" pos:end="35:39"><expr pos:start="35:26" pos:end="35:39"><operator pos:start="35:26" pos:end="35:26">(</operator><name pos:start="35:27" pos:end="35:34">uint32_t</name><operator pos:start="35:35" pos:end="35:35">*</operator><operator pos:start="35:36" pos:end="35:36">)</operator><name pos:start="35:37" pos:end="35:39">buf</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="37:5" pos:end="37:55"><expr pos:start="37:5" pos:end="37:54"><name pos:start="37:5" pos:end="37:16"><name pos:start="37:5" pos:end="37:9">reply</name><operator pos:start="37:10" pos:end="37:11">-&gt;</operator><name pos:start="37:12" pos:end="37:16">error</name></name>  <operator pos:start="37:19" pos:end="37:19">=</operator> <call pos:start="37:21" pos:end="37:54"><name pos:start="37:21" pos:end="37:32">be32_to_cpup</name><argument_list pos:start="37:33" pos:end="37:54">(<argument pos:start="37:34" pos:end="37:53"><expr pos:start="37:34" pos:end="37:53"><operator pos:start="37:34" pos:end="37:34">(</operator><name pos:start="37:35" pos:end="37:42">uint32_t</name><operator pos:start="37:43" pos:end="37:43">*</operator><operator pos:start="37:44" pos:end="37:44">)</operator><operator pos:start="37:45" pos:end="37:45">(</operator><name pos:start="37:46" pos:end="37:48">buf</name> <operator pos:start="37:50" pos:end="37:50">+</operator> <literal type="number" pos:start="37:52" pos:end="37:52">4</literal><operator pos:start="37:53" pos:end="37:53">)</operator></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="39:5" pos:end="39:55"><expr pos:start="39:5" pos:end="39:54"><name pos:start="39:5" pos:end="39:17"><name pos:start="39:5" pos:end="39:9">reply</name><operator pos:start="39:10" pos:end="39:11">-&gt;</operator><name pos:start="39:12" pos:end="39:17">handle</name></name> <operator pos:start="39:19" pos:end="39:19">=</operator> <call pos:start="39:21" pos:end="39:54"><name pos:start="39:21" pos:end="39:32">be64_to_cpup</name><argument_list pos:start="39:33" pos:end="39:54">(<argument pos:start="39:34" pos:end="39:53"><expr pos:start="39:34" pos:end="39:53"><operator pos:start="39:34" pos:end="39:34">(</operator><name pos:start="39:35" pos:end="39:42">uint64_t</name><operator pos:start="39:43" pos:end="39:43">*</operator><operator pos:start="39:44" pos:end="39:44">)</operator><operator pos:start="39:45" pos:end="39:45">(</operator><name pos:start="39:46" pos:end="39:48">buf</name> <operator pos:start="39:50" pos:end="39:50">+</operator> <literal type="number" pos:start="39:52" pos:end="39:52">8</literal><operator pos:start="39:53" pos:end="39:53">)</operator></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="43:5" pos:end="47:46"><expr pos:start="43:5" pos:end="47:45"><call pos:start="43:5" pos:end="47:45"><name pos:start="43:5" pos:end="43:9">TRACE</name><argument_list pos:start="43:10" pos:end="47:45">(<argument pos:start="43:11" pos:end="45:62"><expr pos:start="43:11" pos:end="45:62"><literal type="string" pos:start="43:11" pos:end="43:23">"Got reply: "</literal>
+
+          <literal type="string" pos:start="45:11" pos:end="45:51">"{ magic = 0x%x, .error = %d, handle = %"</literal> <name pos:start="45:53" pos:end="45:58">PRIu64</name><literal type="string" pos:start="45:59" pos:end="45:62">" }"</literal></expr></argument>,
+
+          <argument pos:start="47:11" pos:end="47:15"><expr pos:start="47:11" pos:end="47:15"><name pos:start="47:11" pos:end="47:15">magic</name></expr></argument>, <argument pos:start="47:18" pos:end="47:29"><expr pos:start="47:18" pos:end="47:29"><name pos:start="47:18" pos:end="47:29"><name pos:start="47:18" pos:end="47:22">reply</name><operator pos:start="47:23" pos:end="47:24">-&gt;</operator><name pos:start="47:25" pos:end="47:29">error</name></name></expr></argument>, <argument pos:start="47:32" pos:end="47:44"><expr pos:start="47:32" pos:end="47:44"><name pos:start="47:32" pos:end="47:44"><name pos:start="47:32" pos:end="47:36">reply</name><operator pos:start="47:37" pos:end="47:38">-&gt;</operator><name pos:start="47:39" pos:end="47:44">handle</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="51:5" pos:end="59:5"><if pos:start="51:5" pos:end="59:5">if <condition pos:start="51:8" pos:end="51:33">(<expr pos:start="51:9" pos:end="51:32"><name pos:start="51:9" pos:end="51:13">magic</name> <operator pos:start="51:15" pos:end="51:16">!=</operator> <name pos:start="51:18" pos:end="51:32">NBD_REPLY_MAGIC</name></expr>)</condition> <block pos:start="51:35" pos:end="59:5">{<block_content pos:start="53:9" pos:end="57:18">
+
+        <expr_stmt pos:start="53:9" pos:end="53:47"><expr pos:start="53:9" pos:end="53:46"><call pos:start="53:9" pos:end="53:46"><name pos:start="53:9" pos:end="53:11">LOG</name><argument_list pos:start="53:12" pos:end="53:46">(<argument pos:start="53:13" pos:end="53:38"><expr pos:start="53:13" pos:end="53:38"><literal type="string" pos:start="53:13" pos:end="53:38">"invalid magic (got 0x%x)"</literal></expr></argument>, <argument pos:start="53:41" pos:end="53:45"><expr pos:start="53:41" pos:end="53:45"><name pos:start="53:41" pos:end="53:45">magic</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="55:9" pos:end="55:23"><expr pos:start="55:9" pos:end="55:22"><name pos:start="55:9" pos:end="55:13">errno</name> <operator pos:start="55:15" pos:end="55:15">=</operator> <name pos:start="55:17" pos:end="55:22">EINVAL</name></expr>;</expr_stmt>
+
+        <return pos:start="57:9" pos:end="57:18">return <expr pos:start="57:16" pos:end="57:17"><operator pos:start="57:16" pos:end="57:16">-</operator><literal type="number" pos:start="57:17" pos:end="57:17">1</literal></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+    <return pos:start="61:5" pos:end="61:13">return <expr pos:start="61:12" pos:end="61:12"><literal type="number" pos:start="61:12" pos:end="61:12">0</literal></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

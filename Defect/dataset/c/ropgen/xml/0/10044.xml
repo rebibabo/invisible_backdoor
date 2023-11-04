@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/10044.c" pos:tabs="8"><function pos:start="1:1" pos:end="99:1"><type pos:start="1:1" pos:end="1:28"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:23">av_always_inline</name> <name pos:start="1:25" pos:end="1:28">void</name></type> <name pos:start="1:30" pos:end="1:64">put_h264_qpel8or16_hv1_lowpass_sse2</name><parameter_list pos:start="1:65" pos:end="1:132">(<parameter pos:start="1:66" pos:end="1:77"><decl pos:start="1:66" pos:end="1:77"><type pos:start="1:66" pos:end="1:77"><name pos:start="1:66" pos:end="1:72">int16_t</name> <modifier pos:start="1:74" pos:end="1:74">*</modifier></type><name pos:start="1:75" pos:end="1:77">tmp</name></decl></parameter>, <parameter pos:start="1:80" pos:end="1:91"><decl pos:start="1:80" pos:end="1:91"><type pos:start="1:80" pos:end="1:91"><name pos:start="1:80" pos:end="1:86">uint8_t</name> <modifier pos:start="1:88" pos:end="1:88">*</modifier></type><name pos:start="1:89" pos:end="1:91">src</name></decl></parameter>, <parameter pos:start="1:94" pos:end="1:106"><decl pos:start="1:94" pos:end="1:106"><type pos:start="1:94" pos:end="1:106"><name pos:start="1:94" pos:end="1:96">int</name></type> <name pos:start="1:98" pos:end="1:106">tmpStride</name></decl></parameter>, <parameter pos:start="1:109" pos:end="1:121"><decl pos:start="1:109" pos:end="1:121"><type pos:start="1:109" pos:end="1:121"><name pos:start="1:109" pos:end="1:111">int</name></type> <name pos:start="1:113" pos:end="1:121">srcStride</name></decl></parameter>, <parameter pos:start="1:124" pos:end="1:131"><decl pos:start="1:124" pos:end="1:131"><type pos:start="1:124" pos:end="1:131"><name pos:start="1:124" pos:end="1:126">int</name></type> <name pos:start="1:128" pos:end="1:131">size</name></decl></parameter>)</parameter_list><block pos:start="1:133" pos:end="99:1">{<block_content pos:start="3:5" pos:end="97:5">
+
+    <decl_stmt pos:start="3:5" pos:end="3:24"><decl pos:start="3:5" pos:end="3:23"><type pos:start="3:5" pos:end="3:7"><name pos:start="3:5" pos:end="3:7">int</name></type> <name pos:start="3:9" pos:end="3:9">w</name> <init pos:start="3:11" pos:end="3:23">= <expr pos:start="3:13" pos:end="3:23"><operator pos:start="3:13" pos:end="3:13">(</operator><name pos:start="3:14" pos:end="3:17">size</name><operator pos:start="3:18" pos:end="3:18">+</operator><literal type="number" pos:start="3:19" pos:end="3:19">8</literal><operator pos:start="3:20" pos:end="3:20">)</operator><operator pos:start="3:21" pos:end="3:22">&gt;&gt;</operator><literal type="number" pos:start="3:23" pos:end="3:23">3</literal></expr></init></decl>;</decl_stmt>
+
+    <expr_stmt pos:start="5:5" pos:end="5:25"><expr pos:start="5:5" pos:end="5:24"><name pos:start="5:5" pos:end="5:7">src</name> <operator pos:start="5:9" pos:end="5:10">-=</operator> <literal type="number" pos:start="5:12" pos:end="5:12">2</literal><operator pos:start="5:13" pos:end="5:13">*</operator><name pos:start="5:14" pos:end="5:22">srcStride</name><operator pos:start="5:23" pos:end="5:23">+</operator><literal type="number" pos:start="5:24" pos:end="5:24">2</literal></expr>;</expr_stmt>
+
+    <while pos:start="7:5" pos:end="97:5">while<condition pos:start="7:10" pos:end="7:14">(<expr pos:start="7:11" pos:end="7:13"><name pos:start="7:11" pos:end="7:11">w</name><operator pos:start="7:12" pos:end="7:13">--</operator></expr>)</condition><block pos:start="7:15" pos:end="97:5">{<block_content pos:start="9:9" pos:end="95:38">
+
+        <asm pos:start="9:9" pos:end="91:10">__asm__ <specifier pos:start="9:17" pos:end="9:24">volatile</specifier>(
+
+            "pxor %%xmm7, %%xmm7        \n\t"
+
+            "movq (%0), %%xmm0          \n\t"
+
+            "add %2, %0                 \n\t"
+
+            "movq (%0), %%xmm1          \n\t"
+
+            "add %2, %0                 \n\t"
+
+            "movq (%0), %%xmm2          \n\t"
+
+            "add %2, %0                 \n\t"
+
+            "movq (%0), %%xmm3          \n\t"
+
+            "add %2, %0                 \n\t"
+
+            "movq (%0), %%xmm4          \n\t"
+
+            "add %2, %0                 \n\t"
+
+            "punpcklbw %%xmm7, %%xmm0   \n\t"
+
+            "punpcklbw %%xmm7, %%xmm1   \n\t"
+
+            "punpcklbw %%xmm7, %%xmm2   \n\t"
+
+            "punpcklbw %%xmm7, %%xmm3   \n\t"
+
+            "punpcklbw %%xmm7, %%xmm4   \n\t"
+
+            QPEL_H264HV_XMM(%%xmm0, %%xmm1, %%xmm2, %%xmm3, %%xmm4, %%xmm5, 0*48)
+
+            QPEL_H264HV_XMM(%%xmm1, %%xmm2, %%xmm3, %%xmm4, %%xmm5, %%xmm0, 1*48)
+
+            QPEL_H264HV_XMM(%%xmm2, %%xmm3, %%xmm4, %%xmm5, %%xmm0, %%xmm1, 2*48)
+
+            QPEL_H264HV_XMM(%%xmm3, %%xmm4, %%xmm5, %%xmm0, %%xmm1, %%xmm2, 3*48)
+
+            QPEL_H264HV_XMM(%%xmm4, %%xmm5, %%xmm0, %%xmm1, %%xmm2, %%xmm3, 4*48)
+
+            QPEL_H264HV_XMM(%%xmm5, %%xmm0, %%xmm1, %%xmm2, %%xmm3, %%xmm4, 5*48)
+
+            QPEL_H264HV_XMM(%%xmm0, %%xmm1, %%xmm2, %%xmm3, %%xmm4, %%xmm5, 6*48)
+
+            QPEL_H264HV_XMM(%%xmm1, %%xmm2, %%xmm3, %%xmm4, %%xmm5, %%xmm0, 7*48)
+
+            "cmpl $16, %3               \n\t"
+
+            "jne 2f                     \n\t"
+
+            QPEL_H264HV_XMM(%%xmm2, %%xmm3, %%xmm4, %%xmm5, %%xmm0, %%xmm1,  8*48)
+
+            QPEL_H264HV_XMM(%%xmm3, %%xmm4, %%xmm5, %%xmm0, %%xmm1, %%xmm2,  9*48)
+
+            QPEL_H264HV_XMM(%%xmm4, %%xmm5, %%xmm0, %%xmm1, %%xmm2, %%xmm3, 10*48)
+
+            QPEL_H264HV_XMM(%%xmm5, %%xmm0, %%xmm1, %%xmm2, %%xmm3, %%xmm4, 11*48)
+
+            QPEL_H264HV_XMM(%%xmm0, %%xmm1, %%xmm2, %%xmm3, %%xmm4, %%xmm5, 12*48)
+
+            QPEL_H264HV_XMM(%%xmm1, %%xmm2, %%xmm3, %%xmm4, %%xmm5, %%xmm0, 13*48)
+
+            QPEL_H264HV_XMM(%%xmm2, %%xmm3, %%xmm4, %%xmm5, %%xmm0, %%xmm1, 14*48)
+
+            QPEL_H264HV_XMM(%%xmm3, %%xmm4, %%xmm5, %%xmm0, %%xmm1, %%xmm2, 15*48)
+
+            "2:                         \n\t"
+
+            : "+a"(src)
+
+            : "c"(tmp), "S"((x86_reg)srcStride), "g"(size)
+
+            : XMM_CLOBBERS("%xmm0", "%xmm1", "%xmm2", "%xmm3",
+
+                           "%xmm4", "%xmm5", "%xmm6", "%xmm7",)
+
+              "memory"
+
+        );</asm>
+
+        <expr_stmt pos:start="93:9" pos:end="93:17"><expr pos:start="93:9" pos:end="93:16"><name pos:start="93:9" pos:end="93:11">tmp</name> <operator pos:start="93:13" pos:end="93:14">+=</operator> <literal type="number" pos:start="93:16" pos:end="93:16">8</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="95:9" pos:end="95:38"><expr pos:start="95:9" pos:end="95:37"><name pos:start="95:9" pos:end="95:11">src</name> <operator pos:start="95:13" pos:end="95:14">+=</operator> <literal type="number" pos:start="95:16" pos:end="95:18">8</literal> <operator pos:start="95:18" pos:end="95:18">-</operator> <operator pos:start="95:20" pos:end="95:20">(</operator><name pos:start="95:21" pos:end="95:24">size</name><operator pos:start="95:25" pos:end="95:25">+</operator><literal type="number" pos:start="95:26" pos:end="95:26">5</literal><operator pos:start="95:27" pos:end="95:27">)</operator><operator pos:start="95:28" pos:end="95:28">*</operator><name pos:start="95:29" pos:end="95:37">srcStride</name></expr>;</expr_stmt>
+
+    </block_content>}</block></while>
+
+</block_content>}</block></function>
+</unit>

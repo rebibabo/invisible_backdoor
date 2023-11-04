@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/12967.c" pos:tabs="8"><function pos:start="1:1" pos:end="269:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:27">xhci_kick_epctx</name><parameter_list pos:start="1:28" pos:end="1:72">(<parameter pos:start="1:29" pos:end="1:48"><decl pos:start="1:29" pos:end="1:48"><type pos:start="1:29" pos:end="1:48"><name pos:start="1:29" pos:end="1:41">XHCIEPContext</name> <modifier pos:start="1:43" pos:end="1:43">*</modifier></type><name pos:start="1:44" pos:end="1:48">epctx</name></decl></parameter>, <parameter pos:start="1:51" pos:end="1:71"><decl pos:start="1:51" pos:end="1:71"><type pos:start="1:51" pos:end="1:71"><name pos:start="1:51" pos:end="1:58">unsigned</name> <name pos:start="1:60" pos:end="1:62">int</name></type> <name pos:start="1:64" pos:end="1:71">streamid</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="269:1">{<block_content pos:start="5:5" pos:end="267:5">
+
+    <decl_stmt pos:start="5:5" pos:end="5:34"><decl pos:start="5:5" pos:end="5:33"><type pos:start="5:5" pos:end="5:15"><name pos:start="5:5" pos:end="5:13">XHCIState</name> <modifier pos:start="5:15" pos:end="5:15">*</modifier></type><name pos:start="5:16" pos:end="5:19">xhci</name> <init pos:start="5:21" pos:end="5:33">= <expr pos:start="5:23" pos:end="5:33"><name pos:start="5:23" pos:end="5:33"><name pos:start="5:23" pos:end="5:27">epctx</name><operator pos:start="5:28" pos:end="5:29">-&gt;</operator><name pos:start="5:30" pos:end="5:33">xhci</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:36"><decl pos:start="7:5" pos:end="7:35"><type pos:start="7:5" pos:end="7:23"><name pos:start="7:5" pos:end="7:21">XHCIStreamContext</name> <modifier pos:start="7:23" pos:end="7:23">*</modifier></type><name pos:start="7:24" pos:end="7:28">stctx</name> <init pos:start="7:30" pos:end="7:35">= <expr pos:start="7:32" pos:end="7:35"><name pos:start="7:32" pos:end="7:35">NULL</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:23"><decl pos:start="9:5" pos:end="9:22"><type pos:start="9:5" pos:end="9:18"><name pos:start="9:5" pos:end="9:16">XHCITransfer</name> <modifier pos:start="9:18" pos:end="9:18">*</modifier></type><name pos:start="9:19" pos:end="9:22">xfer</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:19"><decl pos:start="11:5" pos:end="11:18"><type pos:start="11:5" pos:end="11:14"><name pos:start="11:5" pos:end="11:12">XHCIRing</name> <modifier pos:start="11:14" pos:end="11:14">*</modifier></type><name pos:start="11:15" pos:end="11:18">ring</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:27"><decl pos:start="13:5" pos:end="13:26"><type pos:start="13:5" pos:end="13:17"><name pos:start="13:5" pos:end="13:15">USBEndpoint</name> <modifier pos:start="13:17" pos:end="13:17">*</modifier></type><name pos:start="13:18" pos:end="13:19">ep</name> <init pos:start="13:21" pos:end="13:26">= <expr pos:start="13:23" pos:end="13:26"><name pos:start="13:23" pos:end="13:26">NULL</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:21"><decl pos:start="15:5" pos:end="15:20"><type pos:start="15:5" pos:end="15:12"><name pos:start="15:5" pos:end="15:12">uint64_t</name></type> <name pos:start="15:14" pos:end="15:20">mfindex</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="17:5" pos:end="17:27"><decl pos:start="17:5" pos:end="17:26"><type pos:start="17:5" pos:end="17:16"><name pos:start="17:5" pos:end="17:12">unsigned</name> <name pos:start="17:14" pos:end="17:16">int</name></type> <name pos:start="17:18" pos:end="17:22">count</name> <init pos:start="17:24" pos:end="17:26">= <expr pos:start="17:26" pos:end="17:26"><literal type="number" pos:start="17:26" pos:end="17:26">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:15"><decl pos:start="19:5" pos:end="19:14"><type pos:start="19:5" pos:end="19:7"><name pos:start="19:5" pos:end="19:7">int</name></type> <name pos:start="19:9" pos:end="19:14">length</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="21:5" pos:end="21:10"><decl pos:start="21:5" pos:end="21:9"><type pos:start="21:5" pos:end="21:7"><name pos:start="21:5" pos:end="21:7">int</name></type> <name pos:start="21:9" pos:end="21:9">i</name></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="25:5" pos:end="25:65"><expr pos:start="25:5" pos:end="25:64"><call pos:start="25:5" pos:end="25:64"><name pos:start="25:5" pos:end="25:26">trace_usb_xhci_ep_kick</name><argument_list pos:start="25:27" pos:end="25:64">(<argument pos:start="25:28" pos:end="25:40"><expr pos:start="25:28" pos:end="25:40"><name pos:start="25:28" pos:end="25:40"><name pos:start="25:28" pos:end="25:32">epctx</name><operator pos:start="25:33" pos:end="25:34">-&gt;</operator><name pos:start="25:35" pos:end="25:40">slotid</name></name></expr></argument>, <argument pos:start="25:43" pos:end="25:53"><expr pos:start="25:43" pos:end="25:53"><name pos:start="25:43" pos:end="25:53"><name pos:start="25:43" pos:end="25:47">epctx</name><operator pos:start="25:48" pos:end="25:49">-&gt;</operator><name pos:start="25:50" pos:end="25:53">epid</name></name></expr></argument>, <argument pos:start="25:56" pos:end="25:63"><expr pos:start="25:56" pos:end="25:63"><name pos:start="25:56" pos:end="25:63">streamid</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="27:5" pos:end="27:32"><expr pos:start="27:5" pos:end="27:31"><call pos:start="27:5" pos:end="27:31"><name pos:start="27:5" pos:end="27:10">assert</name><argument_list pos:start="27:11" pos:end="27:31">(<argument pos:start="27:12" pos:end="27:30"><expr pos:start="27:12" pos:end="27:30"><operator pos:start="27:12" pos:end="27:12">!</operator><name pos:start="27:13" pos:end="27:30"><name pos:start="27:13" pos:end="27:17">epctx</name><operator pos:start="27:18" pos:end="27:19">-&gt;</operator><name pos:start="27:20" pos:end="27:30">kick_active</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="31:5" pos:end="33:71">/* If the device has been detached, but the guest has not noticed this
+
+       yet the 2 above checks will succeed, but we must NOT continue */</comment>
+
+    <if_stmt pos:start="35:5" pos:end="43:5"><if pos:start="35:5" pos:end="43:5">if <condition pos:start="35:8" pos:end="39:61">(<expr pos:start="35:9" pos:end="39:60"><operator pos:start="35:9" pos:end="35:9">!</operator><name pos:start="35:10" pos:end="35:39"><name pos:start="35:10" pos:end="35:13">xhci</name><operator pos:start="35:14" pos:end="35:15">-&gt;</operator><name pos:start="35:16" pos:end="35:20">slots</name><index pos:start="35:21" pos:end="35:39">[<expr pos:start="35:22" pos:end="35:38"><name pos:start="35:22" pos:end="35:34"><name pos:start="35:22" pos:end="35:26">epctx</name><operator pos:start="35:27" pos:end="35:28">-&gt;</operator><name pos:start="35:29" pos:end="35:34">slotid</name></name> <operator pos:start="35:36" pos:end="35:36">-</operator> <literal type="number" pos:start="35:38" pos:end="35:38">1</literal></expr>]</index></name><operator pos:start="35:40" pos:end="35:40">.</operator><name pos:start="35:41" pos:end="35:45">uport</name> <operator pos:start="35:47" pos:end="35:48">||</operator>
+
+        <operator pos:start="37:9" pos:end="37:9">!</operator><name pos:start="37:10" pos:end="37:39"><name pos:start="37:10" pos:end="37:13">xhci</name><operator pos:start="37:14" pos:end="37:15">-&gt;</operator><name pos:start="37:16" pos:end="37:20">slots</name><index pos:start="37:21" pos:end="37:39">[<expr pos:start="37:22" pos:end="37:38"><name pos:start="37:22" pos:end="37:34"><name pos:start="37:22" pos:end="37:26">epctx</name><operator pos:start="37:27" pos:end="37:28">-&gt;</operator><name pos:start="37:29" pos:end="37:34">slotid</name></name> <operator pos:start="37:36" pos:end="37:36">-</operator> <literal type="number" pos:start="37:38" pos:end="37:38">1</literal></expr>]</index></name><operator pos:start="37:40" pos:end="37:40">.</operator><name pos:start="37:41" pos:end="37:50"><name pos:start="37:41" pos:end="37:45">uport</name><operator pos:start="37:46" pos:end="37:47">-&gt;</operator><name pos:start="37:48" pos:end="37:50">dev</name></name> <operator pos:start="37:52" pos:end="37:53">||</operator>
+
+        <operator pos:start="39:9" pos:end="39:9">!</operator><name pos:start="39:10" pos:end="39:39"><name pos:start="39:10" pos:end="39:13">xhci</name><operator pos:start="39:14" pos:end="39:15">-&gt;</operator><name pos:start="39:16" pos:end="39:20">slots</name><index pos:start="39:21" pos:end="39:39">[<expr pos:start="39:22" pos:end="39:38"><name pos:start="39:22" pos:end="39:34"><name pos:start="39:22" pos:end="39:26">epctx</name><operator pos:start="39:27" pos:end="39:28">-&gt;</operator><name pos:start="39:29" pos:end="39:34">slotid</name></name> <operator pos:start="39:36" pos:end="39:36">-</operator> <literal type="number" pos:start="39:38" pos:end="39:38">1</literal></expr>]</index></name><operator pos:start="39:40" pos:end="39:40">.</operator><name pos:start="39:41" pos:end="39:60"><name pos:start="39:41" pos:end="39:45">uport</name><operator pos:start="39:46" pos:end="39:47">-&gt;</operator><name pos:start="39:48" pos:end="39:50">dev</name><operator pos:start="39:51" pos:end="39:52">-&gt;</operator><name pos:start="39:53" pos:end="39:60">attached</name></name></expr>)</condition> <block pos:start="39:63" pos:end="43:5">{<block_content pos:start="41:9" pos:end="41:15">
+
+        <return pos:start="41:9" pos:end="41:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="47:5" pos:end="125:5"><if pos:start="47:5" pos:end="125:5">if <condition pos:start="47:8" pos:end="47:21">(<expr pos:start="47:9" pos:end="47:20"><name pos:start="47:9" pos:end="47:20"><name pos:start="47:9" pos:end="47:13">epctx</name><operator pos:start="47:14" pos:end="47:15">-&gt;</operator><name pos:start="47:16" pos:end="47:20">retry</name></name></expr>)</condition> <block pos:start="47:23" pos:end="125:5">{<block_content pos:start="49:9" pos:end="123:28">
+
+        <decl_stmt pos:start="49:9" pos:end="49:42"><decl pos:start="49:9" pos:end="49:41"><type pos:start="49:9" pos:end="49:22"><name pos:start="49:9" pos:end="49:20">XHCITransfer</name> <modifier pos:start="49:22" pos:end="49:22">*</modifier></type><name pos:start="49:23" pos:end="49:26">xfer</name> <init pos:start="49:28" pos:end="49:41">= <expr pos:start="49:30" pos:end="49:41"><name pos:start="49:30" pos:end="49:41"><name pos:start="49:30" pos:end="49:34">epctx</name><operator pos:start="49:35" pos:end="49:36">-&gt;</operator><name pos:start="49:37" pos:end="49:41">retry</name></name></expr></init></decl>;</decl_stmt>
+
+
+
+        <expr_stmt pos:start="53:9" pos:end="53:40"><expr pos:start="53:9" pos:end="53:39"><call pos:start="53:9" pos:end="53:39"><name pos:start="53:9" pos:end="53:33">trace_usb_xhci_xfer_retry</name><argument_list pos:start="53:34" pos:end="53:39">(<argument pos:start="53:35" pos:end="53:38"><expr pos:start="53:35" pos:end="53:38"><name pos:start="53:35" pos:end="53:38">xfer</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="55:9" pos:end="55:36"><expr pos:start="55:9" pos:end="55:35"><call pos:start="55:9" pos:end="55:35"><name pos:start="55:9" pos:end="55:14">assert</name><argument_list pos:start="55:15" pos:end="55:35">(<argument pos:start="55:16" pos:end="55:34"><expr pos:start="55:16" pos:end="55:34"><name pos:start="55:16" pos:end="55:34"><name pos:start="55:16" pos:end="55:19">xfer</name><operator pos:start="55:20" pos:end="55:21">-&gt;</operator><name pos:start="55:22" pos:end="55:34">running_retry</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="57:9" pos:end="75:9"><if pos:start="57:9" pos:end="75:9">if <condition pos:start="57:12" pos:end="57:29">(<expr pos:start="57:13" pos:end="57:28"><name pos:start="57:13" pos:end="57:28"><name pos:start="57:13" pos:end="57:16">xfer</name><operator pos:start="57:17" pos:end="57:18">-&gt;</operator><name pos:start="57:19" pos:end="57:28">timed_xfer</name></name></expr>)</condition> <block pos:start="57:31" pos:end="75:9">{<block_content pos:start="61:13" pos:end="73:36">
+
+            <comment type="block" pos:start="59:13" pos:end="59:44">/* time to kick the transfer? */</comment>
+
+            <expr_stmt pos:start="61:13" pos:end="61:45"><expr pos:start="61:13" pos:end="61:44"><name pos:start="61:13" pos:end="61:19">mfindex</name> <operator pos:start="61:21" pos:end="61:21">=</operator> <call pos:start="61:23" pos:end="61:44"><name pos:start="61:23" pos:end="61:38">xhci_mfindex_get</name><argument_list pos:start="61:39" pos:end="61:44">(<argument pos:start="61:40" pos:end="61:43"><expr pos:start="61:40" pos:end="61:43"><name pos:start="61:40" pos:end="61:43">xhci</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="63:13" pos:end="63:65"><expr pos:start="63:13" pos:end="63:64"><call pos:start="63:13" pos:end="63:64"><name pos:start="63:13" pos:end="63:36">xhci_check_intr_iso_kick</name><argument_list pos:start="63:37" pos:end="63:64">(<argument pos:start="63:38" pos:end="63:41"><expr pos:start="63:38" pos:end="63:41"><name pos:start="63:38" pos:end="63:41">xhci</name></expr></argument>, <argument pos:start="63:44" pos:end="63:47"><expr pos:start="63:44" pos:end="63:47"><name pos:start="63:44" pos:end="63:47">xfer</name></expr></argument>, <argument pos:start="63:50" pos:end="63:54"><expr pos:start="63:50" pos:end="63:54"><name pos:start="63:50" pos:end="63:54">epctx</name></expr></argument>, <argument pos:start="63:57" pos:end="63:63"><expr pos:start="63:57" pos:end="63:63"><name pos:start="63:57" pos:end="63:63">mfindex</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <if_stmt pos:start="65:13" pos:end="69:13"><if pos:start="65:13" pos:end="69:13">if <condition pos:start="65:16" pos:end="65:36">(<expr pos:start="65:17" pos:end="65:35"><name pos:start="65:17" pos:end="65:35"><name pos:start="65:17" pos:end="65:20">xfer</name><operator pos:start="65:21" pos:end="65:22">-&gt;</operator><name pos:start="65:23" pos:end="65:35">running_retry</name></name></expr>)</condition> <block pos:start="65:38" pos:end="69:13">{<block_content pos:start="67:17" pos:end="67:23">
+
+                <return pos:start="67:17" pos:end="67:23">return;</return>
+
+            </block_content>}</block></if></if_stmt>
+
+            <expr_stmt pos:start="71:13" pos:end="71:33"><expr pos:start="71:13" pos:end="71:32"><name pos:start="71:13" pos:end="71:28"><name pos:start="71:13" pos:end="71:16">xfer</name><operator pos:start="71:17" pos:end="71:18">-&gt;</operator><name pos:start="71:19" pos:end="71:28">timed_xfer</name></name> <operator pos:start="71:30" pos:end="71:30">=</operator> <literal type="number" pos:start="71:32" pos:end="71:32">0</literal></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="73:13" pos:end="73:36"><expr pos:start="73:13" pos:end="73:35"><name pos:start="73:13" pos:end="73:31"><name pos:start="73:13" pos:end="73:16">xfer</name><operator pos:start="73:17" pos:end="73:18">-&gt;</operator><name pos:start="73:19" pos:end="73:31">running_retry</name></name> <operator pos:start="73:33" pos:end="73:33">=</operator> <literal type="number" pos:start="73:35" pos:end="73:35">1</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <if_stmt pos:start="77:9" pos:end="113:9"><if pos:start="77:9" pos:end="93:9">if <condition pos:start="77:12" pos:end="77:27">(<expr pos:start="77:13" pos:end="77:26"><name pos:start="77:13" pos:end="77:26"><name pos:start="77:13" pos:end="77:16">xfer</name><operator pos:start="77:17" pos:end="77:18">-&gt;</operator><name pos:start="77:19" pos:end="77:26">iso_xfer</name></name></expr>)</condition> <block pos:start="77:29" pos:end="93:9">{<block_content pos:start="81:13" pos:end="91:43">
+
+            <comment type="block" pos:start="79:13" pos:end="79:36">/* retry iso transfer */</comment>
+
+            <if_stmt pos:start="81:13" pos:end="85:13"><if pos:start="81:13" pos:end="85:13">if <condition pos:start="81:16" pos:end="81:44">(<expr pos:start="81:17" pos:end="81:43"><call pos:start="81:17" pos:end="81:39"><name pos:start="81:17" pos:end="81:33">xhci_setup_packet</name><argument_list pos:start="81:34" pos:end="81:39">(<argument pos:start="81:35" pos:end="81:38"><expr pos:start="81:35" pos:end="81:38"><name pos:start="81:35" pos:end="81:38">xfer</name></expr></argument>)</argument_list></call> <operator pos:start="81:41" pos:end="81:41">&lt;</operator> <literal type="number" pos:start="81:43" pos:end="81:43">0</literal></expr>)</condition> <block pos:start="81:46" pos:end="85:13">{<block_content pos:start="83:17" pos:end="83:23">
+
+                <return pos:start="83:17" pos:end="83:23">return;</return>
+
+            </block_content>}</block></if></if_stmt>
+
+            <expr_stmt pos:start="87:13" pos:end="87:67"><expr pos:start="87:13" pos:end="87:66"><call pos:start="87:13" pos:end="87:66"><name pos:start="87:13" pos:end="87:29">usb_handle_packet</name><argument_list pos:start="87:30" pos:end="87:66">(<argument pos:start="87:31" pos:end="87:50"><expr pos:start="87:31" pos:end="87:50"><name pos:start="87:31" pos:end="87:50"><name pos:start="87:31" pos:end="87:34">xfer</name><operator pos:start="87:35" pos:end="87:36">-&gt;</operator><name pos:start="87:37" pos:end="87:42">packet</name><operator pos:start="87:43" pos:end="87:43">.</operator><name pos:start="87:44" pos:end="87:45">ep</name><operator pos:start="87:46" pos:end="87:47">-&gt;</operator><name pos:start="87:48" pos:end="87:50">dev</name></name></expr></argument>, <argument pos:start="87:53" pos:end="87:65"><expr pos:start="87:53" pos:end="87:65"><operator pos:start="87:53" pos:end="87:53">&amp;</operator><name pos:start="87:54" pos:end="87:65"><name pos:start="87:54" pos:end="87:57">xfer</name><operator pos:start="87:58" pos:end="87:59">-&gt;</operator><name pos:start="87:60" pos:end="87:65">packet</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="89:13" pos:end="89:55"><expr pos:start="89:13" pos:end="89:54"><call pos:start="89:13" pos:end="89:54"><name pos:start="89:13" pos:end="89:18">assert</name><argument_list pos:start="89:19" pos:end="89:54">(<argument pos:start="89:20" pos:end="89:53"><expr pos:start="89:20" pos:end="89:53"><name pos:start="89:20" pos:end="89:38"><name pos:start="89:20" pos:end="89:23">xfer</name><operator pos:start="89:24" pos:end="89:25">-&gt;</operator><name pos:start="89:26" pos:end="89:31">packet</name><operator pos:start="89:32" pos:end="89:32">.</operator><name pos:start="89:33" pos:end="89:38">status</name></name> <operator pos:start="89:40" pos:end="89:41">!=</operator> <name pos:start="89:43" pos:end="89:53">USB_RET_NAK</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="91:13" pos:end="91:43"><expr pos:start="91:13" pos:end="91:42"><call pos:start="91:13" pos:end="91:42"><name pos:start="91:13" pos:end="91:36">xhci_try_complete_packet</name><argument_list pos:start="91:37" pos:end="91:42">(<argument pos:start="91:38" pos:end="91:41"><expr pos:start="91:38" pos:end="91:41"><name pos:start="91:38" pos:end="91:41">xfer</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="93:11" pos:end="113:9">else <block pos:start="93:16" pos:end="113:9">{<block_content pos:start="97:13" pos:end="111:43">
+
+            <comment type="block" pos:start="95:13" pos:end="95:39">/* retry nak'ed transfer */</comment>
+
+            <if_stmt pos:start="97:13" pos:end="101:13"><if pos:start="97:13" pos:end="101:13">if <condition pos:start="97:16" pos:end="97:44">(<expr pos:start="97:17" pos:end="97:43"><call pos:start="97:17" pos:end="97:39"><name pos:start="97:17" pos:end="97:33">xhci_setup_packet</name><argument_list pos:start="97:34" pos:end="97:39">(<argument pos:start="97:35" pos:end="97:38"><expr pos:start="97:35" pos:end="97:38"><name pos:start="97:35" pos:end="97:38">xfer</name></expr></argument>)</argument_list></call> <operator pos:start="97:41" pos:end="97:41">&lt;</operator> <literal type="number" pos:start="97:43" pos:end="97:43">0</literal></expr>)</condition> <block pos:start="97:46" pos:end="101:13">{<block_content pos:start="99:17" pos:end="99:23">
+
+                <return pos:start="99:17" pos:end="99:23">return;</return>
+
+            </block_content>}</block></if></if_stmt>
+
+            <expr_stmt pos:start="103:13" pos:end="103:67"><expr pos:start="103:13" pos:end="103:66"><call pos:start="103:13" pos:end="103:66"><name pos:start="103:13" pos:end="103:29">usb_handle_packet</name><argument_list pos:start="103:30" pos:end="103:66">(<argument pos:start="103:31" pos:end="103:50"><expr pos:start="103:31" pos:end="103:50"><name pos:start="103:31" pos:end="103:50"><name pos:start="103:31" pos:end="103:34">xfer</name><operator pos:start="103:35" pos:end="103:36">-&gt;</operator><name pos:start="103:37" pos:end="103:42">packet</name><operator pos:start="103:43" pos:end="103:43">.</operator><name pos:start="103:44" pos:end="103:45">ep</name><operator pos:start="103:46" pos:end="103:47">-&gt;</operator><name pos:start="103:48" pos:end="103:50">dev</name></name></expr></argument>, <argument pos:start="103:53" pos:end="103:65"><expr pos:start="103:53" pos:end="103:65"><operator pos:start="103:53" pos:end="103:53">&amp;</operator><name pos:start="103:54" pos:end="103:65"><name pos:start="103:54" pos:end="103:57">xfer</name><operator pos:start="103:58" pos:end="103:59">-&gt;</operator><name pos:start="103:60" pos:end="103:65">packet</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <if_stmt pos:start="105:13" pos:end="109:13"><if pos:start="105:13" pos:end="109:13">if <condition pos:start="105:16" pos:end="105:51">(<expr pos:start="105:17" pos:end="105:50"><name pos:start="105:17" pos:end="105:35"><name pos:start="105:17" pos:end="105:20">xfer</name><operator pos:start="105:21" pos:end="105:22">-&gt;</operator><name pos:start="105:23" pos:end="105:28">packet</name><operator pos:start="105:29" pos:end="105:29">.</operator><name pos:start="105:30" pos:end="105:35">status</name></name> <operator pos:start="105:37" pos:end="105:38">==</operator> <name pos:start="105:40" pos:end="105:50">USB_RET_NAK</name></expr>)</condition> <block pos:start="105:53" pos:end="109:13">{<block_content pos:start="107:17" pos:end="107:23">
+
+                <return pos:start="107:17" pos:end="107:23">return;</return>
+
+            </block_content>}</block></if></if_stmt>
+
+            <expr_stmt pos:start="111:13" pos:end="111:43"><expr pos:start="111:13" pos:end="111:42"><call pos:start="111:13" pos:end="111:42"><name pos:start="111:13" pos:end="111:36">xhci_try_complete_packet</name><argument_list pos:start="111:37" pos:end="111:42">(<argument pos:start="111:38" pos:end="111:41"><expr pos:start="111:38" pos:end="111:41"><name pos:start="111:38" pos:end="111:41">xfer</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+        <expr_stmt pos:start="115:9" pos:end="115:37"><expr pos:start="115:9" pos:end="115:36"><call pos:start="115:9" pos:end="115:36"><name pos:start="115:9" pos:end="115:14">assert</name><argument_list pos:start="115:15" pos:end="115:36">(<argument pos:start="115:16" pos:end="115:35"><expr pos:start="115:16" pos:end="115:35"><operator pos:start="115:16" pos:end="115:16">!</operator><name pos:start="115:17" pos:end="115:35"><name pos:start="115:17" pos:end="115:20">xfer</name><operator pos:start="115:21" pos:end="115:22">-&gt;</operator><name pos:start="115:23" pos:end="115:35">running_retry</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="117:9" pos:end="121:9"><if pos:start="117:9" pos:end="121:9">if <condition pos:start="117:12" pos:end="117:27">(<expr pos:start="117:13" pos:end="117:26"><name pos:start="117:13" pos:end="117:26"><name pos:start="117:13" pos:end="117:16">xfer</name><operator pos:start="117:17" pos:end="117:18">-&gt;</operator><name pos:start="117:19" pos:end="117:26">complete</name></name></expr>)</condition> <block pos:start="117:29" pos:end="121:9">{<block_content pos:start="119:13" pos:end="119:44">
+
+            <expr_stmt pos:start="119:13" pos:end="119:44"><expr pos:start="119:13" pos:end="119:43"><call pos:start="119:13" pos:end="119:43"><name pos:start="119:13" pos:end="119:29">xhci_ep_free_xfer</name><argument_list pos:start="119:30" pos:end="119:43">(<argument pos:start="119:31" pos:end="119:42"><expr pos:start="119:31" pos:end="119:42"><name pos:start="119:31" pos:end="119:42"><name pos:start="119:31" pos:end="119:35">epctx</name><operator pos:start="119:36" pos:end="119:37">-&gt;</operator><name pos:start="119:38" pos:end="119:42">retry</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="123:9" pos:end="123:28"><expr pos:start="123:9" pos:end="123:27"><name pos:start="123:9" pos:end="123:20"><name pos:start="123:9" pos:end="123:13">epctx</name><operator pos:start="123:14" pos:end="123:15">-&gt;</operator><name pos:start="123:16" pos:end="123:20">retry</name></name> <operator pos:start="123:22" pos:end="123:22">=</operator> <name pos:start="123:24" pos:end="123:27">NULL</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="129:5" pos:end="135:5"><if pos:start="129:5" pos:end="135:5">if <condition pos:start="129:8" pos:end="129:34">(<expr pos:start="129:9" pos:end="129:33"><name pos:start="129:9" pos:end="129:20"><name pos:start="129:9" pos:end="129:13">epctx</name><operator pos:start="129:14" pos:end="129:15">-&gt;</operator><name pos:start="129:16" pos:end="129:20">state</name></name> <operator pos:start="129:22" pos:end="129:23">==</operator> <name pos:start="129:25" pos:end="129:33">EP_HALTED</name></expr>)</condition> <block pos:start="129:36" pos:end="135:5">{<block_content pos:start="131:9" pos:end="133:15">
+
+        <expr_stmt pos:start="131:9" pos:end="131:59"><expr pos:start="131:9" pos:end="131:58"><call pos:start="131:9" pos:end="131:58"><name pos:start="131:9" pos:end="131:15">DPRINTF</name><argument_list pos:start="131:16" pos:end="131:58">(<argument pos:start="131:17" pos:end="131:57"><expr pos:start="131:17" pos:end="131:57"><literal type="string" pos:start="131:17" pos:end="131:57">"xhci: ep halted, not running schedule\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="133:9" pos:end="133:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+
+
+    <if_stmt pos:start="141:5" pos:end="165:5"><if pos:start="141:5" pos:end="157:5">if <condition pos:start="141:8" pos:end="141:27">(<expr pos:start="141:9" pos:end="141:26"><name pos:start="141:9" pos:end="141:26"><name pos:start="141:9" pos:end="141:13">epctx</name><operator pos:start="141:14" pos:end="141:15">-&gt;</operator><name pos:start="141:16" pos:end="141:26">nr_pstreams</name></name></expr>)</condition> <block pos:start="141:29" pos:end="157:5">{<block_content pos:start="143:9" pos:end="155:58">
+
+        <decl_stmt pos:start="143:9" pos:end="143:21"><decl pos:start="143:9" pos:end="143:20"><type pos:start="143:9" pos:end="143:16"><name pos:start="143:9" pos:end="143:16">uint32_t</name></type> <name pos:start="143:18" pos:end="143:20">err</name></decl>;</decl_stmt>
+
+        <expr_stmt pos:start="145:9" pos:end="145:56"><expr pos:start="145:9" pos:end="145:55"><name pos:start="145:9" pos:end="145:13">stctx</name> <operator pos:start="145:15" pos:end="145:15">=</operator> <call pos:start="145:17" pos:end="145:55"><name pos:start="145:17" pos:end="145:32">xhci_find_stream</name><argument_list pos:start="145:33" pos:end="145:55">(<argument pos:start="145:34" pos:end="145:38"><expr pos:start="145:34" pos:end="145:38"><name pos:start="145:34" pos:end="145:38">epctx</name></expr></argument>, <argument pos:start="145:41" pos:end="145:48"><expr pos:start="145:41" pos:end="145:48"><name pos:start="145:41" pos:end="145:48">streamid</name></expr></argument>, <argument pos:start="145:51" pos:end="145:54"><expr pos:start="145:51" pos:end="145:54"><operator pos:start="145:51" pos:end="145:51">&amp;</operator><name pos:start="145:52" pos:end="145:54">err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="147:9" pos:end="151:9"><if pos:start="147:9" pos:end="151:9">if <condition pos:start="147:12" pos:end="147:26">(<expr pos:start="147:13" pos:end="147:25"><name pos:start="147:13" pos:end="147:17">stctx</name> <operator pos:start="147:19" pos:end="147:20">==</operator> <name pos:start="147:22" pos:end="147:25">NULL</name></expr>)</condition> <block pos:start="147:28" pos:end="151:9">{<block_content pos:start="149:13" pos:end="149:19">
+
+            <return pos:start="149:13" pos:end="149:19">return;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="153:9" pos:end="153:28"><expr pos:start="153:9" pos:end="153:27"><name pos:start="153:9" pos:end="153:12">ring</name> <operator pos:start="153:14" pos:end="153:14">=</operator> <operator pos:start="153:16" pos:end="153:16">&amp;</operator><name pos:start="153:17" pos:end="153:27"><name pos:start="153:17" pos:end="153:21">stctx</name><operator pos:start="153:22" pos:end="153:23">-&gt;</operator><name pos:start="153:24" pos:end="153:27">ring</name></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="155:9" pos:end="155:58"><expr pos:start="155:9" pos:end="155:57"><call pos:start="155:9" pos:end="155:57"><name pos:start="155:9" pos:end="155:25">xhci_set_ep_state</name><argument_list pos:start="155:26" pos:end="155:57">(<argument pos:start="155:27" pos:end="155:30"><expr pos:start="155:27" pos:end="155:30"><name pos:start="155:27" pos:end="155:30">xhci</name></expr></argument>, <argument pos:start="155:33" pos:end="155:37"><expr pos:start="155:33" pos:end="155:37"><name pos:start="155:33" pos:end="155:37">epctx</name></expr></argument>, <argument pos:start="155:40" pos:end="155:44"><expr pos:start="155:40" pos:end="155:44"><name pos:start="155:40" pos:end="155:44">stctx</name></expr></argument>, <argument pos:start="155:47" pos:end="155:56"><expr pos:start="155:47" pos:end="155:56"><name pos:start="155:47" pos:end="155:56">EP_RUNNING</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="157:7" pos:end="165:5">else <block pos:start="157:12" pos:end="165:5">{<block_content pos:start="159:9" pos:end="163:57">
+
+        <expr_stmt pos:start="159:9" pos:end="159:28"><expr pos:start="159:9" pos:end="159:27"><name pos:start="159:9" pos:end="159:12">ring</name> <operator pos:start="159:14" pos:end="159:14">=</operator> <operator pos:start="159:16" pos:end="159:16">&amp;</operator><name pos:start="159:17" pos:end="159:27"><name pos:start="159:17" pos:end="159:21">epctx</name><operator pos:start="159:22" pos:end="159:23">-&gt;</operator><name pos:start="159:24" pos:end="159:27">ring</name></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="161:9" pos:end="161:21"><expr pos:start="161:9" pos:end="161:20"><name pos:start="161:9" pos:end="161:16">streamid</name> <operator pos:start="161:18" pos:end="161:18">=</operator> <literal type="number" pos:start="161:20" pos:end="161:20">0</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="163:9" pos:end="163:57"><expr pos:start="163:9" pos:end="163:56"><call pos:start="163:9" pos:end="163:56"><name pos:start="163:9" pos:end="163:25">xhci_set_ep_state</name><argument_list pos:start="163:26" pos:end="163:56">(<argument pos:start="163:27" pos:end="163:30"><expr pos:start="163:27" pos:end="163:30"><name pos:start="163:27" pos:end="163:30">xhci</name></expr></argument>, <argument pos:start="163:33" pos:end="163:37"><expr pos:start="163:33" pos:end="163:37"><name pos:start="163:33" pos:end="163:37">epctx</name></expr></argument>, <argument pos:start="163:40" pos:end="163:43"><expr pos:start="163:40" pos:end="163:43"><name pos:start="163:40" pos:end="163:43">NULL</name></expr></argument>, <argument pos:start="163:46" pos:end="163:55"><expr pos:start="163:46" pos:end="163:55"><name pos:start="163:46" pos:end="163:55">EP_RUNNING</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+    <expr_stmt pos:start="167:5" pos:end="167:31"><expr pos:start="167:5" pos:end="167:30"><call pos:start="167:5" pos:end="167:30"><name pos:start="167:5" pos:end="167:10">assert</name><argument_list pos:start="167:11" pos:end="167:30">(<argument pos:start="167:12" pos:end="167:29"><expr pos:start="167:12" pos:end="167:29"><name pos:start="167:12" pos:end="167:24"><name pos:start="167:12" pos:end="167:15">ring</name><operator pos:start="167:16" pos:end="167:17">-&gt;</operator><name pos:start="167:18" pos:end="167:24">dequeue</name></name> <operator pos:start="167:26" pos:end="167:27">!=</operator> <literal type="number" pos:start="167:29" pos:end="167:29">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="171:5" pos:end="171:25"><expr pos:start="171:5" pos:end="171:24"><name pos:start="171:5" pos:end="171:22"><name pos:start="171:5" pos:end="171:9">epctx</name><operator pos:start="171:10" pos:end="171:11">-&gt;</operator><name pos:start="171:12" pos:end="171:22">kick_active</name></name><operator pos:start="171:23" pos:end="171:24">++</operator></expr>;</expr_stmt>
+
+    <while pos:start="173:5" pos:end="251:5">while <condition pos:start="173:11" pos:end="173:13">(<expr pos:start="173:12" pos:end="173:12"><literal type="number" pos:start="173:12" pos:end="173:12">1</literal></expr>)</condition> <block pos:start="173:15" pos:end="251:5">{<block_content pos:start="175:9" pos:end="249:9">
+
+        <expr_stmt pos:start="175:9" pos:end="175:52"><expr pos:start="175:9" pos:end="175:51"><name pos:start="175:9" pos:end="175:14">length</name> <operator pos:start="175:16" pos:end="175:16">=</operator> <call pos:start="175:18" pos:end="175:51"><name pos:start="175:18" pos:end="175:39">xhci_ring_chain_length</name><argument_list pos:start="175:40" pos:end="175:51">(<argument pos:start="175:41" pos:end="175:44"><expr pos:start="175:41" pos:end="175:44"><name pos:start="175:41" pos:end="175:44">xhci</name></expr></argument>, <argument pos:start="175:47" pos:end="175:50"><expr pos:start="175:47" pos:end="175:50"><name pos:start="175:47" pos:end="175:50">ring</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="177:9" pos:end="181:9"><if pos:start="177:9" pos:end="181:9">if <condition pos:start="177:12" pos:end="177:24">(<expr pos:start="177:13" pos:end="177:23"><name pos:start="177:13" pos:end="177:18">length</name> <operator pos:start="177:20" pos:end="177:21">&lt;=</operator> <literal type="number" pos:start="177:23" pos:end="177:23">0</literal></expr>)</condition> <block pos:start="177:26" pos:end="181:9">{<block_content pos:start="179:13" pos:end="179:18">
+
+            <break pos:start="179:13" pos:end="179:18">break;</break>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="183:9" pos:end="183:49"><expr pos:start="183:9" pos:end="183:48"><name pos:start="183:9" pos:end="183:12">xfer</name> <operator pos:start="183:14" pos:end="183:14">=</operator> <call pos:start="183:16" pos:end="183:48"><name pos:start="183:16" pos:end="183:33">xhci_ep_alloc_xfer</name><argument_list pos:start="183:34" pos:end="183:48">(<argument pos:start="183:35" pos:end="183:39"><expr pos:start="183:35" pos:end="183:39"><name pos:start="183:35" pos:end="183:39">epctx</name></expr></argument>, <argument pos:start="183:42" pos:end="183:47"><expr pos:start="183:42" pos:end="183:47"><name pos:start="183:42" pos:end="183:47">length</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="185:9" pos:end="189:9"><if pos:start="185:9" pos:end="189:9">if <condition pos:start="185:12" pos:end="185:25">(<expr pos:start="185:13" pos:end="185:24"><name pos:start="185:13" pos:end="185:16">xfer</name> <operator pos:start="185:18" pos:end="185:19">==</operator> <name pos:start="185:21" pos:end="185:24">NULL</name></expr>)</condition> <block pos:start="185:27" pos:end="189:9">{<block_content pos:start="187:13" pos:end="187:18">
+
+            <break pos:start="187:13" pos:end="187:18">break;</break>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <for pos:start="193:9" pos:end="201:9">for <control pos:start="193:13" pos:end="193:36">(<init pos:start="193:14" pos:end="193:19"><expr pos:start="193:14" pos:end="193:18"><name pos:start="193:14" pos:end="193:14">i</name> <operator pos:start="193:16" pos:end="193:16">=</operator> <literal type="number" pos:start="193:18" pos:end="193:18">0</literal></expr>;</init> <condition pos:start="193:21" pos:end="193:31"><expr pos:start="193:21" pos:end="193:30"><name pos:start="193:21" pos:end="193:21">i</name> <operator pos:start="193:23" pos:end="193:23">&lt;</operator> <name pos:start="193:25" pos:end="193:30">length</name></expr>;</condition> <incr pos:start="193:33" pos:end="193:35"><expr pos:start="193:33" pos:end="193:35"><name pos:start="193:33" pos:end="193:33">i</name><operator pos:start="193:34" pos:end="193:35">++</operator></expr></incr>)</control> <block pos:start="193:38" pos:end="201:9">{<block_content pos:start="195:13" pos:end="199:25">
+
+            <decl_stmt pos:start="195:13" pos:end="195:25"><decl pos:start="195:13" pos:end="195:24"><type pos:start="195:13" pos:end="195:19"><name pos:start="195:13" pos:end="195:19">TRBType</name></type> <name pos:start="195:21" pos:end="195:24">type</name></decl>;</decl_stmt>
+
+            <expr_stmt pos:start="197:13" pos:end="197:69"><expr pos:start="197:13" pos:end="197:68"><name pos:start="197:13" pos:end="197:16">type</name> <operator pos:start="197:18" pos:end="197:18">=</operator> <call pos:start="197:20" pos:end="197:68"><name pos:start="197:20" pos:end="197:34">xhci_ring_fetch</name><argument_list pos:start="197:35" pos:end="197:68">(<argument pos:start="197:36" pos:end="197:39"><expr pos:start="197:36" pos:end="197:39"><name pos:start="197:36" pos:end="197:39">xhci</name></expr></argument>, <argument pos:start="197:42" pos:end="197:45"><expr pos:start="197:42" pos:end="197:45"><name pos:start="197:42" pos:end="197:45">ring</name></expr></argument>, <argument pos:start="197:48" pos:end="197:61"><expr pos:start="197:48" pos:end="197:61"><operator pos:start="197:48" pos:end="197:48">&amp;</operator><name pos:start="197:49" pos:end="197:61"><name pos:start="197:49" pos:end="197:52">xfer</name><operator pos:start="197:53" pos:end="197:54">-&gt;</operator><name pos:start="197:55" pos:end="197:58">trbs</name><index pos:start="197:59" pos:end="197:61">[<expr pos:start="197:60" pos:end="197:60"><name pos:start="197:60" pos:end="197:60">i</name></expr>]</index></name></expr></argument>, <argument pos:start="197:64" pos:end="197:67"><expr pos:start="197:64" pos:end="197:67"><name pos:start="197:64" pos:end="197:67">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="199:13" pos:end="199:25"><expr pos:start="199:13" pos:end="199:24"><call pos:start="199:13" pos:end="199:24"><name pos:start="199:13" pos:end="199:18">assert</name><argument_list pos:start="199:19" pos:end="199:24">(<argument pos:start="199:20" pos:end="199:23"><expr pos:start="199:20" pos:end="199:23"><name pos:start="199:20" pos:end="199:23">type</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></for>
+
+        <expr_stmt pos:start="203:9" pos:end="203:34"><expr pos:start="203:9" pos:end="203:33"><name pos:start="203:9" pos:end="203:22"><name pos:start="203:9" pos:end="203:12">xfer</name><operator pos:start="203:13" pos:end="203:14">-&gt;</operator><name pos:start="203:15" pos:end="203:22">streamid</name></name> <operator pos:start="203:24" pos:end="203:24">=</operator> <name pos:start="203:26" pos:end="203:33">streamid</name></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="207:9" pos:end="215:9"><if pos:start="207:9" pos:end="211:9">if <condition pos:start="207:12" pos:end="207:29">(<expr pos:start="207:13" pos:end="207:28"><name pos:start="207:13" pos:end="207:23"><name pos:start="207:13" pos:end="207:17">epctx</name><operator pos:start="207:18" pos:end="207:19">-&gt;</operator><name pos:start="207:20" pos:end="207:23">epid</name></name> <operator pos:start="207:25" pos:end="207:26">==</operator> <literal type="number" pos:start="207:28" pos:end="207:28">1</literal></expr>)</condition> <block pos:start="207:31" pos:end="211:9">{<block_content pos:start="209:13" pos:end="209:47">
+
+            <expr_stmt pos:start="209:13" pos:end="209:47"><expr pos:start="209:13" pos:end="209:46"><call pos:start="209:13" pos:end="209:46"><name pos:start="209:13" pos:end="209:34">xhci_fire_ctl_transfer</name><argument_list pos:start="209:35" pos:end="209:46">(<argument pos:start="209:36" pos:end="209:39"><expr pos:start="209:36" pos:end="209:39"><name pos:start="209:36" pos:end="209:39">xhci</name></expr></argument>, <argument pos:start="209:42" pos:end="209:45"><expr pos:start="209:42" pos:end="209:45"><name pos:start="209:42" pos:end="209:45">xfer</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="211:11" pos:end="215:9">else <block pos:start="211:16" pos:end="215:9">{<block_content pos:start="213:13" pos:end="213:50">
+
+            <expr_stmt pos:start="213:13" pos:end="213:50"><expr pos:start="213:13" pos:end="213:49"><call pos:start="213:13" pos:end="213:49"><name pos:start="213:13" pos:end="213:30">xhci_fire_transfer</name><argument_list pos:start="213:31" pos:end="213:49">(<argument pos:start="213:32" pos:end="213:35"><expr pos:start="213:32" pos:end="213:35"><name pos:start="213:32" pos:end="213:35">xhci</name></expr></argument>, <argument pos:start="213:38" pos:end="213:41"><expr pos:start="213:38" pos:end="213:41"><name pos:start="213:38" pos:end="213:41">xfer</name></expr></argument>, <argument pos:start="213:44" pos:end="213:48"><expr pos:start="213:44" pos:end="213:48"><name pos:start="213:44" pos:end="213:48">epctx</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+        <if_stmt pos:start="217:9" pos:end="223:9"><if pos:start="217:9" pos:end="223:9">if <condition pos:start="217:12" pos:end="217:27">(<expr pos:start="217:13" pos:end="217:26"><name pos:start="217:13" pos:end="217:26"><name pos:start="217:13" pos:end="217:16">xfer</name><operator pos:start="217:17" pos:end="217:18">-&gt;</operator><name pos:start="217:19" pos:end="217:26">complete</name></name></expr>)</condition> <block pos:start="217:29" pos:end="223:9">{<block_content pos:start="219:13" pos:end="221:24">
+
+            <expr_stmt pos:start="219:13" pos:end="219:36"><expr pos:start="219:13" pos:end="219:35"><call pos:start="219:13" pos:end="219:35"><name pos:start="219:13" pos:end="219:29">xhci_ep_free_xfer</name><argument_list pos:start="219:30" pos:end="219:35">(<argument pos:start="219:31" pos:end="219:34"><expr pos:start="219:31" pos:end="219:34"><name pos:start="219:31" pos:end="219:34">xfer</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="221:13" pos:end="221:24"><expr pos:start="221:13" pos:end="221:23"><name pos:start="221:13" pos:end="221:16">xfer</name> <operator pos:start="221:18" pos:end="221:18">=</operator> <name pos:start="221:20" pos:end="221:23">NULL</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <if_stmt pos:start="227:9" pos:end="231:9"><if pos:start="227:9" pos:end="231:9">if <condition pos:start="227:12" pos:end="227:38">(<expr pos:start="227:13" pos:end="227:37"><name pos:start="227:13" pos:end="227:24"><name pos:start="227:13" pos:end="227:17">epctx</name><operator pos:start="227:18" pos:end="227:19">-&gt;</operator><name pos:start="227:20" pos:end="227:24">state</name></name> <operator pos:start="227:26" pos:end="227:27">==</operator> <name pos:start="227:29" pos:end="227:37">EP_HALTED</name></expr>)</condition> <block pos:start="227:40" pos:end="231:9">{<block_content pos:start="229:13" pos:end="229:18">
+
+            <break pos:start="229:13" pos:end="229:18">break;</break>
+
+        </block_content>}</block></if></if_stmt>
+
+        <if_stmt pos:start="233:9" pos:end="241:9"><if pos:start="233:9" pos:end="241:9">if <condition pos:start="233:12" pos:end="233:48">(<expr pos:start="233:13" pos:end="233:47"><name pos:start="233:13" pos:end="233:16">xfer</name> <operator pos:start="233:18" pos:end="233:19">!=</operator> <name pos:start="233:21" pos:end="233:24">NULL</name> <operator pos:start="233:26" pos:end="233:27">&amp;&amp;</operator> <name pos:start="233:29" pos:end="233:47"><name pos:start="233:29" pos:end="233:32">xfer</name><operator pos:start="233:33" pos:end="233:34">-&gt;</operator><name pos:start="233:35" pos:end="233:47">running_retry</name></name></expr>)</condition> <block pos:start="233:50" pos:end="241:9">{<block_content pos:start="235:13" pos:end="239:18">
+
+            <expr_stmt pos:start="235:13" pos:end="235:62"><expr pos:start="235:13" pos:end="235:61"><call pos:start="235:13" pos:end="235:61"><name pos:start="235:13" pos:end="235:19">DPRINTF</name><argument_list pos:start="235:20" pos:end="235:61">(<argument pos:start="235:21" pos:end="235:60"><expr pos:start="235:21" pos:end="235:60"><literal type="string" pos:start="235:21" pos:end="235:60">"xhci: xfer nacked, stopping schedule\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="237:13" pos:end="237:32"><expr pos:start="237:13" pos:end="237:31"><name pos:start="237:13" pos:end="237:24"><name pos:start="237:13" pos:end="237:17">epctx</name><operator pos:start="237:18" pos:end="237:19">-&gt;</operator><name pos:start="237:20" pos:end="237:24">retry</name></name> <operator pos:start="237:26" pos:end="237:26">=</operator> <name pos:start="237:28" pos:end="237:31">xfer</name></expr>;</expr_stmt>
+
+            <break pos:start="239:13" pos:end="239:18">break;</break>
+
+        </block_content>}</block></if></if_stmt>
+
+        <if_stmt pos:start="243:9" pos:end="249:9"><if pos:start="243:9" pos:end="249:9">if <condition pos:start="243:12" pos:end="243:37">(<expr pos:start="243:13" pos:end="243:36"><name pos:start="243:13" pos:end="243:17">count</name><operator pos:start="243:18" pos:end="243:19">++</operator> <operator pos:start="243:21" pos:end="243:21">&gt;</operator> <name pos:start="243:23" pos:end="243:36">TRANSFER_LIMIT</name></expr>)</condition> <block pos:start="243:39" pos:end="249:9">{<block_content pos:start="245:13" pos:end="247:18">
+
+            <expr_stmt pos:start="245:13" pos:end="245:55"><expr pos:start="245:13" pos:end="245:54"><call pos:start="245:13" pos:end="245:54"><name pos:start="245:13" pos:end="245:41">trace_usb_xhci_enforced_limit</name><argument_list pos:start="245:42" pos:end="245:54">(<argument pos:start="245:43" pos:end="245:53"><expr pos:start="245:43" pos:end="245:53"><literal type="string" pos:start="245:43" pos:end="245:53">"transfers"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="247:13" pos:end="247:18">break;</break>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></while>
+
+    <comment type="block" pos:start="253:5" pos:end="253:33">/* update ring dequeue ptr */</comment>
+
+    <expr_stmt pos:start="255:5" pos:end="255:56"><expr pos:start="255:5" pos:end="255:55"><call pos:start="255:5" pos:end="255:55"><name pos:start="255:5" pos:end="255:21">xhci_set_ep_state</name><argument_list pos:start="255:22" pos:end="255:55">(<argument pos:start="255:23" pos:end="255:26"><expr pos:start="255:23" pos:end="255:26"><name pos:start="255:23" pos:end="255:26">xhci</name></expr></argument>, <argument pos:start="255:29" pos:end="255:33"><expr pos:start="255:29" pos:end="255:33"><name pos:start="255:29" pos:end="255:33">epctx</name></expr></argument>, <argument pos:start="255:36" pos:end="255:40"><expr pos:start="255:36" pos:end="255:40"><name pos:start="255:36" pos:end="255:40">stctx</name></expr></argument>, <argument pos:start="255:43" pos:end="255:54"><expr pos:start="255:43" pos:end="255:54"><name pos:start="255:43" pos:end="255:54"><name pos:start="255:43" pos:end="255:47">epctx</name><operator pos:start="255:48" pos:end="255:49">-&gt;</operator><name pos:start="255:50" pos:end="255:54">state</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="257:5" pos:end="257:25"><expr pos:start="257:5" pos:end="257:24"><name pos:start="257:5" pos:end="257:22"><name pos:start="257:5" pos:end="257:9">epctx</name><operator pos:start="257:10" pos:end="257:11">-&gt;</operator><name pos:start="257:12" pos:end="257:22">kick_active</name></name><operator pos:start="257:23" pos:end="257:24">--</operator></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="261:5" pos:end="261:35"><expr pos:start="261:5" pos:end="261:34"><name pos:start="261:5" pos:end="261:6">ep</name> <operator pos:start="261:8" pos:end="261:8">=</operator> <call pos:start="261:10" pos:end="261:34"><name pos:start="261:10" pos:end="261:27">xhci_epid_to_usbep</name><argument_list pos:start="261:28" pos:end="261:34">(<argument pos:start="261:29" pos:end="261:33"><expr pos:start="261:29" pos:end="261:33"><name pos:start="261:29" pos:end="261:33">epctx</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="263:5" pos:end="267:5"><if pos:start="263:5" pos:end="267:5">if <condition pos:start="263:8" pos:end="263:11">(<expr pos:start="263:9" pos:end="263:10"><name pos:start="263:9" pos:end="263:10">ep</name></expr>)</condition> <block pos:start="263:13" pos:end="267:5">{<block_content pos:start="265:9" pos:end="265:47">
+
+        <expr_stmt pos:start="265:9" pos:end="265:47"><expr pos:start="265:9" pos:end="265:46"><call pos:start="265:9" pos:end="265:46"><name pos:start="265:9" pos:end="265:33">usb_device_flush_ep_queue</name><argument_list pos:start="265:34" pos:end="265:46">(<argument pos:start="265:35" pos:end="265:41"><expr pos:start="265:35" pos:end="265:41"><name pos:start="265:35" pos:end="265:41"><name pos:start="265:35" pos:end="265:36">ep</name><operator pos:start="265:37" pos:end="265:38">-&gt;</operator><name pos:start="265:39" pos:end="265:41">dev</name></name></expr></argument>, <argument pos:start="265:44" pos:end="265:45"><expr pos:start="265:44" pos:end="265:45"><name pos:start="265:44" pos:end="265:45">ep</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+</block_content>}</block></function>
+</unit>

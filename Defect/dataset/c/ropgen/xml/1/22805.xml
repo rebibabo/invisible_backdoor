@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/22805.c" pos:tabs="8"><function pos:start="1:1" pos:end="175:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:34">colo_packet_compare_tcp</name><parameter_list pos:start="1:35" pos:end="1:62">(<parameter pos:start="1:36" pos:end="1:47"><decl pos:start="1:36" pos:end="1:47"><type pos:start="1:36" pos:end="1:47"><name pos:start="1:36" pos:end="1:41">Packet</name> <modifier pos:start="1:43" pos:end="1:43">*</modifier></type><name pos:start="1:44" pos:end="1:47">spkt</name></decl></parameter>, <parameter pos:start="1:50" pos:end="1:61"><decl pos:start="1:50" pos:end="1:61"><type pos:start="1:50" pos:end="1:61"><name pos:start="1:50" pos:end="1:55">Packet</name> <modifier pos:start="1:57" pos:end="1:57">*</modifier></type><name pos:start="1:58" pos:end="1:61">ppkt</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="175:1">{<block_content pos:start="5:5" pos:end="173:15">
+
+    <decl_stmt pos:start="5:5" pos:end="5:31"><decl pos:start="5:5" pos:end="5:23"><type pos:start="5:5" pos:end="5:19"><name pos:start="5:5" pos:end="5:17"><name pos:start="5:5" pos:end="5:10">struct</name> <name pos:start="5:12" pos:end="5:17">tcphdr</name></name> <modifier pos:start="5:19" pos:end="5:19">*</modifier></type><name pos:start="5:20" pos:end="5:23">ptcp</name></decl>, <decl pos:start="5:26" pos:end="5:30"><type ref="prev" pos:start="5:5" pos:end="5:19"><modifier pos:start="5:26" pos:end="5:26">*</modifier></type><name pos:start="5:27" pos:end="5:30">stcp</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:12"><decl pos:start="7:5" pos:end="7:11"><type pos:start="7:5" pos:end="7:7"><name pos:start="7:5" pos:end="7:7">int</name></type> <name pos:start="7:9" pos:end="7:11">res</name></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="11:5" pos:end="11:43"><expr pos:start="11:5" pos:end="11:42"><call pos:start="11:5" pos:end="11:42"><name pos:start="11:5" pos:end="11:27">trace_colo_compare_main</name><argument_list pos:start="11:28" pos:end="11:42">(<argument pos:start="11:29" pos:end="11:41"><expr pos:start="11:29" pos:end="11:41"><literal type="string" pos:start="11:29" pos:end="11:41">"compare tcp"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="15:5" pos:end="15:51"><expr pos:start="15:5" pos:end="15:50"><name pos:start="15:5" pos:end="15:8">ptcp</name> <operator pos:start="15:10" pos:end="15:10">=</operator> <operator pos:start="15:12" pos:end="15:12">(</operator>struct <name pos:start="15:20" pos:end="15:25">tcphdr</name> <operator pos:start="15:27" pos:end="15:27">*</operator><operator pos:start="15:28" pos:end="15:28">)</operator><name pos:start="15:29" pos:end="15:50"><name pos:start="15:29" pos:end="15:32">ppkt</name><operator pos:start="15:33" pos:end="15:34">-&gt;</operator><name pos:start="15:35" pos:end="15:50">transport_header</name></name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="17:5" pos:end="17:51"><expr pos:start="17:5" pos:end="17:50"><name pos:start="17:5" pos:end="17:8">stcp</name> <operator pos:start="17:10" pos:end="17:10">=</operator> <operator pos:start="17:12" pos:end="17:12">(</operator>struct <name pos:start="17:20" pos:end="17:25">tcphdr</name> <operator pos:start="17:27" pos:end="17:27">*</operator><operator pos:start="17:28" pos:end="17:28">)</operator><name pos:start="17:29" pos:end="17:50"><name pos:start="17:29" pos:end="17:32">spkt</name><operator pos:start="17:33" pos:end="17:34">-&gt;</operator><name pos:start="17:35" pos:end="17:50">transport_header</name></name></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="21:5" pos:end="35:7">/*
+
+     * The 'identification' field in the IP header is *very* random
+
+     * it almost never matches.  Fudge this by ignoring differences in
+
+     * unfragmented packets; they'll normally sort themselves out if different
+
+     * anyway, and it should recover at the TCP level.
+
+     * An alternative would be to get both the primary and secondary to rewrite
+
+     * somehow; but that would need some sync traffic to sync the state
+
+     */</comment>
+
+    <if_stmt pos:start="37:5" pos:end="45:5"><if pos:start="37:5" pos:end="45:5">if <condition pos:start="37:8" pos:end="37:40">(<expr pos:start="37:9" pos:end="37:39"><call pos:start="37:9" pos:end="37:31"><name pos:start="37:9" pos:end="37:13">ntohs</name><argument_list pos:start="37:14" pos:end="37:31">(<argument pos:start="37:15" pos:end="37:30"><expr pos:start="37:15" pos:end="37:30"><name pos:start="37:15" pos:end="37:30"><name pos:start="37:15" pos:end="37:18">ppkt</name><operator pos:start="37:19" pos:end="37:20">-&gt;</operator><name pos:start="37:21" pos:end="37:22">ip</name><operator pos:start="37:23" pos:end="37:24">-&gt;</operator><name pos:start="37:25" pos:end="37:30">ip_off</name></name></expr></argument>)</argument_list></call> <operator pos:start="37:33" pos:end="37:33">&amp;</operator> <name pos:start="37:35" pos:end="37:39">IP_DF</name></expr>)</condition> <block pos:start="37:42" pos:end="45:5">{<block_content pos:start="39:9" pos:end="43:44">
+
+        <expr_stmt pos:start="39:9" pos:end="39:42"><expr pos:start="39:9" pos:end="39:41"><name pos:start="39:9" pos:end="39:23"><name pos:start="39:9" pos:end="39:12">spkt</name><operator pos:start="39:13" pos:end="39:14">-&gt;</operator><name pos:start="39:15" pos:end="39:16">ip</name><operator pos:start="39:17" pos:end="39:18">-&gt;</operator><name pos:start="39:19" pos:end="39:23">ip_id</name></name> <operator pos:start="39:25" pos:end="39:25">=</operator> <name pos:start="39:27" pos:end="39:41"><name pos:start="39:27" pos:end="39:30">ppkt</name><operator pos:start="39:31" pos:end="39:32">-&gt;</operator><name pos:start="39:33" pos:end="39:34">ip</name><operator pos:start="39:35" pos:end="39:36">-&gt;</operator><name pos:start="39:37" pos:end="39:41">ip_id</name></name></expr>;</expr_stmt>
+
+        <comment type="block" pos:start="41:9" pos:end="41:69">/* and the sum will be different if the IDs were different */</comment>
+
+        <expr_stmt pos:start="43:9" pos:end="43:44"><expr pos:start="43:9" pos:end="43:43"><name pos:start="43:9" pos:end="43:24"><name pos:start="43:9" pos:end="43:12">spkt</name><operator pos:start="43:13" pos:end="43:14">-&gt;</operator><name pos:start="43:15" pos:end="43:16">ip</name><operator pos:start="43:17" pos:end="43:18">-&gt;</operator><name pos:start="43:19" pos:end="43:24">ip_sum</name></name> <operator pos:start="43:26" pos:end="43:26">=</operator> <name pos:start="43:28" pos:end="43:43"><name pos:start="43:28" pos:end="43:31">ppkt</name><operator pos:start="43:32" pos:end="43:33">-&gt;</operator><name pos:start="43:34" pos:end="43:35">ip</name><operator pos:start="43:36" pos:end="43:37">-&gt;</operator><name pos:start="43:38" pos:end="43:43">ip_sum</name></name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="49:5" pos:end="87:7">/*
+
+     * Check tcp header length for tcp option field.
+
+     * th_off &gt; 5 means this tcp packet have options field.
+
+     * The tcp options maybe always different.
+
+     * for example:
+
+     * From RFC 7323.
+
+     * TCP Timestamps option (TSopt):
+
+     * Kind: 8
+
+     *
+
+     * Length: 10 bytes
+
+     *
+
+     *    +-------+-------+---------------------+---------------------+
+
+     *    |Kind=8 |  10   |   TS Value (TSval)  |TS Echo Reply (TSecr)|
+
+     *    +-------+-------+---------------------+---------------------+
+
+     *       1       1              4                     4
+
+     *
+
+     * In this case the primary guest's timestamp always different with
+
+     * the secondary guest's timestamp. COLO just focus on payload,
+
+     * so we just need skip this field.
+
+     */</comment>
+
+    <if_stmt pos:start="89:5" pos:end="109:5"><if pos:start="89:5" pos:end="101:5">if <condition pos:start="89:8" pos:end="89:25">(<expr pos:start="89:9" pos:end="89:24"><name pos:start="89:9" pos:end="89:20"><name pos:start="89:9" pos:end="89:12">ptcp</name><operator pos:start="89:13" pos:end="89:14">-&gt;</operator><name pos:start="89:15" pos:end="89:20">th_off</name></name> <operator pos:start="89:22" pos:end="89:22">&gt;</operator> <literal type="number" pos:start="89:24" pos:end="89:24">5</literal></expr>)</condition> <block pos:start="89:27" pos:end="101:5">{<block_content pos:start="91:9" pos:end="99:65">
+
+        <decl_stmt pos:start="91:9" pos:end="91:29"><decl pos:start="91:9" pos:end="91:28"><type pos:start="91:9" pos:end="91:17"><name pos:start="91:9" pos:end="91:17">ptrdiff_t</name></type> <name pos:start="91:19" pos:end="91:28">tcp_offset</name></decl>;</decl_stmt>
+
+
+
+        <expr_stmt pos:start="95:9" pos:end="97:63"><expr pos:start="95:9" pos:end="97:62"><name pos:start="95:9" pos:end="95:18">tcp_offset</name> <operator pos:start="95:20" pos:end="95:20">=</operator> <name pos:start="95:22" pos:end="95:43"><name pos:start="95:22" pos:end="95:25">ppkt</name><operator pos:start="95:26" pos:end="95:27">-&gt;</operator><name pos:start="95:28" pos:end="95:43">transport_header</name></name> <operator pos:start="95:45" pos:end="95:45">-</operator> <operator pos:start="95:47" pos:end="95:47">(</operator><name pos:start="95:48" pos:end="95:54">uint8_t</name> <operator pos:start="95:56" pos:end="95:56">*</operator><operator pos:start="95:57" pos:end="95:57">)</operator><name pos:start="95:58" pos:end="95:67"><name pos:start="95:58" pos:end="95:61">ppkt</name><operator pos:start="95:62" pos:end="95:63">-&gt;</operator><name pos:start="95:64" pos:end="95:67">data</name></name>
+
+                     <operator pos:start="97:22" pos:end="97:22">+</operator> <operator pos:start="97:24" pos:end="97:24">(</operator><name pos:start="97:25" pos:end="97:36"><name pos:start="97:25" pos:end="97:28">ptcp</name><operator pos:start="97:29" pos:end="97:30">-&gt;</operator><name pos:start="97:31" pos:end="97:36">th_off</name></name> <operator pos:start="97:38" pos:end="97:38">*</operator> <literal type="number" pos:start="97:40" pos:end="97:40">4</literal><operator pos:start="97:41" pos:end="97:41">)</operator> <operator pos:start="97:43" pos:end="97:43">-</operator> <name pos:start="97:45" pos:end="97:62"><name pos:start="97:45" pos:end="97:48">ppkt</name><operator pos:start="97:49" pos:end="97:50">-&gt;</operator><name pos:start="97:51" pos:end="97:62">vnet_hdr_len</name></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="99:9" pos:end="99:65"><expr pos:start="99:9" pos:end="99:64"><name pos:start="99:9" pos:end="99:11">res</name> <operator pos:start="99:13" pos:end="99:13">=</operator> <call pos:start="99:15" pos:end="99:64"><name pos:start="99:15" pos:end="99:40">colo_packet_compare_common</name><argument_list pos:start="99:41" pos:end="99:64">(<argument pos:start="99:42" pos:end="99:45"><expr pos:start="99:42" pos:end="99:45"><name pos:start="99:42" pos:end="99:45">ppkt</name></expr></argument>, <argument pos:start="99:48" pos:end="99:51"><expr pos:start="99:48" pos:end="99:51"><name pos:start="99:48" pos:end="99:51">spkt</name></expr></argument>, <argument pos:start="99:54" pos:end="99:63"><expr pos:start="99:54" pos:end="99:63"><name pos:start="99:54" pos:end="99:63">tcp_offset</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <if type="elseif" pos:start="101:7" pos:end="105:5">else if <condition pos:start="101:15" pos:end="101:44">(<expr pos:start="101:16" pos:end="101:43"><name pos:start="101:16" pos:end="101:27"><name pos:start="101:16" pos:end="101:19">ptcp</name><operator pos:start="101:20" pos:end="101:21">-&gt;</operator><name pos:start="101:22" pos:end="101:27">th_sum</name></name> <operator pos:start="101:29" pos:end="101:30">==</operator> <name pos:start="101:32" pos:end="101:43"><name pos:start="101:32" pos:end="101:35">stcp</name><operator pos:start="101:36" pos:end="101:37">-&gt;</operator><name pos:start="101:38" pos:end="101:43">th_sum</name></name></expr>)</condition> <block pos:start="101:46" pos:end="105:5">{<block_content pos:start="103:9" pos:end="103:63">
+
+        <expr_stmt pos:start="103:9" pos:end="103:63"><expr pos:start="103:9" pos:end="103:62"><name pos:start="103:9" pos:end="103:11">res</name> <operator pos:start="103:13" pos:end="103:13">=</operator> <call pos:start="103:15" pos:end="103:62"><name pos:start="103:15" pos:end="103:40">colo_packet_compare_common</name><argument_list pos:start="103:41" pos:end="103:62">(<argument pos:start="103:42" pos:end="103:45"><expr pos:start="103:42" pos:end="103:45"><name pos:start="103:42" pos:end="103:45">ppkt</name></expr></argument>, <argument pos:start="103:48" pos:end="103:51"><expr pos:start="103:48" pos:end="103:51"><name pos:start="103:48" pos:end="103:51">spkt</name></expr></argument>, <argument pos:start="103:54" pos:end="103:61"><expr pos:start="103:54" pos:end="103:61"><name pos:start="103:54" pos:end="103:61">ETH_HLEN</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="105:7" pos:end="109:5">else <block pos:start="105:12" pos:end="109:5">{<block_content pos:start="107:9" pos:end="107:17">
+
+        <expr_stmt pos:start="107:9" pos:end="107:17"><expr pos:start="107:9" pos:end="107:16"><name pos:start="107:9" pos:end="107:11">res</name> <operator pos:start="107:13" pos:end="107:13">=</operator> <operator pos:start="107:15" pos:end="107:15">-</operator><literal type="number" pos:start="107:16" pos:end="107:16">1</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <if_stmt pos:start="113:5" pos:end="169:5"><if pos:start="113:5" pos:end="169:5">if <condition pos:start="113:8" pos:end="113:73">(<expr pos:start="113:9" pos:end="113:72"><name pos:start="113:9" pos:end="113:11">res</name> <operator pos:start="113:13" pos:end="113:14">!=</operator> <literal type="number" pos:start="113:16" pos:end="113:16">0</literal> <operator pos:start="113:18" pos:end="113:19">&amp;&amp;</operator> <call pos:start="113:21" pos:end="113:72"><name pos:start="113:21" pos:end="113:41">trace_event_get_state</name><argument_list pos:start="113:42" pos:end="113:72">(<argument pos:start="113:43" pos:end="113:71"><expr pos:start="113:43" pos:end="113:71"><name pos:start="113:43" pos:end="113:71">TRACE_COLO_COMPARE_MISCOMPARE</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="113:75" pos:end="169:5">{<block_content pos:start="115:9" pos:end="167:54">
+
+        <decl_stmt pos:start="115:9" pos:end="115:76"><decl pos:start="115:9" pos:end="115:27"><type pos:start="115:9" pos:end="115:12"><name pos:start="115:9" pos:end="115:12">char</name></type> <name pos:start="115:14" pos:end="115:27"><name pos:start="115:14" pos:end="115:23">pri_ip_src</name><index pos:start="115:24" pos:end="115:27">[<expr pos:start="115:25" pos:end="115:26"><literal type="number" pos:start="115:25" pos:end="115:26">20</literal></expr>]</index></name></decl>, <decl pos:start="115:30" pos:end="115:43"><type ref="prev" pos:start="115:9" pos:end="115:12"/><name pos:start="115:30" pos:end="115:43"><name pos:start="115:30" pos:end="115:39">pri_ip_dst</name><index pos:start="115:40" pos:end="115:43">[<expr pos:start="115:41" pos:end="115:42"><literal type="number" pos:start="115:41" pos:end="115:42">20</literal></expr>]</index></name></decl>, <decl pos:start="115:46" pos:end="115:59"><type ref="prev" pos:start="115:9" pos:end="115:12"/><name pos:start="115:46" pos:end="115:59"><name pos:start="115:46" pos:end="115:55">sec_ip_src</name><index pos:start="115:56" pos:end="115:59">[<expr pos:start="115:57" pos:end="115:58"><literal type="number" pos:start="115:57" pos:end="115:58">20</literal></expr>]</index></name></decl>, <decl pos:start="115:62" pos:end="115:75"><type ref="prev" pos:start="115:9" pos:end="115:12"/><name pos:start="115:62" pos:end="115:75"><name pos:start="115:62" pos:end="115:71">sec_ip_dst</name><index pos:start="115:72" pos:end="115:75">[<expr pos:start="115:73" pos:end="115:74"><literal type="number" pos:start="115:73" pos:end="115:74">20</literal></expr>]</index></name></decl>;</decl_stmt>
+
+
+
+        <expr_stmt pos:start="119:9" pos:end="119:56"><expr pos:start="119:9" pos:end="119:55"><call pos:start="119:9" pos:end="119:55"><name pos:start="119:9" pos:end="119:14">strcpy</name><argument_list pos:start="119:15" pos:end="119:55">(<argument pos:start="119:16" pos:end="119:25"><expr pos:start="119:16" pos:end="119:25"><name pos:start="119:16" pos:end="119:25">pri_ip_src</name></expr></argument>, <argument pos:start="119:28" pos:end="119:54"><expr pos:start="119:28" pos:end="119:54"><call pos:start="119:28" pos:end="119:54"><name pos:start="119:28" pos:end="119:36">inet_ntoa</name><argument_list pos:start="119:37" pos:end="119:54">(<argument pos:start="119:38" pos:end="119:53"><expr pos:start="119:38" pos:end="119:53"><name pos:start="119:38" pos:end="119:53"><name pos:start="119:38" pos:end="119:41">ppkt</name><operator pos:start="119:42" pos:end="119:43">-&gt;</operator><name pos:start="119:44" pos:end="119:45">ip</name><operator pos:start="119:46" pos:end="119:47">-&gt;</operator><name pos:start="119:48" pos:end="119:53">ip_src</name></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="121:9" pos:end="121:56"><expr pos:start="121:9" pos:end="121:55"><call pos:start="121:9" pos:end="121:55"><name pos:start="121:9" pos:end="121:14">strcpy</name><argument_list pos:start="121:15" pos:end="121:55">(<argument pos:start="121:16" pos:end="121:25"><expr pos:start="121:16" pos:end="121:25"><name pos:start="121:16" pos:end="121:25">pri_ip_dst</name></expr></argument>, <argument pos:start="121:28" pos:end="121:54"><expr pos:start="121:28" pos:end="121:54"><call pos:start="121:28" pos:end="121:54"><name pos:start="121:28" pos:end="121:36">inet_ntoa</name><argument_list pos:start="121:37" pos:end="121:54">(<argument pos:start="121:38" pos:end="121:53"><expr pos:start="121:38" pos:end="121:53"><name pos:start="121:38" pos:end="121:53"><name pos:start="121:38" pos:end="121:41">ppkt</name><operator pos:start="121:42" pos:end="121:43">-&gt;</operator><name pos:start="121:44" pos:end="121:45">ip</name><operator pos:start="121:46" pos:end="121:47">-&gt;</operator><name pos:start="121:48" pos:end="121:53">ip_dst</name></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="123:9" pos:end="123:56"><expr pos:start="123:9" pos:end="123:55"><call pos:start="123:9" pos:end="123:55"><name pos:start="123:9" pos:end="123:14">strcpy</name><argument_list pos:start="123:15" pos:end="123:55">(<argument pos:start="123:16" pos:end="123:25"><expr pos:start="123:16" pos:end="123:25"><name pos:start="123:16" pos:end="123:25">sec_ip_src</name></expr></argument>, <argument pos:start="123:28" pos:end="123:54"><expr pos:start="123:28" pos:end="123:54"><call pos:start="123:28" pos:end="123:54"><name pos:start="123:28" pos:end="123:36">inet_ntoa</name><argument_list pos:start="123:37" pos:end="123:54">(<argument pos:start="123:38" pos:end="123:53"><expr pos:start="123:38" pos:end="123:53"><name pos:start="123:38" pos:end="123:53"><name pos:start="123:38" pos:end="123:41">spkt</name><operator pos:start="123:42" pos:end="123:43">-&gt;</operator><name pos:start="123:44" pos:end="123:45">ip</name><operator pos:start="123:46" pos:end="123:47">-&gt;</operator><name pos:start="123:48" pos:end="123:53">ip_src</name></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="125:9" pos:end="125:56"><expr pos:start="125:9" pos:end="125:55"><call pos:start="125:9" pos:end="125:55"><name pos:start="125:9" pos:end="125:14">strcpy</name><argument_list pos:start="125:15" pos:end="125:55">(<argument pos:start="125:16" pos:end="125:25"><expr pos:start="125:16" pos:end="125:25"><name pos:start="125:16" pos:end="125:25">sec_ip_dst</name></expr></argument>, <argument pos:start="125:28" pos:end="125:54"><expr pos:start="125:28" pos:end="125:54"><call pos:start="125:28" pos:end="125:54"><name pos:start="125:28" pos:end="125:36">inet_ntoa</name><argument_list pos:start="125:37" pos:end="125:54">(<argument pos:start="125:38" pos:end="125:53"><expr pos:start="125:38" pos:end="125:53"><name pos:start="125:38" pos:end="125:53"><name pos:start="125:38" pos:end="125:41">spkt</name><operator pos:start="125:42" pos:end="125:43">-&gt;</operator><name pos:start="125:44" pos:end="125:45">ip</name><operator pos:start="125:46" pos:end="125:47">-&gt;</operator><name pos:start="125:48" pos:end="125:53">ip_dst</name></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="129:9" pos:end="133:59"><expr pos:start="129:9" pos:end="133:58"><call pos:start="129:9" pos:end="133:58"><name pos:start="129:9" pos:end="129:34">trace_colo_compare_ip_info</name><argument_list pos:start="129:35" pos:end="133:58">(<argument pos:start="129:36" pos:end="129:45"><expr pos:start="129:36" pos:end="129:45"><name pos:start="129:36" pos:end="129:45"><name pos:start="129:36" pos:end="129:39">ppkt</name><operator pos:start="129:40" pos:end="129:41">-&gt;</operator><name pos:start="129:42" pos:end="129:45">size</name></name></expr></argument>, <argument pos:start="129:48" pos:end="129:57"><expr pos:start="129:48" pos:end="129:57"><name pos:start="129:48" pos:end="129:57">pri_ip_src</name></expr></argument>,
+
+                                   <argument pos:start="131:36" pos:end="131:45"><expr pos:start="131:36" pos:end="131:45"><name pos:start="131:36" pos:end="131:45">pri_ip_dst</name></expr></argument>, <argument pos:start="131:48" pos:end="131:57"><expr pos:start="131:48" pos:end="131:57"><name pos:start="131:48" pos:end="131:57"><name pos:start="131:48" pos:end="131:51">spkt</name><operator pos:start="131:52" pos:end="131:53">-&gt;</operator><name pos:start="131:54" pos:end="131:57">size</name></name></expr></argument>,
+
+                                   <argument pos:start="133:36" pos:end="133:45"><expr pos:start="133:36" pos:end="133:45"><name pos:start="133:36" pos:end="133:45">sec_ip_src</name></expr></argument>, <argument pos:start="133:48" pos:end="133:57"><expr pos:start="133:48" pos:end="133:57"><name pos:start="133:48" pos:end="133:57">sec_ip_dst</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="137:9" pos:end="145:48"><expr pos:start="137:9" pos:end="145:47"><call pos:start="137:9" pos:end="145:47"><name pos:start="137:9" pos:end="137:35">trace_colo_compare_tcp_info</name><argument_list pos:start="137:36" pos:end="145:47">(<argument pos:start="137:37" pos:end="137:52"><expr pos:start="137:37" pos:end="137:52"><literal type="string" pos:start="137:37" pos:end="137:52">"pri tcp packet"</literal></expr></argument>,
+
+                                    <argument pos:start="139:37" pos:end="139:55"><expr pos:start="139:37" pos:end="139:55"><call pos:start="139:37" pos:end="139:55"><name pos:start="139:37" pos:end="139:41">ntohl</name><argument_list pos:start="139:42" pos:end="139:55">(<argument pos:start="139:43" pos:end="139:54"><expr pos:start="139:43" pos:end="139:54"><name pos:start="139:43" pos:end="139:54"><name pos:start="139:43" pos:end="139:46">ptcp</name><operator pos:start="139:47" pos:end="139:48">-&gt;</operator><name pos:start="139:49" pos:end="139:54">th_seq</name></name></expr></argument>)</argument_list></call></expr></argument>,
+
+                                    <argument pos:start="141:37" pos:end="141:55"><expr pos:start="141:37" pos:end="141:55"><call pos:start="141:37" pos:end="141:55"><name pos:start="141:37" pos:end="141:41">ntohl</name><argument_list pos:start="141:42" pos:end="141:55">(<argument pos:start="141:43" pos:end="141:54"><expr pos:start="141:43" pos:end="141:54"><name pos:start="141:43" pos:end="141:54"><name pos:start="141:43" pos:end="141:46">ptcp</name><operator pos:start="141:47" pos:end="141:48">-&gt;</operator><name pos:start="141:49" pos:end="141:54">th_ack</name></name></expr></argument>)</argument_list></call></expr></argument>,
+
+                                    <argument pos:start="143:37" pos:end="143:39"><expr pos:start="143:37" pos:end="143:39"><name pos:start="143:37" pos:end="143:39">res</name></expr></argument>, <argument pos:start="143:42" pos:end="143:55"><expr pos:start="143:42" pos:end="143:55"><name pos:start="143:42" pos:end="143:55"><name pos:start="143:42" pos:end="143:45">ptcp</name><operator pos:start="143:46" pos:end="143:47">-&gt;</operator><name pos:start="143:48" pos:end="143:55">th_flags</name></name></expr></argument>,
+
+                                    <argument pos:start="145:37" pos:end="145:46"><expr pos:start="145:37" pos:end="145:46"><name pos:start="145:37" pos:end="145:46"><name pos:start="145:37" pos:end="145:40">ppkt</name><operator pos:start="145:41" pos:end="145:42">-&gt;</operator><name pos:start="145:43" pos:end="145:46">size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="149:9" pos:end="157:48"><expr pos:start="149:9" pos:end="157:47"><call pos:start="149:9" pos:end="157:47"><name pos:start="149:9" pos:end="149:35">trace_colo_compare_tcp_info</name><argument_list pos:start="149:36" pos:end="157:47">(<argument pos:start="149:37" pos:end="149:52"><expr pos:start="149:37" pos:end="149:52"><literal type="string" pos:start="149:37" pos:end="149:52">"sec tcp packet"</literal></expr></argument>,
+
+                                    <argument pos:start="151:37" pos:end="151:55"><expr pos:start="151:37" pos:end="151:55"><call pos:start="151:37" pos:end="151:55"><name pos:start="151:37" pos:end="151:41">ntohl</name><argument_list pos:start="151:42" pos:end="151:55">(<argument pos:start="151:43" pos:end="151:54"><expr pos:start="151:43" pos:end="151:54"><name pos:start="151:43" pos:end="151:54"><name pos:start="151:43" pos:end="151:46">stcp</name><operator pos:start="151:47" pos:end="151:48">-&gt;</operator><name pos:start="151:49" pos:end="151:54">th_seq</name></name></expr></argument>)</argument_list></call></expr></argument>,
+
+                                    <argument pos:start="153:37" pos:end="153:55"><expr pos:start="153:37" pos:end="153:55"><call pos:start="153:37" pos:end="153:55"><name pos:start="153:37" pos:end="153:41">ntohl</name><argument_list pos:start="153:42" pos:end="153:55">(<argument pos:start="153:43" pos:end="153:54"><expr pos:start="153:43" pos:end="153:54"><name pos:start="153:43" pos:end="153:54"><name pos:start="153:43" pos:end="153:46">stcp</name><operator pos:start="153:47" pos:end="153:48">-&gt;</operator><name pos:start="153:49" pos:end="153:54">th_ack</name></name></expr></argument>)</argument_list></call></expr></argument>,
+
+                                    <argument pos:start="155:37" pos:end="155:39"><expr pos:start="155:37" pos:end="155:39"><name pos:start="155:37" pos:end="155:39">res</name></expr></argument>, <argument pos:start="155:42" pos:end="155:55"><expr pos:start="155:42" pos:end="155:55"><name pos:start="155:42" pos:end="155:55"><name pos:start="155:42" pos:end="155:45">stcp</name><operator pos:start="155:46" pos:end="155:47">-&gt;</operator><name pos:start="155:48" pos:end="155:55">th_flags</name></name></expr></argument>,
+
+                                    <argument pos:start="157:37" pos:end="157:46"><expr pos:start="157:37" pos:end="157:46"><name pos:start="157:37" pos:end="157:46"><name pos:start="157:37" pos:end="157:40">spkt</name><operator pos:start="157:41" pos:end="157:42">-&gt;</operator><name pos:start="157:43" pos:end="157:46">size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="161:9" pos:end="163:54"><expr pos:start="161:9" pos:end="163:53"><call pos:start="161:9" pos:end="163:53"><name pos:start="161:9" pos:end="161:20">qemu_hexdump</name><argument_list pos:start="161:21" pos:end="163:53">(<argument pos:start="161:22" pos:end="161:39"><expr pos:start="161:22" pos:end="161:39"><operator pos:start="161:22" pos:end="161:22">(</operator><name pos:start="161:23" pos:end="161:26">char</name> <operator pos:start="161:28" pos:end="161:28">*</operator><operator pos:start="161:29" pos:end="161:29">)</operator><name pos:start="161:30" pos:end="161:39"><name pos:start="161:30" pos:end="161:33">ppkt</name><operator pos:start="161:34" pos:end="161:35">-&gt;</operator><name pos:start="161:36" pos:end="161:39">data</name></name></expr></argument>, <argument pos:start="161:42" pos:end="161:47"><expr pos:start="161:42" pos:end="161:47"><name pos:start="161:42" pos:end="161:47">stderr</name></expr></argument>,
+
+                     <argument pos:start="163:22" pos:end="163:40"><expr pos:start="163:22" pos:end="163:40"><literal type="string" pos:start="163:22" pos:end="163:40">"colo-compare ppkt"</literal></expr></argument>, <argument pos:start="163:43" pos:end="163:52"><expr pos:start="163:43" pos:end="163:52"><name pos:start="163:43" pos:end="163:52"><name pos:start="163:43" pos:end="163:46">ppkt</name><operator pos:start="163:47" pos:end="163:48">-&gt;</operator><name pos:start="163:49" pos:end="163:52">size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="165:9" pos:end="167:54"><expr pos:start="165:9" pos:end="167:53"><call pos:start="165:9" pos:end="167:53"><name pos:start="165:9" pos:end="165:20">qemu_hexdump</name><argument_list pos:start="165:21" pos:end="167:53">(<argument pos:start="165:22" pos:end="165:39"><expr pos:start="165:22" pos:end="165:39"><operator pos:start="165:22" pos:end="165:22">(</operator><name pos:start="165:23" pos:end="165:26">char</name> <operator pos:start="165:28" pos:end="165:28">*</operator><operator pos:start="165:29" pos:end="165:29">)</operator><name pos:start="165:30" pos:end="165:39"><name pos:start="165:30" pos:end="165:33">spkt</name><operator pos:start="165:34" pos:end="165:35">-&gt;</operator><name pos:start="165:36" pos:end="165:39">data</name></name></expr></argument>, <argument pos:start="165:42" pos:end="165:47"><expr pos:start="165:42" pos:end="165:47"><name pos:start="165:42" pos:end="165:47">stderr</name></expr></argument>,
+
+                     <argument pos:start="167:22" pos:end="167:40"><expr pos:start="167:22" pos:end="167:40"><literal type="string" pos:start="167:22" pos:end="167:40">"colo-compare spkt"</literal></expr></argument>, <argument pos:start="167:43" pos:end="167:52"><expr pos:start="167:43" pos:end="167:52"><name pos:start="167:43" pos:end="167:52"><name pos:start="167:43" pos:end="167:46">spkt</name><operator pos:start="167:47" pos:end="167:48">-&gt;</operator><name pos:start="167:49" pos:end="167:52">size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <return pos:start="173:5" pos:end="173:15">return <expr pos:start="173:12" pos:end="173:14"><name pos:start="173:12" pos:end="173:14">res</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

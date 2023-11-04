@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/16233.c" pos:tabs="8"><function pos:start="1:1" pos:end="159:1"><type pos:start="1:1" pos:end="1:25"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:23">BlockDriverAIOCB</name> <modifier pos:start="1:25" pos:end="1:25">*</modifier></type><name pos:start="1:26" pos:end="1:38">rbd_start_aio</name><parameter_list pos:start="1:39" pos:end="13:53">(<parameter pos:start="1:40" pos:end="1:59"><decl pos:start="1:40" pos:end="1:59"><type pos:start="1:40" pos:end="1:59"><name pos:start="1:40" pos:end="1:55">BlockDriverState</name> <modifier pos:start="1:57" pos:end="1:57">*</modifier></type><name pos:start="1:58" pos:end="1:59">bs</name></decl></parameter>,
+
+                                       <parameter pos:start="3:40" pos:end="3:57"><decl pos:start="3:40" pos:end="3:57"><type pos:start="3:40" pos:end="3:57"><name pos:start="3:40" pos:end="3:46">int64_t</name></type> <name pos:start="3:48" pos:end="3:57">sector_num</name></decl></parameter>,
+
+                                       <parameter pos:start="5:40" pos:end="5:57"><decl pos:start="5:40" pos:end="5:57"><type pos:start="5:40" pos:end="5:57"><name pos:start="5:40" pos:end="5:51">QEMUIOVector</name> <modifier pos:start="5:53" pos:end="5:53">*</modifier></type><name pos:start="5:54" pos:end="5:57">qiov</name></decl></parameter>,
+
+                                       <parameter pos:start="7:40" pos:end="7:53"><decl pos:start="7:40" pos:end="7:53"><type pos:start="7:40" pos:end="7:53"><name pos:start="7:40" pos:end="7:42">int</name></type> <name pos:start="7:44" pos:end="7:53">nb_sectors</name></decl></parameter>,
+
+                                       <parameter pos:start="9:40" pos:end="9:68"><decl pos:start="9:40" pos:end="9:68"><type pos:start="9:40" pos:end="9:68"><name pos:start="9:40" pos:end="9:64">BlockDriverCompletionFunc</name> <modifier pos:start="9:66" pos:end="9:66">*</modifier></type><name pos:start="9:67" pos:end="9:68">cb</name></decl></parameter>,
+
+                                       <parameter pos:start="11:40" pos:end="11:51"><decl pos:start="11:40" pos:end="11:51"><type pos:start="11:40" pos:end="11:51"><name pos:start="11:40" pos:end="11:43">void</name> <modifier pos:start="11:45" pos:end="11:45">*</modifier></type><name pos:start="11:46" pos:end="11:51">opaque</name></decl></parameter>,
+
+                                       <parameter pos:start="13:40" pos:end="13:52"><decl pos:start="13:40" pos:end="13:52"><type pos:start="13:40" pos:end="13:52"><name pos:start="13:40" pos:end="13:48">RBDAIOCmd</name></type> <name pos:start="13:50" pos:end="13:52">cmd</name></decl></parameter>)</parameter_list>
+
+<block pos:start="15:1" pos:end="159:1">{<block_content pos:start="17:5" pos:end="157:16">
+
+    <decl_stmt pos:start="17:5" pos:end="17:18"><decl pos:start="17:5" pos:end="17:17"><type pos:start="17:5" pos:end="17:14"><name pos:start="17:5" pos:end="17:12">RBDAIOCB</name> <modifier pos:start="17:14" pos:end="17:14">*</modifier></type><name pos:start="17:15" pos:end="17:17">acb</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:17"><decl pos:start="19:5" pos:end="19:16"><type pos:start="19:5" pos:end="19:13"><name pos:start="19:5" pos:end="19:11">RADOSCB</name> <modifier pos:start="19:13" pos:end="19:13">*</modifier></type><name pos:start="19:14" pos:end="19:16">rcb</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="21:5" pos:end="21:23"><decl pos:start="21:5" pos:end="21:22"><type pos:start="21:5" pos:end="21:20"><name pos:start="21:5" pos:end="21:20">rbd_completion_t</name></type> <name pos:start="21:22" pos:end="21:22">c</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="23:5" pos:end="23:22"><decl pos:start="23:5" pos:end="23:15"><type pos:start="23:5" pos:end="23:11"><name pos:start="23:5" pos:end="23:11">int64_t</name></type> <name pos:start="23:13" pos:end="23:15">off</name></decl>, <decl pos:start="23:18" pos:end="23:21"><type ref="prev" pos:start="23:5" pos:end="23:11"/><name pos:start="23:18" pos:end="23:21">size</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="25:5" pos:end="25:14"><decl pos:start="25:5" pos:end="25:13"><type pos:start="25:5" pos:end="25:10"><name pos:start="25:5" pos:end="25:8">char</name> <modifier pos:start="25:10" pos:end="25:10">*</modifier></type><name pos:start="25:11" pos:end="25:13">buf</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="27:5" pos:end="27:10"><decl pos:start="27:5" pos:end="27:9"><type pos:start="27:5" pos:end="27:7"><name pos:start="27:5" pos:end="27:7">int</name></type> <name pos:start="27:9" pos:end="27:9">r</name></decl>;</decl_stmt>
+
+
+
+    <decl_stmt pos:start="31:5" pos:end="31:33"><decl pos:start="31:5" pos:end="31:32"><type pos:start="31:5" pos:end="31:18"><name pos:start="31:5" pos:end="31:16">BDRVRBDState</name> <modifier pos:start="31:18" pos:end="31:18">*</modifier></type><name pos:start="31:19" pos:end="31:19">s</name> <init pos:start="31:21" pos:end="31:32">= <expr pos:start="31:23" pos:end="31:32"><name pos:start="31:23" pos:end="31:32"><name pos:start="31:23" pos:end="31:24">bs</name><operator pos:start="31:25" pos:end="31:26">-&gt;</operator><name pos:start="31:27" pos:end="31:32">opaque</name></name></expr></init></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="35:5" pos:end="35:56"><expr pos:start="35:5" pos:end="35:55"><name pos:start="35:5" pos:end="35:7">acb</name> <operator pos:start="35:9" pos:end="35:9">=</operator> <call pos:start="35:11" pos:end="35:55"><name pos:start="35:11" pos:end="35:22">qemu_aio_get</name><argument_list pos:start="35:23" pos:end="35:55">(<argument pos:start="35:24" pos:end="35:38"><expr pos:start="35:24" pos:end="35:38"><operator pos:start="35:24" pos:end="35:24">&amp;</operator><name pos:start="35:25" pos:end="35:38">rbd_aiocb_info</name></expr></argument>, <argument pos:start="35:41" pos:end="35:42"><expr pos:start="35:41" pos:end="35:42"><name pos:start="35:41" pos:end="35:42">bs</name></expr></argument>, <argument pos:start="35:45" pos:end="35:46"><expr pos:start="35:45" pos:end="35:46"><name pos:start="35:45" pos:end="35:46">cb</name></expr></argument>, <argument pos:start="35:49" pos:end="35:54"><expr pos:start="35:49" pos:end="35:54"><name pos:start="35:49" pos:end="35:54">opaque</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="37:5" pos:end="37:19"><expr pos:start="37:5" pos:end="37:18"><name pos:start="37:5" pos:end="37:12"><name pos:start="37:5" pos:end="37:7">acb</name><operator pos:start="37:8" pos:end="37:9">-&gt;</operator><name pos:start="37:10" pos:end="37:12">cmd</name></name> <operator pos:start="37:14" pos:end="37:14">=</operator> <name pos:start="37:16" pos:end="37:18">cmd</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="39:5" pos:end="39:21"><expr pos:start="39:5" pos:end="39:20"><name pos:start="39:5" pos:end="39:13"><name pos:start="39:5" pos:end="39:7">acb</name><operator pos:start="39:8" pos:end="39:9">-&gt;</operator><name pos:start="39:10" pos:end="39:13">qiov</name></name> <operator pos:start="39:15" pos:end="39:15">=</operator> <name pos:start="39:17" pos:end="39:20">qiov</name></expr>;</expr_stmt>
+
+    <if_stmt pos:start="41:5" pos:end="49:5"><if pos:start="41:5" pos:end="45:5">if <condition pos:start="41:8" pos:end="41:31">(<expr pos:start="41:9" pos:end="41:30"><name pos:start="41:9" pos:end="41:11">cmd</name> <operator pos:start="41:13" pos:end="41:14">==</operator> <name pos:start="41:16" pos:end="41:30">RBD_AIO_DISCARD</name></expr>)</condition> <block pos:start="41:33" pos:end="45:5">{<block_content pos:start="43:9" pos:end="43:27">
+
+        <expr_stmt pos:start="43:9" pos:end="43:27"><expr pos:start="43:9" pos:end="43:26"><name pos:start="43:9" pos:end="43:19"><name pos:start="43:9" pos:end="43:11">acb</name><operator pos:start="43:12" pos:end="43:13">-&gt;</operator><name pos:start="43:14" pos:end="43:19">bounce</name></name> <operator pos:start="43:21" pos:end="43:21">=</operator> <name pos:start="43:23" pos:end="43:26">NULL</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="45:7" pos:end="49:5">else <block pos:start="45:12" pos:end="49:5">{<block_content pos:start="47:9" pos:end="47:54">
+
+        <expr_stmt pos:start="47:9" pos:end="47:54"><expr pos:start="47:9" pos:end="47:53"><name pos:start="47:9" pos:end="47:19"><name pos:start="47:9" pos:end="47:11">acb</name><operator pos:start="47:12" pos:end="47:13">-&gt;</operator><name pos:start="47:14" pos:end="47:19">bounce</name></name> <operator pos:start="47:21" pos:end="47:21">=</operator> <call pos:start="47:23" pos:end="47:53"><name pos:start="47:23" pos:end="47:37">qemu_blockalign</name><argument_list pos:start="47:38" pos:end="47:53">(<argument pos:start="47:39" pos:end="47:40"><expr pos:start="47:39" pos:end="47:40"><name pos:start="47:39" pos:end="47:40">bs</name></expr></argument>, <argument pos:start="47:43" pos:end="47:52"><expr pos:start="47:43" pos:end="47:52"><name pos:start="47:43" pos:end="47:52"><name pos:start="47:43" pos:end="47:46">qiov</name><operator pos:start="47:47" pos:end="47:48">-&gt;</operator><name pos:start="47:49" pos:end="47:52">size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+    <expr_stmt pos:start="51:5" pos:end="51:17"><expr pos:start="51:5" pos:end="51:16"><name pos:start="51:5" pos:end="51:12"><name pos:start="51:5" pos:end="51:7">acb</name><operator pos:start="51:8" pos:end="51:9">-&gt;</operator><name pos:start="51:10" pos:end="51:12">ret</name></name> <operator pos:start="51:14" pos:end="51:14">=</operator> <literal type="number" pos:start="51:16" pos:end="51:16">0</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="53:5" pos:end="53:19"><expr pos:start="53:5" pos:end="53:18"><name pos:start="53:5" pos:end="53:14"><name pos:start="53:5" pos:end="53:7">acb</name><operator pos:start="53:8" pos:end="53:9">-&gt;</operator><name pos:start="53:10" pos:end="53:14">error</name></name> <operator pos:start="53:16" pos:end="53:16">=</operator> <literal type="number" pos:start="53:18" pos:end="53:18">0</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="55:5" pos:end="55:15"><expr pos:start="55:5" pos:end="55:14"><name pos:start="55:5" pos:end="55:10"><name pos:start="55:5" pos:end="55:7">acb</name><operator pos:start="55:8" pos:end="55:9">-&gt;</operator><name pos:start="55:10" pos:end="55:10">s</name></name> <operator pos:start="55:12" pos:end="55:12">=</operator> <name pos:start="55:14" pos:end="55:14">s</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="57:5" pos:end="57:23"><expr pos:start="57:5" pos:end="57:22"><name pos:start="57:5" pos:end="57:18"><name pos:start="57:5" pos:end="57:7">acb</name><operator pos:start="57:8" pos:end="57:9">-&gt;</operator><name pos:start="57:10" pos:end="57:18">cancelled</name></name> <operator pos:start="57:20" pos:end="57:20">=</operator> <literal type="number" pos:start="57:22" pos:end="57:22">0</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="59:5" pos:end="59:19"><expr pos:start="59:5" pos:end="59:18"><name pos:start="59:5" pos:end="59:11"><name pos:start="59:5" pos:end="59:7">acb</name><operator pos:start="59:8" pos:end="59:9">-&gt;</operator><name pos:start="59:10" pos:end="59:11">bh</name></name> <operator pos:start="59:13" pos:end="59:13">=</operator> <name pos:start="59:15" pos:end="59:18">NULL</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="61:5" pos:end="61:31"><expr pos:start="61:5" pos:end="61:30"><name pos:start="61:5" pos:end="61:15"><name pos:start="61:5" pos:end="61:7">acb</name><operator pos:start="61:8" pos:end="61:9">-&gt;</operator><name pos:start="61:10" pos:end="61:15">status</name></name> <operator pos:start="61:17" pos:end="61:17">=</operator> <operator pos:start="61:19" pos:end="61:19">-</operator><name pos:start="61:20" pos:end="61:30">EINPROGRESS</name></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="65:5" pos:end="69:5"><if pos:start="65:5" pos:end="69:5">if <condition pos:start="65:8" pos:end="65:29">(<expr pos:start="65:9" pos:end="65:28"><name pos:start="65:9" pos:end="65:11">cmd</name> <operator pos:start="65:13" pos:end="65:14">==</operator> <name pos:start="65:16" pos:end="65:28">RBD_AIO_WRITE</name></expr>)</condition> <block pos:start="65:31" pos:end="69:5">{<block_content pos:start="67:9" pos:end="67:65">
+
+        <expr_stmt pos:start="67:9" pos:end="67:65"><expr pos:start="67:9" pos:end="67:64"><call pos:start="67:9" pos:end="67:64"><name pos:start="67:9" pos:end="67:25">qemu_iovec_to_buf</name><argument_list pos:start="67:26" pos:end="67:64">(<argument pos:start="67:27" pos:end="67:35"><expr pos:start="67:27" pos:end="67:35"><name pos:start="67:27" pos:end="67:35"><name pos:start="67:27" pos:end="67:29">acb</name><operator pos:start="67:30" pos:end="67:31">-&gt;</operator><name pos:start="67:32" pos:end="67:35">qiov</name></name></expr></argument>, <argument pos:start="67:38" pos:end="67:38"><expr pos:start="67:38" pos:end="67:38"><literal type="number" pos:start="67:38" pos:end="67:38">0</literal></expr></argument>, <argument pos:start="67:41" pos:end="67:51"><expr pos:start="67:41" pos:end="67:51"><name pos:start="67:41" pos:end="67:51"><name pos:start="67:41" pos:end="67:43">acb</name><operator pos:start="67:44" pos:end="67:45">-&gt;</operator><name pos:start="67:46" pos:end="67:51">bounce</name></name></expr></argument>, <argument pos:start="67:54" pos:end="67:63"><expr pos:start="67:54" pos:end="67:63"><name pos:start="67:54" pos:end="67:63"><name pos:start="67:54" pos:end="67:57">qiov</name><operator pos:start="67:58" pos:end="67:59">-&gt;</operator><name pos:start="67:60" pos:end="67:63">size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="73:5" pos:end="73:22"><expr pos:start="73:5" pos:end="73:21"><name pos:start="73:5" pos:end="73:7">buf</name> <operator pos:start="73:9" pos:end="73:9">=</operator> <name pos:start="73:11" pos:end="73:21"><name pos:start="73:11" pos:end="73:13">acb</name><operator pos:start="73:14" pos:end="73:15">-&gt;</operator><name pos:start="73:16" pos:end="73:21">bounce</name></name></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="77:5" pos:end="77:40"><expr pos:start="77:5" pos:end="77:39"><name pos:start="77:5" pos:end="77:7">off</name> <operator pos:start="77:9" pos:end="77:9">=</operator> <name pos:start="77:11" pos:end="77:20">sector_num</name> <operator pos:start="77:22" pos:end="77:22">*</operator> <name pos:start="77:24" pos:end="77:39">BDRV_SECTOR_SIZE</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="79:5" pos:end="79:41"><expr pos:start="79:5" pos:end="79:40"><name pos:start="79:5" pos:end="79:8">size</name> <operator pos:start="79:10" pos:end="79:10">=</operator> <name pos:start="79:12" pos:end="79:21">nb_sectors</name> <operator pos:start="79:23" pos:end="79:23">*</operator> <name pos:start="79:25" pos:end="79:40">BDRV_SECTOR_SIZE</name></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="83:5" pos:end="83:24"><expr pos:start="83:5" pos:end="83:23"><name pos:start="83:5" pos:end="83:21"><name pos:start="83:5" pos:end="83:5">s</name><operator pos:start="83:6" pos:end="83:7">-&gt;</operator><name pos:start="83:8" pos:end="83:21">qemu_aio_count</name></name><operator pos:start="83:22" pos:end="83:23">++</operator></expr>;</expr_stmt> <comment type="block" pos:start="83:26" pos:end="83:46">/* All the RADOSCB */</comment>
+
+
+
+    <expr_stmt pos:start="87:5" pos:end="87:36"><expr pos:start="87:5" pos:end="87:35"><name pos:start="87:5" pos:end="87:7">rcb</name> <operator pos:start="87:9" pos:end="87:9">=</operator> <call pos:start="87:11" pos:end="87:35"><name pos:start="87:11" pos:end="87:18">g_malloc</name><argument_list pos:start="87:19" pos:end="87:35">(<argument pos:start="87:20" pos:end="87:34"><expr pos:start="87:20" pos:end="87:34"><sizeof pos:start="87:20" pos:end="87:34">sizeof<argument_list pos:start="87:26" pos:end="87:34">(<argument pos:start="87:27" pos:end="87:33"><expr pos:start="87:27" pos:end="87:33"><name pos:start="87:27" pos:end="87:33">RADOSCB</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="89:5" pos:end="89:18"><expr pos:start="89:5" pos:end="89:17"><name pos:start="89:5" pos:end="89:13"><name pos:start="89:5" pos:end="89:7">rcb</name><operator pos:start="89:8" pos:end="89:9">-&gt;</operator><name pos:start="89:10" pos:end="89:13">done</name></name> <operator pos:start="89:15" pos:end="89:15">=</operator> <literal type="number" pos:start="89:17" pos:end="89:17">0</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="91:5" pos:end="91:19"><expr pos:start="91:5" pos:end="91:18"><name pos:start="91:5" pos:end="91:12"><name pos:start="91:5" pos:end="91:7">rcb</name><operator pos:start="91:8" pos:end="91:9">-&gt;</operator><name pos:start="91:10" pos:end="91:12">acb</name></name> <operator pos:start="91:14" pos:end="91:14">=</operator> <name pos:start="91:16" pos:end="91:18">acb</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="93:5" pos:end="93:19"><expr pos:start="93:5" pos:end="93:18"><name pos:start="93:5" pos:end="93:12"><name pos:start="93:5" pos:end="93:7">rcb</name><operator pos:start="93:8" pos:end="93:9">-&gt;</operator><name pos:start="93:10" pos:end="93:12">buf</name></name> <operator pos:start="93:14" pos:end="93:14">=</operator> <name pos:start="93:16" pos:end="93:18">buf</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="95:5" pos:end="95:20"><expr pos:start="95:5" pos:end="95:19"><name pos:start="95:5" pos:end="95:10"><name pos:start="95:5" pos:end="95:7">rcb</name><operator pos:start="95:8" pos:end="95:9">-&gt;</operator><name pos:start="95:10" pos:end="95:10">s</name></name> <operator pos:start="95:12" pos:end="95:12">=</operator> <name pos:start="95:14" pos:end="95:19"><name pos:start="95:14" pos:end="95:16">acb</name><operator pos:start="95:17" pos:end="95:18">-&gt;</operator><name pos:start="95:19" pos:end="95:19">s</name></name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="97:5" pos:end="97:21"><expr pos:start="97:5" pos:end="97:20"><name pos:start="97:5" pos:end="97:13"><name pos:start="97:5" pos:end="97:7">rcb</name><operator pos:start="97:8" pos:end="97:9">-&gt;</operator><name pos:start="97:10" pos:end="97:13">size</name></name> <operator pos:start="97:15" pos:end="97:15">=</operator> <name pos:start="97:17" pos:end="97:20">size</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="99:5" pos:end="99:78"><expr pos:start="99:5" pos:end="99:77"><name pos:start="99:5" pos:end="99:5">r</name> <operator pos:start="99:7" pos:end="99:7">=</operator> <call pos:start="99:9" pos:end="99:77"><name pos:start="99:9" pos:end="99:33">rbd_aio_create_completion</name><argument_list pos:start="99:34" pos:end="99:77">(<argument pos:start="99:35" pos:end="99:37"><expr pos:start="99:35" pos:end="99:37"><name pos:start="99:35" pos:end="99:37">rcb</name></expr></argument>, <argument pos:start="99:40" pos:end="99:72"><expr pos:start="99:40" pos:end="99:72"><operator pos:start="99:40" pos:end="99:40">(</operator><name pos:start="99:41" pos:end="99:54">rbd_callback_t</name><operator pos:start="99:55" pos:end="99:55">)</operator> <name pos:start="99:57" pos:end="99:72">rbd_finish_aiocb</name></expr></argument>, <argument pos:start="99:75" pos:end="99:76"><expr pos:start="99:75" pos:end="99:76"><operator pos:start="99:75" pos:end="99:75">&amp;</operator><name pos:start="99:76" pos:end="99:76">c</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="101:5" pos:end="105:5"><if pos:start="101:5" pos:end="105:5">if <condition pos:start="101:8" pos:end="101:14">(<expr pos:start="101:9" pos:end="101:13"><name pos:start="101:9" pos:end="101:9">r</name> <operator pos:start="101:11" pos:end="101:11">&lt;</operator> <literal type="number" pos:start="101:13" pos:end="101:13">0</literal></expr>)</condition> <block pos:start="101:16" pos:end="105:5">{<block_content pos:start="103:9" pos:end="103:20">
+
+        <goto pos:start="103:9" pos:end="103:20">goto <name pos:start="103:14" pos:end="103:19">failed</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <switch pos:start="109:5" pos:end="133:5">switch <condition pos:start="109:12" pos:end="109:16">(<expr pos:start="109:13" pos:end="109:15"><name pos:start="109:13" pos:end="109:15">cmd</name></expr>)</condition> <block pos:start="109:18" pos:end="133:5">{<block_content pos:start="111:5" pos:end="131:20">
+
+    <case pos:start="111:5" pos:end="111:23">case <expr pos:start="111:10" pos:end="111:22"><name pos:start="111:10" pos:end="111:22">RBD_AIO_WRITE</name></expr>:</case>
+
+        <expr_stmt pos:start="113:9" pos:end="113:55"><expr pos:start="113:9" pos:end="113:54"><name pos:start="113:9" pos:end="113:9">r</name> <operator pos:start="113:11" pos:end="113:11">=</operator> <call pos:start="113:13" pos:end="113:54"><name pos:start="113:13" pos:end="113:25">rbd_aio_write</name><argument_list pos:start="113:26" pos:end="113:54">(<argument pos:start="113:27" pos:end="113:34"><expr pos:start="113:27" pos:end="113:34"><name pos:start="113:27" pos:end="113:34"><name pos:start="113:27" pos:end="113:27">s</name><operator pos:start="113:28" pos:end="113:29">-&gt;</operator><name pos:start="113:30" pos:end="113:34">image</name></name></expr></argument>, <argument pos:start="113:37" pos:end="113:39"><expr pos:start="113:37" pos:end="113:39"><name pos:start="113:37" pos:end="113:39">off</name></expr></argument>, <argument pos:start="113:42" pos:end="113:45"><expr pos:start="113:42" pos:end="113:45"><name pos:start="113:42" pos:end="113:45">size</name></expr></argument>, <argument pos:start="113:48" pos:end="113:50"><expr pos:start="113:48" pos:end="113:50"><name pos:start="113:48" pos:end="113:50">buf</name></expr></argument>, <argument pos:start="113:53" pos:end="113:53"><expr pos:start="113:53" pos:end="113:53"><name pos:start="113:53" pos:end="113:53">c</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <break pos:start="115:9" pos:end="115:14">break;</break>
+
+    <case pos:start="117:5" pos:end="117:22">case <expr pos:start="117:10" pos:end="117:21"><name pos:start="117:10" pos:end="117:21">RBD_AIO_READ</name></expr>:</case>
+
+        <expr_stmt pos:start="119:9" pos:end="119:54"><expr pos:start="119:9" pos:end="119:53"><name pos:start="119:9" pos:end="119:9">r</name> <operator pos:start="119:11" pos:end="119:11">=</operator> <call pos:start="119:13" pos:end="119:53"><name pos:start="119:13" pos:end="119:24">rbd_aio_read</name><argument_list pos:start="119:25" pos:end="119:53">(<argument pos:start="119:26" pos:end="119:33"><expr pos:start="119:26" pos:end="119:33"><name pos:start="119:26" pos:end="119:33"><name pos:start="119:26" pos:end="119:26">s</name><operator pos:start="119:27" pos:end="119:28">-&gt;</operator><name pos:start="119:29" pos:end="119:33">image</name></name></expr></argument>, <argument pos:start="119:36" pos:end="119:38"><expr pos:start="119:36" pos:end="119:38"><name pos:start="119:36" pos:end="119:38">off</name></expr></argument>, <argument pos:start="119:41" pos:end="119:44"><expr pos:start="119:41" pos:end="119:44"><name pos:start="119:41" pos:end="119:44">size</name></expr></argument>, <argument pos:start="119:47" pos:end="119:49"><expr pos:start="119:47" pos:end="119:49"><name pos:start="119:47" pos:end="119:49">buf</name></expr></argument>, <argument pos:start="119:52" pos:end="119:52"><expr pos:start="119:52" pos:end="119:52"><name pos:start="119:52" pos:end="119:52">c</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <break pos:start="121:9" pos:end="121:14">break;</break>
+
+    <case pos:start="123:5" pos:end="123:25">case <expr pos:start="123:10" pos:end="123:24"><name pos:start="123:10" pos:end="123:24">RBD_AIO_DISCARD</name></expr>:</case>
+
+        <expr_stmt pos:start="125:9" pos:end="125:60"><expr pos:start="125:9" pos:end="125:59"><name pos:start="125:9" pos:end="125:9">r</name> <operator pos:start="125:11" pos:end="125:11">=</operator> <call pos:start="125:13" pos:end="125:59"><name pos:start="125:13" pos:end="125:35">rbd_aio_discard_wrapper</name><argument_list pos:start="125:36" pos:end="125:59">(<argument pos:start="125:37" pos:end="125:44"><expr pos:start="125:37" pos:end="125:44"><name pos:start="125:37" pos:end="125:44"><name pos:start="125:37" pos:end="125:37">s</name><operator pos:start="125:38" pos:end="125:39">-&gt;</operator><name pos:start="125:40" pos:end="125:44">image</name></name></expr></argument>, <argument pos:start="125:47" pos:end="125:49"><expr pos:start="125:47" pos:end="125:49"><name pos:start="125:47" pos:end="125:49">off</name></expr></argument>, <argument pos:start="125:52" pos:end="125:55"><expr pos:start="125:52" pos:end="125:55"><name pos:start="125:52" pos:end="125:55">size</name></expr></argument>, <argument pos:start="125:58" pos:end="125:58"><expr pos:start="125:58" pos:end="125:58"><name pos:start="125:58" pos:end="125:58">c</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <break pos:start="127:9" pos:end="127:14">break;</break>
+
+    <default pos:start="129:5" pos:end="129:12">default:</default>
+
+        <expr_stmt pos:start="131:9" pos:end="131:20"><expr pos:start="131:9" pos:end="131:19"><name pos:start="131:9" pos:end="131:9">r</name> <operator pos:start="131:11" pos:end="131:11">=</operator> <operator pos:start="131:13" pos:end="131:13">-</operator><name pos:start="131:14" pos:end="131:19">EINVAL</name></expr>;</expr_stmt>
+
+    </block_content>}</block></switch>
+
+
+
+    <if_stmt pos:start="137:5" pos:end="141:5"><if pos:start="137:5" pos:end="141:5">if <condition pos:start="137:8" pos:end="137:14">(<expr pos:start="137:9" pos:end="137:13"><name pos:start="137:9" pos:end="137:9">r</name> <operator pos:start="137:11" pos:end="137:11">&lt;</operator> <literal type="number" pos:start="137:13" pos:end="137:13">0</literal></expr>)</condition> <block pos:start="137:16" pos:end="141:5">{<block_content pos:start="139:9" pos:end="139:20">
+
+        <goto pos:start="139:9" pos:end="139:20">goto <name pos:start="139:14" pos:end="139:19">failed</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <return pos:start="145:5" pos:end="145:24">return <expr pos:start="145:12" pos:end="145:23"><operator pos:start="145:12" pos:end="145:12">&amp;</operator><name pos:start="145:13" pos:end="145:23"><name pos:start="145:13" pos:end="145:15">acb</name><operator pos:start="145:16" pos:end="145:17">-&gt;</operator><name pos:start="145:18" pos:end="145:23">common</name></name></expr>;</return>
+
+
+
+<label pos:start="149:1" pos:end="149:7"><name pos:start="149:1" pos:end="149:6">failed</name>:</label>
+
+    <expr_stmt pos:start="151:5" pos:end="151:16"><expr pos:start="151:5" pos:end="151:15"><call pos:start="151:5" pos:end="151:15"><name pos:start="151:5" pos:end="151:10">g_free</name><argument_list pos:start="151:11" pos:end="151:15">(<argument pos:start="151:12" pos:end="151:14"><expr pos:start="151:12" pos:end="151:14"><name pos:start="151:12" pos:end="151:14">rcb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="153:5" pos:end="153:24"><expr pos:start="153:5" pos:end="153:23"><name pos:start="153:5" pos:end="153:21"><name pos:start="153:5" pos:end="153:5">s</name><operator pos:start="153:6" pos:end="153:7">-&gt;</operator><name pos:start="153:8" pos:end="153:21">qemu_aio_count</name></name><operator pos:start="153:22" pos:end="153:23">--</operator></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="155:5" pos:end="155:26"><expr pos:start="155:5" pos:end="155:25"><call pos:start="155:5" pos:end="155:25"><name pos:start="155:5" pos:end="155:20">qemu_aio_release</name><argument_list pos:start="155:21" pos:end="155:25">(<argument pos:start="155:22" pos:end="155:24"><expr pos:start="155:22" pos:end="155:24"><name pos:start="155:22" pos:end="155:24">acb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <return pos:start="157:5" pos:end="157:16">return <expr pos:start="157:12" pos:end="157:15"><name pos:start="157:12" pos:end="157:15">NULL</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/10994.c" pos:tabs="8"><function pos:start="1:1" pos:end="161:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:38">find_large_solid_color_rect</name><parameter_list pos:start="1:39" pos:end="3:66">(<parameter pos:start="1:40" pos:end="1:51"><decl pos:start="1:40" pos:end="1:51"><type pos:start="1:40" pos:end="1:51"><name pos:start="1:40" pos:end="1:47">VncState</name> <modifier pos:start="1:49" pos:end="1:49">*</modifier></type><name pos:start="1:50" pos:end="1:51">vs</name></decl></parameter>, <parameter pos:start="1:54" pos:end="1:58"><decl pos:start="1:54" pos:end="1:58"><type pos:start="1:54" pos:end="1:58"><name pos:start="1:54" pos:end="1:56">int</name></type> <name pos:start="1:58" pos:end="1:58">x</name></decl></parameter>, <parameter pos:start="1:61" pos:end="1:65"><decl pos:start="1:61" pos:end="1:65"><type pos:start="1:61" pos:end="1:65"><name pos:start="1:61" pos:end="1:63">int</name></type> <name pos:start="1:65" pos:end="1:65">y</name></decl></parameter>,
+
+                                       <parameter pos:start="3:40" pos:end="3:44"><decl pos:start="3:40" pos:end="3:44"><type pos:start="3:40" pos:end="3:44"><name pos:start="3:40" pos:end="3:42">int</name></type> <name pos:start="3:44" pos:end="3:44">w</name></decl></parameter>, <parameter pos:start="3:47" pos:end="3:51"><decl pos:start="3:47" pos:end="3:51"><type pos:start="3:47" pos:end="3:51"><name pos:start="3:47" pos:end="3:49">int</name></type> <name pos:start="3:51" pos:end="3:51">h</name></decl></parameter>, <parameter pos:start="3:54" pos:end="3:65"><decl pos:start="3:54" pos:end="3:65"><type pos:start="3:54" pos:end="3:65"><name pos:start="3:54" pos:end="3:56">int</name></type> <name pos:start="3:58" pos:end="3:65">max_rows</name></decl></parameter>)</parameter_list>
+
+<block pos:start="5:1" pos:end="161:1">{<block_content pos:start="7:5" pos:end="159:48">
+
+    <decl_stmt pos:start="7:5" pos:end="7:23"><decl pos:start="7:5" pos:end="7:10"><type pos:start="7:5" pos:end="7:7"><name pos:start="7:5" pos:end="7:7">int</name></type> <name pos:start="7:9" pos:end="7:10">dx</name></decl>, <decl pos:start="7:13" pos:end="7:14"><type ref="prev" pos:start="7:5" pos:end="7:7"/><name pos:start="7:13" pos:end="7:14">dy</name></decl>, <decl pos:start="7:17" pos:end="7:18"><type ref="prev" pos:start="7:5" pos:end="7:7"/><name pos:start="7:17" pos:end="7:18">dw</name></decl>, <decl pos:start="7:21" pos:end="7:22"><type ref="prev" pos:start="7:5" pos:end="7:7"/><name pos:start="7:21" pos:end="7:22">dh</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:14"><decl pos:start="9:5" pos:end="9:13"><type pos:start="9:5" pos:end="9:7"><name pos:start="9:5" pos:end="9:7">int</name></type> <name pos:start="9:9" pos:end="9:9">n</name> <init pos:start="9:11" pos:end="9:13">= <expr pos:start="9:13" pos:end="9:13"><literal type="number" pos:start="9:13" pos:end="9:13">0</literal></expr></init></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="13:5" pos:end="13:71">/* Try to find large solid-color areas and send them separately. */</comment>
+
+
+
+    <for pos:start="17:5" pos:end="157:5">for <control pos:start="17:9" pos:end="17:65">(<init pos:start="17:10" pos:end="17:16"><expr pos:start="17:10" pos:end="17:15"><name pos:start="17:10" pos:end="17:11">dy</name> <operator pos:start="17:13" pos:end="17:13">=</operator> <name pos:start="17:15" pos:end="17:15">y</name></expr>;</init> <condition pos:start="17:18" pos:end="17:28"><expr pos:start="17:18" pos:end="17:27"><name pos:start="17:18" pos:end="17:19">dy</name> <operator pos:start="17:21" pos:end="17:21">&lt;</operator> <name pos:start="17:23" pos:end="17:23">y</name> <operator pos:start="17:25" pos:end="17:25">+</operator> <name pos:start="17:27" pos:end="17:27">h</name></expr>;</condition> <incr pos:start="17:30" pos:end="17:64"><expr pos:start="17:30" pos:end="17:64"><name pos:start="17:30" pos:end="17:31">dy</name> <operator pos:start="17:33" pos:end="17:34">+=</operator> <name pos:start="17:36" pos:end="17:64">VNC_TIGHT_MAX_SPLIT_TILE_SIZE</name></expr></incr>)</control> <block pos:start="17:67" pos:end="157:5">{<block_content pos:start="25:9" pos:end="155:9">
+
+
+
+        <comment type="block" pos:start="21:9" pos:end="21:72">/* If a rectangle becomes too large, send its upper part now. */</comment>
+
+
+
+        <if_stmt pos:start="25:9" pos:end="33:9"><if pos:start="25:9" pos:end="33:9">if <condition pos:start="25:12" pos:end="25:31">(<expr pos:start="25:13" pos:end="25:30"><name pos:start="25:13" pos:end="25:14">dy</name> <operator pos:start="25:16" pos:end="25:16">-</operator> <name pos:start="25:18" pos:end="25:18">y</name> <operator pos:start="25:20" pos:end="25:21">&gt;=</operator> <name pos:start="25:23" pos:end="25:30">max_rows</name></expr>)</condition> <block pos:start="25:33" pos:end="33:9">{<block_content pos:start="27:13" pos:end="31:26">
+
+            <expr_stmt pos:start="27:13" pos:end="27:57"><expr pos:start="27:13" pos:end="27:56"><name pos:start="27:13" pos:end="27:13">n</name> <operator pos:start="27:15" pos:end="27:16">+=</operator> <call pos:start="27:18" pos:end="27:56"><name pos:start="27:18" pos:end="27:33">send_rect_simple</name><argument_list pos:start="27:34" pos:end="27:56">(<argument pos:start="27:35" pos:end="27:36"><expr pos:start="27:35" pos:end="27:36"><name pos:start="27:35" pos:end="27:36">vs</name></expr></argument>, <argument pos:start="27:39" pos:end="27:39"><expr pos:start="27:39" pos:end="27:39"><name pos:start="27:39" pos:end="27:39">x</name></expr></argument>, <argument pos:start="27:42" pos:end="27:42"><expr pos:start="27:42" pos:end="27:42"><name pos:start="27:42" pos:end="27:42">y</name></expr></argument>, <argument pos:start="27:45" pos:end="27:45"><expr pos:start="27:45" pos:end="27:45"><name pos:start="27:45" pos:end="27:45">w</name></expr></argument>, <argument pos:start="27:48" pos:end="27:55"><expr pos:start="27:48" pos:end="27:55"><name pos:start="27:48" pos:end="27:55">max_rows</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="29:13" pos:end="29:26"><expr pos:start="29:13" pos:end="29:25"><name pos:start="29:13" pos:end="29:13">y</name> <operator pos:start="29:15" pos:end="29:16">+=</operator> <name pos:start="29:18" pos:end="29:25">max_rows</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="31:13" pos:end="31:26"><expr pos:start="31:13" pos:end="31:25"><name pos:start="31:13" pos:end="31:13">h</name> <operator pos:start="31:15" pos:end="31:16">-=</operator> <name pos:start="31:18" pos:end="31:25">max_rows</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="37:9" pos:end="37:62"><expr pos:start="37:9" pos:end="37:61"><name pos:start="37:9" pos:end="37:10">dh</name> <operator pos:start="37:12" pos:end="37:12">=</operator> <call pos:start="37:14" pos:end="37:61"><name pos:start="37:14" pos:end="37:16">MIN</name><argument_list pos:start="37:17" pos:end="37:61">(<argument pos:start="37:18" pos:end="37:46"><expr pos:start="37:18" pos:end="37:46"><name pos:start="37:18" pos:end="37:46">VNC_TIGHT_MAX_SPLIT_TILE_SIZE</name></expr></argument>, <argument pos:start="37:49" pos:end="37:60"><expr pos:start="37:49" pos:end="37:60"><operator pos:start="37:49" pos:end="37:49">(</operator><name pos:start="37:50" pos:end="37:50">y</name> <operator pos:start="37:52" pos:end="37:52">+</operator> <name pos:start="37:54" pos:end="37:54">h</name> <operator pos:start="37:56" pos:end="37:56">-</operator> <name pos:start="37:58" pos:end="37:59">dy</name><operator pos:start="37:60" pos:end="37:60">)</operator></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <for pos:start="41:9" pos:end="155:9">for <control pos:start="41:13" pos:end="41:69">(<init pos:start="41:14" pos:end="41:20"><expr pos:start="41:14" pos:end="41:19"><name pos:start="41:14" pos:end="41:15">dx</name> <operator pos:start="41:17" pos:end="41:17">=</operator> <name pos:start="41:19" pos:end="41:19">x</name></expr>;</init> <condition pos:start="41:22" pos:end="41:32"><expr pos:start="41:22" pos:end="41:31"><name pos:start="41:22" pos:end="41:23">dx</name> <operator pos:start="41:25" pos:end="41:25">&lt;</operator> <name pos:start="41:27" pos:end="41:27">x</name> <operator pos:start="41:29" pos:end="41:29">+</operator> <name pos:start="41:31" pos:end="41:31">w</name></expr>;</condition> <incr pos:start="41:34" pos:end="41:68"><expr pos:start="41:34" pos:end="41:68"><name pos:start="41:34" pos:end="41:35">dx</name> <operator pos:start="41:37" pos:end="41:38">+=</operator> <name pos:start="41:40" pos:end="41:68">VNC_TIGHT_MAX_SPLIT_TILE_SIZE</name></expr></incr>)</control> <block pos:start="41:71" pos:end="155:9">{<block_content pos:start="43:13" pos:end="153:21">
+
+            <decl_stmt pos:start="43:13" pos:end="43:33"><decl pos:start="43:13" pos:end="43:32"><type pos:start="43:13" pos:end="43:20"><name pos:start="43:13" pos:end="43:20">uint32_t</name></type> <name pos:start="43:22" pos:end="43:32">color_value</name></decl>;</decl_stmt>
+
+            <decl_stmt pos:start="45:13" pos:end="45:47"><decl pos:start="45:13" pos:end="45:22"><type pos:start="45:13" pos:end="45:15"><name pos:start="45:13" pos:end="45:15">int</name></type> <name pos:start="45:17" pos:end="45:22">x_best</name></decl>, <decl pos:start="45:25" pos:end="45:30"><type ref="prev" pos:start="45:13" pos:end="45:15"/><name pos:start="45:25" pos:end="45:30">y_best</name></decl>, <decl pos:start="45:33" pos:end="45:38"><type ref="prev" pos:start="45:13" pos:end="45:15"/><name pos:start="45:33" pos:end="45:38">w_best</name></decl>, <decl pos:start="45:41" pos:end="45:46"><type ref="prev" pos:start="45:13" pos:end="45:15"/><name pos:start="45:41" pos:end="45:46">h_best</name></decl>;</decl_stmt>
+
+
+
+            <expr_stmt pos:start="49:13" pos:end="49:66"><expr pos:start="49:13" pos:end="49:65"><name pos:start="49:13" pos:end="49:14">dw</name> <operator pos:start="49:16" pos:end="49:16">=</operator> <call pos:start="49:18" pos:end="49:65"><name pos:start="49:18" pos:end="49:20">MIN</name><argument_list pos:start="49:21" pos:end="49:65">(<argument pos:start="49:22" pos:end="49:50"><expr pos:start="49:22" pos:end="49:50"><name pos:start="49:22" pos:end="49:50">VNC_TIGHT_MAX_SPLIT_TILE_SIZE</name></expr></argument>, <argument pos:start="49:53" pos:end="49:64"><expr pos:start="49:53" pos:end="49:64"><operator pos:start="49:53" pos:end="49:53">(</operator><name pos:start="49:54" pos:end="49:54">x</name> <operator pos:start="49:56" pos:end="49:56">+</operator> <name pos:start="49:58" pos:end="49:58">w</name> <operator pos:start="49:60" pos:end="49:60">-</operator> <name pos:start="49:62" pos:end="49:63">dx</name><operator pos:start="49:64" pos:end="49:64">)</operator></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <if_stmt pos:start="53:13" pos:end="57:13"><if pos:start="53:13" pos:end="57:13">if <condition pos:start="53:16" pos:end="53:75">(<expr pos:start="53:17" pos:end="53:74"><operator pos:start="53:17" pos:end="53:17">!</operator><call pos:start="53:18" pos:end="53:74"><name pos:start="53:18" pos:end="53:33">check_solid_tile</name><argument_list pos:start="53:34" pos:end="53:74">(<argument pos:start="53:35" pos:end="53:36"><expr pos:start="53:35" pos:end="53:36"><name pos:start="53:35" pos:end="53:36">vs</name></expr></argument>, <argument pos:start="53:39" pos:end="53:40"><expr pos:start="53:39" pos:end="53:40"><name pos:start="53:39" pos:end="53:40">dx</name></expr></argument>, <argument pos:start="53:43" pos:end="53:44"><expr pos:start="53:43" pos:end="53:44"><name pos:start="53:43" pos:end="53:44">dy</name></expr></argument>, <argument pos:start="53:47" pos:end="53:48"><expr pos:start="53:47" pos:end="53:48"><name pos:start="53:47" pos:end="53:48">dw</name></expr></argument>, <argument pos:start="53:51" pos:end="53:52"><expr pos:start="53:51" pos:end="53:52"><name pos:start="53:51" pos:end="53:52">dh</name></expr></argument>, <argument pos:start="53:55" pos:end="53:66"><expr pos:start="53:55" pos:end="53:66"><operator pos:start="53:55" pos:end="53:55">&amp;</operator><name pos:start="53:56" pos:end="53:66">color_value</name></expr></argument>, <argument pos:start="53:69" pos:end="53:73"><expr pos:start="53:69" pos:end="53:73"><name pos:start="53:69" pos:end="53:73">false</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="53:77" pos:end="57:13">{<block_content pos:start="55:17" pos:end="55:26">
+
+                <continue pos:start="55:17" pos:end="55:26">continue ;</continue>
+
+            </block_content>}</block></if></if_stmt>
+
+
+
+            <comment type="block" pos:start="61:13" pos:end="61:53">/* Get dimensions of solid-color area. */</comment>
+
+
+
+            <expr_stmt pos:start="65:13" pos:end="67:64"><expr pos:start="65:13" pos:end="67:63"><call pos:start="65:13" pos:end="67:63"><name pos:start="65:13" pos:end="65:32">find_best_solid_area</name><argument_list pos:start="65:33" pos:end="67:63">(<argument pos:start="65:34" pos:end="65:35"><expr pos:start="65:34" pos:end="65:35"><name pos:start="65:34" pos:end="65:35">vs</name></expr></argument>, <argument pos:start="65:38" pos:end="65:39"><expr pos:start="65:38" pos:end="65:39"><name pos:start="65:38" pos:end="65:39">dx</name></expr></argument>, <argument pos:start="65:42" pos:end="65:43"><expr pos:start="65:42" pos:end="65:43"><name pos:start="65:42" pos:end="65:43">dy</name></expr></argument>, <argument pos:start="65:46" pos:end="65:57"><expr pos:start="65:46" pos:end="65:57"><name pos:start="65:46" pos:end="65:46">w</name> <operator pos:start="65:48" pos:end="65:48">-</operator> <operator pos:start="65:50" pos:end="65:50">(</operator><name pos:start="65:51" pos:end="65:52">dx</name> <operator pos:start="65:54" pos:end="65:54">-</operator> <name pos:start="65:56" pos:end="65:56">x</name><operator pos:start="65:57" pos:end="65:57">)</operator></expr></argument>, <argument pos:start="65:60" pos:end="65:71"><expr pos:start="65:60" pos:end="65:71"><name pos:start="65:60" pos:end="65:60">h</name> <operator pos:start="65:62" pos:end="65:62">-</operator> <operator pos:start="65:64" pos:end="65:64">(</operator><name pos:start="65:65" pos:end="65:66">dy</name> <operator pos:start="65:68" pos:end="65:68">-</operator> <name pos:start="65:70" pos:end="65:70">y</name><operator pos:start="65:71" pos:end="65:71">)</operator></expr></argument>,
+
+                                 <argument pos:start="67:34" pos:end="67:44"><expr pos:start="67:34" pos:end="67:44"><name pos:start="67:34" pos:end="67:44">color_value</name></expr></argument>, <argument pos:start="67:47" pos:end="67:53"><expr pos:start="67:47" pos:end="67:53"><operator pos:start="67:47" pos:end="67:47">&amp;</operator><name pos:start="67:48" pos:end="67:53">w_best</name></expr></argument>, <argument pos:start="67:56" pos:end="67:62"><expr pos:start="67:56" pos:end="67:62"><operator pos:start="67:56" pos:end="67:56">&amp;</operator><name pos:start="67:57" pos:end="67:62">h_best</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <comment type="block" pos:start="71:13" pos:end="73:64">/* Make sure a solid rectangle is large enough
+
+               (or the whole rectangle is of the same color). */</comment>
+
+
+
+            <if_stmt pos:start="77:13" pos:end="83:13"><if pos:start="77:13" pos:end="83:13">if <condition pos:start="77:16" pos:end="79:67">(<expr pos:start="77:17" pos:end="79:66"><name pos:start="77:17" pos:end="77:22">w_best</name> <operator pos:start="77:24" pos:end="77:24">*</operator> <name pos:start="77:26" pos:end="77:31">h_best</name> <operator pos:start="77:33" pos:end="77:34">!=</operator> <name pos:start="77:36" pos:end="77:36">w</name> <operator pos:start="77:38" pos:end="77:38">*</operator> <name pos:start="77:40" pos:end="77:40">h</name> <operator pos:start="77:42" pos:end="77:43">&amp;&amp;</operator>
+
+                <name pos:start="79:17" pos:end="79:22">w_best</name> <operator pos:start="79:24" pos:end="79:24">*</operator> <name pos:start="79:26" pos:end="79:31">h_best</name> <operator pos:start="79:33" pos:end="79:33">&lt;</operator> <name pos:start="79:35" pos:end="79:66">VNC_TIGHT_MIN_SOLID_SUBRECT_SIZE</name></expr>)</condition> <block pos:start="79:69" pos:end="83:13">{<block_content pos:start="81:17" pos:end="81:25">
+
+                <continue pos:start="81:17" pos:end="81:25">continue;</continue>
+
+            </block_content>}</block></if></if_stmt>
+
+
+
+            <comment type="block" pos:start="87:13" pos:end="87:64">/* Try to extend solid rectangle to maximum size. */</comment>
+
+
+
+            <expr_stmt pos:start="91:13" pos:end="91:24"><expr pos:start="91:13" pos:end="91:23"><name pos:start="91:13" pos:end="91:18">x_best</name> <operator pos:start="91:20" pos:end="91:20">=</operator> <name pos:start="91:22" pos:end="91:23">dx</name></expr>;</expr_stmt> <expr_stmt pos:start="91:26" pos:end="91:37"><expr pos:start="91:26" pos:end="91:36"><name pos:start="91:26" pos:end="91:31">y_best</name> <operator pos:start="91:33" pos:end="91:33">=</operator> <name pos:start="91:35" pos:end="91:36">dy</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="93:13" pos:end="95:66"><expr pos:start="93:13" pos:end="95:65"><call pos:start="93:13" pos:end="95:65"><name pos:start="93:13" pos:end="93:29">extend_solid_area</name><argument_list pos:start="93:30" pos:end="95:65">(<argument pos:start="93:31" pos:end="93:32"><expr pos:start="93:31" pos:end="93:32"><name pos:start="93:31" pos:end="93:32">vs</name></expr></argument>, <argument pos:start="93:35" pos:end="93:35"><expr pos:start="93:35" pos:end="93:35"><name pos:start="93:35" pos:end="93:35">x</name></expr></argument>, <argument pos:start="93:38" pos:end="93:38"><expr pos:start="93:38" pos:end="93:38"><name pos:start="93:38" pos:end="93:38">y</name></expr></argument>, <argument pos:start="93:41" pos:end="93:41"><expr pos:start="93:41" pos:end="93:41"><name pos:start="93:41" pos:end="93:41">w</name></expr></argument>, <argument pos:start="93:44" pos:end="93:44"><expr pos:start="93:44" pos:end="93:44"><name pos:start="93:44" pos:end="93:44">h</name></expr></argument>, <argument pos:start="93:47" pos:end="93:57"><expr pos:start="93:47" pos:end="93:57"><name pos:start="93:47" pos:end="93:57">color_value</name></expr></argument>,
+
+                              <argument pos:start="95:31" pos:end="95:37"><expr pos:start="95:31" pos:end="95:37"><operator pos:start="95:31" pos:end="95:31">&amp;</operator><name pos:start="95:32" pos:end="95:37">x_best</name></expr></argument>, <argument pos:start="95:40" pos:end="95:46"><expr pos:start="95:40" pos:end="95:46"><operator pos:start="95:40" pos:end="95:40">&amp;</operator><name pos:start="95:41" pos:end="95:46">y_best</name></expr></argument>, <argument pos:start="95:49" pos:end="95:55"><expr pos:start="95:49" pos:end="95:55"><operator pos:start="95:49" pos:end="95:49">&amp;</operator><name pos:start="95:50" pos:end="95:55">w_best</name></expr></argument>, <argument pos:start="95:58" pos:end="95:64"><expr pos:start="95:58" pos:end="95:64"><operator pos:start="95:58" pos:end="95:58">&amp;</operator><name pos:start="95:59" pos:end="95:64">h_best</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <comment type="block" pos:start="99:13" pos:end="99:70">/* Send rectangles at top and left to solid-color area. */</comment>
+
+
+
+            <if_stmt pos:start="103:13" pos:end="107:13"><if pos:start="103:13" pos:end="107:13">if <condition pos:start="103:16" pos:end="103:28">(<expr pos:start="103:17" pos:end="103:27"><name pos:start="103:17" pos:end="103:22">y_best</name> <operator pos:start="103:24" pos:end="103:25">!=</operator> <name pos:start="103:27" pos:end="103:27">y</name></expr>)</condition> <block pos:start="103:30" pos:end="107:13">{<block_content pos:start="105:17" pos:end="105:61">
+
+                <expr_stmt pos:start="105:17" pos:end="105:61"><expr pos:start="105:17" pos:end="105:60"><name pos:start="105:17" pos:end="105:17">n</name> <operator pos:start="105:19" pos:end="105:20">+=</operator> <call pos:start="105:22" pos:end="105:60"><name pos:start="105:22" pos:end="105:37">send_rect_simple</name><argument_list pos:start="105:38" pos:end="105:60">(<argument pos:start="105:39" pos:end="105:40"><expr pos:start="105:39" pos:end="105:40"><name pos:start="105:39" pos:end="105:40">vs</name></expr></argument>, <argument pos:start="105:43" pos:end="105:43"><expr pos:start="105:43" pos:end="105:43"><name pos:start="105:43" pos:end="105:43">x</name></expr></argument>, <argument pos:start="105:46" pos:end="105:46"><expr pos:start="105:46" pos:end="105:46"><name pos:start="105:46" pos:end="105:46">y</name></expr></argument>, <argument pos:start="105:49" pos:end="105:49"><expr pos:start="105:49" pos:end="105:49"><name pos:start="105:49" pos:end="105:49">w</name></expr></argument>, <argument pos:start="105:52" pos:end="105:59"><expr pos:start="105:52" pos:end="105:59"><name pos:start="105:52" pos:end="105:57">y_best</name><operator pos:start="105:58" pos:end="105:58">-</operator><name pos:start="105:59" pos:end="105:59">y</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <if_stmt pos:start="109:13" pos:end="115:13"><if pos:start="109:13" pos:end="115:13">if <condition pos:start="109:16" pos:end="109:28">(<expr pos:start="109:17" pos:end="109:27"><name pos:start="109:17" pos:end="109:22">x_best</name> <operator pos:start="109:24" pos:end="109:25">!=</operator> <name pos:start="109:27" pos:end="109:27">x</name></expr>)</condition> <block pos:start="109:30" pos:end="115:13">{<block_content pos:start="111:17" pos:end="113:73">
+
+                <expr_stmt pos:start="111:17" pos:end="113:73"><expr pos:start="111:17" pos:end="113:72"><name pos:start="111:17" pos:end="111:17">n</name> <operator pos:start="111:19" pos:end="111:20">+=</operator> <call pos:start="111:22" pos:end="113:72"><name pos:start="111:22" pos:end="111:54">vnc_tight_send_framebuffer_update</name><argument_list pos:start="111:55" pos:end="113:72">(<argument pos:start="111:56" pos:end="111:57"><expr pos:start="111:56" pos:end="111:57"><name pos:start="111:56" pos:end="111:57">vs</name></expr></argument>, <argument pos:start="111:60" pos:end="111:60"><expr pos:start="111:60" pos:end="111:60"><name pos:start="111:60" pos:end="111:60">x</name></expr></argument>, <argument pos:start="111:63" pos:end="111:68"><expr pos:start="111:63" pos:end="111:68"><name pos:start="111:63" pos:end="111:68">y_best</name></expr></argument>,
+
+                                                       <argument pos:start="113:56" pos:end="113:63"><expr pos:start="113:56" pos:end="113:63"><name pos:start="113:56" pos:end="113:61">x_best</name><operator pos:start="113:62" pos:end="113:62">-</operator><name pos:start="113:63" pos:end="113:63">x</name></expr></argument>, <argument pos:start="113:66" pos:end="113:71"><expr pos:start="113:66" pos:end="113:71"><name pos:start="113:66" pos:end="113:71">h_best</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+
+
+            <comment type="block" pos:start="119:13" pos:end="119:45">/* Send solid-color rectangle. */</comment>
+
+            <expr_stmt pos:start="121:13" pos:end="121:73"><expr pos:start="121:13" pos:end="121:72"><name pos:start="121:13" pos:end="121:13">n</name> <operator pos:start="121:15" pos:end="121:16">+=</operator> <call pos:start="121:18" pos:end="121:72"><name pos:start="121:18" pos:end="121:36">send_sub_rect_solid</name><argument_list pos:start="121:37" pos:end="121:72">(<argument pos:start="121:38" pos:end="121:39"><expr pos:start="121:38" pos:end="121:39"><name pos:start="121:38" pos:end="121:39">vs</name></expr></argument>, <argument pos:start="121:42" pos:end="121:47"><expr pos:start="121:42" pos:end="121:47"><name pos:start="121:42" pos:end="121:47">x_best</name></expr></argument>, <argument pos:start="121:50" pos:end="121:55"><expr pos:start="121:50" pos:end="121:55"><name pos:start="121:50" pos:end="121:55">y_best</name></expr></argument>, <argument pos:start="121:58" pos:end="121:63"><expr pos:start="121:58" pos:end="121:63"><name pos:start="121:58" pos:end="121:63">w_best</name></expr></argument>, <argument pos:start="121:66" pos:end="121:71"><expr pos:start="121:66" pos:end="121:71"><name pos:start="121:66" pos:end="121:71">h_best</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <comment type="block" pos:start="125:13" pos:end="125:66">/* Send remaining rectangles (at right and bottom). */</comment>
+
+
+
+            <if_stmt pos:start="129:13" pos:end="139:13"><if pos:start="129:13" pos:end="139:13">if <condition pos:start="129:16" pos:end="129:41">(<expr pos:start="129:17" pos:end="129:40"><name pos:start="129:17" pos:end="129:22">x_best</name> <operator pos:start="129:24" pos:end="129:24">+</operator> <name pos:start="129:26" pos:end="129:31">w_best</name> <operator pos:start="129:33" pos:end="129:34">!=</operator> <name pos:start="129:36" pos:end="129:36">x</name> <operator pos:start="129:38" pos:end="129:38">+</operator> <name pos:start="129:40" pos:end="129:40">w</name></expr>)</condition> <block pos:start="129:43" pos:end="139:13">{<block_content pos:start="131:17" pos:end="137:63">
+
+                <expr_stmt pos:start="131:17" pos:end="137:63"><expr pos:start="131:17" pos:end="137:62"><name pos:start="131:17" pos:end="131:17">n</name> <operator pos:start="131:19" pos:end="131:20">+=</operator> <call pos:start="131:22" pos:end="137:62"><name pos:start="131:22" pos:end="131:54">vnc_tight_send_framebuffer_update</name><argument_list pos:start="131:55" pos:end="137:62">(<argument pos:start="131:56" pos:end="131:57"><expr pos:start="131:56" pos:end="131:57"><name pos:start="131:56" pos:end="131:57">vs</name></expr></argument>, <argument pos:start="131:60" pos:end="131:72"><expr pos:start="131:60" pos:end="131:72"><name pos:start="131:60" pos:end="131:65">x_best</name><operator pos:start="131:66" pos:end="131:66">+</operator><name pos:start="131:67" pos:end="131:72">w_best</name></expr></argument>,
+
+                                                       <argument pos:start="133:56" pos:end="133:61"><expr pos:start="133:56" pos:end="133:61"><name pos:start="133:56" pos:end="133:61">y_best</name></expr></argument>,
+
+                                                       <argument pos:start="135:56" pos:end="135:74"><expr pos:start="135:56" pos:end="135:74"><name pos:start="135:56" pos:end="135:56">w</name><operator pos:start="135:57" pos:end="135:57">-</operator><operator pos:start="135:58" pos:end="135:58">(</operator><name pos:start="135:59" pos:end="135:64">x_best</name><operator pos:start="135:65" pos:end="135:65">-</operator><name pos:start="135:66" pos:end="135:66">x</name><operator pos:start="135:67" pos:end="135:67">)</operator><operator pos:start="135:68" pos:end="135:68">-</operator><name pos:start="135:69" pos:end="135:74">w_best</name></expr></argument>,
+
+                                                       <argument pos:start="137:56" pos:end="137:61"><expr pos:start="137:56" pos:end="137:61"><name pos:start="137:56" pos:end="137:61">h_best</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <if_stmt pos:start="141:13" pos:end="147:13"><if pos:start="141:13" pos:end="147:13">if <condition pos:start="141:16" pos:end="141:41">(<expr pos:start="141:17" pos:end="141:40"><name pos:start="141:17" pos:end="141:22">y_best</name> <operator pos:start="141:24" pos:end="141:24">+</operator> <name pos:start="141:26" pos:end="141:31">h_best</name> <operator pos:start="141:33" pos:end="141:34">!=</operator> <name pos:start="141:36" pos:end="141:36">y</name> <operator pos:start="141:38" pos:end="141:38">+</operator> <name pos:start="141:40" pos:end="141:40">h</name></expr>)</condition> <block pos:start="141:43" pos:end="147:13">{<block_content pos:start="143:17" pos:end="145:79">
+
+                <expr_stmt pos:start="143:17" pos:end="145:79"><expr pos:start="143:17" pos:end="145:78"><name pos:start="143:17" pos:end="143:17">n</name> <operator pos:start="143:19" pos:end="143:20">+=</operator> <call pos:start="143:22" pos:end="145:78"><name pos:start="143:22" pos:end="143:54">vnc_tight_send_framebuffer_update</name><argument_list pos:start="143:55" pos:end="145:78">(<argument pos:start="143:56" pos:end="143:57"><expr pos:start="143:56" pos:end="143:57"><name pos:start="143:56" pos:end="143:57">vs</name></expr></argument>, <argument pos:start="143:60" pos:end="143:60"><expr pos:start="143:60" pos:end="143:60"><name pos:start="143:60" pos:end="143:60">x</name></expr></argument>, <argument pos:start="143:63" pos:end="143:75"><expr pos:start="143:63" pos:end="143:75"><name pos:start="143:63" pos:end="143:68">y_best</name><operator pos:start="143:69" pos:end="143:69">+</operator><name pos:start="143:70" pos:end="143:75">h_best</name></expr></argument>,
+
+                                                       <argument pos:start="145:56" pos:end="145:56"><expr pos:start="145:56" pos:end="145:56"><name pos:start="145:56" pos:end="145:56">w</name></expr></argument>, <argument pos:start="145:59" pos:end="145:77"><expr pos:start="145:59" pos:end="145:77"><name pos:start="145:59" pos:end="145:59">h</name><operator pos:start="145:60" pos:end="145:60">-</operator><operator pos:start="145:61" pos:end="145:61">(</operator><name pos:start="145:62" pos:end="145:67">y_best</name><operator pos:start="145:68" pos:end="145:68">-</operator><name pos:start="145:69" pos:end="145:69">y</name><operator pos:start="145:70" pos:end="145:70">)</operator><operator pos:start="145:71" pos:end="145:71">-</operator><name pos:start="145:72" pos:end="145:77">h_best</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+
+
+            <comment type="block" pos:start="151:13" pos:end="151:60">/* Return after all recursive calls are done. */</comment>
+
+            <return pos:start="153:13" pos:end="153:21">return <expr pos:start="153:20" pos:end="153:20"><name pos:start="153:20" pos:end="153:20">n</name></expr>;</return>
+
+        </block_content>}</block></for>
+
+    </block_content>}</block></for>
+
+    <return pos:start="159:5" pos:end="159:48">return <expr pos:start="159:12" pos:end="159:47"><name pos:start="159:12" pos:end="159:12">n</name> <operator pos:start="159:14" pos:end="159:14">+</operator> <call pos:start="159:16" pos:end="159:47"><name pos:start="159:16" pos:end="159:31">send_rect_simple</name><argument_list pos:start="159:32" pos:end="159:47">(<argument pos:start="159:33" pos:end="159:34"><expr pos:start="159:33" pos:end="159:34"><name pos:start="159:33" pos:end="159:34">vs</name></expr></argument>, <argument pos:start="159:37" pos:end="159:37"><expr pos:start="159:37" pos:end="159:37"><name pos:start="159:37" pos:end="159:37">x</name></expr></argument>, <argument pos:start="159:40" pos:end="159:40"><expr pos:start="159:40" pos:end="159:40"><name pos:start="159:40" pos:end="159:40">y</name></expr></argument>, <argument pos:start="159:43" pos:end="159:43"><expr pos:start="159:43" pos:end="159:43"><name pos:start="159:43" pos:end="159:43">w</name></expr></argument>, <argument pos:start="159:46" pos:end="159:46"><expr pos:start="159:46" pos:end="159:46"><name pos:start="159:46" pos:end="159:46">h</name></expr></argument>)</argument_list></call></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/14219.c" pos:tabs="8"><function pos:start="1:1" pos:end="203:1"><type pos:start="1:1" pos:end="1:3"><name pos:start="1:1" pos:end="1:3">int</name></type> <name pos:start="1:5" pos:end="1:13">vring_pop</name><parameter_list pos:start="1:14" pos:end="3:37">(<parameter pos:start="1:15" pos:end="1:32"><decl pos:start="1:15" pos:end="1:32"><type pos:start="1:15" pos:end="1:32"><name pos:start="1:15" pos:end="1:26">VirtIODevice</name> <modifier pos:start="1:28" pos:end="1:28">*</modifier></type><name pos:start="1:29" pos:end="1:32">vdev</name></decl></parameter>, <parameter pos:start="1:35" pos:end="1:46"><decl pos:start="1:35" pos:end="1:46"><type pos:start="1:35" pos:end="1:46"><name pos:start="1:35" pos:end="1:39">Vring</name> <modifier pos:start="1:41" pos:end="1:41">*</modifier></type><name pos:start="1:42" pos:end="1:46">vring</name></decl></parameter>,
+
+              <parameter pos:start="3:15" pos:end="3:36"><decl pos:start="3:15" pos:end="3:36"><type pos:start="3:15" pos:end="3:36"><name pos:start="3:15" pos:end="3:30">VirtQueueElement</name> <modifier pos:start="3:32" pos:end="3:32">*</modifier></type><name pos:start="3:33" pos:end="3:36">elem</name></decl></parameter>)</parameter_list>
+
+<block pos:start="5:1" pos:end="203:1">{<block_content pos:start="7:5" pos:end="201:15">
+
+    <decl_stmt pos:start="7:5" pos:end="7:27"><decl pos:start="7:5" pos:end="7:26"><type pos:start="7:5" pos:end="7:21"><name pos:start="7:5" pos:end="7:21"><name pos:start="7:5" pos:end="7:10">struct</name> <name pos:start="7:12" pos:end="7:21">vring_desc</name></name></type> <name pos:start="7:23" pos:end="7:26">desc</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:57"><decl pos:start="9:5" pos:end="9:18"><type pos:start="9:5" pos:end="9:16"><name pos:start="9:5" pos:end="9:12">unsigned</name> <name pos:start="9:14" pos:end="9:16">int</name></type> <name pos:start="9:18" pos:end="9:18">i</name></decl>, <decl pos:start="9:21" pos:end="9:24"><type ref="prev" pos:start="9:5" pos:end="9:16"/><name pos:start="9:21" pos:end="9:24">head</name></decl>, <decl pos:start="9:27" pos:end="9:35"><type ref="prev" pos:start="9:5" pos:end="9:16"/><name pos:start="9:27" pos:end="9:31">found</name> <init pos:start="9:33" pos:end="9:35">= <expr pos:start="9:35" pos:end="9:35"><literal type="number" pos:start="9:35" pos:end="9:35">0</literal></expr></init></decl>, <decl pos:start="9:38" pos:end="9:56"><type ref="prev" pos:start="9:5" pos:end="9:16"/><name pos:start="9:38" pos:end="9:40">num</name> <init pos:start="9:42" pos:end="9:56">= <expr pos:start="9:44" pos:end="9:56"><name pos:start="9:44" pos:end="9:56"><name pos:start="9:44" pos:end="9:48">vring</name><operator pos:start="9:49" pos:end="9:50">-&gt;</operator><name pos:start="9:51" pos:end="9:52">vr</name><operator pos:start="9:53" pos:end="9:53">.</operator><name pos:start="9:54" pos:end="9:56">num</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:39"><decl pos:start="11:5" pos:end="11:22"><type pos:start="11:5" pos:end="11:12"><name pos:start="11:5" pos:end="11:12">uint16_t</name></type> <name pos:start="11:14" pos:end="11:22">avail_idx</name></decl>, <decl pos:start="11:25" pos:end="11:38"><type ref="prev" pos:start="11:5" pos:end="11:12"/><name pos:start="11:25" pos:end="11:38">last_avail_idx</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:12"><decl pos:start="13:5" pos:end="13:11"><type pos:start="13:5" pos:end="13:7"><name pos:start="13:5" pos:end="13:7">int</name></type> <name pos:start="13:9" pos:end="13:11">ret</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="17:5" pos:end="17:54">/* Initialize elem so it can be safely unmapped */</comment>
+
+    <expr_stmt pos:start="19:5" pos:end="19:37"><expr pos:start="19:5" pos:end="19:36"><name pos:start="19:5" pos:end="19:16"><name pos:start="19:5" pos:end="19:8">elem</name><operator pos:start="19:9" pos:end="19:10">-&gt;</operator><name pos:start="19:11" pos:end="19:16">in_num</name></name> <operator pos:start="19:18" pos:end="19:18">=</operator> <name pos:start="19:20" pos:end="19:32"><name pos:start="19:20" pos:end="19:23">elem</name><operator pos:start="19:24" pos:end="19:25">-&gt;</operator><name pos:start="19:26" pos:end="19:32">out_num</name></name> <operator pos:start="19:34" pos:end="19:34">=</operator> <literal type="number" pos:start="19:36" pos:end="19:36">0</literal></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="23:5" pos:end="23:58">/* If there was a fatal error then refuse operation */</comment>
+
+    <if_stmt pos:start="25:5" pos:end="31:5"><if pos:start="25:5" pos:end="31:5">if <condition pos:start="25:8" pos:end="25:22">(<expr pos:start="25:9" pos:end="25:21"><name pos:start="25:9" pos:end="25:21"><name pos:start="25:9" pos:end="25:13">vring</name><operator pos:start="25:14" pos:end="25:15">-&gt;</operator><name pos:start="25:16" pos:end="25:21">broken</name></name></expr>)</condition> <block pos:start="25:24" pos:end="31:5">{<block_content pos:start="27:9" pos:end="29:17">
+
+        <expr_stmt pos:start="27:9" pos:end="27:22"><expr pos:start="27:9" pos:end="27:21"><name pos:start="27:9" pos:end="27:11">ret</name> <operator pos:start="27:13" pos:end="27:13">=</operator> <operator pos:start="27:15" pos:end="27:15">-</operator><name pos:start="27:16" pos:end="27:21">EFAULT</name></expr>;</expr_stmt>
+
+        <goto pos:start="29:9" pos:end="29:17">goto <name pos:start="29:14" pos:end="29:16">out</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="35:5" pos:end="35:75">/* Check it isn't doing very strange things with descriptor numbers. */</comment>
+
+    <expr_stmt pos:start="37:5" pos:end="37:43"><expr pos:start="37:5" pos:end="37:42"><name pos:start="37:5" pos:end="37:18">last_avail_idx</name> <operator pos:start="37:20" pos:end="37:20">=</operator> <name pos:start="37:22" pos:end="37:42"><name pos:start="37:22" pos:end="37:26">vring</name><operator pos:start="37:27" pos:end="37:28">-&gt;</operator><name pos:start="37:29" pos:end="37:42">last_avail_idx</name></name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="39:5" pos:end="39:49"><expr pos:start="39:5" pos:end="39:48"><name pos:start="39:5" pos:end="39:13">avail_idx</name> <operator pos:start="39:15" pos:end="39:15">=</operator> <call pos:start="39:17" pos:end="39:48"><name pos:start="39:17" pos:end="39:35">vring_get_avail_idx</name><argument_list pos:start="39:36" pos:end="39:48">(<argument pos:start="39:37" pos:end="39:40"><expr pos:start="39:37" pos:end="39:40"><name pos:start="39:37" pos:end="39:40">vdev</name></expr></argument>, <argument pos:start="39:43" pos:end="39:47"><expr pos:start="39:43" pos:end="39:47"><name pos:start="39:43" pos:end="39:47">vring</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="41:5" pos:end="41:14"><expr pos:start="41:5" pos:end="41:13"><call pos:start="41:5" pos:end="41:13"><name pos:start="41:5" pos:end="41:11">barrier</name><argument_list pos:start="41:12" pos:end="41:13">()</argument_list></call></expr>;</expr_stmt> <comment type="block" pos:start="41:16" pos:end="41:57">/* load indices now and not again later */</comment>
+
+
+
+    <if_stmt pos:start="45:5" pos:end="55:5"><if pos:start="45:5" pos:end="55:5">if <condition pos:start="45:8" pos:end="45:63">(<expr pos:start="45:9" pos:end="45:62"><call pos:start="45:9" pos:end="45:62"><name pos:start="45:9" pos:end="45:16">unlikely</name><argument_list pos:start="45:17" pos:end="45:62">(<argument pos:start="45:18" pos:end="45:61"><expr pos:start="45:18" pos:end="45:61"><operator pos:start="45:18" pos:end="45:18">(</operator><name pos:start="45:19" pos:end="45:26">uint16_t</name><operator pos:start="45:27" pos:end="45:27">)</operator><operator pos:start="45:28" pos:end="45:28">(</operator><name pos:start="45:29" pos:end="45:37">avail_idx</name> <operator pos:start="45:39" pos:end="45:39">-</operator> <name pos:start="45:41" pos:end="45:54">last_avail_idx</name><operator pos:start="45:55" pos:end="45:55">)</operator> <operator pos:start="45:57" pos:end="45:57">&gt;</operator> <name pos:start="45:59" pos:end="45:61">num</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="45:65" pos:end="55:5">{<block_content pos:start="47:9" pos:end="53:17">
+
+        <expr_stmt pos:start="47:9" pos:end="49:48"><expr pos:start="47:9" pos:end="49:47"><call pos:start="47:9" pos:end="49:47"><name pos:start="47:9" pos:end="47:20">error_report</name><argument_list pos:start="47:21" pos:end="49:47">(<argument pos:start="47:22" pos:end="47:59"><expr pos:start="47:22" pos:end="47:59"><literal type="string" pos:start="47:22" pos:end="47:59">"Guest moved used index from %u to %u"</literal></expr></argument>,
+
+                     <argument pos:start="49:22" pos:end="49:35"><expr pos:start="49:22" pos:end="49:35"><name pos:start="49:22" pos:end="49:35">last_avail_idx</name></expr></argument>, <argument pos:start="49:38" pos:end="49:46"><expr pos:start="49:38" pos:end="49:46"><name pos:start="49:38" pos:end="49:46">avail_idx</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="51:9" pos:end="51:22"><expr pos:start="51:9" pos:end="51:21"><name pos:start="51:9" pos:end="51:11">ret</name> <operator pos:start="51:13" pos:end="51:13">=</operator> <operator pos:start="51:15" pos:end="51:15">-</operator><name pos:start="51:16" pos:end="51:21">EFAULT</name></expr>;</expr_stmt>
+
+        <goto pos:start="53:9" pos:end="53:17">goto <name pos:start="53:14" pos:end="53:16">out</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="59:5" pos:end="59:54">/* If there's nothing new since last we looked. */</comment>
+
+    <if_stmt pos:start="61:5" pos:end="67:5"><if pos:start="61:5" pos:end="67:5">if <condition pos:start="61:8" pos:end="61:36">(<expr pos:start="61:9" pos:end="61:35"><name pos:start="61:9" pos:end="61:17">avail_idx</name> <operator pos:start="61:19" pos:end="61:20">==</operator> <name pos:start="61:22" pos:end="61:35">last_avail_idx</name></expr>)</condition> <block pos:start="61:38" pos:end="67:5">{<block_content pos:start="63:9" pos:end="65:17">
+
+        <expr_stmt pos:start="63:9" pos:end="63:22"><expr pos:start="63:9" pos:end="63:21"><name pos:start="63:9" pos:end="63:11">ret</name> <operator pos:start="63:13" pos:end="63:13">=</operator> <operator pos:start="63:15" pos:end="63:15">-</operator><name pos:start="63:16" pos:end="63:21">EAGAIN</name></expr>;</expr_stmt>
+
+        <goto pos:start="65:9" pos:end="65:17">goto <name pos:start="65:14" pos:end="65:16">out</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="71:5" pos:end="71:76">/* Only get avail ring entries after they have been exposed by guest. */</comment>
+
+    <expr_stmt pos:start="73:5" pos:end="73:14"><expr pos:start="73:5" pos:end="73:13"><call pos:start="73:5" pos:end="73:13"><name pos:start="73:5" pos:end="73:11">smp_rmb</name><argument_list pos:start="73:12" pos:end="73:13">()</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="77:5" pos:end="79:31">/* Grab the next descriptor number they're advertising, and increment
+
+     * the index we've seen. */</comment>
+
+    <expr_stmt pos:start="81:5" pos:end="81:67"><expr pos:start="81:5" pos:end="81:66"><name pos:start="81:5" pos:end="81:8">head</name> <operator pos:start="81:10" pos:end="81:10">=</operator> <call pos:start="81:12" pos:end="81:66"><name pos:start="81:12" pos:end="81:31">vring_get_avail_ring</name><argument_list pos:start="81:32" pos:end="81:66">(<argument pos:start="81:33" pos:end="81:36"><expr pos:start="81:33" pos:end="81:36"><name pos:start="81:33" pos:end="81:36">vdev</name></expr></argument>, <argument pos:start="81:39" pos:end="81:43"><expr pos:start="81:39" pos:end="81:43"><name pos:start="81:39" pos:end="81:43">vring</name></expr></argument>, <argument pos:start="81:46" pos:end="81:65"><expr pos:start="81:46" pos:end="81:65"><name pos:start="81:46" pos:end="81:59">last_avail_idx</name> <operator pos:start="81:61" pos:end="81:61">%</operator> <name pos:start="81:63" pos:end="81:65">num</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="85:5" pos:end="85:23"><expr pos:start="85:5" pos:end="85:22"><name pos:start="85:5" pos:end="85:15"><name pos:start="85:5" pos:end="85:8">elem</name><operator pos:start="85:9" pos:end="85:10">-&gt;</operator><name pos:start="85:11" pos:end="85:15">index</name></name> <operator pos:start="85:17" pos:end="85:17">=</operator> <name pos:start="85:19" pos:end="85:22">head</name></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="89:5" pos:end="89:52">/* If their number is silly, that's an error. */</comment>
+
+    <if_stmt pos:start="91:5" pos:end="99:5"><if pos:start="91:5" pos:end="99:5">if <condition pos:start="91:8" pos:end="91:30">(<expr pos:start="91:9" pos:end="91:29"><call pos:start="91:9" pos:end="91:29"><name pos:start="91:9" pos:end="91:16">unlikely</name><argument_list pos:start="91:17" pos:end="91:29">(<argument pos:start="91:18" pos:end="91:28"><expr pos:start="91:18" pos:end="91:28"><name pos:start="91:18" pos:end="91:21">head</name> <operator pos:start="91:23" pos:end="91:24">&gt;=</operator> <name pos:start="91:26" pos:end="91:28">num</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="91:32" pos:end="99:5">{<block_content pos:start="93:9" pos:end="97:17">
+
+        <expr_stmt pos:start="93:9" pos:end="93:73"><expr pos:start="93:9" pos:end="93:72"><call pos:start="93:9" pos:end="93:72"><name pos:start="93:9" pos:end="93:20">error_report</name><argument_list pos:start="93:21" pos:end="93:72">(<argument pos:start="93:22" pos:end="93:60"><expr pos:start="93:22" pos:end="93:60"><literal type="string" pos:start="93:22" pos:end="93:60">"Guest says index %u &gt; %u is available"</literal></expr></argument>, <argument pos:start="93:63" pos:end="93:66"><expr pos:start="93:63" pos:end="93:66"><name pos:start="93:63" pos:end="93:66">head</name></expr></argument>, <argument pos:start="93:69" pos:end="93:71"><expr pos:start="93:69" pos:end="93:71"><name pos:start="93:69" pos:end="93:71">num</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="95:9" pos:end="95:22"><expr pos:start="95:9" pos:end="95:21"><name pos:start="95:9" pos:end="95:11">ret</name> <operator pos:start="95:13" pos:end="95:13">=</operator> <operator pos:start="95:15" pos:end="95:15">-</operator><name pos:start="95:16" pos:end="95:21">EFAULT</name></expr>;</expr_stmt>
+
+        <goto pos:start="97:9" pos:end="97:17">goto <name pos:start="97:14" pos:end="97:16">out</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="103:5" pos:end="103:13"><expr pos:start="103:5" pos:end="103:12"><name pos:start="103:5" pos:end="103:5">i</name> <operator pos:start="103:7" pos:end="103:7">=</operator> <name pos:start="103:9" pos:end="103:12">head</name></expr>;</expr_stmt>
+
+    <do pos:start="105:5" pos:end="167:45">do <block pos:start="105:8" pos:end="167:5">{<block_content pos:start="107:9" pos:end="165:22">
+
+        <if_stmt pos:start="107:9" pos:end="115:9"><if pos:start="107:9" pos:end="115:9">if <condition pos:start="107:12" pos:end="107:31">(<expr pos:start="107:13" pos:end="107:30"><call pos:start="107:13" pos:end="107:30"><name pos:start="107:13" pos:end="107:20">unlikely</name><argument_list pos:start="107:21" pos:end="107:30">(<argument pos:start="107:22" pos:end="107:29"><expr pos:start="107:22" pos:end="107:29"><name pos:start="107:22" pos:end="107:22">i</name> <operator pos:start="107:24" pos:end="107:25">&gt;=</operator> <name pos:start="107:27" pos:end="107:29">num</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="107:33" pos:end="115:9">{<block_content pos:start="109:13" pos:end="113:21">
+
+            <expr_stmt pos:start="109:13" pos:end="109:75"><expr pos:start="109:13" pos:end="109:74"><call pos:start="109:13" pos:end="109:74"><name pos:start="109:13" pos:end="109:24">error_report</name><argument_list pos:start="109:25" pos:end="109:74">(<argument pos:start="109:26" pos:end="109:59"><expr pos:start="109:26" pos:end="109:59"><literal type="string" pos:start="109:26" pos:end="109:59">"Desc index is %u &gt; %u, head = %u"</literal></expr></argument>, <argument pos:start="109:62" pos:end="109:62"><expr pos:start="109:62" pos:end="109:62"><name pos:start="109:62" pos:end="109:62">i</name></expr></argument>, <argument pos:start="109:65" pos:end="109:67"><expr pos:start="109:65" pos:end="109:67"><name pos:start="109:65" pos:end="109:67">num</name></expr></argument>, <argument pos:start="109:70" pos:end="109:73"><expr pos:start="109:70" pos:end="109:73"><name pos:start="109:70" pos:end="109:73">head</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="111:13" pos:end="111:26"><expr pos:start="111:13" pos:end="111:25"><name pos:start="111:13" pos:end="111:15">ret</name> <operator pos:start="111:17" pos:end="111:17">=</operator> <operator pos:start="111:19" pos:end="111:19">-</operator><name pos:start="111:20" pos:end="111:25">EFAULT</name></expr>;</expr_stmt>
+
+            <goto pos:start="113:13" pos:end="113:21">goto <name pos:start="113:18" pos:end="113:20">out</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+        <if_stmt pos:start="117:9" pos:end="127:9"><if pos:start="117:9" pos:end="127:9">if <condition pos:start="117:12" pos:end="117:36">(<expr pos:start="117:13" pos:end="117:35"><call pos:start="117:13" pos:end="117:35"><name pos:start="117:13" pos:end="117:20">unlikely</name><argument_list pos:start="117:21" pos:end="117:35">(<argument pos:start="117:22" pos:end="117:34"><expr pos:start="117:22" pos:end="117:34"><operator pos:start="117:22" pos:end="117:23">++</operator><name pos:start="117:24" pos:end="117:28">found</name> <operator pos:start="117:30" pos:end="117:30">&gt;</operator> <name pos:start="117:32" pos:end="117:34">num</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="117:38" pos:end="127:9">{<block_content pos:start="119:13" pos:end="125:21">
+
+            <expr_stmt pos:start="119:13" pos:end="121:39"><expr pos:start="119:13" pos:end="121:38"><call pos:start="119:13" pos:end="121:38"><name pos:start="119:13" pos:end="119:24">error_report</name><argument_list pos:start="119:25" pos:end="121:38">(<argument pos:start="119:26" pos:end="119:75"><expr pos:start="119:26" pos:end="119:75"><literal type="string" pos:start="119:26" pos:end="119:75">"Loop detected: last one at %u vq size %u head %u"</literal></expr></argument>,
+
+                         <argument pos:start="121:26" pos:end="121:26"><expr pos:start="121:26" pos:end="121:26"><name pos:start="121:26" pos:end="121:26">i</name></expr></argument>, <argument pos:start="121:29" pos:end="121:31"><expr pos:start="121:29" pos:end="121:31"><name pos:start="121:29" pos:end="121:31">num</name></expr></argument>, <argument pos:start="121:34" pos:end="121:37"><expr pos:start="121:34" pos:end="121:37"><name pos:start="121:34" pos:end="121:37">head</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="123:13" pos:end="123:26"><expr pos:start="123:13" pos:end="123:25"><name pos:start="123:13" pos:end="123:15">ret</name> <operator pos:start="123:17" pos:end="123:17">=</operator> <operator pos:start="123:19" pos:end="123:19">-</operator><name pos:start="123:20" pos:end="123:25">EFAULT</name></expr>;</expr_stmt>
+
+            <goto pos:start="125:13" pos:end="125:21">goto <name pos:start="125:18" pos:end="125:20">out</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="129:9" pos:end="129:60"><expr pos:start="129:9" pos:end="129:59"><call pos:start="129:9" pos:end="129:59"><name pos:start="129:9" pos:end="129:26">copy_in_vring_desc</name><argument_list pos:start="129:27" pos:end="129:59">(<argument pos:start="129:28" pos:end="129:31"><expr pos:start="129:28" pos:end="129:31"><name pos:start="129:28" pos:end="129:31">vdev</name></expr></argument>, <argument pos:start="129:34" pos:end="129:51"><expr pos:start="129:34" pos:end="129:51"><operator pos:start="129:34" pos:end="129:34">&amp;</operator><name pos:start="129:35" pos:end="129:51"><name pos:start="129:35" pos:end="129:39">vring</name><operator pos:start="129:40" pos:end="129:41">-&gt;</operator><name pos:start="129:42" pos:end="129:43">vr</name><operator pos:start="129:44" pos:end="129:44">.</operator><name pos:start="129:45" pos:end="129:48">desc</name><index pos:start="129:49" pos:end="129:51">[<expr pos:start="129:50" pos:end="129:50"><name pos:start="129:50" pos:end="129:50">i</name></expr>]</index></name></expr></argument>, <argument pos:start="129:54" pos:end="129:58"><expr pos:start="129:54" pos:end="129:58"><operator pos:start="129:54" pos:end="129:54">&amp;</operator><name pos:start="129:55" pos:end="129:58">desc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <comment type="block" pos:start="133:9" pos:end="133:65">/* Ensure descriptor is loaded before accessing fields */</comment>
+
+        <expr_stmt pos:start="135:9" pos:end="135:18"><expr pos:start="135:9" pos:end="135:17"><call pos:start="135:9" pos:end="135:17"><name pos:start="135:9" pos:end="135:15">barrier</name><argument_list pos:start="135:16" pos:end="135:17">()</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="139:9" pos:end="151:9"><if pos:start="139:9" pos:end="151:9">if <condition pos:start="139:12" pos:end="139:47">(<expr pos:start="139:13" pos:end="139:46"><name pos:start="139:13" pos:end="139:22"><name pos:start="139:13" pos:end="139:16">desc</name><operator pos:start="139:17" pos:end="139:17">.</operator><name pos:start="139:18" pos:end="139:22">flags</name></name> <operator pos:start="139:24" pos:end="139:24">&amp;</operator> <name pos:start="139:26" pos:end="139:46">VRING_DESC_F_INDIRECT</name></expr>)</condition> <block pos:start="139:49" pos:end="151:9">{<block_content pos:start="141:13" pos:end="149:21">
+
+            <expr_stmt pos:start="141:13" pos:end="141:57"><expr pos:start="141:13" pos:end="141:56"><name pos:start="141:13" pos:end="141:15">ret</name> <operator pos:start="141:17" pos:end="141:17">=</operator> <call pos:start="141:19" pos:end="141:56"><name pos:start="141:19" pos:end="141:30">get_indirect</name><argument_list pos:start="141:31" pos:end="141:56">(<argument pos:start="141:32" pos:end="141:35"><expr pos:start="141:32" pos:end="141:35"><name pos:start="141:32" pos:end="141:35">vdev</name></expr></argument>, <argument pos:start="141:38" pos:end="141:42"><expr pos:start="141:38" pos:end="141:42"><name pos:start="141:38" pos:end="141:42">vring</name></expr></argument>, <argument pos:start="141:45" pos:end="141:48"><expr pos:start="141:45" pos:end="141:48"><name pos:start="141:45" pos:end="141:48">elem</name></expr></argument>, <argument pos:start="141:51" pos:end="141:55"><expr pos:start="141:51" pos:end="141:55"><operator pos:start="141:51" pos:end="141:51">&amp;</operator><name pos:start="141:52" pos:end="141:55">desc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <if_stmt pos:start="143:13" pos:end="147:13"><if pos:start="143:13" pos:end="147:13">if <condition pos:start="143:16" pos:end="143:24">(<expr pos:start="143:17" pos:end="143:23"><name pos:start="143:17" pos:end="143:19">ret</name> <operator pos:start="143:21" pos:end="143:21">&lt;</operator> <literal type="number" pos:start="143:23" pos:end="143:23">0</literal></expr>)</condition> <block pos:start="143:26" pos:end="147:13">{<block_content pos:start="145:17" pos:end="145:25">
+
+                <goto pos:start="145:17" pos:end="145:25">goto <name pos:start="145:22" pos:end="145:24">out</name>;</goto>
+
+            </block_content>}</block></if></if_stmt>
+
+            <continue pos:start="149:13" pos:end="149:21">continue;</continue>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="155:9" pos:end="155:43"><expr pos:start="155:9" pos:end="155:42"><name pos:start="155:9" pos:end="155:11">ret</name> <operator pos:start="155:13" pos:end="155:13">=</operator> <call pos:start="155:15" pos:end="155:42"><name pos:start="155:15" pos:end="155:22">get_desc</name><argument_list pos:start="155:23" pos:end="155:42">(<argument pos:start="155:24" pos:end="155:28"><expr pos:start="155:24" pos:end="155:28"><name pos:start="155:24" pos:end="155:28">vring</name></expr></argument>, <argument pos:start="155:31" pos:end="155:34"><expr pos:start="155:31" pos:end="155:34"><name pos:start="155:31" pos:end="155:34">elem</name></expr></argument>, <argument pos:start="155:37" pos:end="155:41"><expr pos:start="155:37" pos:end="155:41"><operator pos:start="155:37" pos:end="155:37">&amp;</operator><name pos:start="155:38" pos:end="155:41">desc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="157:9" pos:end="161:9"><if pos:start="157:9" pos:end="161:9">if <condition pos:start="157:12" pos:end="157:20">(<expr pos:start="157:13" pos:end="157:19"><name pos:start="157:13" pos:end="157:15">ret</name> <operator pos:start="157:17" pos:end="157:17">&lt;</operator> <literal type="number" pos:start="157:19" pos:end="157:19">0</literal></expr>)</condition> <block pos:start="157:22" pos:end="161:9">{<block_content pos:start="159:13" pos:end="159:21">
+
+            <goto pos:start="159:13" pos:end="159:21">goto <name pos:start="159:18" pos:end="159:20">out</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="165:9" pos:end="165:22"><expr pos:start="165:9" pos:end="165:21"><name pos:start="165:9" pos:end="165:9">i</name> <operator pos:start="165:11" pos:end="165:11">=</operator> <name pos:start="165:13" pos:end="165:21"><name pos:start="165:13" pos:end="165:16">desc</name><operator pos:start="165:17" pos:end="165:17">.</operator><name pos:start="165:18" pos:end="165:21">next</name></name></expr>;</expr_stmt>
+
+    </block_content>}</block> while <condition pos:start="167:13" pos:end="167:44">(<expr pos:start="167:14" pos:end="167:43"><name pos:start="167:14" pos:end="167:23"><name pos:start="167:14" pos:end="167:17">desc</name><operator pos:start="167:18" pos:end="167:18">.</operator><name pos:start="167:19" pos:end="167:23">flags</name></name> <operator pos:start="167:25" pos:end="167:25">&amp;</operator> <name pos:start="167:27" pos:end="167:43">VRING_DESC_F_NEXT</name></expr>)</condition>;</do>
+
+
+
+    <comment type="block" pos:start="171:5" pos:end="171:44">/* On success, increment avail index. */</comment>
+
+    <expr_stmt pos:start="173:5" pos:end="173:28"><expr pos:start="173:5" pos:end="173:27"><name pos:start="173:5" pos:end="173:25"><name pos:start="173:5" pos:end="173:9">vring</name><operator pos:start="173:10" pos:end="173:11">-&gt;</operator><name pos:start="173:12" pos:end="173:25">last_avail_idx</name></name><operator pos:start="173:26" pos:end="173:27">++</operator></expr>;</expr_stmt>
+
+    <if_stmt pos:start="175:5" pos:end="181:5"><if pos:start="175:5" pos:end="181:5">if <condition pos:start="175:8" pos:end="175:58">(<expr pos:start="175:9" pos:end="175:57"><call pos:start="175:9" pos:end="175:57"><name pos:start="175:9" pos:end="175:26">virtio_has_feature</name><argument_list pos:start="175:27" pos:end="175:57">(<argument pos:start="175:28" pos:end="175:31"><expr pos:start="175:28" pos:end="175:31"><name pos:start="175:28" pos:end="175:31">vdev</name></expr></argument>, <argument pos:start="175:34" pos:end="175:56"><expr pos:start="175:34" pos:end="175:56"><name pos:start="175:34" pos:end="175:56">VIRTIO_RING_F_EVENT_IDX</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="175:60" pos:end="181:5">{<block_content pos:start="177:9" pos:end="179:56">
+
+        <expr_stmt pos:start="177:9" pos:end="179:56"><expr pos:start="177:9" pos:end="179:55"><call pos:start="177:9" pos:end="177:37"><name pos:start="177:9" pos:end="177:25">vring_avail_event</name><argument_list pos:start="177:26" pos:end="177:37">(<argument pos:start="177:27" pos:end="177:36"><expr pos:start="177:27" pos:end="177:36"><operator pos:start="177:27" pos:end="177:27">&amp;</operator><name pos:start="177:28" pos:end="177:36"><name pos:start="177:28" pos:end="177:32">vring</name><operator pos:start="177:33" pos:end="177:34">-&gt;</operator><name pos:start="177:35" pos:end="177:36">vr</name></name></expr></argument>)</argument_list></call> <operator pos:start="177:39" pos:end="177:39">=</operator>
+
+            <call pos:start="179:13" pos:end="179:55"><name pos:start="179:13" pos:end="179:26">virtio_tswap16</name><argument_list pos:start="179:27" pos:end="179:55">(<argument pos:start="179:28" pos:end="179:31"><expr pos:start="179:28" pos:end="179:31"><name pos:start="179:28" pos:end="179:31">vdev</name></expr></argument>, <argument pos:start="179:34" pos:end="179:54"><expr pos:start="179:34" pos:end="179:54"><name pos:start="179:34" pos:end="179:54"><name pos:start="179:34" pos:end="179:38">vring</name><operator pos:start="179:39" pos:end="179:40">-&gt;</operator><name pos:start="179:41" pos:end="179:54">last_avail_idx</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <return pos:start="185:5" pos:end="185:16">return <expr pos:start="185:12" pos:end="185:15"><name pos:start="185:12" pos:end="185:15">head</name></expr>;</return>
+
+
+
+<label pos:start="189:1" pos:end="189:4"><name pos:start="189:1" pos:end="189:3">out</name>:</label>
+
+    <expr_stmt pos:start="191:5" pos:end="191:20"><expr pos:start="191:5" pos:end="191:19"><call pos:start="191:5" pos:end="191:19"><name pos:start="191:5" pos:end="191:10">assert</name><argument_list pos:start="191:11" pos:end="191:19">(<argument pos:start="191:12" pos:end="191:18"><expr pos:start="191:12" pos:end="191:18"><name pos:start="191:12" pos:end="191:14">ret</name> <operator pos:start="191:16" pos:end="191:16">&lt;</operator> <literal type="number" pos:start="191:18" pos:end="191:18">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="193:5" pos:end="197:5"><if pos:start="193:5" pos:end="197:5">if <condition pos:start="193:8" pos:end="193:23">(<expr pos:start="193:9" pos:end="193:22"><name pos:start="193:9" pos:end="193:11">ret</name> <operator pos:start="193:13" pos:end="193:14">==</operator> <operator pos:start="193:16" pos:end="193:16">-</operator><name pos:start="193:17" pos:end="193:22">EFAULT</name></expr>)</condition> <block pos:start="193:25" pos:end="197:5">{<block_content pos:start="195:9" pos:end="195:29">
+
+        <expr_stmt pos:start="195:9" pos:end="195:29"><expr pos:start="195:9" pos:end="195:28"><name pos:start="195:9" pos:end="195:21"><name pos:start="195:9" pos:end="195:13">vring</name><operator pos:start="195:14" pos:end="195:15">-&gt;</operator><name pos:start="195:16" pos:end="195:21">broken</name></name> <operator pos:start="195:23" pos:end="195:23">=</operator> <name pos:start="195:25" pos:end="195:28">true</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <expr_stmt pos:start="199:5" pos:end="199:30"><expr pos:start="199:5" pos:end="199:29"><call pos:start="199:5" pos:end="199:29"><name pos:start="199:5" pos:end="199:23">vring_unmap_element</name><argument_list pos:start="199:24" pos:end="199:29">(<argument pos:start="199:25" pos:end="199:28"><expr pos:start="199:25" pos:end="199:28"><name pos:start="199:25" pos:end="199:28">elem</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <return pos:start="201:5" pos:end="201:15">return <expr pos:start="201:12" pos:end="201:14"><name pos:start="201:12" pos:end="201:14">ret</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

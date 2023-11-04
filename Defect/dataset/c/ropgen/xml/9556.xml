@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/9556.c" pos:tabs="8"><function pos:start="1:1" pos:end="69:1"><type pos:start="1:1" pos:end="1:14"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:14">int64_t</name></type> <name pos:start="1:16" pos:end="1:25">update_scr</name><parameter_list pos:start="1:26" pos:end="1:76">(<parameter pos:start="1:27" pos:end="1:46"><decl pos:start="1:27" pos:end="1:46"><type pos:start="1:27" pos:end="1:46"><name pos:start="1:27" pos:end="1:41">AVFormatContext</name> <modifier pos:start="1:43" pos:end="1:43">*</modifier></type><name pos:start="1:44" pos:end="1:46">ctx</name></decl></parameter>,<parameter pos:start="1:48" pos:end="1:63"><decl pos:start="1:48" pos:end="1:63"><type pos:start="1:48" pos:end="1:63"><name pos:start="1:48" pos:end="1:50">int</name></type> <name pos:start="1:52" pos:end="1:63">stream_index</name></decl></parameter>,<parameter pos:start="1:65" pos:end="1:75"><decl pos:start="1:65" pos:end="1:75"><type pos:start="1:65" pos:end="1:75"><name pos:start="1:65" pos:end="1:71">int64_t</name></type> <name pos:start="1:73" pos:end="1:75">pts</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="69:1">{<block_content pos:start="5:5" pos:end="67:15">
+
+    <decl_stmt pos:start="5:5" pos:end="5:39"><decl pos:start="5:5" pos:end="5:38"><type pos:start="5:5" pos:end="5:20"><name pos:start="5:5" pos:end="5:18">MpegMuxContext</name> <modifier pos:start="5:20" pos:end="5:20">*</modifier></type><name pos:start="5:21" pos:end="5:21">s</name> <init pos:start="5:23" pos:end="5:38">= <expr pos:start="5:25" pos:end="5:38"><name pos:start="5:25" pos:end="5:38"><name pos:start="5:25" pos:end="5:27">ctx</name><operator pos:start="5:28" pos:end="5:29">-&gt;</operator><name pos:start="5:30" pos:end="5:38">priv_data</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:16"><decl pos:start="7:5" pos:end="7:15"><type pos:start="7:5" pos:end="7:11"><name pos:start="7:5" pos:end="7:11">int64_t</name></type> <name pos:start="7:13" pos:end="7:15">scr</name></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="11:5" pos:end="59:5"><if pos:start="11:5" pos:end="33:46">if <condition pos:start="11:8" pos:end="11:18">(<expr pos:start="11:9" pos:end="11:17"><name pos:start="11:9" pos:end="11:17"><name pos:start="11:9" pos:end="11:9">s</name><operator pos:start="11:10" pos:end="11:11">-&gt;</operator><name pos:start="11:12" pos:end="11:17">is_vcd</name></name></expr>)</condition><block type="pseudo" pos:start="33:9" pos:end="33:46"><block_content pos:start="33:9" pos:end="33:46">
+
+        <comment type="block" pos:start="13:9" pos:end="31:38">/* Since the data delivery rate is constant, SCR is computed
+
+           using the formula C + i * 1200 where C is the start constant
+
+           and i is the pack index.
+
+           It is recommended that SCR 0 is at the beginning of the VCD front
+
+           margin (a sequence of empty Form 2 sectors on the CD).
+
+           It is recommended that the front margin is 30 sectors long, so
+
+           we use C = 30*1200 = 36000
+
+           (Note that even if the front margin is not 30 sectors the file
+
+           will still be correct according to the standard. It just won't have
+
+           the "recommended" value).*/</comment>
+
+        <expr_stmt pos:start="33:9" pos:end="33:46"><expr pos:start="33:9" pos:end="33:45"><name pos:start="33:9" pos:end="33:11">scr</name> <operator pos:start="33:13" pos:end="33:13">=</operator> <literal type="number" pos:start="33:15" pos:end="33:21">36000</literal> <operator pos:start="33:21" pos:end="33:21">+</operator> <name pos:start="33:23" pos:end="33:38"><name pos:start="33:23" pos:end="33:23">s</name><operator pos:start="33:24" pos:end="33:25">-&gt;</operator><name pos:start="33:26" pos:end="33:38">packet_number</name></name> <operator pos:start="33:40" pos:end="33:40">*</operator> <literal type="number" pos:start="33:42" pos:end="33:45">1200</literal></expr>;</expr_stmt></block_content></block></if>
+
+    <else pos:start="35:5" pos:end="59:5">else <block pos:start="35:10" pos:end="59:5">{<block_content pos:start="49:9" pos:end="57:30">
+
+        <comment type="block" pos:start="37:9" pos:end="41:66">/* XXX I believe this calculation of SCR is wrong. SCR
+
+           specifies at which time the data should enter the decoder.
+
+           Two packs cannot enter the decoder at the same time. */</comment>
+
+
+
+        <comment type="block" pos:start="45:9" pos:end="47:71">/* XXX: system clock should be computed precisely, especially for
+
+        CBR case. The current mode gives at least something coherent */</comment>
+
+        <if_stmt pos:start="49:9" pos:end="57:30"><if pos:start="49:9" pos:end="53:22">if <condition pos:start="49:12" pos:end="51:37">(<expr pos:start="49:13" pos:end="51:36"><name pos:start="49:13" pos:end="49:24">stream_index</name> <operator pos:start="49:26" pos:end="49:27">==</operator> <name pos:start="49:29" pos:end="49:47"><name pos:start="49:29" pos:end="49:29">s</name><operator pos:start="49:30" pos:end="49:31">-&gt;</operator><name pos:start="49:32" pos:end="49:47">scr_stream_index</name></name>
+
+            <operator pos:start="51:13" pos:end="51:14">&amp;&amp;</operator> <name pos:start="51:16" pos:end="51:18">pts</name> <operator pos:start="51:20" pos:end="51:21">!=</operator> <name pos:start="51:23" pos:end="51:36">AV_NOPTS_VALUE</name></expr>)</condition><block type="pseudo" pos:start="53:13" pos:end="53:22"><block_content pos:start="53:13" pos:end="53:22">
+
+            <expr_stmt pos:start="53:13" pos:end="53:22"><expr pos:start="53:13" pos:end="53:21"><name pos:start="53:13" pos:end="53:15">scr</name> <operator pos:start="53:17" pos:end="53:17">=</operator> <name pos:start="53:19" pos:end="53:21">pts</name></expr>;</expr_stmt></block_content></block></if>
+
+        <else pos:start="55:9" pos:end="57:30">else<block type="pseudo" pos:start="57:13" pos:end="57:30"><block_content pos:start="57:13" pos:end="57:30">
+
+            <expr_stmt pos:start="57:13" pos:end="57:30"><expr pos:start="57:13" pos:end="57:29"><name pos:start="57:13" pos:end="57:15">scr</name> <operator pos:start="57:17" pos:end="57:17">=</operator> <name pos:start="57:19" pos:end="57:29"><name pos:start="57:19" pos:end="57:19">s</name><operator pos:start="57:20" pos:end="57:21">-&gt;</operator><name pos:start="57:22" pos:end="57:29">last_scr</name></name></expr>;</expr_stmt></block_content></block></else></if_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <expr_stmt pos:start="63:5" pos:end="63:20"><expr pos:start="63:5" pos:end="63:19"><name pos:start="63:5" pos:end="63:15"><name pos:start="63:5" pos:end="63:5">s</name><operator pos:start="63:6" pos:end="63:7">-&gt;</operator><name pos:start="63:8" pos:end="63:15">last_scr</name></name><operator pos:start="63:16" pos:end="63:16">=</operator><name pos:start="63:17" pos:end="63:19">scr</name></expr>;</expr_stmt>
+
+
+
+    <return pos:start="67:5" pos:end="67:15">return <expr pos:start="67:12" pos:end="67:14"><name pos:start="67:12" pos:end="67:14">scr</name></expr>;</return>
+
+</block_content>}</block></function>    
+</unit>

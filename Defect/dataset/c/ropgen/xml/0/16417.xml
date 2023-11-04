@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/16417.c" pos:tabs="8"><function pos:start="1:1" pos:end="83:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:23">netmap_send</name><parameter_list pos:start="1:24" pos:end="1:37">(<parameter pos:start="1:25" pos:end="1:36"><decl pos:start="1:25" pos:end="1:36"><type pos:start="1:25" pos:end="1:30"><name pos:start="1:25" pos:end="1:28">void</name> <modifier pos:start="1:30" pos:end="1:30">*</modifier></type><name pos:start="1:31" pos:end="1:36">opaque</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="83:1">{<block_content pos:start="5:5" pos:end="81:5">
+
+    <decl_stmt pos:start="5:5" pos:end="5:28"><decl pos:start="5:5" pos:end="5:27"><type pos:start="5:5" pos:end="5:17"><name pos:start="5:5" pos:end="5:15">NetmapState</name> <modifier pos:start="5:17" pos:end="5:17">*</modifier></type><name pos:start="5:18" pos:end="5:18">s</name> <init pos:start="5:20" pos:end="5:27">= <expr pos:start="5:22" pos:end="5:27"><name pos:start="5:22" pos:end="5:27">opaque</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:40"><decl pos:start="7:5" pos:end="7:39"><type pos:start="7:5" pos:end="7:24"><name pos:start="7:5" pos:end="7:22"><name pos:start="7:5" pos:end="7:10">struct</name> <name pos:start="7:12" pos:end="7:22">netmap_ring</name></name> <modifier pos:start="7:24" pos:end="7:24">*</modifier></type><name pos:start="7:25" pos:end="7:28">ring</name> <init pos:start="7:30" pos:end="7:39">= <expr pos:start="7:32" pos:end="7:39"><name pos:start="7:32" pos:end="7:39"><name pos:start="7:32" pos:end="7:32">s</name><operator pos:start="7:33" pos:end="7:34">-&gt;</operator><name pos:start="7:35" pos:end="7:36">me</name><operator pos:start="7:37" pos:end="7:37">.</operator><name pos:start="7:38" pos:end="7:39">rx</name></name></expr></init></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="11:5" pos:end="13:67">/* Keep sending while there are available packets into the netmap
+
+       RX ring and the forwarding path towards the peer is open. */</comment>
+
+    <while pos:start="15:5" pos:end="81:5">while <condition pos:start="15:11" pos:end="15:64">(<expr pos:start="15:12" pos:end="15:63"><operator pos:start="15:12" pos:end="15:12">!</operator><call pos:start="15:13" pos:end="15:31"><name pos:start="15:13" pos:end="15:25">nm_ring_empty</name><argument_list pos:start="15:26" pos:end="15:31">(<argument pos:start="15:27" pos:end="15:30"><expr pos:start="15:27" pos:end="15:30"><name pos:start="15:27" pos:end="15:30">ring</name></expr></argument>)</argument_list></call> <operator pos:start="15:33" pos:end="15:34">&amp;&amp;</operator> <call pos:start="15:36" pos:end="15:63"><name pos:start="15:36" pos:end="15:55">qemu_can_send_packet</name><argument_list pos:start="15:56" pos:end="15:63">(<argument pos:start="15:57" pos:end="15:62"><expr pos:start="15:57" pos:end="15:62"><operator pos:start="15:57" pos:end="15:57">&amp;</operator><name pos:start="15:58" pos:end="15:62"><name pos:start="15:58" pos:end="15:58">s</name><operator pos:start="15:59" pos:end="15:60">-&gt;</operator><name pos:start="15:61" pos:end="15:62">nc</name></name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="15:66" pos:end="81:5">{<block_content pos:start="17:9" pos:end="79:9">
+
+        <decl_stmt pos:start="17:9" pos:end="17:19"><decl pos:start="17:9" pos:end="17:18"><type pos:start="17:9" pos:end="17:16"><name pos:start="17:9" pos:end="17:16">uint32_t</name></type> <name pos:start="17:18" pos:end="17:18">i</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="19:9" pos:end="19:21"><decl pos:start="19:9" pos:end="19:20"><type pos:start="19:9" pos:end="19:16"><name pos:start="19:9" pos:end="19:16">uint32_t</name></type> <name pos:start="19:18" pos:end="19:20">idx</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="21:9" pos:end="21:22"><decl pos:start="21:9" pos:end="21:21"><type pos:start="21:9" pos:end="21:12"><name pos:start="21:9" pos:end="21:12">bool</name></type> <name pos:start="21:14" pos:end="21:21">morefrag</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="23:9" pos:end="23:23"><decl pos:start="23:9" pos:end="23:22"><type pos:start="23:9" pos:end="23:11"><name pos:start="23:9" pos:end="23:11">int</name></type> <name pos:start="23:13" pos:end="23:18">iovcnt</name> <init pos:start="23:20" pos:end="23:22">= <expr pos:start="23:22" pos:end="23:22"><literal type="number" pos:start="23:22" pos:end="23:22">0</literal></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="25:9" pos:end="25:20"><decl pos:start="25:9" pos:end="25:19"><type pos:start="25:9" pos:end="25:11"><name pos:start="25:9" pos:end="25:11">int</name></type> <name pos:start="25:13" pos:end="25:19">iovsize</name></decl>;</decl_stmt>
+
+
+
+        <do pos:start="29:9" pos:end="47:51">do <block pos:start="29:12" pos:end="47:9">{<block_content pos:start="31:13" pos:end="45:59">
+
+            <expr_stmt pos:start="31:13" pos:end="31:26"><expr pos:start="31:13" pos:end="31:25"><name pos:start="31:13" pos:end="31:13">i</name> <operator pos:start="31:15" pos:end="31:15">=</operator> <name pos:start="31:17" pos:end="31:25"><name pos:start="31:17" pos:end="31:20">ring</name><operator pos:start="31:21" pos:end="31:22">-&gt;</operator><name pos:start="31:23" pos:end="31:25">cur</name></name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="33:13" pos:end="33:40"><expr pos:start="33:13" pos:end="33:39"><name pos:start="33:13" pos:end="33:15">idx</name> <operator pos:start="33:17" pos:end="33:17">=</operator> <name pos:start="33:19" pos:end="33:31"><name pos:start="33:19" pos:end="33:22">ring</name><operator pos:start="33:23" pos:end="33:24">-&gt;</operator><name pos:start="33:25" pos:end="33:28">slot</name><index pos:start="33:29" pos:end="33:31">[<expr pos:start="33:30" pos:end="33:30"><name pos:start="33:30" pos:end="33:30">i</name></expr>]</index></name><operator pos:start="33:32" pos:end="33:32">.</operator><name pos:start="33:33" pos:end="33:39">buf_idx</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="35:13" pos:end="35:59"><expr pos:start="35:13" pos:end="35:58"><name pos:start="35:13" pos:end="35:20">morefrag</name> <operator pos:start="35:22" pos:end="35:22">=</operator> <operator pos:start="35:24" pos:end="35:24">(</operator><name pos:start="35:25" pos:end="35:37"><name pos:start="35:25" pos:end="35:28">ring</name><operator pos:start="35:29" pos:end="35:30">-&gt;</operator><name pos:start="35:31" pos:end="35:34">slot</name><index pos:start="35:35" pos:end="35:37">[<expr pos:start="35:36" pos:end="35:36"><name pos:start="35:36" pos:end="35:36">i</name></expr>]</index></name><operator pos:start="35:38" pos:end="35:38">.</operator><name pos:start="35:39" pos:end="35:43">flags</name> <operator pos:start="35:45" pos:end="35:45">&amp;</operator> <name pos:start="35:47" pos:end="35:57">NS_MOREFRAG</name><operator pos:start="35:58" pos:end="35:58">)</operator></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="37:13" pos:end="37:70"><expr pos:start="37:13" pos:end="37:69"><name pos:start="37:13" pos:end="37:26"><name pos:start="37:13" pos:end="37:13">s</name><operator pos:start="37:14" pos:end="37:15">-&gt;</operator><name pos:start="37:16" pos:end="37:18">iov</name><index pos:start="37:19" pos:end="37:26">[<expr pos:start="37:20" pos:end="37:25"><name pos:start="37:20" pos:end="37:25">iovcnt</name></expr>]</index></name><operator pos:start="37:27" pos:end="37:27">.</operator><name pos:start="37:28" pos:end="37:35">iov_base</name> <operator pos:start="37:37" pos:end="37:37">=</operator> <operator pos:start="37:39" pos:end="37:39">(</operator><name pos:start="37:40" pos:end="37:45">u_char</name> <operator pos:start="37:47" pos:end="37:47">*</operator><operator pos:start="37:48" pos:end="37:48">)</operator><call pos:start="37:49" pos:end="37:69"><name pos:start="37:49" pos:end="37:58">NETMAP_BUF</name><argument_list pos:start="37:59" pos:end="37:69">(<argument pos:start="37:60" pos:end="37:63"><expr pos:start="37:60" pos:end="37:63"><name pos:start="37:60" pos:end="37:63">ring</name></expr></argument>, <argument pos:start="37:66" pos:end="37:68"><expr pos:start="37:66" pos:end="37:68"><name pos:start="37:66" pos:end="37:68">idx</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="39:13" pos:end="39:55"><expr pos:start="39:13" pos:end="39:54"><name pos:start="39:13" pos:end="39:26"><name pos:start="39:13" pos:end="39:13">s</name><operator pos:start="39:14" pos:end="39:15">-&gt;</operator><name pos:start="39:16" pos:end="39:18">iov</name><index pos:start="39:19" pos:end="39:26">[<expr pos:start="39:20" pos:end="39:25"><name pos:start="39:20" pos:end="39:25">iovcnt</name></expr>]</index></name><operator pos:start="39:27" pos:end="39:27">.</operator><name pos:start="39:28" pos:end="39:34">iov_len</name> <operator pos:start="39:36" pos:end="39:36">=</operator> <name pos:start="39:38" pos:end="39:50"><name pos:start="39:38" pos:end="39:41">ring</name><operator pos:start="39:42" pos:end="39:43">-&gt;</operator><name pos:start="39:44" pos:end="39:47">slot</name><index pos:start="39:48" pos:end="39:50">[<expr pos:start="39:49" pos:end="39:49"><name pos:start="39:49" pos:end="39:49">i</name></expr>]</index></name><operator pos:start="39:51" pos:end="39:51">.</operator><name pos:start="39:52" pos:end="39:54">len</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="41:13" pos:end="41:21"><expr pos:start="41:13" pos:end="41:20"><name pos:start="41:13" pos:end="41:18">iovcnt</name><operator pos:start="41:19" pos:end="41:20">++</operator></expr>;</expr_stmt>
+
+
+
+            <expr_stmt pos:start="45:13" pos:end="45:59"><expr pos:start="45:13" pos:end="45:58"><name pos:start="45:13" pos:end="45:21"><name pos:start="45:13" pos:end="45:16">ring</name><operator pos:start="45:17" pos:end="45:18">-&gt;</operator><name pos:start="45:19" pos:end="45:21">cur</name></name> <operator pos:start="45:23" pos:end="45:23">=</operator> <name pos:start="45:25" pos:end="45:34"><name pos:start="45:25" pos:end="45:28">ring</name><operator pos:start="45:29" pos:end="45:30">-&gt;</operator><name pos:start="45:31" pos:end="45:34">head</name></name> <operator pos:start="45:36" pos:end="45:36">=</operator> <call pos:start="45:38" pos:end="45:58"><name pos:start="45:38" pos:end="45:49">nm_ring_next</name><argument_list pos:start="45:50" pos:end="45:58">(<argument pos:start="45:51" pos:end="45:54"><expr pos:start="45:51" pos:end="45:54"><name pos:start="45:51" pos:end="45:54">ring</name></expr></argument>, <argument pos:start="45:57" pos:end="45:57"><expr pos:start="45:57" pos:end="45:57"><name pos:start="45:57" pos:end="45:57">i</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block> while <condition pos:start="47:17" pos:end="47:50">(<expr pos:start="47:18" pos:end="47:49"><operator pos:start="47:18" pos:end="47:18">!</operator><call pos:start="47:19" pos:end="47:37"><name pos:start="47:19" pos:end="47:31">nm_ring_empty</name><argument_list pos:start="47:32" pos:end="47:37">(<argument pos:start="47:33" pos:end="47:36"><expr pos:start="47:33" pos:end="47:36"><name pos:start="47:33" pos:end="47:36">ring</name></expr></argument>)</argument_list></call> <operator pos:start="47:39" pos:end="47:40">&amp;&amp;</operator> <name pos:start="47:42" pos:end="47:49">morefrag</name></expr>)</condition>;</do>
+
+
+
+        <if_stmt pos:start="51:9" pos:end="57:9"><if pos:start="51:9" pos:end="57:9">if <condition pos:start="51:12" pos:end="51:54">(<expr pos:start="51:13" pos:end="51:53"><call pos:start="51:13" pos:end="51:53"><name pos:start="51:13" pos:end="51:20">unlikely</name><argument_list pos:start="51:21" pos:end="51:53">(<argument pos:start="51:22" pos:end="51:52"><expr pos:start="51:22" pos:end="51:52"><call pos:start="51:22" pos:end="51:40"><name pos:start="51:22" pos:end="51:34">nm_ring_empty</name><argument_list pos:start="51:35" pos:end="51:40">(<argument pos:start="51:36" pos:end="51:39"><expr pos:start="51:36" pos:end="51:39"><name pos:start="51:36" pos:end="51:39">ring</name></expr></argument>)</argument_list></call> <operator pos:start="51:42" pos:end="51:43">&amp;&amp;</operator> <name pos:start="51:45" pos:end="51:52">morefrag</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="51:56" pos:end="57:9">{<block_content pos:start="53:13" pos:end="55:42">
+
+            <expr_stmt pos:start="53:13" pos:end="55:42"><expr pos:start="53:13" pos:end="55:41"><call pos:start="53:13" pos:end="55:41"><name pos:start="53:13" pos:end="53:14">RD</name><argument_list pos:start="53:15" pos:end="55:41">(<argument pos:start="53:16" pos:end="53:16"><expr pos:start="53:16" pos:end="53:16"><literal type="number" pos:start="53:16" pos:end="53:16">5</literal></expr></argument>, <argument pos:start="53:19" pos:end="55:40"><expr pos:start="53:19" pos:end="55:40"><literal type="string" pos:start="53:19" pos:end="53:66">"[netmap_send] ran out of slots, with a pending"</literal>
+
+                   <literal type="string" pos:start="55:20" pos:end="55:40">"incomplete packet\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="61:9" pos:end="63:67"><expr pos:start="61:9" pos:end="63:66"><name pos:start="61:9" pos:end="61:15">iovsize</name> <operator pos:start="61:17" pos:end="61:17">=</operator> <call pos:start="61:19" pos:end="63:66"><name pos:start="61:19" pos:end="61:41">qemu_sendv_packet_async</name><argument_list pos:start="61:42" pos:end="63:66">(<argument pos:start="61:43" pos:end="61:48"><expr pos:start="61:43" pos:end="61:48"><operator pos:start="61:43" pos:end="61:43">&amp;</operator><name pos:start="61:44" pos:end="61:48"><name pos:start="61:44" pos:end="61:44">s</name><operator pos:start="61:45" pos:end="61:46">-&gt;</operator><name pos:start="61:47" pos:end="61:48">nc</name></name></expr></argument>, <argument pos:start="61:51" pos:end="61:56"><expr pos:start="61:51" pos:end="61:56"><name pos:start="61:51" pos:end="61:56"><name pos:start="61:51" pos:end="61:51">s</name><operator pos:start="61:52" pos:end="61:53">-&gt;</operator><name pos:start="61:54" pos:end="61:56">iov</name></name></expr></argument>, <argument pos:start="61:59" pos:end="61:64"><expr pos:start="61:59" pos:end="61:64"><name pos:start="61:59" pos:end="61:64">iovcnt</name></expr></argument>,
+
+                                            <argument pos:start="63:45" pos:end="63:65"><expr pos:start="63:45" pos:end="63:65"><name pos:start="63:45" pos:end="63:65">netmap_send_completed</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="67:9" pos:end="79:9"><if pos:start="67:9" pos:end="79:9">if <condition pos:start="67:12" pos:end="67:25">(<expr pos:start="67:13" pos:end="67:24"><name pos:start="67:13" pos:end="67:19">iovsize</name> <operator pos:start="67:21" pos:end="67:22">==</operator> <literal type="number" pos:start="67:24" pos:end="67:24">0</literal></expr>)</condition> <block pos:start="67:27" pos:end="79:9">{<block_content pos:start="75:13" pos:end="77:18">
+
+            <comment type="block" pos:start="69:13" pos:end="73:15">/* The peer does not receive anymore. Packet is queued, stop
+
+             * reading from the backend until netmap_send_completed()
+
+             */</comment>
+
+            <expr_stmt pos:start="75:13" pos:end="75:39"><expr pos:start="75:13" pos:end="75:38"><call pos:start="75:13" pos:end="75:38"><name pos:start="75:13" pos:end="75:28">netmap_read_poll</name><argument_list pos:start="75:29" pos:end="75:38">(<argument pos:start="75:30" pos:end="75:30"><expr pos:start="75:30" pos:end="75:30"><name pos:start="75:30" pos:end="75:30">s</name></expr></argument>, <argument pos:start="75:33" pos:end="75:37"><expr pos:start="75:33" pos:end="75:37"><name pos:start="75:33" pos:end="75:37">false</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="77:13" pos:end="77:18">break;</break>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></while>
+
+</block_content>}</block></function>
+</unit>

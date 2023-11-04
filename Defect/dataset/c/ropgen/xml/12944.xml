@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/12944.c" pos:tabs="8"><function pos:start="1:1" pos:end="155:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:24">asf_read_seek</name><parameter_list pos:start="1:25" pos:end="1:75">(<parameter pos:start="1:26" pos:end="1:43"><decl pos:start="1:26" pos:end="1:43"><type pos:start="1:26" pos:end="1:43"><name pos:start="1:26" pos:end="1:40">AVFormatContext</name> <modifier pos:start="1:42" pos:end="1:42">*</modifier></type><name pos:start="1:43" pos:end="1:43">s</name></decl></parameter>, <parameter pos:start="1:46" pos:end="1:61"><decl pos:start="1:46" pos:end="1:61"><type pos:start="1:46" pos:end="1:61"><name pos:start="1:46" pos:end="1:48">int</name></type> <name pos:start="1:50" pos:end="1:61">stream_index</name></decl></parameter>, <parameter pos:start="1:64" pos:end="1:74"><decl pos:start="1:64" pos:end="1:74"><type pos:start="1:64" pos:end="1:74"><name pos:start="1:64" pos:end="1:70">int64_t</name></type> <name pos:start="1:72" pos:end="1:74">pts</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="155:1">{<block_content pos:start="5:5" pos:end="153:13">
+
+    <decl_stmt pos:start="5:5" pos:end="5:35"><decl pos:start="5:5" pos:end="5:34"><type pos:start="5:5" pos:end="5:16"><name pos:start="5:5" pos:end="5:14">ASFContext</name> <modifier pos:start="5:16" pos:end="5:16">*</modifier></type><name pos:start="5:17" pos:end="5:19">asf</name> <init pos:start="5:21" pos:end="5:34">= <expr pos:start="5:23" pos:end="5:34"><name pos:start="5:23" pos:end="5:34"><name pos:start="5:23" pos:end="5:23">s</name><operator pos:start="5:24" pos:end="5:25">-&gt;</operator><name pos:start="5:26" pos:end="5:34">priv_data</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:17"><decl pos:start="7:5" pos:end="7:16"><type pos:start="7:5" pos:end="7:14"><name pos:start="7:5" pos:end="7:12">AVStream</name> <modifier pos:start="7:14" pos:end="7:14">*</modifier></type><name pos:start="7:15" pos:end="7:16">st</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:24"><decl pos:start="9:5" pos:end="9:17"><type pos:start="9:5" pos:end="9:12"><name pos:start="9:5" pos:end="9:12">AVPacket</name></type> <name pos:start="9:14" pos:end="9:17">pkt1</name></decl>, <decl pos:start="9:20" pos:end="9:23"><type ref="prev" pos:start="9:5" pos:end="9:12"><modifier pos:start="9:20" pos:end="9:20">*</modifier></type><name pos:start="9:21" pos:end="9:23">pkt</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:20"><decl pos:start="11:5" pos:end="11:19"><type pos:start="11:5" pos:end="11:7"><name pos:start="11:5" pos:end="11:7">int</name></type> <name pos:start="11:9" pos:end="11:19">block_align</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:16"><decl pos:start="13:5" pos:end="13:15"><type pos:start="13:5" pos:end="13:11"><name pos:start="13:5" pos:end="13:11">int64_t</name></type> <name pos:start="13:13" pos:end="13:15">pos</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:56"><decl pos:start="15:5" pos:end="15:19"><type pos:start="15:5" pos:end="15:11"><name pos:start="15:5" pos:end="15:11">int64_t</name></type> <name pos:start="15:13" pos:end="15:19">pos_min</name></decl>, <decl pos:start="15:22" pos:end="15:28"><type ref="prev" pos:start="15:5" pos:end="15:11"/><name pos:start="15:22" pos:end="15:28">pos_max</name></decl>, <decl pos:start="15:31" pos:end="15:37"><type ref="prev" pos:start="15:5" pos:end="15:11"/><name pos:start="15:31" pos:end="15:37">pts_min</name></decl>, <decl pos:start="15:40" pos:end="15:46"><type ref="prev" pos:start="15:5" pos:end="15:11"/><name pos:start="15:40" pos:end="15:46">pts_max</name></decl>, <decl pos:start="15:49" pos:end="15:55"><type ref="prev" pos:start="15:5" pos:end="15:11"/><name pos:start="15:49" pos:end="15:55">cur_pts</name></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="19:5" pos:end="19:16"><expr pos:start="19:5" pos:end="19:15"><name pos:start="19:5" pos:end="19:7">pkt</name> <operator pos:start="19:9" pos:end="19:9">=</operator> <operator pos:start="19:11" pos:end="19:11">&amp;</operator><name pos:start="19:12" pos:end="19:15">pkt1</name></expr>;</expr_stmt>
+
+
+
+    <comment type="line" pos:start="23:5" pos:end="23:19">// Validate pts</comment>
+
+    <if_stmt pos:start="25:5" pos:end="27:16"><if pos:start="25:5" pos:end="27:16">if <condition pos:start="25:8" pos:end="25:16">(<expr pos:start="25:9" pos:end="25:15"><name pos:start="25:9" pos:end="25:11">pts</name> <operator pos:start="25:13" pos:end="25:13">&lt;</operator> <literal type="number" pos:start="25:15" pos:end="25:15">0</literal></expr>)</condition><block type="pseudo" pos:start="27:9" pos:end="27:16"><block_content pos:start="27:9" pos:end="27:16">
+
+	<expr_stmt pos:start="27:9" pos:end="27:16"><expr pos:start="27:9" pos:end="27:15"><name pos:start="27:9" pos:end="27:11">pts</name> <operator pos:start="27:13" pos:end="27:13">=</operator> <literal type="number" pos:start="27:15" pos:end="27:15">0</literal></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="31:5" pos:end="33:54"><if pos:start="31:5" pos:end="33:54">if <condition pos:start="31:8" pos:end="31:27">(<expr pos:start="31:9" pos:end="31:26"><name pos:start="31:9" pos:end="31:20">stream_index</name> <operator pos:start="31:22" pos:end="31:23">==</operator> <operator pos:start="31:25" pos:end="31:25">-</operator><literal type="number" pos:start="31:26" pos:end="31:26">1</literal></expr>)</condition><block type="pseudo" pos:start="33:9" pos:end="33:54"><block_content pos:start="33:9" pos:end="33:54">
+
+        <expr_stmt pos:start="33:9" pos:end="33:54"><expr pos:start="33:9" pos:end="33:53"><name pos:start="33:9" pos:end="33:20">stream_index</name><operator pos:start="33:21" pos:end="33:21">=</operator> <call pos:start="33:23" pos:end="33:53"><name pos:start="33:23" pos:end="33:50">av_find_default_stream_index</name><argument_list pos:start="33:51" pos:end="33:53">(<argument pos:start="33:52" pos:end="33:52"><expr pos:start="33:52" pos:end="33:52"><name pos:start="33:52" pos:end="33:52">s</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+    
+
+    <expr_stmt pos:start="37:5" pos:end="37:34"><expr pos:start="37:5" pos:end="37:33"><name pos:start="37:5" pos:end="37:6">st</name> <operator pos:start="37:8" pos:end="37:8">=</operator> <name pos:start="37:10" pos:end="37:33"><name pos:start="37:10" pos:end="37:10">s</name><operator pos:start="37:11" pos:end="37:12">-&gt;</operator><name pos:start="37:13" pos:end="37:19">streams</name><index pos:start="37:20" pos:end="37:33">[<expr pos:start="37:21" pos:end="37:32"><name pos:start="37:21" pos:end="37:32">stream_index</name></expr>]</index></name></expr>;</expr_stmt>
+
+
+
+    <comment type="line" pos:start="41:5" pos:end="41:71">// ASF files have fixed block sizes, store this to determine offset</comment>
+
+    <expr_stmt pos:start="43:5" pos:end="43:35"><expr pos:start="43:5" pos:end="43:34"><name pos:start="43:5" pos:end="43:15">block_align</name> <operator pos:start="43:17" pos:end="43:17">=</operator> <name pos:start="43:19" pos:end="43:34"><name pos:start="43:19" pos:end="43:21">asf</name><operator pos:start="43:22" pos:end="43:23">-&gt;</operator><name pos:start="43:24" pos:end="43:34">packet_size</name></name></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="47:5" pos:end="49:18"><if pos:start="47:5" pos:end="49:18">if <condition pos:start="47:8" pos:end="47:25">(<expr pos:start="47:9" pos:end="47:24"><name pos:start="47:9" pos:end="47:19">block_align</name> <operator pos:start="47:21" pos:end="47:22">&lt;=</operator> <literal type="number" pos:start="47:24" pos:end="47:24">0</literal></expr>)</condition><block type="pseudo" pos:start="49:9" pos:end="49:18"><block_content pos:start="49:9" pos:end="49:18">
+
+        <return pos:start="49:9" pos:end="49:18">return <expr pos:start="49:16" pos:end="49:17"><operator pos:start="49:16" pos:end="49:16">-</operator><literal type="number" pos:start="49:17" pos:end="49:17">1</literal></expr>;</return></block_content></block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="53:5" pos:end="53:16"><expr pos:start="53:5" pos:end="53:15"><name pos:start="53:5" pos:end="53:11">pos_min</name> <operator pos:start="53:13" pos:end="53:13">=</operator> <literal type="number" pos:start="53:15" pos:end="53:15">0</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="55:5" pos:end="55:54"><expr pos:start="55:5" pos:end="55:53"><name pos:start="55:5" pos:end="55:11">pts_min</name> <operator pos:start="55:13" pos:end="55:13">=</operator> <call pos:start="55:15" pos:end="55:53"><name pos:start="55:15" pos:end="55:26">asf_read_pts</name><argument_list pos:start="55:27" pos:end="55:53">(<argument pos:start="55:28" pos:end="55:28"><expr pos:start="55:28" pos:end="55:28"><name pos:start="55:28" pos:end="55:28">s</name></expr></argument>, <argument pos:start="55:31" pos:end="55:38"><expr pos:start="55:31" pos:end="55:38"><operator pos:start="55:31" pos:end="55:31">&amp;</operator><name pos:start="55:32" pos:end="55:38">pos_min</name></expr></argument>, <argument pos:start="55:41" pos:end="55:52"><expr pos:start="55:41" pos:end="55:52"><name pos:start="55:41" pos:end="55:52">stream_index</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="57:5" pos:end="57:45"><if pos:start="57:5" pos:end="57:45">if <condition pos:start="57:8" pos:end="57:34">(<expr pos:start="57:9" pos:end="57:33"><name pos:start="57:9" pos:end="57:15">pts_min</name> <operator pos:start="57:17" pos:end="57:18">==</operator> <name pos:start="57:20" pos:end="57:33">AV_NOPTS_VALUE</name></expr>)</condition><block type="pseudo" pos:start="57:36" pos:end="57:45"><block_content pos:start="57:36" pos:end="57:45"> <return pos:start="57:36" pos:end="57:45">return <expr pos:start="57:43" pos:end="57:44"><operator pos:start="57:43" pos:end="57:43">-</operator><literal type="number" pos:start="57:44" pos:end="57:44">1</literal></expr>;</return></block_content></block></if></if_stmt>
+
+   
+
+    <expr_stmt pos:start="61:5" pos:end="61:82"><expr pos:start="61:5" pos:end="61:81"><name pos:start="61:5" pos:end="61:11">pos_max</name> <operator pos:start="61:13" pos:end="61:13">=</operator> <call pos:start="61:15" pos:end="61:81"><name pos:start="61:15" pos:end="61:23">asf_align</name><argument_list pos:start="61:24" pos:end="61:81">(<argument pos:start="61:25" pos:end="61:25"><expr pos:start="61:25" pos:end="61:25"><name pos:start="61:25" pos:end="61:25">s</name></expr></argument>, <argument pos:start="61:28" pos:end="61:80"><expr pos:start="61:28" pos:end="61:80"><call pos:start="61:28" pos:end="61:59"><name pos:start="61:28" pos:end="61:39">url_filesize</name><argument_list pos:start="61:40" pos:end="61:59">(<argument pos:start="61:41" pos:end="61:58"><expr pos:start="61:41" pos:end="61:58"><call pos:start="61:41" pos:end="61:58"><name pos:start="61:41" pos:end="61:50">url_fileno</name><argument_list pos:start="61:51" pos:end="61:58">(<argument pos:start="61:52" pos:end="61:57"><expr pos:start="61:52" pos:end="61:57"><operator pos:start="61:52" pos:end="61:52">&amp;</operator><name pos:start="61:53" pos:end="61:57"><name pos:start="61:53" pos:end="61:53">s</name><operator pos:start="61:54" pos:end="61:55">-&gt;</operator><name pos:start="61:56" pos:end="61:57">pb</name></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call> <operator pos:start="61:61" pos:end="61:61">-</operator> <literal type="number" pos:start="61:63" pos:end="61:65">1</literal> <operator pos:start="61:65" pos:end="61:65">-</operator> <name pos:start="61:67" pos:end="61:80"><name pos:start="61:67" pos:end="61:67">s</name><operator pos:start="61:68" pos:end="61:69">-&gt;</operator><name pos:start="61:70" pos:end="61:80">data_offset</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line" pos:start="61:84" pos:end="61:96">//FIXME wrong</comment>
+
+    <expr_stmt pos:start="63:5" pos:end="63:36"><expr pos:start="63:5" pos:end="63:35"><name pos:start="63:5" pos:end="63:11">pts_max</name> <operator pos:start="63:13" pos:end="63:13">=</operator> <name pos:start="63:15" pos:end="63:21">pts_min</name> <operator pos:start="63:23" pos:end="63:23">+</operator> <name pos:start="63:25" pos:end="63:35"><name pos:start="63:25" pos:end="63:25">s</name><operator pos:start="63:26" pos:end="63:27">-&gt;</operator><name pos:start="63:28" pos:end="63:35">duration</name></name></expr>;</expr_stmt>
+
+
+
+    <while pos:start="67:5" pos:end="143:5">while <condition pos:start="67:11" pos:end="67:30">(<expr pos:start="67:12" pos:end="67:29"><name pos:start="67:12" pos:end="67:18">pos_min</name> <operator pos:start="67:20" pos:end="67:21">&lt;=</operator> <name pos:start="67:23" pos:end="67:29">pos_max</name></expr>)</condition> <block pos:start="67:32" pos:end="143:5">{<block_content pos:start="71:9" pos:end="141:9">
+
+
+
+        <if_stmt pos:start="71:9" pos:end="95:9"><if pos:start="71:9" pos:end="77:9">if <condition pos:start="71:12" pos:end="71:27">(<expr pos:start="71:13" pos:end="71:26"><name pos:start="71:13" pos:end="71:15">pts</name> <operator pos:start="71:17" pos:end="71:18">&lt;=</operator> <name pos:start="71:20" pos:end="71:26">pts_min</name></expr>)</condition> <block pos:start="71:29" pos:end="77:9">{<block_content pos:start="73:13" pos:end="75:23">
+
+            <expr_stmt pos:start="73:13" pos:end="73:26"><expr pos:start="73:13" pos:end="73:25"><name pos:start="73:13" pos:end="73:15">pos</name> <operator pos:start="73:17" pos:end="73:17">=</operator> <name pos:start="73:19" pos:end="73:25">pos_min</name></expr>;</expr_stmt>
+
+            <goto pos:start="75:13" pos:end="75:23">goto <name pos:start="75:18" pos:end="75:22">found</name>;</goto>
+
+        </block_content>}</block></if> <if type="elseif" pos:start="77:11" pos:end="83:9">else if <condition pos:start="77:19" pos:end="77:34">(<expr pos:start="77:20" pos:end="77:33"><name pos:start="77:20" pos:end="77:22">pts</name> <operator pos:start="77:24" pos:end="77:25">&gt;=</operator> <name pos:start="77:27" pos:end="77:33">pts_max</name></expr>)</condition> <block pos:start="77:36" pos:end="83:9">{<block_content pos:start="79:13" pos:end="81:23">
+
+            <expr_stmt pos:start="79:13" pos:end="79:26"><expr pos:start="79:13" pos:end="79:25"><name pos:start="79:13" pos:end="79:15">pos</name> <operator pos:start="79:17" pos:end="79:17">=</operator> <name pos:start="79:19" pos:end="79:25">pos_max</name></expr>;</expr_stmt>
+
+            <goto pos:start="81:13" pos:end="81:23">goto <name pos:start="81:18" pos:end="81:22">found</name>;</goto>
+
+        </block_content>}</block></if> <else pos:start="83:11" pos:end="95:9">else <block pos:start="83:16" pos:end="95:9">{<block_content pos:start="87:13" pos:end="93:35">
+
+            <comment type="line" pos:start="85:13" pos:end="85:59">// interpolate position (better than dichotomy)</comment>
+
+            <expr_stmt pos:start="87:13" pos:end="91:67"><expr pos:start="87:13" pos:end="91:66"><name pos:start="87:13" pos:end="87:15">pos</name> <operator pos:start="87:17" pos:end="87:17">=</operator> <operator pos:start="87:19" pos:end="87:19">(</operator><name pos:start="87:20" pos:end="87:26">int64_t</name><operator pos:start="87:27" pos:end="87:27">)</operator><operator pos:start="87:28" pos:end="87:28">(</operator><operator pos:start="87:29" pos:end="87:29">(</operator><name pos:start="87:30" pos:end="87:35">double</name><operator pos:start="87:36" pos:end="87:36">)</operator><operator pos:start="87:37" pos:end="87:37">(</operator><name pos:start="87:38" pos:end="87:44">pos_max</name> <operator pos:start="87:46" pos:end="87:46">-</operator> <name pos:start="87:48" pos:end="87:54">pos_min</name><operator pos:start="87:55" pos:end="87:55">)</operator> <operator pos:start="87:57" pos:end="87:57">*</operator>
+
+                            <operator pos:start="89:29" pos:end="89:29">(</operator><name pos:start="89:30" pos:end="89:35">double</name><operator pos:start="89:36" pos:end="89:36">)</operator><operator pos:start="89:37" pos:end="89:37">(</operator><name pos:start="89:38" pos:end="89:40">pts</name> <operator pos:start="89:42" pos:end="89:42">-</operator> <name pos:start="89:44" pos:end="89:50">pts_min</name><operator pos:start="89:51" pos:end="89:51">)</operator> <operator pos:start="89:53" pos:end="89:53">/</operator>
+
+                            <operator pos:start="91:29" pos:end="91:29">(</operator><name pos:start="91:30" pos:end="91:35">double</name><operator pos:start="91:36" pos:end="91:36">)</operator><operator pos:start="91:37" pos:end="91:37">(</operator><name pos:start="91:38" pos:end="91:44">pts_max</name> <operator pos:start="91:46" pos:end="91:46">-</operator> <name pos:start="91:48" pos:end="91:54">pts_min</name><operator pos:start="91:55" pos:end="91:55">)</operator><operator pos:start="91:56" pos:end="91:56">)</operator> <operator pos:start="91:58" pos:end="91:58">+</operator> <name pos:start="91:60" pos:end="91:66">pos_min</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="93:13" pos:end="93:35"><expr pos:start="93:13" pos:end="93:34"><name pos:start="93:13" pos:end="93:15">pos</name><operator pos:start="93:16" pos:end="93:16">=</operator> <call pos:start="93:18" pos:end="93:34"><name pos:start="93:18" pos:end="93:26">asf_align</name><argument_list pos:start="93:27" pos:end="93:34">(<argument pos:start="93:28" pos:end="93:28"><expr pos:start="93:28" pos:end="93:28"><name pos:start="93:28" pos:end="93:28">s</name></expr></argument>, <argument pos:start="93:31" pos:end="93:33"><expr pos:start="93:31" pos:end="93:33"><name pos:start="93:31" pos:end="93:33">pos</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+
+
+        <comment type="line" pos:start="99:9" pos:end="99:35">// read the next timestamp </comment>
+
+    	<expr_stmt pos:start="101:9" pos:end="101:54"><expr pos:start="101:9" pos:end="101:53"><name pos:start="101:9" pos:end="101:15">cur_pts</name> <operator pos:start="101:17" pos:end="101:17">=</operator> <call pos:start="101:19" pos:end="101:53"><name pos:start="101:19" pos:end="101:30">asf_read_pts</name><argument_list pos:start="101:31" pos:end="101:53">(<argument pos:start="101:32" pos:end="101:32"><expr pos:start="101:32" pos:end="101:32"><name pos:start="101:32" pos:end="101:32">s</name></expr></argument>, <argument pos:start="101:35" pos:end="101:38"><expr pos:start="101:35" pos:end="101:38"><operator pos:start="101:35" pos:end="101:35">&amp;</operator><name pos:start="101:36" pos:end="101:38">pos</name></expr></argument>, <argument pos:start="101:41" pos:end="101:52"><expr pos:start="101:41" pos:end="101:52"><name pos:start="101:41" pos:end="101:52">stream_index</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>    
+
+	
+
+        <comment type="block" pos:start="105:9" pos:end="105:35">/* check if we are lucky */</comment>
+
+        <if_stmt pos:start="107:9" pos:end="141:9"><if pos:start="107:9" pos:end="111:9">if <condition pos:start="107:12" pos:end="107:27">(<expr pos:start="107:13" pos:end="107:26"><name pos:start="107:13" pos:end="107:15">pts</name> <operator pos:start="107:17" pos:end="107:18">==</operator> <name pos:start="107:20" pos:end="107:26">cur_pts</name></expr>)</condition> <block pos:start="107:29" pos:end="111:9">{<block_content pos:start="109:13" pos:end="109:23">
+
+            <goto pos:start="109:13" pos:end="109:23">goto <name pos:start="109:18" pos:end="109:22">found</name>;</goto>
+
+        </block_content>}</block></if> <if type="elseif" pos:start="111:11" pos:end="115:9">else if <condition pos:start="111:19" pos:end="111:45">(<expr pos:start="111:20" pos:end="111:44"><name pos:start="111:20" pos:end="111:26">cur_pts</name> <operator pos:start="111:28" pos:end="111:29">==</operator> <name pos:start="111:31" pos:end="111:44">AV_NOPTS_VALUE</name></expr>)</condition> <block pos:start="111:47" pos:end="115:9">{<block_content pos:start="113:13" pos:end="113:22">
+
+	    <return pos:start="113:13" pos:end="113:22">return <expr pos:start="113:20" pos:end="113:21"><operator pos:start="113:20" pos:end="113:20">-</operator><literal type="number" pos:start="113:21" pos:end="113:21">1</literal></expr>;</return>
+
+        </block_content>}</block></if> <if type="elseif" pos:start="115:11" pos:end="129:9">else if <condition pos:start="115:19" pos:end="115:33">(<expr pos:start="115:20" pos:end="115:32"><name pos:start="115:20" pos:end="115:22">pts</name> <operator pos:start="115:24" pos:end="115:24">&lt;</operator> <name pos:start="115:26" pos:end="115:32">cur_pts</name></expr>)</condition> <block pos:start="115:35" pos:end="129:9">{<block_content pos:start="117:13" pos:end="127:13">
+
+            <expr_stmt pos:start="117:13" pos:end="117:26"><expr pos:start="117:13" pos:end="117:25"><name pos:start="117:13" pos:end="117:19">pos_max</name> <operator pos:start="117:21" pos:end="117:21">=</operator> <name pos:start="117:23" pos:end="117:25">pos</name></expr>;</expr_stmt>
+
+	    <expr_stmt pos:start="119:13" pos:end="119:62"><expr pos:start="119:13" pos:end="119:61"><name pos:start="119:13" pos:end="119:19">pts_max</name> <operator pos:start="119:21" pos:end="119:21">=</operator> <call pos:start="119:23" pos:end="119:61"><name pos:start="119:23" pos:end="119:34">asf_read_pts</name><argument_list pos:start="119:35" pos:end="119:61">(<argument pos:start="119:36" pos:end="119:36"><expr pos:start="119:36" pos:end="119:36"><name pos:start="119:36" pos:end="119:36">s</name></expr></argument>, <argument pos:start="119:39" pos:end="119:46"><expr pos:start="119:39" pos:end="119:46"><operator pos:start="119:39" pos:end="119:39">&amp;</operator><name pos:start="119:40" pos:end="119:46">pos_max</name></expr></argument>, <argument pos:start="119:49" pos:end="119:60"><expr pos:start="119:49" pos:end="119:60"><name pos:start="119:49" pos:end="119:60">stream_index</name></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="line" pos:start="119:64" pos:end="119:125">//FIXME wrong, must do backward search, or change this somehow</comment>
+
+            <if_stmt pos:start="121:13" pos:end="127:13"><if pos:start="121:13" pos:end="127:13">if <condition pos:start="121:16" pos:end="121:31">(<expr pos:start="121:17" pos:end="121:30"><name pos:start="121:17" pos:end="121:19">pts</name> <operator pos:start="121:21" pos:end="121:22">&gt;=</operator> <name pos:start="121:24" pos:end="121:30">pts_max</name></expr>)</condition> <block pos:start="121:33" pos:end="127:13">{<block_content pos:start="123:17" pos:end="125:27">
+
+                <expr_stmt pos:start="123:17" pos:end="123:30"><expr pos:start="123:17" pos:end="123:29"><name pos:start="123:17" pos:end="123:19">pos</name> <operator pos:start="123:21" pos:end="123:21">=</operator> <name pos:start="123:23" pos:end="123:29">pos_max</name></expr>;</expr_stmt>
+
+                <goto pos:start="125:17" pos:end="125:27">goto <name pos:start="125:22" pos:end="125:26">found</name>;</goto>
+
+            </block_content>}</block></if></if_stmt>
+
+        </block_content>}</block></if> <else pos:start="129:11" pos:end="141:9">else <block pos:start="129:16" pos:end="141:9">{<block_content pos:start="131:13" pos:end="139:13">
+
+            <expr_stmt pos:start="131:13" pos:end="131:45"><expr pos:start="131:13" pos:end="131:44"><name pos:start="131:13" pos:end="131:19">pos_min</name> <operator pos:start="131:21" pos:end="131:21">=</operator> <name pos:start="131:23" pos:end="131:25">pos</name> <operator pos:start="131:27" pos:end="131:27">+</operator> <name pos:start="131:29" pos:end="131:44"><name pos:start="131:29" pos:end="131:31">asf</name><operator pos:start="131:32" pos:end="131:33">-&gt;</operator><name pos:start="131:34" pos:end="131:44">packet_size</name></name></expr>;</expr_stmt>
+
+	    <expr_stmt pos:start="133:13" pos:end="133:62"><expr pos:start="133:13" pos:end="133:61"><name pos:start="133:13" pos:end="133:19">pts_min</name> <operator pos:start="133:21" pos:end="133:21">=</operator> <call pos:start="133:23" pos:end="133:61"><name pos:start="133:23" pos:end="133:34">asf_read_pts</name><argument_list pos:start="133:35" pos:end="133:61">(<argument pos:start="133:36" pos:end="133:36"><expr pos:start="133:36" pos:end="133:36"><name pos:start="133:36" pos:end="133:36">s</name></expr></argument>, <argument pos:start="133:39" pos:end="133:46"><expr pos:start="133:39" pos:end="133:46"><operator pos:start="133:39" pos:end="133:39">&amp;</operator><name pos:start="133:40" pos:end="133:46">pos_min</name></expr></argument>, <argument pos:start="133:49" pos:end="133:60"><expr pos:start="133:49" pos:end="133:60"><name pos:start="133:49" pos:end="133:60">stream_index</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <if_stmt pos:start="135:13" pos:end="139:13"><if pos:start="135:13" pos:end="139:13">if <condition pos:start="135:16" pos:end="135:31">(<expr pos:start="135:17" pos:end="135:30"><name pos:start="135:17" pos:end="135:19">pts</name> <operator pos:start="135:21" pos:end="135:22">&lt;=</operator> <name pos:start="135:24" pos:end="135:30">pts_min</name></expr>)</condition> <block pos:start="135:33" pos:end="139:13">{<block_content pos:start="137:17" pos:end="137:27">
+
+                <goto pos:start="137:17" pos:end="137:27">goto <name pos:start="137:22" pos:end="137:26">found</name>;</goto>
+
+            </block_content>}</block></if></if_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+    </block_content>}</block></while>
+
+    <expr_stmt pos:start="145:5" pos:end="145:18"><expr pos:start="145:5" pos:end="145:17"><name pos:start="145:5" pos:end="145:7">pos</name> <operator pos:start="145:9" pos:end="145:9">=</operator> <name pos:start="145:11" pos:end="145:17">pos_min</name></expr>;</expr_stmt>
+
+<label pos:start="147:1" pos:end="147:6"><name pos:start="147:1" pos:end="147:5">found</name>:</label>
+
+    <expr_stmt pos:start="149:5" pos:end="149:54"><expr pos:start="149:5" pos:end="149:53"><call pos:start="149:5" pos:end="149:53"><name pos:start="149:5" pos:end="149:13">url_fseek</name><argument_list pos:start="149:14" pos:end="149:53">(<argument pos:start="149:15" pos:end="149:20"><expr pos:start="149:15" pos:end="149:20"><operator pos:start="149:15" pos:end="149:15">&amp;</operator><name pos:start="149:16" pos:end="149:20"><name pos:start="149:16" pos:end="149:16">s</name><operator pos:start="149:17" pos:end="149:18">-&gt;</operator><name pos:start="149:19" pos:end="149:20">pb</name></name></expr></argument>, <argument pos:start="149:23" pos:end="149:42"><expr pos:start="149:23" pos:end="149:42"><name pos:start="149:23" pos:end="149:25">pos</name> <operator pos:start="149:27" pos:end="149:27">+</operator> <name pos:start="149:29" pos:end="149:42"><name pos:start="149:29" pos:end="149:29">s</name><operator pos:start="149:30" pos:end="149:31">-&gt;</operator><name pos:start="149:32" pos:end="149:42">data_offset</name></name></expr></argument>, <argument pos:start="149:45" pos:end="149:52"><expr pos:start="149:45" pos:end="149:52"><name pos:start="149:45" pos:end="149:52">SEEK_SET</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="151:5" pos:end="151:24"><expr pos:start="151:5" pos:end="151:23"><call pos:start="151:5" pos:end="151:23"><name pos:start="151:5" pos:end="151:20">asf_reset_header</name><argument_list pos:start="151:21" pos:end="151:23">(<argument pos:start="151:22" pos:end="151:22"><expr pos:start="151:22" pos:end="151:22"><name pos:start="151:22" pos:end="151:22">s</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <return pos:start="153:5" pos:end="153:13">return <expr pos:start="153:12" pos:end="153:12"><literal type="number" pos:start="153:12" pos:end="153:12">0</literal></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

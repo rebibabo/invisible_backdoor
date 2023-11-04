@@ -2,8 +2,8 @@ import os
 import sys
 import shutil
 from tqdm import tqdm
-sys.path.append('attack/ropgen')
-sys.path.append('/home/backdoor2023/backdoor/preprocess/attack/ropgen')
+sys.path.append('./ropgen')
+# sys.path.append('/home/backdoor2023/backdoor/preprocess/attack/ropgen')
 from itertools import combinations
 from aug_data.change_program_style import *
 from style_change_method import var_name_style_to_camel_case, \
@@ -50,8 +50,8 @@ style_mapping = {
     '5.2': 'array_to_pointer', 
     '6.1': 're_temp', # defined at the beginning
     '6.2': 'temporary_var',
-    '7.1': 'var_init_merge',
-    '7.2': 'var_init_pos',
+    '7.1': 'var_init_merge',                        # int a = 0;
+    '7.2': 'var_init_pos',                          # int a; a = 0;
     '8.1': 'init_declaration',
     '8.2': 'var_init_split',
     # 9.x 在数据集中都较为稀少，conv -> 0%
@@ -244,7 +244,7 @@ if __name__ == '__main__':
     with open('test.java', 'r') as f:
         code = f.read()
         print(code)
-    new_code, succ = change_style_AND(code, ['1.1ex'], expand=True)
+    new_code, succ = change_style_AND(code, ['7.2'], expand=True)
     print(new_code)
 
     # 1.1 1.2 1.4 6.1 7.2 8.2 10.2 10.3 10.4 20.2

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/9048.c" pos:tabs="8"><macro pos:start="1:1" pos:end="3:50"><name pos:start="1:1" pos:end="1:19">raw_co_writev_flags</name><argument_list pos:start="1:20" pos:end="3:50">(<argument pos:start="1:21" pos:end="1:40">BlockDriverState *bs</argument>, <argument pos:start="1:43" pos:end="1:60">int64_t sector_num</argument>, <argument pos:start="1:63" pos:end="1:76">int nb_sectors</argument>,
+
+                    <argument pos:start="3:21" pos:end="3:38">QEMUIOVector *qiov</argument>, <argument pos:start="3:41" pos:end="3:49">int flags</argument>)</argument_list></macro>
+
+<block pos:start="5:1" pos:end="113:1">{<block_content pos:start="7:5" pos:end="111:15">
+
+    <decl_stmt pos:start="7:5" pos:end="7:21"><decl pos:start="7:5" pos:end="7:20"><type pos:start="7:5" pos:end="7:10"><name pos:start="7:5" pos:end="7:8">void</name> <modifier pos:start="7:10" pos:end="7:10">*</modifier></type><name pos:start="7:11" pos:end="7:13">buf</name> <init pos:start="7:15" pos:end="7:20">= <expr pos:start="7:17" pos:end="7:20"><name pos:start="7:17" pos:end="7:20">NULL</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:21"><decl pos:start="9:5" pos:end="9:20"><type pos:start="9:5" pos:end="9:17"><name pos:start="9:5" pos:end="9:15">BlockDriver</name> <modifier pos:start="9:17" pos:end="9:17">*</modifier></type><name pos:start="9:18" pos:end="9:20">drv</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:28"><decl pos:start="11:5" pos:end="11:27"><type pos:start="11:5" pos:end="11:16"><name pos:start="11:5" pos:end="11:16">QEMUIOVector</name></type> <name pos:start="11:18" pos:end="11:27">local_qiov</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:12"><decl pos:start="13:5" pos:end="13:11"><type pos:start="13:5" pos:end="13:7"><name pos:start="13:5" pos:end="13:7">int</name></type> <name pos:start="13:9" pos:end="13:11">ret</name></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="17:5" pos:end="89:5"><if pos:start="17:5" pos:end="89:5">if <condition pos:start="17:8" pos:end="17:38">(<expr pos:start="17:9" pos:end="17:37"><name pos:start="17:9" pos:end="17:18"><name pos:start="17:9" pos:end="17:10">bs</name><operator pos:start="17:11" pos:end="17:12">-&gt;</operator><name pos:start="17:13" pos:end="17:18">probed</name></name> <operator pos:start="17:20" pos:end="17:21">&amp;&amp;</operator> <name pos:start="17:23" pos:end="17:32">sector_num</name> <operator pos:start="17:34" pos:end="17:35">==</operator> <literal type="number" pos:start="17:37" pos:end="17:37">0</literal></expr>)</condition> <block pos:start="17:40" pos:end="89:5">{<block_content pos:start="23:9" pos:end="87:27">
+
+        <comment type="block" pos:start="19:9" pos:end="21:71">/* As long as these conditions are true, we can't get partial writes to
+
+         * the probe buffer and can just directly check the request. */</comment>
+
+        <expr_stmt pos:start="23:9" pos:end="23:55"><expr pos:start="23:9" pos:end="23:54"><call pos:start="23:9" pos:end="23:54"><name pos:start="23:9" pos:end="23:25">QEMU_BUILD_BUG_ON</name><argument_list pos:start="23:26" pos:end="23:54">(<argument pos:start="23:27" pos:end="23:53"><expr pos:start="23:27" pos:end="23:53"><name pos:start="23:27" pos:end="23:46">BLOCK_PROBE_BUF_SIZE</name> <operator pos:start="23:48" pos:end="23:49">!=</operator> <literal type="number" pos:start="23:51" pos:end="23:53">512</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="25:9" pos:end="25:51"><expr pos:start="25:9" pos:end="25:50"><call pos:start="25:9" pos:end="25:50"><name pos:start="25:9" pos:end="25:25">QEMU_BUILD_BUG_ON</name><argument_list pos:start="25:26" pos:end="25:50">(<argument pos:start="25:27" pos:end="25:49"><expr pos:start="25:27" pos:end="25:49"><name pos:start="25:27" pos:end="25:42">BDRV_SECTOR_SIZE</name> <operator pos:start="25:44" pos:end="25:45">!=</operator> <literal type="number" pos:start="25:47" pos:end="25:49">512</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="29:9" pos:end="37:9"><if pos:start="29:9" pos:end="37:9">if <condition pos:start="29:12" pos:end="29:28">(<expr pos:start="29:13" pos:end="29:27"><name pos:start="29:13" pos:end="29:22">nb_sectors</name> <operator pos:start="29:24" pos:end="29:25">==</operator> <literal type="number" pos:start="29:27" pos:end="29:27">0</literal></expr>)</condition> <block pos:start="29:30" pos:end="37:9">{<block_content pos:start="35:13" pos:end="35:21">
+
+            <comment type="block" pos:start="31:13" pos:end="33:50">/* qemu_iovec_to_buf() would fail, but we want to return success
+
+             * instead of -EINVAL in this case. */</comment>
+
+            <return pos:start="35:13" pos:end="35:21">return <expr pos:start="35:20" pos:end="35:20"><literal type="number" pos:start="35:20" pos:end="35:20">0</literal></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="41:9" pos:end="41:53"><expr pos:start="41:9" pos:end="41:52"><name pos:start="41:9" pos:end="41:11">buf</name> <operator pos:start="41:13" pos:end="41:13">=</operator> <call pos:start="41:15" pos:end="41:52"><name pos:start="41:15" pos:end="41:33">qemu_try_blockalign</name><argument_list pos:start="41:34" pos:end="41:52">(<argument pos:start="41:35" pos:end="41:46"><expr pos:start="41:35" pos:end="41:46"><name pos:start="41:35" pos:end="41:46"><name pos:start="41:35" pos:end="41:36">bs</name><operator pos:start="41:37" pos:end="41:38">-&gt;</operator><name pos:start="41:39" pos:end="41:42">file</name><operator pos:start="41:43" pos:end="41:44">-&gt;</operator><name pos:start="41:45" pos:end="41:46">bs</name></name></expr></argument>, <argument pos:start="41:49" pos:end="41:51"><expr pos:start="41:49" pos:end="41:51"><literal type="number" pos:start="41:49" pos:end="41:51">512</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="43:9" pos:end="49:9"><if pos:start="43:9" pos:end="49:9">if <condition pos:start="43:12" pos:end="43:17">(<expr pos:start="43:13" pos:end="43:16"><operator pos:start="43:13" pos:end="43:13">!</operator><name pos:start="43:14" pos:end="43:16">buf</name></expr>)</condition> <block pos:start="43:19" pos:end="49:9">{<block_content pos:start="45:13" pos:end="47:22">
+
+            <expr_stmt pos:start="45:13" pos:end="45:26"><expr pos:start="45:13" pos:end="45:25"><name pos:start="45:13" pos:end="45:15">ret</name> <operator pos:start="45:17" pos:end="45:17">=</operator> <operator pos:start="45:19" pos:end="45:19">-</operator><name pos:start="45:20" pos:end="45:25">ENOMEM</name></expr>;</expr_stmt>
+
+            <goto pos:start="47:13" pos:end="47:22">goto <name pos:start="47:18" pos:end="47:21">fail</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="53:9" pos:end="53:51"><expr pos:start="53:9" pos:end="53:50"><name pos:start="53:9" pos:end="53:11">ret</name> <operator pos:start="53:13" pos:end="53:13">=</operator> <call pos:start="53:15" pos:end="53:50"><name pos:start="53:15" pos:end="53:31">qemu_iovec_to_buf</name><argument_list pos:start="53:32" pos:end="53:50">(<argument pos:start="53:33" pos:end="53:36"><expr pos:start="53:33" pos:end="53:36"><name pos:start="53:33" pos:end="53:36">qiov</name></expr></argument>, <argument pos:start="53:39" pos:end="53:39"><expr pos:start="53:39" pos:end="53:39"><literal type="number" pos:start="53:39" pos:end="53:39">0</literal></expr></argument>, <argument pos:start="53:42" pos:end="53:44"><expr pos:start="53:42" pos:end="53:44"><name pos:start="53:42" pos:end="53:44">buf</name></expr></argument>, <argument pos:start="53:47" pos:end="53:49"><expr pos:start="53:47" pos:end="53:49"><literal type="number" pos:start="53:47" pos:end="53:49">512</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="55:9" pos:end="61:9"><if pos:start="55:9" pos:end="61:9">if <condition pos:start="55:12" pos:end="55:23">(<expr pos:start="55:13" pos:end="55:22"><name pos:start="55:13" pos:end="55:15">ret</name> <operator pos:start="55:17" pos:end="55:18">!=</operator> <literal type="number" pos:start="55:20" pos:end="55:22">512</literal></expr>)</condition> <block pos:start="55:25" pos:end="61:9">{<block_content pos:start="57:13" pos:end="59:22">
+
+            <expr_stmt pos:start="57:13" pos:end="57:26"><expr pos:start="57:13" pos:end="57:25"><name pos:start="57:13" pos:end="57:15">ret</name> <operator pos:start="57:17" pos:end="57:17">=</operator> <operator pos:start="57:19" pos:end="57:19">-</operator><name pos:start="57:20" pos:end="57:25">EINVAL</name></expr>;</expr_stmt>
+
+            <goto pos:start="59:13" pos:end="59:22">goto <name pos:start="59:18" pos:end="59:21">fail</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="65:9" pos:end="65:45"><expr pos:start="65:9" pos:end="65:44"><name pos:start="65:9" pos:end="65:11">drv</name> <operator pos:start="65:13" pos:end="65:13">=</operator> <call pos:start="65:15" pos:end="65:44"><name pos:start="65:15" pos:end="65:28">bdrv_probe_all</name><argument_list pos:start="65:29" pos:end="65:44">(<argument pos:start="65:30" pos:end="65:32"><expr pos:start="65:30" pos:end="65:32"><name pos:start="65:30" pos:end="65:32">buf</name></expr></argument>, <argument pos:start="65:35" pos:end="65:37"><expr pos:start="65:35" pos:end="65:37"><literal type="number" pos:start="65:35" pos:end="65:37">512</literal></expr></argument>, <argument pos:start="65:40" pos:end="65:43"><expr pos:start="65:40" pos:end="65:43"><name pos:start="65:40" pos:end="65:43">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="67:9" pos:end="73:9"><if pos:start="67:9" pos:end="73:9">if <condition pos:start="67:12" pos:end="67:27">(<expr pos:start="67:13" pos:end="67:26"><name pos:start="67:13" pos:end="67:15">drv</name> <operator pos:start="67:17" pos:end="67:18">!=</operator> <name pos:start="67:20" pos:end="67:26"><name pos:start="67:20" pos:end="67:21">bs</name><operator pos:start="67:22" pos:end="67:23">-&gt;</operator><name pos:start="67:24" pos:end="67:26">drv</name></name></expr>)</condition> <block pos:start="67:29" pos:end="73:9">{<block_content pos:start="69:13" pos:end="71:22">
+
+            <expr_stmt pos:start="69:13" pos:end="69:25"><expr pos:start="69:13" pos:end="69:24"><name pos:start="69:13" pos:end="69:15">ret</name> <operator pos:start="69:17" pos:end="69:17">=</operator> <operator pos:start="69:19" pos:end="69:19">-</operator><name pos:start="69:20" pos:end="69:24">EPERM</name></expr>;</expr_stmt>
+
+            <goto pos:start="71:13" pos:end="71:22">goto <name pos:start="71:18" pos:end="71:21">fail</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <comment type="block" pos:start="77:9" pos:end="79:48">/* Use the checked buffer, a malicious guest might be overwriting its
+
+         * original buffer in the background. */</comment>
+
+        <expr_stmt pos:start="81:9" pos:end="81:53"><expr pos:start="81:9" pos:end="81:52"><call pos:start="81:9" pos:end="81:52"><name pos:start="81:9" pos:end="81:23">qemu_iovec_init</name><argument_list pos:start="81:24" pos:end="81:52">(<argument pos:start="81:25" pos:end="81:35"><expr pos:start="81:25" pos:end="81:35"><operator pos:start="81:25" pos:end="81:25">&amp;</operator><name pos:start="81:26" pos:end="81:35">local_qiov</name></expr></argument>, <argument pos:start="81:38" pos:end="81:51"><expr pos:start="81:38" pos:end="81:51"><name pos:start="81:38" pos:end="81:47"><name pos:start="81:38" pos:end="81:41">qiov</name><operator pos:start="81:42" pos:end="81:43">-&gt;</operator><name pos:start="81:44" pos:end="81:47">niov</name></name> <operator pos:start="81:49" pos:end="81:49">+</operator> <literal type="number" pos:start="81:51" pos:end="81:51">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="83:9" pos:end="83:46"><expr pos:start="83:9" pos:end="83:45"><call pos:start="83:9" pos:end="83:45"><name pos:start="83:9" pos:end="83:22">qemu_iovec_add</name><argument_list pos:start="83:23" pos:end="83:45">(<argument pos:start="83:24" pos:end="83:34"><expr pos:start="83:24" pos:end="83:34"><operator pos:start="83:24" pos:end="83:24">&amp;</operator><name pos:start="83:25" pos:end="83:34">local_qiov</name></expr></argument>, <argument pos:start="83:37" pos:end="83:39"><expr pos:start="83:37" pos:end="83:39"><name pos:start="83:37" pos:end="83:39">buf</name></expr></argument>, <argument pos:start="83:42" pos:end="83:44"><expr pos:start="83:42" pos:end="83:44"><literal type="number" pos:start="83:42" pos:end="83:44">512</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="85:9" pos:end="85:68"><expr pos:start="85:9" pos:end="85:67"><call pos:start="85:9" pos:end="85:67"><name pos:start="85:9" pos:end="85:25">qemu_iovec_concat</name><argument_list pos:start="85:26" pos:end="85:67">(<argument pos:start="85:27" pos:end="85:37"><expr pos:start="85:27" pos:end="85:37"><operator pos:start="85:27" pos:end="85:27">&amp;</operator><name pos:start="85:28" pos:end="85:37">local_qiov</name></expr></argument>, <argument pos:start="85:40" pos:end="85:43"><expr pos:start="85:40" pos:end="85:43"><name pos:start="85:40" pos:end="85:43">qiov</name></expr></argument>, <argument pos:start="85:46" pos:end="85:48"><expr pos:start="85:46" pos:end="85:48"><literal type="number" pos:start="85:46" pos:end="85:48">512</literal></expr></argument>, <argument pos:start="85:51" pos:end="85:66"><expr pos:start="85:51" pos:end="85:66"><name pos:start="85:51" pos:end="85:60"><name pos:start="85:51" pos:end="85:54">qiov</name><operator pos:start="85:55" pos:end="85:56">-&gt;</operator><name pos:start="85:57" pos:end="85:60">size</name></name> <operator pos:start="85:62" pos:end="85:62">-</operator> <literal type="number" pos:start="85:64" pos:end="85:66">512</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="87:9" pos:end="87:27"><expr pos:start="87:9" pos:end="87:26"><name pos:start="87:9" pos:end="87:12">qiov</name> <operator pos:start="87:14" pos:end="87:14">=</operator> <operator pos:start="87:16" pos:end="87:16">&amp;</operator><name pos:start="87:17" pos:end="87:26">local_qiov</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="93:5" pos:end="93:45"><expr pos:start="93:5" pos:end="93:44"><call pos:start="93:5" pos:end="93:44"><name pos:start="93:5" pos:end="93:16">BLKDBG_EVENT</name><argument_list pos:start="93:17" pos:end="93:44">(<argument pos:start="93:18" pos:end="93:25"><expr pos:start="93:18" pos:end="93:25"><name pos:start="93:18" pos:end="93:25"><name pos:start="93:18" pos:end="93:19">bs</name><operator pos:start="93:20" pos:end="93:21">-&gt;</operator><name pos:start="93:22" pos:end="93:25">file</name></name></expr></argument>, <argument pos:start="93:28" pos:end="93:43"><expr pos:start="93:28" pos:end="93:43"><name pos:start="93:28" pos:end="93:43">BLKDBG_WRITE_AIO</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="95:5" pos:end="97:70"><expr pos:start="95:5" pos:end="97:69"><name pos:start="95:5" pos:end="95:7">ret</name> <operator pos:start="95:9" pos:end="95:9">=</operator> <call pos:start="95:11" pos:end="97:69"><name pos:start="95:11" pos:end="95:25">bdrv_co_pwritev</name><argument_list pos:start="95:26" pos:end="97:69">(<argument pos:start="95:27" pos:end="95:38"><expr pos:start="95:27" pos:end="95:38"><name pos:start="95:27" pos:end="95:38"><name pos:start="95:27" pos:end="95:28">bs</name><operator pos:start="95:29" pos:end="95:30">-&gt;</operator><name pos:start="95:31" pos:end="95:34">file</name><operator pos:start="95:35" pos:end="95:36">-&gt;</operator><name pos:start="95:37" pos:end="95:38">bs</name></name></expr></argument>, <argument pos:start="95:41" pos:end="95:69"><expr pos:start="95:41" pos:end="95:69"><name pos:start="95:41" pos:end="95:50">sector_num</name> <operator pos:start="95:52" pos:end="95:52">*</operator> <name pos:start="95:54" pos:end="95:69">BDRV_SECTOR_SIZE</name></expr></argument>,
+
+                          <argument pos:start="97:27" pos:end="97:55"><expr pos:start="97:27" pos:end="97:55"><name pos:start="97:27" pos:end="97:36">nb_sectors</name> <operator pos:start="97:38" pos:end="97:38">*</operator> <name pos:start="97:40" pos:end="97:55">BDRV_SECTOR_SIZE</name></expr></argument>, <argument pos:start="97:58" pos:end="97:61"><expr pos:start="97:58" pos:end="97:61"><name pos:start="97:58" pos:end="97:61">qiov</name></expr></argument>, <argument pos:start="97:64" pos:end="97:68"><expr pos:start="97:64" pos:end="97:68"><name pos:start="97:64" pos:end="97:68">flags</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+<label pos:start="101:1" pos:end="101:5"><name pos:start="101:1" pos:end="101:4">fail</name>:</label>
+
+    <if_stmt pos:start="103:5" pos:end="107:5"><if pos:start="103:5" pos:end="107:5">if <condition pos:start="103:8" pos:end="103:28">(<expr pos:start="103:9" pos:end="103:27"><name pos:start="103:9" pos:end="103:12">qiov</name> <operator pos:start="103:14" pos:end="103:15">==</operator> <operator pos:start="103:17" pos:end="103:17">&amp;</operator><name pos:start="103:18" pos:end="103:27">local_qiov</name></expr>)</condition> <block pos:start="103:30" pos:end="107:5">{<block_content pos:start="105:9" pos:end="105:40">
+
+        <expr_stmt pos:start="105:9" pos:end="105:40"><expr pos:start="105:9" pos:end="105:39"><call pos:start="105:9" pos:end="105:39"><name pos:start="105:9" pos:end="105:26">qemu_iovec_destroy</name><argument_list pos:start="105:27" pos:end="105:39">(<argument pos:start="105:28" pos:end="105:38"><expr pos:start="105:28" pos:end="105:38"><operator pos:start="105:28" pos:end="105:28">&amp;</operator><name pos:start="105:29" pos:end="105:38">local_qiov</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <expr_stmt pos:start="109:5" pos:end="109:20"><expr pos:start="109:5" pos:end="109:19"><call pos:start="109:5" pos:end="109:19"><name pos:start="109:5" pos:end="109:14">qemu_vfree</name><argument_list pos:start="109:15" pos:end="109:19">(<argument pos:start="109:16" pos:end="109:18"><expr pos:start="109:16" pos:end="109:18"><name pos:start="109:16" pos:end="109:18">buf</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <return pos:start="111:5" pos:end="111:15">return <expr pos:start="111:12" pos:end="111:14"><name pos:start="111:12" pos:end="111:14">ret</name></expr>;</return>
+
+</block_content>}</block>
+</unit>

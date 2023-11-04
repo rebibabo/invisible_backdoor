@@ -1,0 +1,597 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/3154.c" pos:tabs="8"><function pos:start="1:1" pos:end="595:1"><type pos:start="1:1" pos:end="1:14"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:14">int16_t</name></type> <name pos:start="1:16" pos:end="1:31">long_term_filter</name><parameter_list pos:start="1:32" pos:end="5:50">(<parameter pos:start="1:33" pos:end="1:47"><decl pos:start="1:33" pos:end="1:47"><type pos:start="1:33" pos:end="1:47"><name pos:start="1:33" pos:end="1:42">DSPContext</name> <modifier pos:start="1:44" pos:end="1:44">*</modifier></type><name pos:start="1:45" pos:end="1:47">dsp</name></decl></parameter>, <parameter pos:start="1:50" pos:end="1:68"><decl pos:start="1:50" pos:end="1:68"><type pos:start="1:50" pos:end="1:68"><name pos:start="1:50" pos:end="1:52">int</name></type> <name pos:start="1:54" pos:end="1:68">pitch_delay_int</name></decl></parameter>,
+
+                                <parameter pos:start="3:33" pos:end="3:55"><decl pos:start="3:33" pos:end="3:55"><type pos:start="3:33" pos:end="3:55"><specifier pos:start="3:33" pos:end="3:37">const</specifier> <name pos:start="3:39" pos:end="3:45">int16_t</name><modifier pos:start="3:46" pos:end="3:46">*</modifier></type> <name pos:start="3:48" pos:end="3:55">residual</name></decl></parameter>, <parameter pos:start="3:58" pos:end="3:79"><decl pos:start="3:58" pos:end="3:79"><type pos:start="3:58" pos:end="3:79"><name pos:start="3:58" pos:end="3:64">int16_t</name> <modifier pos:start="3:66" pos:end="3:66">*</modifier></type><name pos:start="3:67" pos:end="3:79">residual_filt</name></decl></parameter>,
+
+                                <parameter pos:start="5:33" pos:end="5:49"><decl pos:start="5:33" pos:end="5:49"><type pos:start="5:33" pos:end="5:49"><name pos:start="5:33" pos:end="5:35">int</name></type> <name pos:start="5:37" pos:end="5:49">subframe_size</name></decl></parameter>)</parameter_list>
+
+<block pos:start="7:1" pos:end="595:1">{<block_content pos:start="9:5" pos:end="593:13">
+
+    <decl_stmt pos:start="9:5" pos:end="9:24"><decl pos:start="9:5" pos:end="9:9"><type pos:start="9:5" pos:end="9:7"><name pos:start="9:5" pos:end="9:7">int</name></type> <name pos:start="9:9" pos:end="9:9">i</name></decl>, <decl pos:start="9:12" pos:end="9:12"><type ref="prev" pos:start="9:5" pos:end="9:7"/><name pos:start="9:12" pos:end="9:12">k</name></decl>, <decl pos:start="9:15" pos:end="9:17"><type ref="prev" pos:start="9:5" pos:end="9:7"/><name pos:start="9:15" pos:end="9:17">tmp</name></decl>, <decl pos:start="9:20" pos:end="9:23"><type ref="prev" pos:start="9:5" pos:end="9:7"/><name pos:start="9:20" pos:end="9:23">tmp2</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:12"><decl pos:start="11:5" pos:end="11:11"><type pos:start="11:5" pos:end="11:7"><name pos:start="11:5" pos:end="11:7">int</name></type> <name pos:start="11:9" pos:end="11:11">sum</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:16"><decl pos:start="13:5" pos:end="13:15"><type pos:start="13:5" pos:end="13:7"><name pos:start="13:5" pos:end="13:7">int</name></type> <name pos:start="13:9" pos:end="13:15">L_temp0</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:16"><decl pos:start="15:5" pos:end="15:15"><type pos:start="15:5" pos:end="15:7"><name pos:start="15:5" pos:end="15:7">int</name></type> <name pos:start="15:9" pos:end="15:15">L_temp1</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="17:5" pos:end="17:22"><decl pos:start="17:5" pos:end="17:21"><type pos:start="17:5" pos:end="17:11"><name pos:start="17:5" pos:end="17:11">int64_t</name></type> <name pos:start="17:13" pos:end="17:21">L64_temp0</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:22"><decl pos:start="19:5" pos:end="19:21"><type pos:start="19:5" pos:end="19:11"><name pos:start="19:5" pos:end="19:11">int64_t</name></type> <name pos:start="19:13" pos:end="19:21">L64_temp1</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="21:5" pos:end="21:18"><decl pos:start="21:5" pos:end="21:17"><type pos:start="21:5" pos:end="21:11"><name pos:start="21:5" pos:end="21:11">int16_t</name></type> <name pos:start="21:13" pos:end="21:17">shift</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="23:5" pos:end="23:35"><decl pos:start="23:5" pos:end="23:20"><type pos:start="23:5" pos:end="23:7"><name pos:start="23:5" pos:end="23:7">int</name></type> <name pos:start="23:9" pos:end="23:20">corr_int_num</name></decl>, <decl pos:start="23:23" pos:end="23:34"><type ref="prev" pos:start="23:5" pos:end="23:7"/><name pos:start="23:23" pos:end="23:34">corr_int_den</name></decl>;</decl_stmt>
+
+
+
+    <decl_stmt pos:start="27:5" pos:end="27:13"><decl pos:start="27:5" pos:end="27:12"><type pos:start="27:5" pos:end="27:7"><name pos:start="27:5" pos:end="27:7">int</name></type> <name pos:start="27:9" pos:end="27:12">ener</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="29:5" pos:end="29:20"><decl pos:start="29:5" pos:end="29:19"><type pos:start="29:5" pos:end="29:11"><name pos:start="29:5" pos:end="29:11">int16_t</name></type> <name pos:start="29:13" pos:end="29:19">sh_ener</name></decl>;</decl_stmt>
+
+
+
+    <decl_stmt pos:start="33:5" pos:end="33:30"><decl pos:start="33:5" pos:end="33:20"><type pos:start="33:5" pos:end="33:11"><name pos:start="33:5" pos:end="33:11">int16_t</name></type> <name pos:start="33:13" pos:end="33:20">gain_num</name></decl>,<decl pos:start="33:22" pos:end="33:29"><type ref="prev" pos:start="33:5" pos:end="33:11"/><name pos:start="33:22" pos:end="33:29">gain_den</name></decl>;</decl_stmt> <comment type="line" pos:start="33:32" pos:end="33:81">//selected signal's gain numerator and denominator</comment>
+
+    <decl_stmt pos:start="35:5" pos:end="35:37"><decl pos:start="35:5" pos:end="35:23"><type pos:start="35:5" pos:end="35:11"><name pos:start="35:5" pos:end="35:11">int16_t</name></type> <name pos:start="35:13" pos:end="35:23">sh_gain_num</name></decl>, <decl pos:start="35:26" pos:end="35:36"><type ref="prev" pos:start="35:5" pos:end="35:11"/><name pos:start="35:26" pos:end="35:36">sh_gain_den</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="37:5" pos:end="37:24"><decl pos:start="37:5" pos:end="37:23"><type pos:start="37:5" pos:end="37:7"><name pos:start="37:5" pos:end="37:7">int</name></type> <name pos:start="37:9" pos:end="37:23">gain_num_square</name></decl>;</decl_stmt>
+
+
+
+    <decl_stmt pos:start="41:5" pos:end="41:40"><decl pos:start="41:5" pos:end="41:25"><type pos:start="41:5" pos:end="41:11"><name pos:start="41:5" pos:end="41:11">int16_t</name></type> <name pos:start="41:13" pos:end="41:25">gain_long_num</name></decl>,<decl pos:start="41:27" pos:end="41:39"><type ref="prev" pos:start="41:5" pos:end="41:11"/><name pos:start="41:27" pos:end="41:39">gain_long_den</name></decl>;</decl_stmt> <comment type="line" pos:start="41:42" pos:end="41:125">//filtered through long interpolation filter signal's gain numerator and denominator</comment>
+
+    <decl_stmt pos:start="43:5" pos:end="43:47"><decl pos:start="43:5" pos:end="43:28"><type pos:start="43:5" pos:end="43:11"><name pos:start="43:5" pos:end="43:11">int16_t</name></type> <name pos:start="43:13" pos:end="43:28">sh_gain_long_num</name></decl>, <decl pos:start="43:31" pos:end="43:46"><type ref="prev" pos:start="43:5" pos:end="43:11"/><name pos:start="43:31" pos:end="43:46">sh_gain_long_den</name></decl>;</decl_stmt>
+
+
+
+    <decl_stmt pos:start="47:5" pos:end="47:44"><decl pos:start="47:5" pos:end="47:26"><type pos:start="47:5" pos:end="47:11"><name pos:start="47:5" pos:end="47:11">int16_t</name></type> <name pos:start="47:13" pos:end="47:26">best_delay_int</name></decl>, <decl pos:start="47:29" pos:end="47:43"><type ref="prev" pos:start="47:5" pos:end="47:11"/><name pos:start="47:29" pos:end="47:43">best_delay_frac</name></decl>;</decl_stmt>
+
+
+
+    <decl_stmt pos:start="51:5" pos:end="51:34"><decl pos:start="51:5" pos:end="51:33"><type pos:start="51:5" pos:end="51:11"><name pos:start="51:5" pos:end="51:11">int16_t</name></type> <name pos:start="51:13" pos:end="51:33">delayed_signal_offset</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="53:5" pos:end="53:43"><decl pos:start="53:5" pos:end="53:24"><type pos:start="53:5" pos:end="53:7"><name pos:start="53:5" pos:end="53:7">int</name></type> <name pos:start="53:9" pos:end="53:24">lt_filt_factor_a</name></decl>, <decl pos:start="53:27" pos:end="53:42"><type ref="prev" pos:start="53:5" pos:end="53:7"/><name pos:start="53:27" pos:end="53:42">lt_filt_factor_b</name></decl>;</decl_stmt>
+
+
+
+    <decl_stmt pos:start="57:5" pos:end="57:30"><decl pos:start="57:5" pos:end="57:29"><type pos:start="57:5" pos:end="57:13"><name pos:start="57:5" pos:end="57:11">int16_t</name> <modifier pos:start="57:13" pos:end="57:13">*</modifier></type> <name pos:start="57:15" pos:end="57:29">selected_signal</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="59:5" pos:end="59:42"><decl pos:start="59:5" pos:end="59:41"><type pos:start="59:5" pos:end="59:19"><specifier pos:start="59:5" pos:end="59:9">const</specifier> <name pos:start="59:11" pos:end="59:17">int16_t</name> <modifier pos:start="59:19" pos:end="59:19">*</modifier></type> <name pos:start="59:21" pos:end="59:41">selected_signal_const</name></decl>;</decl_stmt> <comment type="line" pos:start="59:44" pos:end="59:80">//Necessary to avoid compiler warning</comment>
+
+
+
+    <decl_stmt pos:start="63:5" pos:end="63:59"><decl pos:start="63:5" pos:end="63:58"><type pos:start="63:5" pos:end="63:11"><name pos:start="63:5" pos:end="63:11">int16_t</name></type> <name pos:start="63:13" pos:end="63:58"><name pos:start="63:13" pos:end="63:22">sig_scaled</name><index pos:start="63:23" pos:end="63:58">[<expr pos:start="63:24" pos:end="63:57"><name pos:start="63:24" pos:end="63:36">SUBFRAME_SIZE</name> <operator pos:start="63:38" pos:end="63:38">+</operator> <name pos:start="63:40" pos:end="63:57">RES_PREV_DATA_SIZE</name></expr>]</index></name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="65:5" pos:end="65:66"><decl pos:start="65:5" pos:end="65:65"><type pos:start="65:5" pos:end="65:11"><name pos:start="65:5" pos:end="65:11">int16_t</name></type> <name pos:start="65:13" pos:end="65:65"><name pos:start="65:13" pos:end="65:26">delayed_signal</name><index pos:start="65:27" pos:end="65:48">[<expr pos:start="65:28" pos:end="65:47"><name pos:start="65:28" pos:end="65:47">ANALYZED_FRAC_DELAYS</name></expr>]</index><index pos:start="65:49" pos:end="65:65">[<expr pos:start="65:50" pos:end="65:64"><name pos:start="65:50" pos:end="65:62">SUBFRAME_SIZE</name><operator pos:start="65:63" pos:end="65:63">+</operator><literal type="number" pos:start="65:64" pos:end="65:64">1</literal></expr>]</index></name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="67:5" pos:end="67:42"><decl pos:start="67:5" pos:end="67:41"><type pos:start="67:5" pos:end="67:7"><name pos:start="67:5" pos:end="67:7">int</name></type> <name pos:start="67:9" pos:end="67:41"><name pos:start="67:9" pos:end="67:16">corr_den</name><index pos:start="67:17" pos:end="67:38">[<expr pos:start="67:18" pos:end="67:37"><name pos:start="67:18" pos:end="67:37">ANALYZED_FRAC_DELAYS</name></expr>]</index><index pos:start="67:39" pos:end="67:41">[<expr pos:start="67:40" pos:end="67:40"><literal type="number" pos:start="67:40" pos:end="67:40">2</literal></expr>]</index></name></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="71:5" pos:end="71:12"><expr pos:start="71:5" pos:end="71:11"><name pos:start="71:5" pos:end="71:7">tmp</name> <operator pos:start="71:9" pos:end="71:9">=</operator> <literal type="number" pos:start="71:11" pos:end="71:11">0</literal></expr>;</expr_stmt>
+
+    <for pos:start="73:5" pos:end="75:34">for<control pos:start="73:8" pos:end="73:55">(<init pos:start="73:9" pos:end="73:12"><expr pos:start="73:9" pos:end="73:11"><name pos:start="73:9" pos:end="73:9">i</name><operator pos:start="73:10" pos:end="73:10">=</operator><literal type="number" pos:start="73:11" pos:end="73:11">0</literal></expr>;</init> <condition pos:start="73:14" pos:end="73:50"><expr pos:start="73:14" pos:end="73:49"><name pos:start="73:14" pos:end="73:14">i</name><operator pos:start="73:15" pos:end="73:15">&lt;</operator><name pos:start="73:16" pos:end="73:28">subframe_size</name> <operator pos:start="73:30" pos:end="73:30">+</operator> <name pos:start="73:32" pos:end="73:49">RES_PREV_DATA_SIZE</name></expr>;</condition> <incr pos:start="73:52" pos:end="73:54"><expr pos:start="73:52" pos:end="73:54"><name pos:start="73:52" pos:end="73:52">i</name><operator pos:start="73:53" pos:end="73:54">++</operator></expr></incr>)</control><block type="pseudo" pos:start="75:9" pos:end="75:34"><block_content pos:start="75:9" pos:end="75:34">
+
+        <expr_stmt pos:start="75:9" pos:end="75:34"><expr pos:start="75:9" pos:end="75:33"><name pos:start="75:9" pos:end="75:11">tmp</name> <operator pos:start="75:13" pos:end="75:14">|=</operator> <call pos:start="75:16" pos:end="75:33"><name pos:start="75:16" pos:end="75:20">FFABS</name><argument_list pos:start="75:21" pos:end="75:33">(<argument pos:start="75:22" pos:end="75:32"><expr pos:start="75:22" pos:end="75:32"><name pos:start="75:22" pos:end="75:32"><name pos:start="75:22" pos:end="75:29">residual</name><index pos:start="75:30" pos:end="75:32">[<expr pos:start="75:31" pos:end="75:31"><name pos:start="75:31" pos:end="75:31">i</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></for>
+
+
+
+    <if_stmt pos:start="79:5" pos:end="85:34"><if pos:start="79:5" pos:end="81:18">if<condition pos:start="79:7" pos:end="79:12">(<expr pos:start="79:8" pos:end="79:11"><operator pos:start="79:8" pos:end="79:8">!</operator><name pos:start="79:9" pos:end="79:11">tmp</name></expr>)</condition><block type="pseudo" pos:start="81:9" pos:end="81:18"><block_content pos:start="81:9" pos:end="81:18">
+
+        <expr_stmt pos:start="81:9" pos:end="81:18"><expr pos:start="81:9" pos:end="81:17"><name pos:start="81:9" pos:end="81:13">shift</name> <operator pos:start="81:15" pos:end="81:15">=</operator> <literal type="number" pos:start="81:17" pos:end="81:17">3</literal></expr>;</expr_stmt></block_content></block></if>
+
+    <else pos:start="83:5" pos:end="85:34">else<block type="pseudo" pos:start="85:9" pos:end="85:34"><block_content pos:start="85:9" pos:end="85:34">
+
+        <expr_stmt pos:start="85:9" pos:end="85:34"><expr pos:start="85:9" pos:end="85:33"><name pos:start="85:9" pos:end="85:13">shift</name> <operator pos:start="85:15" pos:end="85:15">=</operator> <call pos:start="85:17" pos:end="85:28"><name pos:start="85:17" pos:end="85:23">av_log2</name><argument_list pos:start="85:24" pos:end="85:28">(<argument pos:start="85:25" pos:end="85:27"><expr pos:start="85:25" pos:end="85:27"><name pos:start="85:25" pos:end="85:27">tmp</name></expr></argument>)</argument_list></call> <operator pos:start="85:30" pos:end="85:30">-</operator> <literal type="number" pos:start="85:32" pos:end="85:33">11</literal></expr>;</expr_stmt></block_content></block></else></if_stmt>
+
+
+
+    <if_stmt pos:start="89:5" pos:end="99:50"><if pos:start="89:5" pos:end="93:49">if <condition pos:start="89:8" pos:end="89:18">(<expr pos:start="89:9" pos:end="89:17"><name pos:start="89:9" pos:end="89:13">shift</name> <operator pos:start="89:15" pos:end="89:15">&gt;</operator> <literal type="number" pos:start="89:17" pos:end="89:17">0</literal></expr>)</condition><block type="pseudo" pos:start="91:9" pos:end="93:49"><block_content pos:start="91:9" pos:end="93:49">
+
+        <for pos:start="91:9" pos:end="93:49">for <control pos:start="91:13" pos:end="91:64">(<init pos:start="91:14" pos:end="91:19"><expr pos:start="91:14" pos:end="91:18"><name pos:start="91:14" pos:end="91:14">i</name> <operator pos:start="91:16" pos:end="91:16">=</operator> <literal type="number" pos:start="91:18" pos:end="91:18">0</literal></expr>;</init> <condition pos:start="91:21" pos:end="91:59"><expr pos:start="91:21" pos:end="91:58"><name pos:start="91:21" pos:end="91:21">i</name> <operator pos:start="91:23" pos:end="91:23">&lt;</operator> <name pos:start="91:25" pos:end="91:37">subframe_size</name> <operator pos:start="91:39" pos:end="91:39">+</operator> <name pos:start="91:41" pos:end="91:58">RES_PREV_DATA_SIZE</name></expr>;</condition> <incr pos:start="91:61" pos:end="91:63"><expr pos:start="91:61" pos:end="91:63"><name pos:start="91:61" pos:end="91:61">i</name><operator pos:start="91:62" pos:end="91:63">++</operator></expr></incr>)</control><block type="pseudo" pos:start="93:13" pos:end="93:49"><block_content pos:start="93:13" pos:end="93:49">
+
+            <expr_stmt pos:start="93:13" pos:end="93:49"><expr pos:start="93:13" pos:end="93:48"><name pos:start="93:13" pos:end="93:25"><name pos:start="93:13" pos:end="93:22">sig_scaled</name><index pos:start="93:23" pos:end="93:25">[<expr pos:start="93:24" pos:end="93:24"><name pos:start="93:24" pos:end="93:24">i</name></expr>]</index></name> <operator pos:start="93:27" pos:end="93:27">=</operator> <name pos:start="93:29" pos:end="93:39"><name pos:start="93:29" pos:end="93:36">residual</name><index pos:start="93:37" pos:end="93:39">[<expr pos:start="93:38" pos:end="93:38"><name pos:start="93:38" pos:end="93:38">i</name></expr>]</index></name> <operator pos:start="93:41" pos:end="93:42">&gt;&gt;</operator> <name pos:start="93:44" pos:end="93:48">shift</name></expr>;</expr_stmt></block_content></block></for></block_content></block></if>
+
+    <else pos:start="95:5" pos:end="99:50">else<block type="pseudo" pos:start="97:9" pos:end="99:50"><block_content pos:start="97:9" pos:end="99:50">
+
+        <for pos:start="97:9" pos:end="99:50">for <control pos:start="97:13" pos:end="97:64">(<init pos:start="97:14" pos:end="97:19"><expr pos:start="97:14" pos:end="97:18"><name pos:start="97:14" pos:end="97:14">i</name> <operator pos:start="97:16" pos:end="97:16">=</operator> <literal type="number" pos:start="97:18" pos:end="97:18">0</literal></expr>;</init> <condition pos:start="97:21" pos:end="97:59"><expr pos:start="97:21" pos:end="97:58"><name pos:start="97:21" pos:end="97:21">i</name> <operator pos:start="97:23" pos:end="97:23">&lt;</operator> <name pos:start="97:25" pos:end="97:37">subframe_size</name> <operator pos:start="97:39" pos:end="97:39">+</operator> <name pos:start="97:41" pos:end="97:58">RES_PREV_DATA_SIZE</name></expr>;</condition> <incr pos:start="97:61" pos:end="97:63"><expr pos:start="97:61" pos:end="97:63"><name pos:start="97:61" pos:end="97:61">i</name><operator pos:start="97:62" pos:end="97:63">++</operator></expr></incr>)</control><block type="pseudo" pos:start="99:13" pos:end="99:50"><block_content pos:start="99:13" pos:end="99:50">
+
+            <expr_stmt pos:start="99:13" pos:end="99:50"><expr pos:start="99:13" pos:end="99:49"><name pos:start="99:13" pos:end="99:25"><name pos:start="99:13" pos:end="99:22">sig_scaled</name><index pos:start="99:23" pos:end="99:25">[<expr pos:start="99:24" pos:end="99:24"><name pos:start="99:24" pos:end="99:24">i</name></expr>]</index></name> <operator pos:start="99:27" pos:end="99:27">=</operator> <name pos:start="99:29" pos:end="99:39"><name pos:start="99:29" pos:end="99:36">residual</name><index pos:start="99:37" pos:end="99:39">[<expr pos:start="99:38" pos:end="99:38"><name pos:start="99:38" pos:end="99:38">i</name></expr>]</index></name> <operator pos:start="99:41" pos:end="99:42">&lt;&lt;</operator> <operator pos:start="99:44" pos:end="99:44">-</operator><name pos:start="99:45" pos:end="99:49">shift</name></expr>;</expr_stmt></block_content></block></for></block_content></block></else></if_stmt>
+
+
+
+    <comment type="block" pos:start="103:5" pos:end="103:44">/* Start of best delay searching code */</comment>
+
+    <expr_stmt pos:start="105:5" pos:end="105:17"><expr pos:start="105:5" pos:end="105:16"><name pos:start="105:5" pos:end="105:12">gain_num</name> <operator pos:start="105:14" pos:end="105:14">=</operator> <literal type="number" pos:start="105:16" pos:end="105:16">0</literal></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="109:5" pos:end="113:51"><expr pos:start="109:5" pos:end="113:50"><name pos:start="109:5" pos:end="109:8">ener</name> <operator pos:start="109:10" pos:end="109:10">=</operator> <call pos:start="109:12" pos:end="113:50"><name pos:start="109:12" pos:end="109:35"><name pos:start="109:12" pos:end="109:14">dsp</name><operator pos:start="109:15" pos:end="109:16">-&gt;</operator><name pos:start="109:17" pos:end="109:35">scalarproduct_int16</name></name><argument_list pos:start="109:36" pos:end="113:50">(<argument pos:start="109:37" pos:end="109:67"><expr pos:start="109:37" pos:end="109:67"><name pos:start="109:37" pos:end="109:46">sig_scaled</name> <operator pos:start="109:48" pos:end="109:48">+</operator> <name pos:start="109:50" pos:end="109:67">RES_PREV_DATA_SIZE</name></expr></argument>,
+
+                                    <argument pos:start="111:37" pos:end="111:67"><expr pos:start="111:37" pos:end="111:67"><name pos:start="111:37" pos:end="111:46">sig_scaled</name> <operator pos:start="111:48" pos:end="111:48">+</operator> <name pos:start="111:50" pos:end="111:67">RES_PREV_DATA_SIZE</name></expr></argument>,
+
+                                    <argument pos:start="113:37" pos:end="113:49"><expr pos:start="113:37" pos:end="113:49"><name pos:start="113:37" pos:end="113:49">subframe_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="115:5" pos:end="373:5"><if pos:start="115:5" pos:end="373:5">if <condition pos:start="115:8" pos:end="115:13">(<expr pos:start="115:9" pos:end="115:12"><name pos:start="115:9" pos:end="115:12">ener</name></expr>)</condition> <block pos:start="115:15" pos:end="373:5">{<block_content pos:start="117:9" pos:end="371:9">
+
+        <expr_stmt pos:start="117:9" pos:end="117:47"><expr pos:start="117:9" pos:end="117:46"><name pos:start="117:9" pos:end="117:15">sh_ener</name> <operator pos:start="117:17" pos:end="117:17">=</operator> <call pos:start="117:19" pos:end="117:46"><name pos:start="117:19" pos:end="117:23">FFMAX</name><argument_list pos:start="117:24" pos:end="117:46">(<argument pos:start="117:25" pos:end="117:42"><expr pos:start="117:25" pos:end="117:42"><call pos:start="117:25" pos:end="117:37"><name pos:start="117:25" pos:end="117:31">av_log2</name><argument_list pos:start="117:32" pos:end="117:37">(<argument pos:start="117:33" pos:end="117:36"><expr pos:start="117:33" pos:end="117:36"><name pos:start="117:33" pos:end="117:36">ener</name></expr></argument>)</argument_list></call> <operator pos:start="117:39" pos:end="117:39">-</operator> <literal type="number" pos:start="117:41" pos:end="117:42">14</literal></expr></argument>, <argument pos:start="117:45" pos:end="117:45"><expr pos:start="117:45" pos:end="117:45"><literal type="number" pos:start="117:45" pos:end="117:45">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="119:9" pos:end="119:25"><expr pos:start="119:9" pos:end="119:24"><name pos:start="119:9" pos:end="119:12">ener</name> <operator pos:start="119:14" pos:end="119:16">&gt;&gt;=</operator> <name pos:start="119:18" pos:end="119:24">sh_ener</name></expr>;</expr_stmt>
+
+        <comment type="block" pos:start="121:9" pos:end="147:36">/* Search for best pitch delay.
+
+
+
+                       sum{ r(n) * r(k,n) ] }^2
+
+           R'(k)^2 := -------------------------
+
+                       sum{ r(k,n) * r(k,n) }
+
+
+
+
+
+           R(T)    :=  sum{ r(n) * r(n-T) ] }
+
+
+
+
+
+           where
+
+           r(n-T) is integer delayed signal with delay T
+
+           r(k,n) is non-integer delayed signal with integer delay best_delay
+
+           and fractional delay k */</comment>
+
+
+
+        <comment type="block" pos:start="151:9" pos:end="159:42">/* Find integer delay best_delay which maximizes correlation R(T).
+
+
+
+           This is also equals to numerator of R'(0),
+
+           since the fine search (second step) is done with 1/8
+
+           precision around best_delay. */</comment>
+
+        <expr_stmt pos:start="161:9" pos:end="161:25"><expr pos:start="161:9" pos:end="161:24"><name pos:start="161:9" pos:end="161:20">corr_int_num</name> <operator pos:start="161:22" pos:end="161:22">=</operator> <literal type="number" pos:start="161:24" pos:end="161:24">0</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="163:9" pos:end="163:45"><expr pos:start="163:9" pos:end="163:44"><name pos:start="163:9" pos:end="163:22">best_delay_int</name> <operator pos:start="163:24" pos:end="163:24">=</operator> <name pos:start="163:26" pos:end="163:40">pitch_delay_int</name> <operator pos:start="163:42" pos:end="163:42">-</operator> <literal type="number" pos:start="163:44" pos:end="163:44">1</literal></expr>;</expr_stmt>
+
+        <for pos:start="165:9" pos:end="181:9">for <control pos:start="165:13" pos:end="165:68">(<init pos:start="165:14" pos:end="165:37"><expr pos:start="165:14" pos:end="165:36"><name pos:start="165:14" pos:end="165:14">i</name> <operator pos:start="165:16" pos:end="165:16">=</operator> <name pos:start="165:18" pos:end="165:32">pitch_delay_int</name> <operator pos:start="165:34" pos:end="165:34">-</operator> <literal type="number" pos:start="165:36" pos:end="165:36">1</literal></expr>;</init> <condition pos:start="165:39" pos:end="165:63"><expr pos:start="165:39" pos:end="165:62"><name pos:start="165:39" pos:end="165:39">i</name> <operator pos:start="165:41" pos:end="165:42">&lt;=</operator> <name pos:start="165:44" pos:end="165:58">pitch_delay_int</name> <operator pos:start="165:60" pos:end="165:60">+</operator> <literal type="number" pos:start="165:62" pos:end="165:62">1</literal></expr>;</condition> <incr pos:start="165:65" pos:end="165:67"><expr pos:start="165:65" pos:end="165:67"><name pos:start="165:65" pos:end="165:65">i</name><operator pos:start="165:66" pos:end="165:67">++</operator></expr></incr>)</control> <block pos:start="165:70" pos:end="181:9">{<block_content pos:start="167:13" pos:end="179:13">
+
+            <expr_stmt pos:start="167:13" pos:end="171:58"><expr pos:start="167:13" pos:end="171:57"><name pos:start="167:13" pos:end="167:15">sum</name> <operator pos:start="167:17" pos:end="167:17">=</operator> <call pos:start="167:19" pos:end="171:57"><name pos:start="167:19" pos:end="167:42"><name pos:start="167:19" pos:end="167:21">dsp</name><operator pos:start="167:22" pos:end="167:23">-&gt;</operator><name pos:start="167:24" pos:end="167:42">scalarproduct_int16</name></name><argument_list pos:start="167:43" pos:end="171:57">(<argument pos:start="167:44" pos:end="167:74"><expr pos:start="167:44" pos:end="167:74"><name pos:start="167:44" pos:end="167:53">sig_scaled</name> <operator pos:start="167:55" pos:end="167:55">+</operator> <name pos:start="167:57" pos:end="167:74">RES_PREV_DATA_SIZE</name></expr></argument>,
+
+                                           <argument pos:start="169:44" pos:end="169:78"><expr pos:start="169:44" pos:end="169:78"><name pos:start="169:44" pos:end="169:53">sig_scaled</name> <operator pos:start="169:55" pos:end="169:55">+</operator> <name pos:start="169:57" pos:end="169:74">RES_PREV_DATA_SIZE</name> <operator pos:start="169:76" pos:end="169:76">-</operator> <name pos:start="169:78" pos:end="169:78">i</name></expr></argument>,
+
+                                           <argument pos:start="171:44" pos:end="171:56"><expr pos:start="171:44" pos:end="171:56"><name pos:start="171:44" pos:end="171:56">subframe_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <if_stmt pos:start="173:13" pos:end="179:13"><if pos:start="173:13" pos:end="179:13">if <condition pos:start="173:16" pos:end="173:35">(<expr pos:start="173:17" pos:end="173:34"><name pos:start="173:17" pos:end="173:19">sum</name> <operator pos:start="173:21" pos:end="173:21">&gt;</operator> <name pos:start="173:23" pos:end="173:34">corr_int_num</name></expr>)</condition> <block pos:start="173:37" pos:end="179:13">{<block_content pos:start="175:17" pos:end="177:35">
+
+                <expr_stmt pos:start="175:17" pos:end="175:35"><expr pos:start="175:17" pos:end="175:34"><name pos:start="175:17" pos:end="175:28">corr_int_num</name> <operator pos:start="175:30" pos:end="175:30">=</operator> <name pos:start="175:32" pos:end="175:34">sum</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="177:17" pos:end="177:35"><expr pos:start="177:17" pos:end="177:34"><name pos:start="177:17" pos:end="177:30">best_delay_int</name> <operator pos:start="177:32" pos:end="177:32">=</operator> <name pos:start="177:34" pos:end="177:34">i</name></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+        </block_content>}</block></for>
+
+        <if_stmt pos:start="183:9" pos:end="371:9"><if pos:start="183:9" pos:end="371:9">if <condition pos:start="183:12" pos:end="183:25">(<expr pos:start="183:13" pos:end="183:24"><name pos:start="183:13" pos:end="183:24">corr_int_num</name></expr>)</condition> <block pos:start="183:27" pos:end="371:9">{<block_content pos:start="187:13" pos:end="369:13">
+
+            <comment type="block" pos:start="185:13" pos:end="185:77">/* Compute denominator of pseudo-normalized correlation R'(0). */</comment>
+
+            <expr_stmt pos:start="187:13" pos:end="191:67"><expr pos:start="187:13" pos:end="191:66"><name pos:start="187:13" pos:end="187:24">corr_int_den</name> <operator pos:start="187:26" pos:end="187:26">=</operator> <call pos:start="187:28" pos:end="191:66"><name pos:start="187:28" pos:end="187:51"><name pos:start="187:28" pos:end="187:30">dsp</name><operator pos:start="187:31" pos:end="187:32">-&gt;</operator><name pos:start="187:33" pos:end="187:51">scalarproduct_int16</name></name><argument_list pos:start="187:52" pos:end="191:66">(<argument pos:start="187:53" pos:end="187:100"><expr pos:start="187:53" pos:end="187:100"><name pos:start="187:53" pos:end="187:62">sig_scaled</name> <operator pos:start="187:64" pos:end="187:64">-</operator> <name pos:start="187:66" pos:end="187:79">best_delay_int</name> <operator pos:start="187:81" pos:end="187:81">+</operator> <name pos:start="187:83" pos:end="187:100">RES_PREV_DATA_SIZE</name></expr></argument>,
+
+                                                    <argument pos:start="189:53" pos:end="189:100"><expr pos:start="189:53" pos:end="189:100"><name pos:start="189:53" pos:end="189:62">sig_scaled</name> <operator pos:start="189:64" pos:end="189:64">-</operator> <name pos:start="189:66" pos:end="189:79">best_delay_int</name> <operator pos:start="189:81" pos:end="189:81">+</operator> <name pos:start="189:83" pos:end="189:100">RES_PREV_DATA_SIZE</name></expr></argument>,
+
+                                                    <argument pos:start="191:53" pos:end="191:65"><expr pos:start="191:53" pos:end="191:65"><name pos:start="191:53" pos:end="191:65">subframe_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <comment type="block" pos:start="195:13" pos:end="203:44">/* Compute signals with non-integer delay k (with 1/8 precision),
+
+               where k is in [0;6] range.
+
+               Entire delay is qual to best_delay+(k+1)/8
+
+               This is archieved by applying an interpolation filter of
+
+               legth 33 to source signal. */</comment>
+
+            <for pos:start="205:13" pos:end="221:13">for <control pos:start="205:17" pos:end="205:54">(<init pos:start="205:18" pos:end="205:23"><expr pos:start="205:18" pos:end="205:22"><name pos:start="205:18" pos:end="205:18">k</name> <operator pos:start="205:20" pos:end="205:20">=</operator> <literal type="number" pos:start="205:22" pos:end="205:22">0</literal></expr>;</init> <condition pos:start="205:25" pos:end="205:49"><expr pos:start="205:25" pos:end="205:48"><name pos:start="205:25" pos:end="205:25">k</name> <operator pos:start="205:27" pos:end="205:27">&lt;</operator> <name pos:start="205:29" pos:end="205:48">ANALYZED_FRAC_DELAYS</name></expr>;</condition> <incr pos:start="205:51" pos:end="205:53"><expr pos:start="205:51" pos:end="205:53"><name pos:start="205:51" pos:end="205:51">k</name><operator pos:start="205:52" pos:end="205:53">++</operator></expr></incr>)</control> <block pos:start="205:56" pos:end="221:13">{<block_content pos:start="207:17" pos:end="219:56">
+
+                <expr_stmt pos:start="207:17" pos:end="219:56"><expr pos:start="207:17" pos:end="219:55"><call pos:start="207:17" pos:end="219:55"><name pos:start="207:17" pos:end="207:36">ff_acelp_interpolate</name><argument_list pos:start="207:37" pos:end="219:55">(<argument pos:start="207:38" pos:end="207:58"><expr pos:start="207:38" pos:end="207:58"><operator pos:start="207:38" pos:end="207:38">&amp;</operator><name pos:start="207:39" pos:end="207:58"><name pos:start="207:39" pos:end="207:52">delayed_signal</name><index pos:start="207:53" pos:end="207:55">[<expr pos:start="207:54" pos:end="207:54"><name pos:start="207:54" pos:end="207:54">k</name></expr>]</index><index pos:start="207:56" pos:end="207:58">[<expr pos:start="207:57" pos:end="207:57"><literal type="number" pos:start="207:57" pos:end="207:57">0</literal></expr>]</index></name></expr></argument>,
+
+                                     <argument pos:start="209:38" pos:end="209:85"><expr pos:start="209:38" pos:end="209:85"><operator pos:start="209:38" pos:end="209:38">&amp;</operator><name pos:start="209:39" pos:end="209:85"><name pos:start="209:39" pos:end="209:48">sig_scaled</name><index pos:start="209:49" pos:end="209:85">[<expr pos:start="209:50" pos:end="209:84"><name pos:start="209:50" pos:end="209:67">RES_PREV_DATA_SIZE</name> <operator pos:start="209:69" pos:end="209:69">-</operator> <name pos:start="209:71" pos:end="209:84">best_delay_int</name></expr>]</index></name></expr></argument>,
+
+                                     <argument pos:start="211:38" pos:end="211:62"><expr pos:start="211:38" pos:end="211:62"><name pos:start="211:38" pos:end="211:62">ff_g729_interp_filt_short</name></expr></argument>,
+
+                                     <argument pos:start="213:38" pos:end="213:59"><expr pos:start="213:38" pos:end="213:59"><name pos:start="213:38" pos:end="213:57">ANALYZED_FRAC_DELAYS</name><operator pos:start="213:58" pos:end="213:58">+</operator><literal type="number" pos:start="213:59" pos:end="213:59">1</literal></expr></argument>,
+
+                                     <argument pos:start="215:38" pos:end="215:46"><expr pos:start="215:38" pos:end="215:46"><literal type="number" pos:start="215:38" pos:end="215:40">8</literal> <operator pos:start="215:40" pos:end="215:40">-</operator> <name pos:start="215:42" pos:end="215:42">k</name> <operator pos:start="215:44" pos:end="215:44">-</operator> <literal type="number" pos:start="215:46" pos:end="215:46">1</literal></expr></argument>,
+
+                                     <argument pos:start="217:38" pos:end="217:55"><expr pos:start="217:38" pos:end="217:55"><name pos:start="217:38" pos:end="217:55">SHORT_INT_FILT_LEN</name></expr></argument>,
+
+                                     <argument pos:start="219:38" pos:end="219:54"><expr pos:start="219:38" pos:end="219:54"><name pos:start="219:38" pos:end="219:50">subframe_size</name> <operator pos:start="219:52" pos:end="219:52">+</operator> <literal type="number" pos:start="219:54" pos:end="219:54">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></for>
+
+
+
+            <comment type="block" pos:start="225:13" pos:end="235:77">/* Compute denominator of pseudo-normalized correlation R'(k).
+
+
+
+                 corr_den[k][0] is square root of R'(k) denominator, for int(T) == int(T0)
+
+                 corr_den[k][1] is square root of R'(k) denominator, for int(T) == int(T0)+1
+
+
+
+              Also compute maximum value of above denominators over all k. */</comment>
+
+            <expr_stmt pos:start="237:13" pos:end="237:31"><expr pos:start="237:13" pos:end="237:30"><name pos:start="237:13" pos:end="237:15">tmp</name> <operator pos:start="237:17" pos:end="237:17">=</operator> <name pos:start="237:19" pos:end="237:30">corr_int_den</name></expr>;</expr_stmt>
+
+            <for pos:start="239:13" pos:end="255:13">for <control pos:start="239:17" pos:end="239:54">(<init pos:start="239:18" pos:end="239:23"><expr pos:start="239:18" pos:end="239:22"><name pos:start="239:18" pos:end="239:18">k</name> <operator pos:start="239:20" pos:end="239:20">=</operator> <literal type="number" pos:start="239:22" pos:end="239:22">0</literal></expr>;</init> <condition pos:start="239:25" pos:end="239:49"><expr pos:start="239:25" pos:end="239:48"><name pos:start="239:25" pos:end="239:25">k</name> <operator pos:start="239:27" pos:end="239:27">&lt;</operator> <name pos:start="239:29" pos:end="239:48">ANALYZED_FRAC_DELAYS</name></expr>;</condition> <incr pos:start="239:51" pos:end="239:53"><expr pos:start="239:51" pos:end="239:53"><name pos:start="239:51" pos:end="239:51">k</name><operator pos:start="239:52" pos:end="239:53">++</operator></expr></incr>)</control> <block pos:start="239:56" pos:end="255:13">{<block_content pos:start="241:17" pos:end="253:66">
+
+                <expr_stmt pos:start="241:17" pos:end="245:66"><expr pos:start="241:17" pos:end="245:65"><name pos:start="241:17" pos:end="241:19">sum</name> <operator pos:start="241:21" pos:end="241:21">=</operator> <call pos:start="241:23" pos:end="245:65"><name pos:start="241:23" pos:end="241:46"><name pos:start="241:23" pos:end="241:25">dsp</name><operator pos:start="241:26" pos:end="241:27">-&gt;</operator><name pos:start="241:28" pos:end="241:46">scalarproduct_int16</name></name><argument_list pos:start="241:47" pos:end="245:65">(<argument pos:start="241:48" pos:end="241:68"><expr pos:start="241:48" pos:end="241:68"><operator pos:start="241:48" pos:end="241:48">&amp;</operator><name pos:start="241:49" pos:end="241:68"><name pos:start="241:49" pos:end="241:62">delayed_signal</name><index pos:start="241:63" pos:end="241:65">[<expr pos:start="241:64" pos:end="241:64"><name pos:start="241:64" pos:end="241:64">k</name></expr>]</index><index pos:start="241:66" pos:end="241:68">[<expr pos:start="241:67" pos:end="241:67"><literal type="number" pos:start="241:67" pos:end="241:67">1</literal></expr>]</index></name></expr></argument>,
+
+                                               <argument pos:start="243:48" pos:end="243:68"><expr pos:start="243:48" pos:end="243:68"><operator pos:start="243:48" pos:end="243:48">&amp;</operator><name pos:start="243:49" pos:end="243:68"><name pos:start="243:49" pos:end="243:62">delayed_signal</name><index pos:start="243:63" pos:end="243:65">[<expr pos:start="243:64" pos:end="243:64"><name pos:start="243:64" pos:end="243:64">k</name></expr>]</index><index pos:start="243:66" pos:end="243:68">[<expr pos:start="243:67" pos:end="243:67"><literal type="number" pos:start="243:67" pos:end="243:67">1</literal></expr>]</index></name></expr></argument>,
+
+                                               <argument pos:start="245:48" pos:end="245:64"><expr pos:start="245:48" pos:end="245:64"><name pos:start="245:48" pos:end="245:60">subframe_size</name> <operator pos:start="245:62" pos:end="245:62">-</operator> <literal type="number" pos:start="245:64" pos:end="245:64">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="247:17" pos:end="247:107"><expr pos:start="247:17" pos:end="247:106"><name pos:start="247:17" pos:end="247:30"><name pos:start="247:17" pos:end="247:24">corr_den</name><index pos:start="247:25" pos:end="247:27">[<expr pos:start="247:26" pos:end="247:26"><name pos:start="247:26" pos:end="247:26">k</name></expr>]</index><index pos:start="247:28" pos:end="247:30">[<expr pos:start="247:29" pos:end="247:29"><literal type="number" pos:start="247:29" pos:end="247:29">0</literal></expr>]</index></name> <operator pos:start="247:32" pos:end="247:32">=</operator> <name pos:start="247:34" pos:end="247:36">sum</name> <operator pos:start="247:38" pos:end="247:38">+</operator> <name pos:start="247:40" pos:end="247:71"><name pos:start="247:40" pos:end="247:53">delayed_signal</name><index pos:start="247:54" pos:end="247:56">[<expr pos:start="247:55" pos:end="247:55"><name pos:start="247:55" pos:end="247:55">k</name></expr>]</index><index pos:start="247:57" pos:end="247:71">[<expr pos:start="247:58" pos:end="247:58"><literal type="number" pos:start="247:58" pos:end="247:58">0</literal></expr>            ]</index></name> <operator pos:start="247:73" pos:end="247:73">*</operator> <name pos:start="247:75" pos:end="247:106"><name pos:start="247:75" pos:end="247:88">delayed_signal</name><index pos:start="247:89" pos:end="247:91">[<expr pos:start="247:90" pos:end="247:90"><name pos:start="247:90" pos:end="247:90">k</name></expr>]</index><index pos:start="247:92" pos:end="247:106">[<expr pos:start="247:93" pos:end="247:93"><literal type="number" pos:start="247:93" pos:end="247:93">0</literal></expr>            ]</index></name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="249:17" pos:end="249:107"><expr pos:start="249:17" pos:end="249:106"><name pos:start="249:17" pos:end="249:30"><name pos:start="249:17" pos:end="249:24">corr_den</name><index pos:start="249:25" pos:end="249:27">[<expr pos:start="249:26" pos:end="249:26"><name pos:start="249:26" pos:end="249:26">k</name></expr>]</index><index pos:start="249:28" pos:end="249:30">[<expr pos:start="249:29" pos:end="249:29"><literal type="number" pos:start="249:29" pos:end="249:29">1</literal></expr>]</index></name> <operator pos:start="249:32" pos:end="249:32">=</operator> <name pos:start="249:34" pos:end="249:36">sum</name> <operator pos:start="249:38" pos:end="249:38">+</operator> <name pos:start="249:40" pos:end="249:71"><name pos:start="249:40" pos:end="249:53">delayed_signal</name><index pos:start="249:54" pos:end="249:56">[<expr pos:start="249:55" pos:end="249:55"><name pos:start="249:55" pos:end="249:55">k</name></expr>]</index><index pos:start="249:57" pos:end="249:71">[<expr pos:start="249:58" pos:end="249:70"><name pos:start="249:58" pos:end="249:70">subframe_size</name></expr>]</index></name> <operator pos:start="249:73" pos:end="249:73">*</operator> <name pos:start="249:75" pos:end="249:106"><name pos:start="249:75" pos:end="249:88">delayed_signal</name><index pos:start="249:89" pos:end="249:91">[<expr pos:start="249:90" pos:end="249:90"><name pos:start="249:90" pos:end="249:90">k</name></expr>]</index><index pos:start="249:92" pos:end="249:106">[<expr pos:start="249:93" pos:end="249:105"><name pos:start="249:93" pos:end="249:105">subframe_size</name></expr>]</index></name></expr>;</expr_stmt>
+
+
+
+                <expr_stmt pos:start="253:17" pos:end="253:66"><expr pos:start="253:17" pos:end="253:65"><name pos:start="253:17" pos:end="253:19">tmp</name> <operator pos:start="253:21" pos:end="253:21">=</operator> <call pos:start="253:23" pos:end="253:65"><name pos:start="253:23" pos:end="253:28">FFMAX3</name><argument_list pos:start="253:29" pos:end="253:65">(<argument pos:start="253:30" pos:end="253:32"><expr pos:start="253:30" pos:end="253:32"><name pos:start="253:30" pos:end="253:32">tmp</name></expr></argument>, <argument pos:start="253:35" pos:end="253:48"><expr pos:start="253:35" pos:end="253:48"><name pos:start="253:35" pos:end="253:48"><name pos:start="253:35" pos:end="253:42">corr_den</name><index pos:start="253:43" pos:end="253:45">[<expr pos:start="253:44" pos:end="253:44"><name pos:start="253:44" pos:end="253:44">k</name></expr>]</index><index pos:start="253:46" pos:end="253:48">[<expr pos:start="253:47" pos:end="253:47"><literal type="number" pos:start="253:47" pos:end="253:47">0</literal></expr>]</index></name></expr></argument>, <argument pos:start="253:51" pos:end="253:64"><expr pos:start="253:51" pos:end="253:64"><name pos:start="253:51" pos:end="253:64"><name pos:start="253:51" pos:end="253:58">corr_den</name><index pos:start="253:59" pos:end="253:61">[<expr pos:start="253:60" pos:end="253:60"><name pos:start="253:60" pos:end="253:60">k</name></expr>]</index><index pos:start="253:62" pos:end="253:64">[<expr pos:start="253:63" pos:end="253:63"><literal type="number" pos:start="253:63" pos:end="253:63">1</literal></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></for>
+
+
+
+            <expr_stmt pos:start="259:13" pos:end="259:44"><expr pos:start="259:13" pos:end="259:43"><name pos:start="259:13" pos:end="259:23">sh_gain_den</name> <operator pos:start="259:25" pos:end="259:25">=</operator> <call pos:start="259:27" pos:end="259:38"><name pos:start="259:27" pos:end="259:33">av_log2</name><argument_list pos:start="259:34" pos:end="259:38">(<argument pos:start="259:35" pos:end="259:37"><expr pos:start="259:35" pos:end="259:37"><name pos:start="259:35" pos:end="259:37">tmp</name></expr></argument>)</argument_list></call> <operator pos:start="259:40" pos:end="259:40">-</operator> <literal type="number" pos:start="259:42" pos:end="259:43">14</literal></expr>;</expr_stmt>
+
+            <if_stmt pos:start="261:13" pos:end="369:13"><if pos:start="261:13" pos:end="369:13">if <condition pos:start="261:16" pos:end="261:33">(<expr pos:start="261:17" pos:end="261:32"><name pos:start="261:17" pos:end="261:27">sh_gain_den</name> <operator pos:start="261:29" pos:end="261:30">&gt;=</operator> <literal type="number" pos:start="261:32" pos:end="261:32">0</literal></expr>)</condition> <block pos:start="261:35" pos:end="369:13">{<block_content pos:start="265:17" pos:end="367:33">
+
+
+
+                <expr_stmt pos:start="265:17" pos:end="265:59"><expr pos:start="265:17" pos:end="265:58"><name pos:start="265:17" pos:end="265:27">sh_gain_num</name> <operator pos:start="265:29" pos:end="265:29">=</operator>  <call pos:start="265:32" pos:end="265:58"><name pos:start="265:32" pos:end="265:36">FFMAX</name><argument_list pos:start="265:37" pos:end="265:58">(<argument pos:start="265:38" pos:end="265:48"><expr pos:start="265:38" pos:end="265:48"><name pos:start="265:38" pos:end="265:48">sh_gain_den</name></expr></argument>, <argument pos:start="265:51" pos:end="265:57"><expr pos:start="265:51" pos:end="265:57"><name pos:start="265:51" pos:end="265:57">sh_ener</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <comment type="block" pos:start="267:17" pos:end="273:41">/* Loop through all k and find delay that maximizes
+
+                   R'(k) correlation.
+
+                   Search is done in [int(T0)-1; intT(0)+1] range
+
+                   with 1/8 precision. */</comment>
+
+                <expr_stmt pos:start="275:17" pos:end="275:42"><expr pos:start="275:17" pos:end="275:41"><name pos:start="275:17" pos:end="275:37">delayed_signal_offset</name> <operator pos:start="275:39" pos:end="275:39">=</operator> <literal type="number" pos:start="275:41" pos:end="275:41">1</literal></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="277:17" pos:end="277:36"><expr pos:start="277:17" pos:end="277:35"><name pos:start="277:17" pos:end="277:31">best_delay_frac</name> <operator pos:start="277:33" pos:end="277:33">=</operator> <literal type="number" pos:start="277:35" pos:end="277:35">0</literal></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="279:17" pos:end="279:55"><expr pos:start="279:17" pos:end="279:54"><name pos:start="279:17" pos:end="279:24">gain_den</name> <operator pos:start="279:26" pos:end="279:26">=</operator> <name pos:start="279:28" pos:end="279:39">corr_int_den</name> <operator pos:start="279:41" pos:end="279:42">&gt;&gt;</operator> <name pos:start="279:44" pos:end="279:54">sh_gain_den</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="281:17" pos:end="281:55"><expr pos:start="281:17" pos:end="281:54"><name pos:start="281:17" pos:end="281:24">gain_num</name> <operator pos:start="281:26" pos:end="281:26">=</operator> <name pos:start="281:28" pos:end="281:39">corr_int_num</name> <operator pos:start="281:41" pos:end="281:42">&gt;&gt;</operator> <name pos:start="281:44" pos:end="281:54">sh_gain_num</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="283:17" pos:end="283:54"><expr pos:start="283:17" pos:end="283:53"><name pos:start="283:17" pos:end="283:31">gain_num_square</name> <operator pos:start="283:33" pos:end="283:33">=</operator> <name pos:start="283:35" pos:end="283:42">gain_num</name> <operator pos:start="283:44" pos:end="283:44">*</operator> <name pos:start="283:46" pos:end="283:53">gain_num</name></expr>;</expr_stmt>
+
+                <for pos:start="285:17" pos:end="347:17">for <control pos:start="285:21" pos:end="285:58">(<init pos:start="285:22" pos:end="285:27"><expr pos:start="285:22" pos:end="285:26"><name pos:start="285:22" pos:end="285:22">k</name> <operator pos:start="285:24" pos:end="285:24">=</operator> <literal type="number" pos:start="285:26" pos:end="285:26">0</literal></expr>;</init> <condition pos:start="285:29" pos:end="285:53"><expr pos:start="285:29" pos:end="285:52"><name pos:start="285:29" pos:end="285:29">k</name> <operator pos:start="285:31" pos:end="285:31">&lt;</operator> <name pos:start="285:33" pos:end="285:52">ANALYZED_FRAC_DELAYS</name></expr>;</condition> <incr pos:start="285:55" pos:end="285:57"><expr pos:start="285:55" pos:end="285:57"><name pos:start="285:55" pos:end="285:55">k</name><operator pos:start="285:56" pos:end="285:57">++</operator></expr></incr>)</control> <block pos:start="285:60" pos:end="347:17">{<block_content pos:start="287:21" pos:end="345:21">
+
+                    <for pos:start="287:21" pos:end="345:21">for <control pos:start="287:25" pos:end="287:43">(<init pos:start="287:26" pos:end="287:31"><expr pos:start="287:26" pos:end="287:30"><name pos:start="287:26" pos:end="287:26">i</name> <operator pos:start="287:28" pos:end="287:28">=</operator> <literal type="number" pos:start="287:30" pos:end="287:30">0</literal></expr>;</init> <condition pos:start="287:33" pos:end="287:38"><expr pos:start="287:33" pos:end="287:37"><name pos:start="287:33" pos:end="287:33">i</name> <operator pos:start="287:35" pos:end="287:35">&lt;</operator> <literal type="number" pos:start="287:37" pos:end="287:37">2</literal></expr>;</condition> <incr pos:start="287:40" pos:end="287:42"><expr pos:start="287:40" pos:end="287:42"><name pos:start="287:40" pos:end="287:40">i</name><operator pos:start="287:41" pos:end="287:42">++</operator></expr></incr>)</control> <block pos:start="287:45" pos:end="345:21">{<block_content pos:start="289:25" pos:end="343:25">
+
+                        <decl_stmt pos:start="289:25" pos:end="289:63"><decl pos:start="289:25" pos:end="289:46"><type pos:start="289:25" pos:end="289:31"><name pos:start="289:25" pos:end="289:31">int16_t</name></type> <name pos:start="289:33" pos:end="289:46">gain_num_short</name></decl>, <decl pos:start="289:49" pos:end="289:62"><type ref="prev" pos:start="289:25" pos:end="289:31"/><name pos:start="289:49" pos:end="289:62">gain_den_short</name></decl>;</decl_stmt>
+
+                        <decl_stmt pos:start="291:25" pos:end="291:50"><decl pos:start="291:25" pos:end="291:49"><type pos:start="291:25" pos:end="291:27"><name pos:start="291:25" pos:end="291:27">int</name></type> <name pos:start="291:29" pos:end="291:49">gain_num_short_square</name></decl>;</decl_stmt>
+
+                        <comment type="block" pos:start="293:25" pos:end="295:48">/* Compute numerator of pseudo-normalized
+
+                           correlation R'(k). */</comment>
+
+                        <expr_stmt pos:start="297:25" pos:end="301:70"><expr pos:start="297:25" pos:end="301:69"><name pos:start="297:25" pos:end="297:27">sum</name> <operator pos:start="297:29" pos:end="297:29">=</operator> <call pos:start="297:31" pos:end="301:69"><name pos:start="297:31" pos:end="297:54"><name pos:start="297:31" pos:end="297:33">dsp</name><operator pos:start="297:34" pos:end="297:35">-&gt;</operator><name pos:start="297:36" pos:end="297:54">scalarproduct_int16</name></name><argument_list pos:start="297:55" pos:end="301:69">(<argument pos:start="297:56" pos:end="297:76"><expr pos:start="297:56" pos:end="297:76"><operator pos:start="297:56" pos:end="297:56">&amp;</operator><name pos:start="297:57" pos:end="297:76"><name pos:start="297:57" pos:end="297:70">delayed_signal</name><index pos:start="297:71" pos:end="297:73">[<expr pos:start="297:72" pos:end="297:72"><name pos:start="297:72" pos:end="297:72">k</name></expr>]</index><index pos:start="297:74" pos:end="297:76">[<expr pos:start="297:75" pos:end="297:75"><name pos:start="297:75" pos:end="297:75">i</name></expr>]</index></name></expr></argument>,
+
+                                                       <argument pos:start="299:56" pos:end="299:86"><expr pos:start="299:56" pos:end="299:86"><name pos:start="299:56" pos:end="299:65">sig_scaled</name> <operator pos:start="299:67" pos:end="299:67">+</operator> <name pos:start="299:69" pos:end="299:86">RES_PREV_DATA_SIZE</name></expr></argument>,
+
+                                                       <argument pos:start="301:56" pos:end="301:68"><expr pos:start="301:56" pos:end="301:68"><name pos:start="301:56" pos:end="301:68">subframe_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="303:25" pos:end="303:70"><expr pos:start="303:25" pos:end="303:69"><name pos:start="303:25" pos:end="303:38">gain_num_short</name> <operator pos:start="303:40" pos:end="303:40">=</operator> <call pos:start="303:42" pos:end="303:69"><name pos:start="303:42" pos:end="303:46">FFMAX</name><argument_list pos:start="303:47" pos:end="303:69">(<argument pos:start="303:48" pos:end="303:65"><expr pos:start="303:48" pos:end="303:65"><name pos:start="303:48" pos:end="303:50">sum</name> <operator pos:start="303:52" pos:end="303:53">&gt;&gt;</operator> <name pos:start="303:55" pos:end="303:65">sh_gain_num</name></expr></argument>, <argument pos:start="303:68" pos:end="303:68"><expr pos:start="303:68" pos:end="303:68"><literal type="number" pos:start="303:68" pos:end="303:68">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+                        <comment type="block" pos:start="307:25" pos:end="315:26">/*
+
+                                      gain_num_short_square                gain_num_square
+
+                           R'(T)^2 = -----------------------, max R'(T)^2= --------------
+
+                                           den                                 gain_den
+
+                        */</comment>
+
+                        <expr_stmt pos:start="317:25" pos:end="317:80"><expr pos:start="317:25" pos:end="317:79"><name pos:start="317:25" pos:end="317:45">gain_num_short_square</name> <operator pos:start="317:47" pos:end="317:47">=</operator> <name pos:start="317:49" pos:end="317:62">gain_num_short</name> <operator pos:start="317:64" pos:end="317:64">*</operator> <name pos:start="317:66" pos:end="317:79">gain_num_short</name></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="319:25" pos:end="319:71"><expr pos:start="319:25" pos:end="319:70"><name pos:start="319:25" pos:end="319:38">gain_den_short</name> <operator pos:start="319:40" pos:end="319:40">=</operator> <name pos:start="319:42" pos:end="319:55"><name pos:start="319:42" pos:end="319:49">corr_den</name><index pos:start="319:50" pos:end="319:52">[<expr pos:start="319:51" pos:end="319:51"><name pos:start="319:51" pos:end="319:51">k</name></expr>]</index><index pos:start="319:53" pos:end="319:55">[<expr pos:start="319:54" pos:end="319:54"><name pos:start="319:54" pos:end="319:54">i</name></expr>]</index></name> <operator pos:start="319:57" pos:end="319:58">&gt;&gt;</operator> <name pos:start="319:60" pos:end="319:70">sh_gain_den</name></expr>;</expr_stmt>
+
+
+
+                        <expr_stmt pos:start="323:25" pos:end="323:79"><expr pos:start="323:25" pos:end="323:78"><name pos:start="323:25" pos:end="323:27">tmp</name> <operator pos:start="323:29" pos:end="323:29">=</operator> <call pos:start="323:31" pos:end="323:78"><name pos:start="323:31" pos:end="323:34">MULL</name><argument_list pos:start="323:35" pos:end="323:78">(<argument pos:start="323:36" pos:end="323:56"><expr pos:start="323:36" pos:end="323:56"><name pos:start="323:36" pos:end="323:56">gain_num_short_square</name></expr></argument>, <argument pos:start="323:59" pos:end="323:66"><expr pos:start="323:59" pos:end="323:66"><name pos:start="323:59" pos:end="323:66">gain_den</name></expr></argument>, <argument pos:start="323:69" pos:end="323:77"><expr pos:start="323:69" pos:end="323:77"><name pos:start="323:69" pos:end="323:77">FRAC_BITS</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="325:25" pos:end="325:80"><expr pos:start="325:25" pos:end="325:79"><name pos:start="325:25" pos:end="325:28">tmp2</name> <operator pos:start="325:30" pos:end="325:30">=</operator> <call pos:start="325:32" pos:end="325:79"><name pos:start="325:32" pos:end="325:35">MULL</name><argument_list pos:start="325:36" pos:end="325:79">(<argument pos:start="325:37" pos:end="325:51"><expr pos:start="325:37" pos:end="325:51"><name pos:start="325:37" pos:end="325:51">gain_num_square</name></expr></argument>, <argument pos:start="325:54" pos:end="325:67"><expr pos:start="325:54" pos:end="325:67"><name pos:start="325:54" pos:end="325:67">gain_den_short</name></expr></argument>, <argument pos:start="325:70" pos:end="325:78"><expr pos:start="325:70" pos:end="325:78"><name pos:start="325:70" pos:end="325:78">FRAC_BITS</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+                        <comment type="line" pos:start="329:25" pos:end="329:48">// R'(T)^2 &gt; max R'(T)^2</comment>
+
+                        <if_stmt pos:start="331:25" pos:end="343:25"><if pos:start="331:25" pos:end="343:25">if <condition pos:start="331:28" pos:end="331:39">(<expr pos:start="331:29" pos:end="331:38"><name pos:start="331:29" pos:end="331:31">tmp</name> <operator pos:start="331:33" pos:end="331:33">&gt;</operator> <name pos:start="331:35" pos:end="331:38">tmp2</name></expr>)</condition> <block pos:start="331:41" pos:end="343:25">{<block_content pos:start="333:29" pos:end="341:52">
+
+                            <expr_stmt pos:start="333:29" pos:end="333:54"><expr pos:start="333:29" pos:end="333:53"><name pos:start="333:29" pos:end="333:36">gain_num</name> <operator pos:start="333:38" pos:end="333:38">=</operator> <name pos:start="333:40" pos:end="333:53">gain_num_short</name></expr>;</expr_stmt>
+
+                            <expr_stmt pos:start="335:29" pos:end="335:54"><expr pos:start="335:29" pos:end="335:53"><name pos:start="335:29" pos:end="335:36">gain_den</name> <operator pos:start="335:38" pos:end="335:38">=</operator> <name pos:start="335:40" pos:end="335:53">gain_den_short</name></expr>;</expr_stmt>
+
+                            <expr_stmt pos:start="337:29" pos:end="337:68"><expr pos:start="337:29" pos:end="337:67"><name pos:start="337:29" pos:end="337:43">gain_num_square</name> <operator pos:start="337:45" pos:end="337:45">=</operator> <name pos:start="337:47" pos:end="337:67">gain_num_short_square</name></expr>;</expr_stmt>
+
+                            <expr_stmt pos:start="339:29" pos:end="339:54"><expr pos:start="339:29" pos:end="339:53"><name pos:start="339:29" pos:end="339:49">delayed_signal_offset</name> <operator pos:start="339:51" pos:end="339:51">=</operator> <name pos:start="339:53" pos:end="339:53">i</name></expr>;</expr_stmt>
+
+                            <expr_stmt pos:start="341:29" pos:end="341:52"><expr pos:start="341:29" pos:end="341:51"><name pos:start="341:29" pos:end="341:43">best_delay_frac</name> <operator pos:start="341:45" pos:end="341:45">=</operator> <name pos:start="341:47" pos:end="341:47">k</name> <operator pos:start="341:49" pos:end="341:49">+</operator> <literal type="number" pos:start="341:51" pos:end="341:51">1</literal></expr>;</expr_stmt>
+
+                        </block_content>}</block></if></if_stmt>
+
+                    </block_content>}</block></for>
+
+                </block_content>}</block></for>
+
+
+
+                <comment type="block" pos:start="351:17" pos:end="359:18">/*
+
+                       R'(T)^2
+
+                  2 * --------- &lt; 1
+
+                        R(0)
+
+                */</comment>
+
+                <expr_stmt pos:start="361:17" pos:end="361:83"><expr pos:start="361:17" pos:end="361:82"><name pos:start="361:17" pos:end="361:25">L64_temp0</name> <operator pos:start="361:27" pos:end="361:27">=</operator>  <operator pos:start="361:30" pos:end="361:30">(</operator><name pos:start="361:31" pos:end="361:37">int64_t</name><operator pos:start="361:38" pos:end="361:38">)</operator><name pos:start="361:39" pos:end="361:53">gain_num_square</name>  <operator pos:start="361:56" pos:end="361:57">&lt;&lt;</operator> <operator pos:start="361:59" pos:end="361:59">(</operator><operator pos:start="361:60" pos:end="361:60">(</operator><name pos:start="361:61" pos:end="361:71">sh_gain_num</name> <operator pos:start="361:73" pos:end="361:74">&lt;&lt;</operator> <literal type="number" pos:start="361:76" pos:end="361:76">1</literal><operator pos:start="361:77" pos:end="361:77">)</operator> <operator pos:start="361:79" pos:end="361:79">+</operator> <literal type="number" pos:start="361:81" pos:end="361:81">1</literal><operator pos:start="361:82" pos:end="361:82">)</operator></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="363:17" pos:end="363:82"><expr pos:start="363:17" pos:end="363:81"><name pos:start="363:17" pos:end="363:25">L64_temp1</name> <operator pos:start="363:27" pos:end="363:27">=</operator> <operator pos:start="363:29" pos:end="363:29">(</operator><operator pos:start="363:30" pos:end="363:30">(</operator><name pos:start="363:31" pos:end="363:37">int64_t</name><operator pos:start="363:38" pos:end="363:38">)</operator><name pos:start="363:39" pos:end="363:46">gain_den</name> <operator pos:start="363:48" pos:end="363:48">*</operator> <name pos:start="363:50" pos:end="363:53">ener</name><operator pos:start="363:54" pos:end="363:54">)</operator> <operator pos:start="363:56" pos:end="363:57">&lt;&lt;</operator> <operator pos:start="363:59" pos:end="363:59">(</operator><name pos:start="363:60" pos:end="363:70">sh_gain_den</name> <operator pos:start="363:72" pos:end="363:72">+</operator> <name pos:start="363:74" pos:end="363:80">sh_ener</name><operator pos:start="363:81" pos:end="363:81">)</operator></expr>;</expr_stmt>
+
+                <if_stmt pos:start="365:17" pos:end="367:33"><if pos:start="365:17" pos:end="367:33">if <condition pos:start="365:20" pos:end="365:42">(<expr pos:start="365:21" pos:end="365:41"><name pos:start="365:21" pos:end="365:29">L64_temp0</name> <operator pos:start="365:31" pos:end="365:31">&lt;</operator> <name pos:start="365:33" pos:end="365:41">L64_temp1</name></expr>)</condition><block type="pseudo" pos:start="367:21" pos:end="367:33"><block_content pos:start="367:21" pos:end="367:33">
+
+                    <expr_stmt pos:start="367:21" pos:end="367:33"><expr pos:start="367:21" pos:end="367:32"><name pos:start="367:21" pos:end="367:28">gain_num</name> <operator pos:start="367:30" pos:end="367:30">=</operator> <literal type="number" pos:start="367:32" pos:end="367:32">0</literal></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+            </block_content>}</block></if></if_stmt> <comment type="line" pos:start="369:15" pos:end="369:37">// if(sh_gain_den &gt;= 0)</comment>
+
+        </block_content>}</block></if></if_stmt> <comment type="line" pos:start="371:11" pos:end="371:29">// if(corr_int_num)</comment>
+
+    </block_content>}</block></if></if_stmt> <comment type="line" pos:start="373:7" pos:end="373:17">// if(ener)</comment>
+
+    <comment type="block" pos:start="375:5" pos:end="375:43">/* End of best delay searching code  */</comment>
+
+
+
+    <if_stmt pos:start="379:5" pos:end="389:5"><if pos:start="379:5" pos:end="389:5">if <condition pos:start="379:8" pos:end="379:18">(<expr pos:start="379:9" pos:end="379:17"><operator pos:start="379:9" pos:end="379:9">!</operator><name pos:start="379:10" pos:end="379:17">gain_num</name></expr>)</condition> <block pos:start="379:20" pos:end="389:5">{<block_content pos:start="381:9" pos:end="387:17">
+
+        <expr_stmt pos:start="381:9" pos:end="381:94"><expr pos:start="381:9" pos:end="381:93"><call pos:start="381:9" pos:end="381:93"><name pos:start="381:9" pos:end="381:14">memcpy</name><argument_list pos:start="381:15" pos:end="381:93">(<argument pos:start="381:16" pos:end="381:28"><expr pos:start="381:16" pos:end="381:28"><name pos:start="381:16" pos:end="381:28">residual_filt</name></expr></argument>, <argument pos:start="381:31" pos:end="381:59"><expr pos:start="381:31" pos:end="381:59"><name pos:start="381:31" pos:end="381:38">residual</name> <operator pos:start="381:40" pos:end="381:40">+</operator> <name pos:start="381:42" pos:end="381:59">RES_PREV_DATA_SIZE</name></expr></argument>, <argument pos:start="381:62" pos:end="381:92"><expr pos:start="381:62" pos:end="381:92"><name pos:start="381:62" pos:end="381:74">subframe_size</name> <operator pos:start="381:76" pos:end="381:76">*</operator> <sizeof pos:start="381:78" pos:end="381:92">sizeof<argument_list pos:start="381:84" pos:end="381:92">(<argument pos:start="381:85" pos:end="381:91"><expr pos:start="381:85" pos:end="381:91"><name pos:start="381:85" pos:end="381:91">int16_t</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <comment type="block" pos:start="385:9" pos:end="385:91">/* Long-term prediction gain is less than 3dB. Long-term postfilter is disabled. */</comment>
+
+        <return pos:start="387:9" pos:end="387:17">return <expr pos:start="387:16" pos:end="387:16"><literal type="number" pos:start="387:16" pos:end="387:16">0</literal></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+    <if_stmt pos:start="391:5" pos:end="536:0"><if pos:start="391:5" pos:end="529:5">if <condition pos:start="391:8" pos:end="391:24">(<expr pos:start="391:9" pos:end="391:23"><name pos:start="391:9" pos:end="391:23">best_delay_frac</name></expr>)</condition> <block pos:start="391:26" pos:end="529:5">{<block_content pos:start="395:9" pos:end="527:48">
+
+        <comment type="block" pos:start="393:9" pos:end="393:82">/* Recompute delayed signal with an interpolation filter of length 129. */</comment>
+
+        <expr_stmt pos:start="395:9" pos:end="407:48"><expr pos:start="395:9" pos:end="407:47"><call pos:start="395:9" pos:end="407:47"><name pos:start="395:9" pos:end="395:28">ff_acelp_interpolate</name><argument_list pos:start="395:29" pos:end="407:47">(<argument pos:start="395:30" pos:end="395:42"><expr pos:start="395:30" pos:end="395:42"><name pos:start="395:30" pos:end="395:42">residual_filt</name></expr></argument>,
+
+                             <argument pos:start="397:30" pos:end="397:101"><expr pos:start="397:30" pos:end="397:101"><operator pos:start="397:30" pos:end="397:30">&amp;</operator><name pos:start="397:31" pos:end="397:101"><name pos:start="397:31" pos:end="397:40">sig_scaled</name><index pos:start="397:41" pos:end="397:101">[<expr pos:start="397:42" pos:end="397:100"><name pos:start="397:42" pos:end="397:59">RES_PREV_DATA_SIZE</name> <operator pos:start="397:61" pos:end="397:61">-</operator> <name pos:start="397:63" pos:end="397:76">best_delay_int</name> <operator pos:start="397:78" pos:end="397:78">+</operator> <name pos:start="397:80" pos:end="397:100">delayed_signal_offset</name></expr>]</index></name></expr></argument>,
+
+                             <argument pos:start="399:30" pos:end="399:53"><expr pos:start="399:30" pos:end="399:53"><name pos:start="399:30" pos:end="399:53">ff_g729_interp_filt_long</name></expr></argument>,
+
+                             <argument pos:start="401:30" pos:end="401:53"><expr pos:start="401:30" pos:end="401:53"><name pos:start="401:30" pos:end="401:49">ANALYZED_FRAC_DELAYS</name> <operator pos:start="401:51" pos:end="401:51">+</operator> <literal type="number" pos:start="401:53" pos:end="401:53">1</literal></expr></argument>,
+
+                             <argument pos:start="403:30" pos:end="403:48"><expr pos:start="403:30" pos:end="403:48"><literal type="number" pos:start="403:30" pos:end="403:32">8</literal> <operator pos:start="403:32" pos:end="403:32">-</operator> <name pos:start="403:34" pos:end="403:48">best_delay_frac</name></expr></argument>,
+
+                             <argument pos:start="405:30" pos:end="405:46"><expr pos:start="405:30" pos:end="405:46"><name pos:start="405:30" pos:end="405:46">LONG_INT_FILT_LEN</name></expr></argument>,
+
+                             <argument pos:start="407:30" pos:end="407:46"><expr pos:start="407:30" pos:end="407:46"><name pos:start="407:30" pos:end="407:42">subframe_size</name> <operator pos:start="407:44" pos:end="407:44">+</operator> <literal type="number" pos:start="407:46" pos:end="407:46">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <comment type="block" pos:start="409:9" pos:end="409:52">/* Compute R'(k) correlation's numerator. */</comment>
+
+        <expr_stmt pos:start="411:9" pos:end="415:54"><expr pos:start="411:9" pos:end="415:53"><name pos:start="411:9" pos:end="411:11">sum</name> <operator pos:start="411:13" pos:end="411:13">=</operator> <call pos:start="411:15" pos:end="415:53"><name pos:start="411:15" pos:end="411:38"><name pos:start="411:15" pos:end="411:17">dsp</name><operator pos:start="411:18" pos:end="411:19">-&gt;</operator><name pos:start="411:20" pos:end="411:38">scalarproduct_int16</name></name><argument_list pos:start="411:39" pos:end="415:53">(<argument pos:start="411:40" pos:end="411:52"><expr pos:start="411:40" pos:end="411:52"><name pos:start="411:40" pos:end="411:52">residual_filt</name></expr></argument>,
+
+                                       <argument pos:start="413:40" pos:end="413:70"><expr pos:start="413:40" pos:end="413:70"><name pos:start="413:40" pos:end="413:49">sig_scaled</name> <operator pos:start="413:51" pos:end="413:51">+</operator> <name pos:start="413:53" pos:end="413:70">RES_PREV_DATA_SIZE</name></expr></argument>,
+
+                                       <argument pos:start="415:40" pos:end="415:52"><expr pos:start="415:40" pos:end="415:52"><name pos:start="415:40" pos:end="415:52">subframe_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="419:9" pos:end="435:9"><if pos:start="419:9" pos:end="425:9">if <condition pos:start="419:12" pos:end="419:20">(<expr pos:start="419:13" pos:end="419:19"><name pos:start="419:13" pos:end="419:15">sum</name> <operator pos:start="419:17" pos:end="419:17">&lt;</operator> <literal type="number" pos:start="419:19" pos:end="419:19">0</literal></expr>)</condition> <block pos:start="419:22" pos:end="425:9">{<block_content pos:start="421:13" pos:end="423:33">
+
+            <expr_stmt pos:start="421:13" pos:end="421:30"><expr pos:start="421:13" pos:end="421:29"><name pos:start="421:13" pos:end="421:25">gain_long_num</name> <operator pos:start="421:27" pos:end="421:27">=</operator> <literal type="number" pos:start="421:29" pos:end="421:29">0</literal></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="423:13" pos:end="423:33"><expr pos:start="423:13" pos:end="423:32"><name pos:start="423:13" pos:end="423:28">sh_gain_long_num</name> <operator pos:start="423:30" pos:end="423:30">=</operator> <literal type="number" pos:start="423:32" pos:end="423:32">0</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="425:11" pos:end="435:9">else <block pos:start="425:16" pos:end="435:9">{<block_content pos:start="427:13" pos:end="433:35">
+
+            <expr_stmt pos:start="427:13" pos:end="427:46"><expr pos:start="427:13" pos:end="427:45"><name pos:start="427:13" pos:end="427:15">tmp</name> <operator pos:start="427:17" pos:end="427:17">=</operator> <call pos:start="427:19" pos:end="427:45"><name pos:start="427:19" pos:end="427:23">FFMAX</name><argument_list pos:start="427:24" pos:end="427:45">(<argument pos:start="427:25" pos:end="427:41"><expr pos:start="427:25" pos:end="427:41"><call pos:start="427:25" pos:end="427:36"><name pos:start="427:25" pos:end="427:31">av_log2</name><argument_list pos:start="427:32" pos:end="427:36">(<argument pos:start="427:33" pos:end="427:35"><expr pos:start="427:33" pos:end="427:35"><name pos:start="427:33" pos:end="427:35">sum</name></expr></argument>)</argument_list></call> <operator pos:start="427:38" pos:end="427:38">-</operator> <literal type="number" pos:start="427:40" pos:end="427:41">14</literal></expr></argument>, <argument pos:start="427:44" pos:end="427:44"><expr pos:start="427:44" pos:end="427:44"><literal type="number" pos:start="427:44" pos:end="427:44">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="429:13" pos:end="429:24"><expr pos:start="429:13" pos:end="429:23"><name pos:start="429:13" pos:end="429:15">sum</name> <operator pos:start="429:17" pos:end="429:19">&gt;&gt;=</operator> <name pos:start="429:21" pos:end="429:23">tmp</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="431:13" pos:end="431:32"><expr pos:start="431:13" pos:end="431:31"><name pos:start="431:13" pos:end="431:25">gain_long_num</name> <operator pos:start="431:27" pos:end="431:27">=</operator> <name pos:start="431:29" pos:end="431:31">sum</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="433:13" pos:end="433:35"><expr pos:start="433:13" pos:end="433:34"><name pos:start="433:13" pos:end="433:28">sh_gain_long_num</name> <operator pos:start="433:30" pos:end="433:30">=</operator> <name pos:start="433:32" pos:end="433:34">tmp</name></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+
+
+        <comment type="block" pos:start="439:9" pos:end="439:54">/* Compute R'(k) correlation's denominator. */</comment>
+
+        <expr_stmt pos:start="441:9" pos:end="441:84"><expr pos:start="441:9" pos:end="441:83"><name pos:start="441:9" pos:end="441:11">sum</name> <operator pos:start="441:13" pos:end="441:13">=</operator> <call pos:start="441:15" pos:end="441:83"><name pos:start="441:15" pos:end="441:38"><name pos:start="441:15" pos:end="441:17">dsp</name><operator pos:start="441:18" pos:end="441:19">-&gt;</operator><name pos:start="441:20" pos:end="441:38">scalarproduct_int16</name></name><argument_list pos:start="441:39" pos:end="441:83">(<argument pos:start="441:40" pos:end="441:52"><expr pos:start="441:40" pos:end="441:52"><name pos:start="441:40" pos:end="441:52">residual_filt</name></expr></argument>, <argument pos:start="441:55" pos:end="441:67"><expr pos:start="441:55" pos:end="441:67"><name pos:start="441:55" pos:end="441:67">residual_filt</name></expr></argument>, <argument pos:start="441:70" pos:end="441:82"><expr pos:start="441:70" pos:end="441:82"><name pos:start="441:70" pos:end="441:82">subframe_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="445:9" pos:end="445:42"><expr pos:start="445:9" pos:end="445:41"><name pos:start="445:9" pos:end="445:11">tmp</name> <operator pos:start="445:13" pos:end="445:13">=</operator> <call pos:start="445:15" pos:end="445:41"><name pos:start="445:15" pos:end="445:19">FFMAX</name><argument_list pos:start="445:20" pos:end="445:41">(<argument pos:start="445:21" pos:end="445:37"><expr pos:start="445:21" pos:end="445:37"><call pos:start="445:21" pos:end="445:32"><name pos:start="445:21" pos:end="445:27">av_log2</name><argument_list pos:start="445:28" pos:end="445:32">(<argument pos:start="445:29" pos:end="445:31"><expr pos:start="445:29" pos:end="445:31"><name pos:start="445:29" pos:end="445:31">sum</name></expr></argument>)</argument_list></call> <operator pos:start="445:34" pos:end="445:34">-</operator> <literal type="number" pos:start="445:36" pos:end="445:37">14</literal></expr></argument>, <argument pos:start="445:40" pos:end="445:40"><expr pos:start="445:40" pos:end="445:40"><literal type="number" pos:start="445:40" pos:end="445:40">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="447:9" pos:end="447:20"><expr pos:start="447:9" pos:end="447:19"><name pos:start="447:9" pos:end="447:11">sum</name> <operator pos:start="447:13" pos:end="447:15">&gt;&gt;=</operator> <name pos:start="447:17" pos:end="447:19">tmp</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="449:9" pos:end="449:28"><expr pos:start="449:9" pos:end="449:27"><name pos:start="449:9" pos:end="449:21">gain_long_den</name> <operator pos:start="449:23" pos:end="449:23">=</operator> <name pos:start="449:25" pos:end="449:27">sum</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="451:9" pos:end="451:31"><expr pos:start="451:9" pos:end="451:30"><name pos:start="451:9" pos:end="451:24">sh_gain_long_den</name> <operator pos:start="451:26" pos:end="451:26">=</operator> <name pos:start="451:28" pos:end="451:30">tmp</name></expr>;</expr_stmt>
+
+
+
+        <comment type="block" pos:start="455:9" pos:end="459:26">/* Select between original and delayed signal.
+
+           Delayed signal will be selected if it increases R'(k)
+
+           correlation. */</comment>
+
+        <expr_stmt pos:start="461:9" pos:end="461:38"><expr pos:start="461:9" pos:end="461:37"><name pos:start="461:9" pos:end="461:15">L_temp0</name> <operator pos:start="461:17" pos:end="461:17">=</operator> <name pos:start="461:19" pos:end="461:26">gain_num</name> <operator pos:start="461:28" pos:end="461:28">*</operator> <name pos:start="461:30" pos:end="461:37">gain_num</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="463:9" pos:end="463:58"><expr pos:start="463:9" pos:end="463:57"><name pos:start="463:9" pos:end="463:15">L_temp0</name> <operator pos:start="463:17" pos:end="463:17">=</operator> <call pos:start="463:19" pos:end="463:57"><name pos:start="463:19" pos:end="463:22">MULL</name><argument_list pos:start="463:23" pos:end="463:57">(<argument pos:start="463:24" pos:end="463:30"><expr pos:start="463:24" pos:end="463:30"><name pos:start="463:24" pos:end="463:30">L_temp0</name></expr></argument>, <argument pos:start="463:33" pos:end="463:45"><expr pos:start="463:33" pos:end="463:45"><name pos:start="463:33" pos:end="463:45">gain_long_den</name></expr></argument>, <argument pos:start="463:48" pos:end="463:56"><expr pos:start="463:48" pos:end="463:56"><name pos:start="463:48" pos:end="463:56">FRAC_BITS</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="467:9" pos:end="467:48"><expr pos:start="467:9" pos:end="467:47"><name pos:start="467:9" pos:end="467:15">L_temp1</name> <operator pos:start="467:17" pos:end="467:17">=</operator> <name pos:start="467:19" pos:end="467:31">gain_long_num</name> <operator pos:start="467:33" pos:end="467:33">*</operator> <name pos:start="467:35" pos:end="467:47">gain_long_num</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="469:9" pos:end="469:53"><expr pos:start="469:9" pos:end="469:52"><name pos:start="469:9" pos:end="469:15">L_temp1</name> <operator pos:start="469:17" pos:end="469:17">=</operator> <call pos:start="469:19" pos:end="469:52"><name pos:start="469:19" pos:end="469:22">MULL</name><argument_list pos:start="469:23" pos:end="469:52">(<argument pos:start="469:24" pos:end="469:30"><expr pos:start="469:24" pos:end="469:30"><name pos:start="469:24" pos:end="469:30">L_temp1</name></expr></argument>, <argument pos:start="469:33" pos:end="469:40"><expr pos:start="469:33" pos:end="469:40"><name pos:start="469:33" pos:end="469:40">gain_den</name></expr></argument>, <argument pos:start="469:43" pos:end="469:51"><expr pos:start="469:43" pos:end="469:51"><name pos:start="469:43" pos:end="469:51">FRAC_BITS</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="473:9" pos:end="473:89"><expr pos:start="473:9" pos:end="473:88"><name pos:start="473:9" pos:end="473:11">tmp</name> <operator pos:start="473:13" pos:end="473:13">=</operator> <operator pos:start="473:15" pos:end="473:15">(</operator><operator pos:start="473:16" pos:end="473:16">(</operator><name pos:start="473:17" pos:end="473:32">sh_gain_long_num</name> <operator pos:start="473:34" pos:end="473:34">-</operator> <name pos:start="473:36" pos:end="473:46">sh_gain_num</name><operator pos:start="473:47" pos:end="473:47">)</operator> <operator pos:start="473:49" pos:end="473:50">&lt;&lt;</operator> <literal type="number" pos:start="473:52" pos:end="473:52">1</literal><operator pos:start="473:53" pos:end="473:53">)</operator> <operator pos:start="473:55" pos:end="473:55">-</operator> <operator pos:start="473:57" pos:end="473:57">(</operator><name pos:start="473:58" pos:end="473:73">sh_gain_long_den</name> <operator pos:start="473:75" pos:end="473:75">-</operator> <name pos:start="473:77" pos:end="473:87">sh_gain_den</name><operator pos:start="473:88" pos:end="473:88">)</operator></expr>;</expr_stmt>
+
+        <if_stmt pos:start="475:9" pos:end="481:29"><if pos:start="475:9" pos:end="477:28">if <condition pos:start="475:12" pos:end="475:20">(<expr pos:start="475:13" pos:end="475:19"><name pos:start="475:13" pos:end="475:15">tmp</name> <operator pos:start="475:17" pos:end="475:17">&gt;</operator> <literal type="number" pos:start="475:19" pos:end="475:19">0</literal></expr>)</condition><block type="pseudo" pos:start="477:13" pos:end="477:28"><block_content pos:start="477:13" pos:end="477:28">
+
+            <expr_stmt pos:start="477:13" pos:end="477:28"><expr pos:start="477:13" pos:end="477:27"><name pos:start="477:13" pos:end="477:19">L_temp0</name> <operator pos:start="477:21" pos:end="477:23">&gt;&gt;=</operator> <name pos:start="477:25" pos:end="477:27">tmp</name></expr>;</expr_stmt></block_content></block></if>
+
+        <else pos:start="479:9" pos:end="481:29">else<block type="pseudo" pos:start="481:13" pos:end="481:29"><block_content pos:start="481:13" pos:end="481:29">
+
+            <expr_stmt pos:start="481:13" pos:end="481:29"><expr pos:start="481:13" pos:end="481:28"><name pos:start="481:13" pos:end="481:19">L_temp1</name> <operator pos:start="481:21" pos:end="481:23">&gt;&gt;=</operator> <operator pos:start="481:25" pos:end="481:25">-</operator><name pos:start="481:26" pos:end="481:28">tmp</name></expr>;</expr_stmt></block_content></block></else></if_stmt>
+
+
+
+        <comment type="block" pos:start="485:9" pos:end="485:67">/* Check if longer filter increases the values of R'(k). */</comment>
+
+        <if_stmt pos:start="487:9" pos:end="505:88"><if pos:start="487:9" pos:end="501:9">if <condition pos:start="487:12" pos:end="487:30">(<expr pos:start="487:13" pos:end="487:29"><name pos:start="487:13" pos:end="487:19">L_temp1</name> <operator pos:start="487:21" pos:end="487:21">&gt;</operator> <name pos:start="487:23" pos:end="487:29">L_temp0</name></expr>)</condition> <block pos:start="487:32" pos:end="501:9">{<block_content pos:start="491:13" pos:end="499:43">
+
+            <comment type="block" pos:start="489:13" pos:end="489:37">/* Select long filter. */</comment>
+
+            <expr_stmt pos:start="491:13" pos:end="491:44"><expr pos:start="491:13" pos:end="491:43"><name pos:start="491:13" pos:end="491:27">selected_signal</name> <operator pos:start="491:29" pos:end="491:29">=</operator> <name pos:start="491:31" pos:end="491:43">residual_filt</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="493:13" pos:end="493:37"><expr pos:start="493:13" pos:end="493:36"><name pos:start="493:13" pos:end="493:20">gain_num</name> <operator pos:start="493:22" pos:end="493:22">=</operator> <name pos:start="493:24" pos:end="493:36">gain_long_num</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="495:13" pos:end="495:37"><expr pos:start="495:13" pos:end="495:36"><name pos:start="495:13" pos:end="495:20">gain_den</name> <operator pos:start="495:22" pos:end="495:22">=</operator> <name pos:start="495:24" pos:end="495:36">gain_long_den</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="497:13" pos:end="497:43"><expr pos:start="497:13" pos:end="497:42"><name pos:start="497:13" pos:end="497:23">sh_gain_num</name> <operator pos:start="497:25" pos:end="497:25">=</operator> <name pos:start="497:27" pos:end="497:42">sh_gain_long_num</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="499:13" pos:end="499:43"><expr pos:start="499:13" pos:end="499:42"><name pos:start="499:13" pos:end="499:23">sh_gain_den</name> <operator pos:start="499:25" pos:end="499:25">=</operator> <name pos:start="499:27" pos:end="499:42">sh_gain_long_den</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="501:11" pos:end="505:88">else<block type="pseudo" pos:start="505:13" pos:end="505:88"><block_content pos:start="505:13" pos:end="505:88">
+
+            <comment type="block" pos:start="503:13" pos:end="503:38">/* Select short filter. */</comment>
+
+            <expr_stmt pos:start="505:13" pos:end="505:88"><expr pos:start="505:13" pos:end="505:87"><name pos:start="505:13" pos:end="505:27">selected_signal</name> <operator pos:start="505:29" pos:end="505:29">=</operator> <operator pos:start="505:31" pos:end="505:31">&amp;</operator><name pos:start="505:32" pos:end="505:87"><name pos:start="505:32" pos:end="505:45">delayed_signal</name><index pos:start="505:46" pos:end="505:64">[<expr pos:start="505:47" pos:end="505:63"><name pos:start="505:47" pos:end="505:61">best_delay_frac</name><operator pos:start="505:62" pos:end="505:62">-</operator><literal type="number" pos:start="505:63" pos:end="505:63">1</literal></expr>]</index><index pos:start="505:65" pos:end="505:87">[<expr pos:start="505:66" pos:end="505:86"><name pos:start="505:66" pos:end="505:86">delayed_signal_offset</name></expr>]</index></name></expr>;</expr_stmt></block_content></block></else></if_stmt>
+
+
+
+        <comment type="block" pos:start="509:9" pos:end="509:56">/* Rescale selected signal to original value. */</comment>
+
+        <if_stmt pos:start="511:9" pos:end="521:46"><if pos:start="511:9" pos:end="515:45">if <condition pos:start="511:12" pos:end="511:22">(<expr pos:start="511:13" pos:end="511:21"><name pos:start="511:13" pos:end="511:17">shift</name> <operator pos:start="511:19" pos:end="511:19">&gt;</operator> <literal type="number" pos:start="511:21" pos:end="511:21">0</literal></expr>)</condition><block type="pseudo" pos:start="513:13" pos:end="515:45"><block_content pos:start="513:13" pos:end="515:45">
+
+            <for pos:start="513:13" pos:end="515:45">for <control pos:start="513:17" pos:end="513:47">(<init pos:start="513:18" pos:end="513:23"><expr pos:start="513:18" pos:end="513:22"><name pos:start="513:18" pos:end="513:18">i</name> <operator pos:start="513:20" pos:end="513:20">=</operator> <literal type="number" pos:start="513:22" pos:end="513:22">0</literal></expr>;</init> <condition pos:start="513:25" pos:end="513:42"><expr pos:start="513:25" pos:end="513:41"><name pos:start="513:25" pos:end="513:25">i</name> <operator pos:start="513:27" pos:end="513:27">&lt;</operator> <name pos:start="513:29" pos:end="513:41">subframe_size</name></expr>;</condition> <incr pos:start="513:44" pos:end="513:46"><expr pos:start="513:44" pos:end="513:46"><name pos:start="513:44" pos:end="513:44">i</name><operator pos:start="513:45" pos:end="513:46">++</operator></expr></incr>)</control><block type="pseudo" pos:start="515:17" pos:end="515:45"><block_content pos:start="515:17" pos:end="515:45">
+
+                <expr_stmt pos:start="515:17" pos:end="515:45"><expr pos:start="515:17" pos:end="515:44"><name pos:start="515:17" pos:end="515:34"><name pos:start="515:17" pos:end="515:31">selected_signal</name><index pos:start="515:32" pos:end="515:34">[<expr pos:start="515:33" pos:end="515:33"><name pos:start="515:33" pos:end="515:33">i</name></expr>]</index></name> <operator pos:start="515:36" pos:end="515:38">&lt;&lt;=</operator> <name pos:start="515:40" pos:end="515:44">shift</name></expr>;</expr_stmt></block_content></block></for></block_content></block></if>
+
+        <else pos:start="517:9" pos:end="521:46">else<block type="pseudo" pos:start="519:13" pos:end="521:46"><block_content pos:start="519:13" pos:end="521:46">
+
+            <for pos:start="519:13" pos:end="521:46">for <control pos:start="519:17" pos:end="519:47">(<init pos:start="519:18" pos:end="519:23"><expr pos:start="519:18" pos:end="519:22"><name pos:start="519:18" pos:end="519:18">i</name> <operator pos:start="519:20" pos:end="519:20">=</operator> <literal type="number" pos:start="519:22" pos:end="519:22">0</literal></expr>;</init> <condition pos:start="519:25" pos:end="519:42"><expr pos:start="519:25" pos:end="519:41"><name pos:start="519:25" pos:end="519:25">i</name> <operator pos:start="519:27" pos:end="519:27">&lt;</operator> <name pos:start="519:29" pos:end="519:41">subframe_size</name></expr>;</condition> <incr pos:start="519:44" pos:end="519:46"><expr pos:start="519:44" pos:end="519:46"><name pos:start="519:44" pos:end="519:44">i</name><operator pos:start="519:45" pos:end="519:46">++</operator></expr></incr>)</control><block type="pseudo" pos:start="521:17" pos:end="521:46"><block_content pos:start="521:17" pos:end="521:46">
+
+                <expr_stmt pos:start="521:17" pos:end="521:46"><expr pos:start="521:17" pos:end="521:45"><name pos:start="521:17" pos:end="521:34"><name pos:start="521:17" pos:end="521:31">selected_signal</name><index pos:start="521:32" pos:end="521:34">[<expr pos:start="521:33" pos:end="521:33"><name pos:start="521:33" pos:end="521:33">i</name></expr>]</index></name> <operator pos:start="521:36" pos:end="521:38">&gt;&gt;=</operator> <operator pos:start="521:40" pos:end="521:40">-</operator><name pos:start="521:41" pos:end="521:45">shift</name></expr>;</expr_stmt></block_content></block></for></block_content></block></else></if_stmt>
+
+
+
+        <comment type="block" pos:start="525:9" pos:end="525:49">/* necessary to avoid compiler warning */</comment>
+
+        <expr_stmt pos:start="527:9" pos:end="527:48"><expr pos:start="527:9" pos:end="527:47"><name pos:start="527:9" pos:end="527:29">selected_signal_const</name> <operator pos:start="527:31" pos:end="527:31">=</operator> <name pos:start="527:33" pos:end="527:47">selected_signal</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <comment type="line" pos:start="529:7" pos:end="529:28">// if(best_delay_frac)</comment>
+
+    <else pos:start="531:5" pos:end="536:0">else<block type="pseudo" pos:start="533:9" pos:end="536:0"><block_content pos:start="533:9" pos:end="536:0">
+
+        <expr_stmt pos:start="533:9" pos:end="536:0"><expr pos:start="533:9" pos:end="533:108"><name pos:start="533:9" pos:end="533:29">selected_signal_const</name> <operator pos:start="533:31" pos:end="533:31">=</operator> <name pos:start="533:33" pos:end="533:40">residual</name> <operator pos:start="533:42" pos:end="533:42">+</operator> <name pos:start="533:44" pos:end="533:61">RES_PREV_DATA_SIZE</name> <operator pos:start="533:63" pos:end="533:63">-</operator> <operator pos:start="533:65" pos:end="533:65">(</operator><name pos:start="533:66" pos:end="533:79">best_delay_int</name> <operator pos:start="533:81" pos:end="533:81">+</operator> <literal type="number" pos:start="533:83" pos:end="533:85">1</literal> <operator pos:start="533:85" pos:end="533:85">-</operator> <name pos:start="533:87" pos:end="533:107">delayed_signal_offset</name><operator pos:start="533:108" pos:end="533:108">)</operator></expr>;</expr_stmt></block_content></block></else></if_stmt>
+
+<cpp:ifdef pos:start="535:1" pos:end="535:20">#<cpp:directive pos:start="535:2" pos:end="535:6">ifdef</cpp:directive> <name pos:start="535:8" pos:end="535:20">G729_BITEXACT</name></cpp:ifdef>
+
+    <expr_stmt pos:start="537:5" pos:end="537:36"><expr pos:start="537:5" pos:end="537:35"><name pos:start="537:5" pos:end="537:7">tmp</name> <operator pos:start="537:9" pos:end="537:9">=</operator> <name pos:start="537:11" pos:end="537:21">sh_gain_num</name> <operator pos:start="537:23" pos:end="537:23">-</operator> <name pos:start="537:25" pos:end="537:35">sh_gain_den</name></expr>;</expr_stmt>
+
+    <if_stmt pos:start="539:5" pos:end="545:26"><if pos:start="539:5" pos:end="541:25">if <condition pos:start="539:8" pos:end="539:16">(<expr pos:start="539:9" pos:end="539:15"><name pos:start="539:9" pos:end="539:11">tmp</name> <operator pos:start="539:13" pos:end="539:13">&gt;</operator> <literal type="number" pos:start="539:15" pos:end="539:15">0</literal></expr>)</condition><block type="pseudo" pos:start="541:9" pos:end="541:25"><block_content pos:start="541:9" pos:end="541:25">
+
+        <expr_stmt pos:start="541:9" pos:end="541:25"><expr pos:start="541:9" pos:end="541:24"><name pos:start="541:9" pos:end="541:16">gain_den</name> <operator pos:start="541:18" pos:end="541:20">&gt;&gt;=</operator> <name pos:start="541:22" pos:end="541:24">tmp</name></expr>;</expr_stmt></block_content></block></if>
+
+    <else pos:start="543:5" pos:end="545:26">else<block type="pseudo" pos:start="545:9" pos:end="545:26"><block_content pos:start="545:9" pos:end="545:26">
+
+        <expr_stmt pos:start="545:9" pos:end="545:26"><expr pos:start="545:9" pos:end="545:25"><name pos:start="545:9" pos:end="545:16">gain_num</name> <operator pos:start="545:18" pos:end="545:20">&gt;&gt;=</operator> <operator pos:start="545:22" pos:end="545:22">-</operator><name pos:start="545:23" pos:end="545:25">tmp</name></expr>;</expr_stmt></block_content></block></else></if_stmt>
+
+
+
+    <if_stmt pos:start="549:5" pos:end="564:0"><if pos:start="549:5" pos:end="551:48">if <condition pos:start="549:8" pos:end="549:28">(<expr pos:start="549:9" pos:end="549:27"><name pos:start="549:9" pos:end="549:16">gain_num</name> <operator pos:start="549:18" pos:end="549:18">&gt;</operator> <name pos:start="549:20" pos:end="549:27">gain_den</name></expr>)</condition><block type="pseudo" pos:start="551:9" pos:end="551:48"><block_content pos:start="551:9" pos:end="551:48">
+
+        <expr_stmt pos:start="551:9" pos:end="551:48"><expr pos:start="551:9" pos:end="551:47"><name pos:start="551:9" pos:end="551:24">lt_filt_factor_a</name> <operator pos:start="551:26" pos:end="551:26">=</operator> <name pos:start="551:28" pos:end="551:47">MIN_LT_FILT_FACTOR_A</name></expr>;</expr_stmt></block_content></block></if>
+
+    <else pos:start="553:5" pos:end="564:0">else <block pos:start="553:10" pos:end="564:0">{<block_content pos:start="555:9" pos:end="559:68">
+
+        <expr_stmt pos:start="555:9" pos:end="555:23"><expr pos:start="555:9" pos:end="555:22"><name pos:start="555:9" pos:end="555:16">gain_num</name> <operator pos:start="555:18" pos:end="555:20">&gt;&gt;=</operator> <literal type="number" pos:start="555:22" pos:end="555:22">2</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="557:9" pos:end="557:23"><expr pos:start="557:9" pos:end="557:22"><name pos:start="557:9" pos:end="557:16">gain_den</name> <operator pos:start="557:18" pos:end="557:20">&gt;&gt;=</operator> <literal type="number" pos:start="557:22" pos:end="557:22">1</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="559:9" pos:end="559:68"><expr pos:start="559:9" pos:end="559:67"><name pos:start="559:9" pos:end="559:24">lt_filt_factor_a</name> <operator pos:start="559:26" pos:end="559:26">=</operator> <operator pos:start="559:28" pos:end="559:28">(</operator><name pos:start="559:29" pos:end="559:36">gain_den</name> <operator pos:start="559:38" pos:end="559:39">&lt;&lt;</operator> <literal type="number" pos:start="559:41" pos:end="559:42">15</literal><operator pos:start="559:43" pos:end="559:43">)</operator> <operator pos:start="559:45" pos:end="559:45">/</operator> <operator pos:start="559:47" pos:end="559:47">(</operator><name pos:start="559:48" pos:end="559:55">gain_den</name> <operator pos:start="559:57" pos:end="559:57">+</operator> <name pos:start="559:59" pos:end="559:66">gain_num</name><operator pos:start="559:67" pos:end="559:67">)</operator></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+<cpp:else pos:start="563:1" pos:end="563:5">#<cpp:directive pos:start="563:2" pos:end="563:5">else</cpp:directive></cpp:else>
+
+    <expr_stmt pos:start="565:5" pos:end="565:57"><expr pos:start="565:5" pos:end="565:56"><name pos:start="565:5" pos:end="565:13">L64_temp0</name> <operator pos:start="565:15" pos:end="565:15">=</operator> <operator pos:start="565:17" pos:end="565:17">(</operator><operator pos:start="565:18" pos:end="565:18">(</operator><name pos:start="565:19" pos:end="565:25">int64_t</name><operator pos:start="565:26" pos:end="565:26">)</operator><name pos:start="565:27" pos:end="565:34">gain_num</name><operator pos:start="565:35" pos:end="565:35">)</operator> <operator pos:start="565:37" pos:end="565:38">&lt;&lt;</operator> <operator pos:start="565:40" pos:end="565:40">(</operator><name pos:start="565:41" pos:end="565:51">sh_gain_num</name> <operator pos:start="565:53" pos:end="565:53">-</operator> <literal type="number" pos:start="565:55" pos:end="565:55">1</literal><operator pos:start="565:56" pos:end="565:56">)</operator></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="567:5" pos:end="567:51"><expr pos:start="567:5" pos:end="567:50"><name pos:start="567:5" pos:end="567:13">L64_temp1</name> <operator pos:start="567:15" pos:end="567:15">=</operator> <operator pos:start="567:17" pos:end="567:17">(</operator><operator pos:start="567:18" pos:end="567:18">(</operator><name pos:start="567:19" pos:end="567:25">int64_t</name><operator pos:start="567:26" pos:end="567:26">)</operator><name pos:start="567:27" pos:end="567:34">gain_den</name><operator pos:start="567:35" pos:end="567:35">)</operator> <operator pos:start="567:37" pos:end="567:38">&lt;&lt;</operator> <name pos:start="567:40" pos:end="567:50">sh_gain_den</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="569:5" pos:end="572:0"><expr pos:start="569:5" pos:end="569:95"><name pos:start="569:5" pos:end="569:20">lt_filt_factor_a</name> <operator pos:start="569:22" pos:end="569:22">=</operator> <call pos:start="569:24" pos:end="569:95"><name pos:start="569:24" pos:end="569:28">FFMAX</name><argument_list pos:start="569:29" pos:end="569:95">(<argument pos:start="569:30" pos:end="569:72"><expr pos:start="569:30" pos:end="569:72"><operator pos:start="569:30" pos:end="569:30">(</operator><name pos:start="569:31" pos:end="569:39">L64_temp1</name> <operator pos:start="569:41" pos:end="569:42">&lt;&lt;</operator> <literal type="number" pos:start="569:44" pos:end="569:45">15</literal><operator pos:start="569:46" pos:end="569:46">)</operator> <operator pos:start="569:48" pos:end="569:48">/</operator> <operator pos:start="569:50" pos:end="569:50">(</operator><name pos:start="569:51" pos:end="569:59">L64_temp1</name> <operator pos:start="569:61" pos:end="569:61">+</operator> <name pos:start="569:63" pos:end="569:71">L64_temp0</name><operator pos:start="569:72" pos:end="569:72">)</operator></expr></argument>, <argument pos:start="569:75" pos:end="569:94"><expr pos:start="569:75" pos:end="569:94"><name pos:start="569:75" pos:end="569:94">MIN_LT_FILT_FACTOR_A</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+<cpp:endif pos:start="571:1" pos:end="571:6">#<cpp:directive pos:start="571:2" pos:end="571:6">endif</cpp:directive></cpp:endif>
+
+
+
+    <comment type="block" pos:start="575:5" pos:end="575:41">/* Filter through selected filter. */</comment>
+
+    <expr_stmt pos:start="577:5" pos:end="577:52"><expr pos:start="577:5" pos:end="577:51"><name pos:start="577:5" pos:end="577:20">lt_filt_factor_b</name> <operator pos:start="577:22" pos:end="577:22">=</operator> <literal type="number" pos:start="577:24" pos:end="577:30">32767</literal> <operator pos:start="577:30" pos:end="577:30">-</operator> <name pos:start="577:32" pos:end="577:47">lt_filt_factor_a</name> <operator pos:start="577:49" pos:end="577:49">+</operator> <literal type="number" pos:start="577:51" pos:end="577:51">1</literal></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="581:5" pos:end="587:59"><expr pos:start="581:5" pos:end="587:58"><call pos:start="581:5" pos:end="587:58"><name pos:start="581:5" pos:end="581:32">ff_acelp_weighted_vector_sum</name><argument_list pos:start="581:33" pos:end="587:58">(<argument pos:start="581:34" pos:end="581:46"><expr pos:start="581:34" pos:end="581:46"><name pos:start="581:34" pos:end="581:46">residual_filt</name></expr></argument>, <argument pos:start="581:49" pos:end="581:77"><expr pos:start="581:49" pos:end="581:77"><name pos:start="581:49" pos:end="581:56">residual</name> <operator pos:start="581:58" pos:end="581:58">+</operator> <name pos:start="581:60" pos:end="581:77">RES_PREV_DATA_SIZE</name></expr></argument>,
+
+                                 <argument pos:start="583:34" pos:end="583:54"><expr pos:start="583:34" pos:end="583:54"><name pos:start="583:34" pos:end="583:54">selected_signal_const</name></expr></argument>,
+
+                                 <argument pos:start="585:34" pos:end="585:49"><expr pos:start="585:34" pos:end="585:49"><name pos:start="585:34" pos:end="585:49">lt_filt_factor_a</name></expr></argument>, <argument pos:start="585:52" pos:end="585:67"><expr pos:start="585:52" pos:end="585:67"><name pos:start="585:52" pos:end="585:67">lt_filt_factor_b</name></expr></argument>,
+
+                                 <argument pos:start="587:34" pos:end="587:38"><expr pos:start="587:34" pos:end="587:38"><literal type="number" pos:start="587:34" pos:end="587:34">1</literal><operator pos:start="587:35" pos:end="587:36">&lt;&lt;</operator><literal type="number" pos:start="587:37" pos:end="587:38">14</literal></expr></argument>, <argument pos:start="587:41" pos:end="587:42"><expr pos:start="587:41" pos:end="587:42"><literal type="number" pos:start="587:41" pos:end="587:42">15</literal></expr></argument>, <argument pos:start="587:45" pos:end="587:57"><expr pos:start="587:45" pos:end="587:57"><name pos:start="587:45" pos:end="587:57">subframe_size</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="line" pos:start="591:5" pos:end="591:52">// Long-term prediction gain is larger than 3dB.</comment>
+
+    <return pos:start="593:5" pos:end="593:13">return <expr pos:start="593:12" pos:end="593:12"><literal type="number" pos:start="593:12" pos:end="593:12">1</literal></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

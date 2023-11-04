@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/5680.c" pos:tabs="8"><function pos:start="1:1" pos:end="99:1"><type pos:start="1:1" pos:end="1:20"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <specifier pos:start="1:8" pos:end="1:13">inline</specifier> <name pos:start="1:15" pos:end="1:18">TCGv</name> <modifier pos:start="1:20" pos:end="1:20">*</modifier></type><name pos:start="1:21" pos:end="1:37">compute_ldst_addr</name><parameter_list pos:start="1:38" pos:end="1:64">(<parameter pos:start="1:39" pos:end="1:54"><decl pos:start="1:39" pos:end="1:54"><type pos:start="1:39" pos:end="1:54"><name pos:start="1:39" pos:end="1:50">DisasContext</name> <modifier pos:start="1:52" pos:end="1:52">*</modifier></type><name pos:start="1:53" pos:end="1:54">dc</name></decl></parameter>, <parameter pos:start="1:57" pos:end="1:63"><decl pos:start="1:57" pos:end="1:63"><type pos:start="1:57" pos:end="1:63"><name pos:start="1:57" pos:end="1:60">TCGv</name> <modifier pos:start="1:62" pos:end="1:62">*</modifier></type><name pos:start="1:63" pos:end="1:63">t</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="99:1">{<block_content pos:start="5:5" pos:end="97:13">
+
+    <decl_stmt pos:start="5:5" pos:end="5:50"><decl pos:start="5:5" pos:end="5:49"><type pos:start="5:5" pos:end="5:16"><name pos:start="5:5" pos:end="5:12">unsigned</name> <name pos:start="5:14" pos:end="5:16">int</name></type> <name pos:start="5:18" pos:end="5:23">extimm</name> <init pos:start="5:25" pos:end="5:49">= <expr pos:start="5:27" pos:end="5:49"><name pos:start="5:27" pos:end="5:38"><name pos:start="5:27" pos:end="5:28">dc</name><operator pos:start="5:29" pos:end="5:30">-&gt;</operator><name pos:start="5:31" pos:end="5:38">tb_flags</name></name> <operator pos:start="5:40" pos:end="5:40">&amp;</operator> <name pos:start="5:42" pos:end="5:49">IMM_FLAG</name></expr></init></decl>;</decl_stmt>
+
+    <comment type="block" pos:start="7:5" pos:end="7:60">/* Should be set to one if r1 is used by loadstores.  */</comment>
+
+    <decl_stmt pos:start="9:5" pos:end="9:22"><decl pos:start="9:5" pos:end="9:21"><type pos:start="9:5" pos:end="9:7"><name pos:start="9:5" pos:end="9:7">int</name></type> <name pos:start="9:9" pos:end="9:17">stackprot</name> <init pos:start="9:19" pos:end="9:21">= <expr pos:start="9:21" pos:end="9:21"><literal type="number" pos:start="9:21" pos:end="9:21">0</literal></expr></init></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="13:5" pos:end="13:34">/* All load/stores use ra.  */</comment>
+
+    <if_stmt pos:start="15:5" pos:end="19:5"><if pos:start="15:5" pos:end="19:5">if <condition pos:start="15:8" pos:end="15:20">(<expr pos:start="15:9" pos:end="15:19"><name pos:start="15:9" pos:end="15:14"><name pos:start="15:9" pos:end="15:10">dc</name><operator pos:start="15:11" pos:end="15:12">-&gt;</operator><name pos:start="15:13" pos:end="15:14">ra</name></name> <operator pos:start="15:16" pos:end="15:17">==</operator> <literal type="number" pos:start="15:19" pos:end="15:19">1</literal></expr>)</condition> <block pos:start="15:22" pos:end="19:5">{<block_content pos:start="17:9" pos:end="17:22">
+
+        <expr_stmt pos:start="17:9" pos:end="17:22"><expr pos:start="17:9" pos:end="17:21"><name pos:start="17:9" pos:end="17:17">stackprot</name> <operator pos:start="17:19" pos:end="17:19">=</operator> <literal type="number" pos:start="17:21" pos:end="17:21">1</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="23:5" pos:end="23:40">/* Treat the common cases first.  */</comment>
+
+    <if_stmt pos:start="25:5" pos:end="63:5"><if pos:start="25:5" pos:end="63:5">if <condition pos:start="25:8" pos:end="25:20">(<expr pos:start="25:9" pos:end="25:19"><operator pos:start="25:9" pos:end="25:9">!</operator><name pos:start="25:10" pos:end="25:19"><name pos:start="25:10" pos:end="25:11">dc</name><operator pos:start="25:12" pos:end="25:13">-&gt;</operator><name pos:start="25:14" pos:end="25:19">type_b</name></name></expr>)</condition> <block pos:start="25:22" pos:end="63:5">{<block_content pos:start="29:9" pos:end="61:17">
+
+        <comment type="block" pos:start="27:9" pos:end="27:67">/* If any of the regs is r0, return a ptr to the other.  */</comment>
+
+        <if_stmt pos:start="29:9" pos:end="37:9"><if pos:start="29:9" pos:end="33:9">if <condition pos:start="29:12" pos:end="29:24">(<expr pos:start="29:13" pos:end="29:23"><name pos:start="29:13" pos:end="29:18"><name pos:start="29:13" pos:end="29:14">dc</name><operator pos:start="29:15" pos:end="29:16">-&gt;</operator><name pos:start="29:17" pos:end="29:18">ra</name></name> <operator pos:start="29:20" pos:end="29:21">==</operator> <literal type="number" pos:start="29:23" pos:end="29:23">0</literal></expr>)</condition> <block pos:start="29:26" pos:end="33:9">{<block_content pos:start="31:13" pos:end="31:34">
+
+            <return pos:start="31:13" pos:end="31:34">return <expr pos:start="31:20" pos:end="31:33"><operator pos:start="31:20" pos:end="31:20">&amp;</operator><name pos:start="31:21" pos:end="31:33"><name pos:start="31:21" pos:end="31:25">cpu_R</name><index pos:start="31:26" pos:end="31:33">[<expr pos:start="31:27" pos:end="31:32"><name pos:start="31:27" pos:end="31:32"><name pos:start="31:27" pos:end="31:28">dc</name><operator pos:start="31:29" pos:end="31:30">-&gt;</operator><name pos:start="31:31" pos:end="31:32">rb</name></name></expr>]</index></name></expr>;</return>
+
+        </block_content>}</block></if> <if type="elseif" pos:start="33:11" pos:end="37:9">else if <condition pos:start="33:19" pos:end="33:31">(<expr pos:start="33:20" pos:end="33:30"><name pos:start="33:20" pos:end="33:25"><name pos:start="33:20" pos:end="33:21">dc</name><operator pos:start="33:22" pos:end="33:23">-&gt;</operator><name pos:start="33:24" pos:end="33:25">rb</name></name> <operator pos:start="33:27" pos:end="33:28">==</operator> <literal type="number" pos:start="33:30" pos:end="33:30">0</literal></expr>)</condition> <block pos:start="33:33" pos:end="37:9">{<block_content pos:start="35:13" pos:end="35:34">
+
+            <return pos:start="35:13" pos:end="35:34">return <expr pos:start="35:20" pos:end="35:33"><operator pos:start="35:20" pos:end="35:20">&amp;</operator><name pos:start="35:21" pos:end="35:33"><name pos:start="35:21" pos:end="35:25">cpu_R</name><index pos:start="35:26" pos:end="35:33">[<expr pos:start="35:27" pos:end="35:32"><name pos:start="35:27" pos:end="35:32"><name pos:start="35:27" pos:end="35:28">dc</name><operator pos:start="35:29" pos:end="35:30">-&gt;</operator><name pos:start="35:31" pos:end="35:32">ra</name></name></expr>]</index></name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <if_stmt pos:start="41:9" pos:end="45:9"><if pos:start="41:9" pos:end="45:9">if <condition pos:start="41:12" pos:end="41:24">(<expr pos:start="41:13" pos:end="41:23"><name pos:start="41:13" pos:end="41:18"><name pos:start="41:13" pos:end="41:14">dc</name><operator pos:start="41:15" pos:end="41:16">-&gt;</operator><name pos:start="41:17" pos:end="41:18">rb</name></name> <operator pos:start="41:20" pos:end="41:21">==</operator> <literal type="number" pos:start="41:23" pos:end="41:23">1</literal></expr>)</condition> <block pos:start="41:26" pos:end="45:9">{<block_content pos:start="43:13" pos:end="43:26">
+
+            <expr_stmt pos:start="43:13" pos:end="43:26"><expr pos:start="43:13" pos:end="43:25"><name pos:start="43:13" pos:end="43:21">stackprot</name> <operator pos:start="43:23" pos:end="43:23">=</operator> <literal type="number" pos:start="43:25" pos:end="43:25">1</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="49:9" pos:end="49:28"><expr pos:start="49:9" pos:end="49:27"><operator pos:start="49:9" pos:end="49:9">*</operator><name pos:start="49:10" pos:end="49:10">t</name> <operator pos:start="49:12" pos:end="49:12">=</operator> <call pos:start="49:14" pos:end="49:27"><name pos:start="49:14" pos:end="49:25">tcg_temp_new</name><argument_list pos:start="49:26" pos:end="49:27">()</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="51:9" pos:end="51:57"><expr pos:start="51:9" pos:end="51:56"><call pos:start="51:9" pos:end="51:56"><name pos:start="51:9" pos:end="51:22">tcg_gen_add_tl</name><argument_list pos:start="51:23" pos:end="51:56">(<argument pos:start="51:24" pos:end="51:25"><expr pos:start="51:24" pos:end="51:25"><operator pos:start="51:24" pos:end="51:24">*</operator><name pos:start="51:25" pos:end="51:25">t</name></expr></argument>, <argument pos:start="51:28" pos:end="51:40"><expr pos:start="51:28" pos:end="51:40"><name pos:start="51:28" pos:end="51:40"><name pos:start="51:28" pos:end="51:32">cpu_R</name><index pos:start="51:33" pos:end="51:40">[<expr pos:start="51:34" pos:end="51:39"><name pos:start="51:34" pos:end="51:39"><name pos:start="51:34" pos:end="51:35">dc</name><operator pos:start="51:36" pos:end="51:37">-&gt;</operator><name pos:start="51:38" pos:end="51:39">ra</name></name></expr>]</index></name></expr></argument>, <argument pos:start="51:43" pos:end="51:55"><expr pos:start="51:43" pos:end="51:55"><name pos:start="51:43" pos:end="51:55"><name pos:start="51:43" pos:end="51:47">cpu_R</name><index pos:start="51:48" pos:end="51:55">[<expr pos:start="51:49" pos:end="51:54"><name pos:start="51:49" pos:end="51:54"><name pos:start="51:49" pos:end="51:50">dc</name><operator pos:start="51:51" pos:end="51:52">-&gt;</operator><name pos:start="51:53" pos:end="51:54">rb</name></name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="55:9" pos:end="59:9"><if pos:start="55:9" pos:end="59:9">if <condition pos:start="55:12" pos:end="55:22">(<expr pos:start="55:13" pos:end="55:21"><name pos:start="55:13" pos:end="55:21">stackprot</name></expr>)</condition> <block pos:start="55:24" pos:end="59:9">{<block_content pos:start="57:13" pos:end="57:46">
+
+            <expr_stmt pos:start="57:13" pos:end="57:46"><expr pos:start="57:13" pos:end="57:45"><call pos:start="57:13" pos:end="57:45"><name pos:start="57:13" pos:end="57:32">gen_helper_stackprot</name><argument_list pos:start="57:33" pos:end="57:45">(<argument pos:start="57:34" pos:end="57:40"><expr pos:start="57:34" pos:end="57:40"><name pos:start="57:34" pos:end="57:40">cpu_env</name></expr></argument>, <argument pos:start="57:43" pos:end="57:44"><expr pos:start="57:43" pos:end="57:44"><operator pos:start="57:43" pos:end="57:43">*</operator><name pos:start="57:44" pos:end="57:44">t</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <return pos:start="61:9" pos:end="61:17">return <expr pos:start="61:16" pos:end="61:16"><name pos:start="61:16" pos:end="61:16">t</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+    <comment type="block" pos:start="65:5" pos:end="65:21">/* Immediate.  */</comment>
+
+    <if_stmt pos:start="67:5" pos:end="87:5"><if pos:start="67:5" pos:end="81:5">if <condition pos:start="67:8" pos:end="67:16">(<expr pos:start="67:9" pos:end="67:15"><operator pos:start="67:9" pos:end="67:9">!</operator><name pos:start="67:10" pos:end="67:15">extimm</name></expr>)</condition> <block pos:start="67:18" pos:end="81:5">{<block_content pos:start="69:9" pos:end="79:46">
+
+        <if_stmt pos:start="69:9" pos:end="73:9"><if pos:start="69:9" pos:end="73:9">if <condition pos:start="69:12" pos:end="69:25">(<expr pos:start="69:13" pos:end="69:24"><name pos:start="69:13" pos:end="69:19"><name pos:start="69:13" pos:end="69:14">dc</name><operator pos:start="69:15" pos:end="69:16">-&gt;</operator><name pos:start="69:17" pos:end="69:19">imm</name></name> <operator pos:start="69:21" pos:end="69:22">==</operator> <literal type="number" pos:start="69:24" pos:end="69:24">0</literal></expr>)</condition> <block pos:start="69:27" pos:end="73:9">{<block_content pos:start="71:13" pos:end="71:34">
+
+            <return pos:start="71:13" pos:end="71:34">return <expr pos:start="71:20" pos:end="71:33"><operator pos:start="71:20" pos:end="71:20">&amp;</operator><name pos:start="71:21" pos:end="71:33"><name pos:start="71:21" pos:end="71:25">cpu_R</name><index pos:start="71:26" pos:end="71:33">[<expr pos:start="71:27" pos:end="71:32"><name pos:start="71:27" pos:end="71:32"><name pos:start="71:27" pos:end="71:28">dc</name><operator pos:start="71:29" pos:end="71:30">-&gt;</operator><name pos:start="71:31" pos:end="71:32">ra</name></name></expr>]</index></name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="75:9" pos:end="75:28"><expr pos:start="75:9" pos:end="75:27"><operator pos:start="75:9" pos:end="75:9">*</operator><name pos:start="75:10" pos:end="75:10">t</name> <operator pos:start="75:12" pos:end="75:12">=</operator> <call pos:start="75:14" pos:end="75:27"><name pos:start="75:14" pos:end="75:25">tcg_temp_new</name><argument_list pos:start="75:26" pos:end="75:27">()</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="77:9" pos:end="77:57"><expr pos:start="77:9" pos:end="77:56"><call pos:start="77:9" pos:end="77:56"><name pos:start="77:9" pos:end="77:23">tcg_gen_movi_tl</name><argument_list pos:start="77:24" pos:end="77:56">(<argument pos:start="77:25" pos:end="77:26"><expr pos:start="77:25" pos:end="77:26"><operator pos:start="77:25" pos:end="77:25">*</operator><name pos:start="77:26" pos:end="77:26">t</name></expr></argument>, <argument pos:start="77:29" pos:end="77:55"><expr pos:start="77:29" pos:end="77:55"><operator pos:start="77:29" pos:end="77:29">(</operator><name pos:start="77:30" pos:end="77:36">int32_t</name><operator pos:start="77:37" pos:end="77:37">)</operator><operator pos:start="77:38" pos:end="77:38">(</operator><operator pos:start="77:39" pos:end="77:39">(</operator><name pos:start="77:40" pos:end="77:46">int16_t</name><operator pos:start="77:47" pos:end="77:47">)</operator><name pos:start="77:48" pos:end="77:54"><name pos:start="77:48" pos:end="77:49">dc</name><operator pos:start="77:50" pos:end="77:51">-&gt;</operator><name pos:start="77:52" pos:end="77:54">imm</name></name><operator pos:start="77:55" pos:end="77:55">)</operator></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="79:9" pos:end="79:46"><expr pos:start="79:9" pos:end="79:45"><call pos:start="79:9" pos:end="79:45"><name pos:start="79:9" pos:end="79:22">tcg_gen_add_tl</name><argument_list pos:start="79:23" pos:end="79:45">(<argument pos:start="79:24" pos:end="79:25"><expr pos:start="79:24" pos:end="79:25"><operator pos:start="79:24" pos:end="79:24">*</operator><name pos:start="79:25" pos:end="79:25">t</name></expr></argument>, <argument pos:start="79:28" pos:end="79:40"><expr pos:start="79:28" pos:end="79:40"><name pos:start="79:28" pos:end="79:40"><name pos:start="79:28" pos:end="79:32">cpu_R</name><index pos:start="79:33" pos:end="79:40">[<expr pos:start="79:34" pos:end="79:39"><name pos:start="79:34" pos:end="79:39"><name pos:start="79:34" pos:end="79:35">dc</name><operator pos:start="79:36" pos:end="79:37">-&gt;</operator><name pos:start="79:38" pos:end="79:39">ra</name></name></expr>]</index></name></expr></argument>, <argument pos:start="79:43" pos:end="79:44"><expr pos:start="79:43" pos:end="79:44"><operator pos:start="79:43" pos:end="79:43">*</operator><name pos:start="79:44" pos:end="79:44">t</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="81:7" pos:end="87:5">else <block pos:start="81:12" pos:end="87:5">{<block_content pos:start="83:9" pos:end="85:63">
+
+        <expr_stmt pos:start="83:9" pos:end="83:28"><expr pos:start="83:9" pos:end="83:27"><operator pos:start="83:9" pos:end="83:9">*</operator><name pos:start="83:10" pos:end="83:10">t</name> <operator pos:start="83:12" pos:end="83:12">=</operator> <call pos:start="83:14" pos:end="83:27"><name pos:start="83:14" pos:end="83:25">tcg_temp_new</name><argument_list pos:start="83:26" pos:end="83:27">()</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="85:9" pos:end="85:63"><expr pos:start="85:9" pos:end="85:62"><call pos:start="85:9" pos:end="85:62"><name pos:start="85:9" pos:end="85:22">tcg_gen_add_tl</name><argument_list pos:start="85:23" pos:end="85:62">(<argument pos:start="85:24" pos:end="85:25"><expr pos:start="85:24" pos:end="85:25"><operator pos:start="85:24" pos:end="85:24">*</operator><name pos:start="85:25" pos:end="85:25">t</name></expr></argument>, <argument pos:start="85:28" pos:end="85:40"><expr pos:start="85:28" pos:end="85:40"><name pos:start="85:28" pos:end="85:40"><name pos:start="85:28" pos:end="85:32">cpu_R</name><index pos:start="85:33" pos:end="85:40">[<expr pos:start="85:34" pos:end="85:39"><name pos:start="85:34" pos:end="85:39"><name pos:start="85:34" pos:end="85:35">dc</name><operator pos:start="85:36" pos:end="85:37">-&gt;</operator><name pos:start="85:38" pos:end="85:39">ra</name></name></expr>]</index></name></expr></argument>, <argument pos:start="85:43" pos:end="85:61"><expr pos:start="85:43" pos:end="85:61"><operator pos:start="85:43" pos:end="85:43">*</operator><operator pos:start="85:44" pos:end="85:44">(</operator><call pos:start="85:45" pos:end="85:60"><name pos:start="85:45" pos:end="85:56">dec_alu_op_b</name><argument_list pos:start="85:57" pos:end="85:60">(<argument pos:start="85:58" pos:end="85:59"><expr pos:start="85:58" pos:end="85:59"><name pos:start="85:58" pos:end="85:59">dc</name></expr></argument>)</argument_list></call><operator pos:start="85:61" pos:end="85:61">)</operator></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <if_stmt pos:start="91:5" pos:end="95:5"><if pos:start="91:5" pos:end="95:5">if <condition pos:start="91:8" pos:end="91:18">(<expr pos:start="91:9" pos:end="91:17"><name pos:start="91:9" pos:end="91:17">stackprot</name></expr>)</condition> <block pos:start="91:20" pos:end="95:5">{<block_content pos:start="93:9" pos:end="93:42">
+
+        <expr_stmt pos:start="93:9" pos:end="93:42"><expr pos:start="93:9" pos:end="93:41"><call pos:start="93:9" pos:end="93:41"><name pos:start="93:9" pos:end="93:28">gen_helper_stackprot</name><argument_list pos:start="93:29" pos:end="93:41">(<argument pos:start="93:30" pos:end="93:36"><expr pos:start="93:30" pos:end="93:36"><name pos:start="93:30" pos:end="93:36">cpu_env</name></expr></argument>, <argument pos:start="93:39" pos:end="93:40"><expr pos:start="93:39" pos:end="93:40"><operator pos:start="93:39" pos:end="93:39">*</operator><name pos:start="93:40" pos:end="93:40">t</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <return pos:start="97:5" pos:end="97:13">return <expr pos:start="97:12" pos:end="97:12"><name pos:start="97:12" pos:end="97:12">t</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

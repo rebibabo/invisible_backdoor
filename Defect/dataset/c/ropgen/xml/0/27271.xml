@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/27271.c" pos:tabs="8"><function pos:start="1:1" pos:end="83:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:26">msix_add_config</name><parameter_list pos:start="1:27" pos:end="3:62">(<parameter pos:start="1:28" pos:end="1:49"><decl pos:start="1:28" pos:end="1:49"><type pos:start="1:28" pos:end="1:49"><name pos:start="1:28" pos:end="1:43"><name pos:start="1:28" pos:end="1:33">struct</name> <name pos:start="1:35" pos:end="1:43">PCIDevice</name></name> <modifier pos:start="1:45" pos:end="1:45">*</modifier></type><name pos:start="1:46" pos:end="1:49">pdev</name></decl></parameter>, <parameter pos:start="1:52" pos:end="1:74"><decl pos:start="1:52" pos:end="1:74"><type pos:start="1:52" pos:end="1:74"><name pos:start="1:52" pos:end="1:59">unsigned</name> <name pos:start="1:61" pos:end="1:65">short</name></type> <name pos:start="1:67" pos:end="1:74">nentries</name></decl></parameter>,
+
+                           <parameter pos:start="3:28" pos:end="3:42"><decl pos:start="3:28" pos:end="3:42"><type pos:start="3:28" pos:end="3:42"><name pos:start="3:28" pos:end="3:35">unsigned</name></type> <name pos:start="3:37" pos:end="3:42">bar_nr</name></decl></parameter>, <parameter pos:start="3:45" pos:end="3:61"><decl pos:start="3:45" pos:end="3:61"><type pos:start="3:45" pos:end="3:61"><name pos:start="3:45" pos:end="3:52">unsigned</name></type> <name pos:start="3:54" pos:end="3:61">bar_size</name></decl></parameter>)</parameter_list>
+
+<block pos:start="5:1" pos:end="83:1">{<block_content pos:start="7:5" pos:end="81:13">
+
+    <decl_stmt pos:start="7:5" pos:end="7:22"><decl pos:start="7:5" pos:end="7:21"><type pos:start="7:5" pos:end="7:7"><name pos:start="7:5" pos:end="7:7">int</name></type> <name pos:start="7:9" pos:end="7:21">config_offset</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:20"><decl pos:start="9:5" pos:end="9:19"><type pos:start="9:5" pos:end="9:13"><name pos:start="9:5" pos:end="9:11">uint8_t</name> <modifier pos:start="9:13" pos:end="9:13">*</modifier></type><name pos:start="9:14" pos:end="9:19">config</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:22"><decl pos:start="11:5" pos:end="11:21"><type pos:start="11:5" pos:end="11:12"><name pos:start="11:5" pos:end="11:12">uint32_t</name></type> <name pos:start="11:14" pos:end="11:21">new_size</name></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="15:5" pos:end="17:23"><if pos:start="15:5" pos:end="17:23">if <condition pos:start="15:8" pos:end="15:60">(<expr pos:start="15:9" pos:end="15:59"><name pos:start="15:9" pos:end="15:34"><name pos:start="15:9" pos:end="15:16">nentries</name> <argument_list type="generic" pos:start="15:18" pos:end="15:34">&lt; <argument pos:start="15:20" pos:end="15:32"><expr pos:start="15:20" pos:end="15:32"><literal type="number" pos:start="15:20" pos:end="15:20">1</literal> <operator pos:start="15:22" pos:end="15:23">||</operator> <name pos:start="15:25" pos:end="15:32">nentries</name></expr></argument> &gt;</argument_list></name> <name pos:start="15:36" pos:end="15:55">PCI_MSIX_FLAGS_QSIZE</name> <operator pos:start="15:57" pos:end="15:57">+</operator> <literal type="number" pos:start="15:59" pos:end="15:59">1</literal></expr>)</condition><block type="pseudo" pos:start="17:9" pos:end="17:23"><block_content pos:start="17:9" pos:end="17:23">
+
+        <return pos:start="17:9" pos:end="17:23">return <expr pos:start="17:16" pos:end="17:22"><operator pos:start="17:16" pos:end="17:16">-</operator><name pos:start="17:17" pos:end="17:22">EINVAL</name></expr>;</return></block_content></block></if></if_stmt>
+
+    <if_stmt pos:start="19:5" pos:end="21:23"><if pos:start="19:5" pos:end="21:23">if <condition pos:start="19:8" pos:end="19:30">(<expr pos:start="19:9" pos:end="19:29"><name pos:start="19:9" pos:end="19:16">bar_size</name> <operator pos:start="19:18" pos:end="19:18">&gt;</operator> <literal type="number" pos:start="19:20" pos:end="19:29">0x80000000</literal></expr>)</condition><block type="pseudo" pos:start="21:9" pos:end="21:23"><block_content pos:start="21:9" pos:end="21:23">
+
+        <return pos:start="21:9" pos:end="21:23">return <expr pos:start="21:16" pos:end="21:22"><operator pos:start="21:16" pos:end="21:16">-</operator><name pos:start="21:17" pos:end="21:22">ENOSPC</name></expr>;</return></block_content></block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="25:5" pos:end="25:40">/* Add space for MSI-X structures */</comment>
+
+    <if_stmt pos:start="27:5" pos:end="41:5"><if pos:start="27:5" pos:end="31:5">if <condition pos:start="27:8" pos:end="27:18">(<expr pos:start="27:9" pos:end="27:17"><operator pos:start="27:9" pos:end="27:9">!</operator><name pos:start="27:10" pos:end="27:17">bar_size</name></expr>)</condition> <block pos:start="27:20" pos:end="31:5">{<block_content pos:start="29:9" pos:end="29:34">
+
+        <expr_stmt pos:start="29:9" pos:end="29:34"><expr pos:start="29:9" pos:end="29:33"><name pos:start="29:9" pos:end="29:16">new_size</name> <operator pos:start="29:18" pos:end="29:18">=</operator> <name pos:start="29:20" pos:end="29:33">MSIX_PAGE_SIZE</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <if type="elseif" pos:start="31:7" pos:end="37:5">else if <condition pos:start="31:15" pos:end="31:41">(<expr pos:start="31:16" pos:end="31:40"><name pos:start="31:16" pos:end="31:23">bar_size</name> <operator pos:start="31:25" pos:end="31:25">&lt;</operator> <name pos:start="31:27" pos:end="31:40">MSIX_PAGE_SIZE</name></expr>)</condition> <block pos:start="31:43" pos:end="37:5">{<block_content pos:start="33:9" pos:end="35:38">
+
+        <expr_stmt pos:start="33:9" pos:end="33:34"><expr pos:start="33:9" pos:end="33:33"><name pos:start="33:9" pos:end="33:16">bar_size</name> <operator pos:start="33:18" pos:end="33:18">=</operator> <name pos:start="33:20" pos:end="33:33">MSIX_PAGE_SIZE</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="35:9" pos:end="35:38"><expr pos:start="35:9" pos:end="35:37"><name pos:start="35:9" pos:end="35:16">new_size</name> <operator pos:start="35:18" pos:end="35:18">=</operator> <name pos:start="35:20" pos:end="35:33">MSIX_PAGE_SIZE</name> <operator pos:start="35:35" pos:end="35:35">*</operator> <literal type="number" pos:start="35:37" pos:end="35:37">2</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="37:7" pos:end="41:5">else <block pos:start="37:12" pos:end="41:5">{<block_content pos:start="39:9" pos:end="39:32">
+
+        <expr_stmt pos:start="39:9" pos:end="39:32"><expr pos:start="39:9" pos:end="39:31"><name pos:start="39:9" pos:end="39:16">new_size</name> <operator pos:start="39:18" pos:end="39:18">=</operator> <name pos:start="39:20" pos:end="39:27">bar_size</name> <operator pos:start="39:29" pos:end="39:29">*</operator> <literal type="number" pos:start="39:31" pos:end="39:31">2</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <expr_stmt pos:start="45:5" pos:end="45:35"><expr pos:start="45:5" pos:end="45:34"><name pos:start="45:5" pos:end="45:23"><name pos:start="45:5" pos:end="45:8">pdev</name><operator pos:start="45:9" pos:end="45:10">-&gt;</operator><name pos:start="45:11" pos:end="45:23">msix_bar_size</name></name> <operator pos:start="45:25" pos:end="45:25">=</operator> <name pos:start="45:27" pos:end="45:34">new_size</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="47:5" pos:end="49:59"><expr pos:start="47:5" pos:end="49:58"><name pos:start="47:5" pos:end="47:17">config_offset</name> <operator pos:start="47:19" pos:end="47:19">=</operator> <call pos:start="47:21" pos:end="49:58"><name pos:start="47:21" pos:end="47:38">pci_add_capability</name><argument_list pos:start="47:39" pos:end="49:58">(<argument pos:start="47:40" pos:end="47:43"><expr pos:start="47:40" pos:end="47:43"><name pos:start="47:40" pos:end="47:43">pdev</name></expr></argument>, <argument pos:start="47:46" pos:end="47:60"><expr pos:start="47:46" pos:end="47:60"><name pos:start="47:46" pos:end="47:60">PCI_CAP_ID_MSIX</name></expr></argument>,
+
+                                       <argument pos:start="49:40" pos:end="49:40"><expr pos:start="49:40" pos:end="49:40"><literal type="number" pos:start="49:40" pos:end="49:40">0</literal></expr></argument>, <argument pos:start="49:43" pos:end="49:57"><expr pos:start="49:43" pos:end="49:57"><name pos:start="49:43" pos:end="49:57">MSIX_CAP_LENGTH</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="51:5" pos:end="53:29"><if pos:start="51:5" pos:end="53:29">if <condition pos:start="51:8" pos:end="51:26">(<expr pos:start="51:9" pos:end="51:25"><name pos:start="51:9" pos:end="51:21">config_offset</name> <operator pos:start="51:23" pos:end="51:23">&lt;</operator> <literal type="number" pos:start="51:25" pos:end="51:25">0</literal></expr>)</condition><block type="pseudo" pos:start="53:9" pos:end="53:29"><block_content pos:start="53:9" pos:end="53:29">
+
+        <return pos:start="53:9" pos:end="53:29">return <expr pos:start="53:16" pos:end="53:28"><name pos:start="53:16" pos:end="53:28">config_offset</name></expr>;</return></block_content></block></if></if_stmt>
+
+    <expr_stmt pos:start="55:5" pos:end="55:42"><expr pos:start="55:5" pos:end="55:41"><name pos:start="55:5" pos:end="55:10">config</name> <operator pos:start="55:12" pos:end="55:12">=</operator> <name pos:start="55:14" pos:end="55:25"><name pos:start="55:14" pos:end="55:17">pdev</name><operator pos:start="55:18" pos:end="55:19">-&gt;</operator><name pos:start="55:20" pos:end="55:25">config</name></name> <operator pos:start="55:27" pos:end="55:27">+</operator> <name pos:start="55:29" pos:end="55:41">config_offset</name></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="59:5" pos:end="59:56"><expr pos:start="59:5" pos:end="59:55"><call pos:start="59:5" pos:end="59:55"><name pos:start="59:5" pos:end="59:16">pci_set_word</name><argument_list pos:start="59:17" pos:end="59:55">(<argument pos:start="59:18" pos:end="59:40"><expr pos:start="59:18" pos:end="59:40"><name pos:start="59:18" pos:end="59:23">config</name> <operator pos:start="59:25" pos:end="59:25">+</operator> <name pos:start="59:27" pos:end="59:40">PCI_MSIX_FLAGS</name></expr></argument>, <argument pos:start="59:43" pos:end="59:54"><expr pos:start="59:43" pos:end="59:54"><name pos:start="59:43" pos:end="59:50">nentries</name> <operator pos:start="59:52" pos:end="59:52">-</operator> <literal type="number" pos:start="59:54" pos:end="59:54">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <comment type="block" pos:start="61:5" pos:end="61:29">/* Table on top of BAR */</comment>
+
+    <expr_stmt pos:start="63:5" pos:end="63:61"><expr pos:start="63:5" pos:end="63:60"><call pos:start="63:5" pos:end="63:60"><name pos:start="63:5" pos:end="63:16">pci_set_long</name><argument_list pos:start="63:17" pos:end="63:60">(<argument pos:start="63:18" pos:end="63:40"><expr pos:start="63:18" pos:end="63:40"><name pos:start="63:18" pos:end="63:23">config</name> <operator pos:start="63:25" pos:end="63:25">+</operator> <name pos:start="63:27" pos:end="63:40">PCI_MSIX_TABLE</name></expr></argument>, <argument pos:start="63:43" pos:end="63:59"><expr pos:start="63:43" pos:end="63:59"><name pos:start="63:43" pos:end="63:50">bar_size</name> <operator pos:start="63:52" pos:end="63:52">|</operator> <name pos:start="63:54" pos:end="63:59">bar_nr</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <comment type="block" pos:start="65:5" pos:end="65:37">/* Pending bits on top of that */</comment>
+
+    <expr_stmt pos:start="67:5" pos:end="69:25"><expr pos:start="67:5" pos:end="69:24"><call pos:start="67:5" pos:end="69:24"><name pos:start="67:5" pos:end="67:16">pci_set_long</name><argument_list pos:start="67:17" pos:end="69:24">(<argument pos:start="67:18" pos:end="67:38"><expr pos:start="67:18" pos:end="67:38"><name pos:start="67:18" pos:end="67:23">config</name> <operator pos:start="67:25" pos:end="67:25">+</operator> <name pos:start="67:27" pos:end="67:38">PCI_MSIX_PBA</name></expr></argument>, <argument pos:start="67:41" pos:end="69:23"><expr pos:start="67:41" pos:end="69:23"><operator pos:start="67:41" pos:end="67:41">(</operator><name pos:start="67:42" pos:end="67:49">bar_size</name> <operator pos:start="67:51" pos:end="67:51">+</operator> <name pos:start="67:53" pos:end="67:69">MSIX_PAGE_PENDING</name><operator pos:start="67:70" pos:end="67:70">)</operator> <operator pos:start="67:72" pos:end="67:72">|</operator>
+
+                 <name pos:start="69:18" pos:end="69:23">bar_nr</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="71:5" pos:end="71:35"><expr pos:start="71:5" pos:end="71:34"><name pos:start="71:5" pos:end="71:18"><name pos:start="71:5" pos:end="71:8">pdev</name><operator pos:start="71:9" pos:end="71:10">-&gt;</operator><name pos:start="71:11" pos:end="71:18">msix_cap</name></name> <operator pos:start="71:20" pos:end="71:20">=</operator> <name pos:start="71:22" pos:end="71:34">config_offset</name></expr>;</expr_stmt>
+
+    <comment type="block" pos:start="73:5" pos:end="73:34">/* Make flags bit writable. */</comment>
+
+    <expr_stmt pos:start="75:5" pos:end="77:30"><expr pos:start="75:5" pos:end="77:29"><name pos:start="75:5" pos:end="75:52"><name pos:start="75:5" pos:end="75:8">pdev</name><operator pos:start="75:9" pos:end="75:10">-&gt;</operator><name pos:start="75:11" pos:end="75:15">wmask</name><index pos:start="75:16" pos:end="75:52">[<expr pos:start="75:17" pos:end="75:51"><name pos:start="75:17" pos:end="75:29">config_offset</name> <operator pos:start="75:31" pos:end="75:31">+</operator> <name pos:start="75:33" pos:end="75:51">MSIX_CONTROL_OFFSET</name></expr>]</index></name> <operator pos:start="75:54" pos:end="75:55">|=</operator> <name pos:start="75:57" pos:end="75:72">MSIX_ENABLE_MASK</name> <operator pos:start="75:74" pos:end="75:74">|</operator>
+
+	    <name pos:start="77:13" pos:end="77:29">MSIX_MASKALL_MASK</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="79:5" pos:end="79:38"><expr pos:start="79:5" pos:end="79:37"><name pos:start="79:5" pos:end="79:30"><name pos:start="79:5" pos:end="79:8">pdev</name><operator pos:start="79:9" pos:end="79:10">-&gt;</operator><name pos:start="79:11" pos:end="79:30">msix_function_masked</name></name> <operator pos:start="79:32" pos:end="79:32">=</operator> <name pos:start="79:34" pos:end="79:37">true</name></expr>;</expr_stmt>
+
+    <return pos:start="81:5" pos:end="81:13">return <expr pos:start="81:12" pos:end="81:12"><literal type="number" pos:start="81:12" pos:end="81:12">0</literal></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

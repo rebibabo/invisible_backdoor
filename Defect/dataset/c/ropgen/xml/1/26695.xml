@@ -1,0 +1,731 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/26695.c" pos:tabs="8"><function pos:start="1:1" pos:end="729:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:28">alac_decode_frame</name><parameter_list pos:start="1:29" pos:end="5:70">(<parameter pos:start="1:30" pos:end="1:50"><decl pos:start="1:30" pos:end="1:50"><type pos:start="1:30" pos:end="1:50"><name pos:start="1:30" pos:end="1:43">AVCodecContext</name> <modifier pos:start="1:45" pos:end="1:45">*</modifier></type><name pos:start="1:46" pos:end="1:50">avctx</name></decl></parameter>,
+
+                             <parameter pos:start="3:30" pos:end="3:44"><decl pos:start="3:30" pos:end="3:44"><type pos:start="3:30" pos:end="3:44"><name pos:start="3:30" pos:end="3:33">void</name> <modifier pos:start="3:35" pos:end="3:35">*</modifier></type><name pos:start="3:36" pos:end="3:44">outbuffer</name></decl></parameter>, <parameter pos:start="3:47" pos:end="3:61"><decl pos:start="3:47" pos:end="3:61"><type pos:start="3:47" pos:end="3:61"><name pos:start="3:47" pos:end="3:49">int</name> <modifier pos:start="3:51" pos:end="3:51">*</modifier></type><name pos:start="3:52" pos:end="3:61">outputsize</name></decl></parameter>,
+
+                             <parameter pos:start="5:30" pos:end="5:46"><decl pos:start="5:30" pos:end="5:46"><type pos:start="5:30" pos:end="5:46"><name pos:start="5:30" pos:end="5:36">uint8_t</name> <modifier pos:start="5:38" pos:end="5:38">*</modifier></type><name pos:start="5:39" pos:end="5:46">inbuffer</name></decl></parameter>, <parameter pos:start="5:49" pos:end="5:69"><decl pos:start="5:49" pos:end="5:69"><type pos:start="5:49" pos:end="5:69"><name pos:start="5:49" pos:end="5:51">int</name></type> <name pos:start="5:53" pos:end="5:69">input_buffer_size</name></decl></parameter>)</parameter_list>
+
+<block pos:start="7:1" pos:end="729:1">{<block_content pos:start="9:5" pos:end="727:29">
+
+    <decl_stmt pos:start="9:5" pos:end="9:41"><decl pos:start="9:5" pos:end="9:40"><type pos:start="9:5" pos:end="9:17"><name pos:start="9:5" pos:end="9:15">ALACContext</name> <modifier pos:start="9:17" pos:end="9:17">*</modifier></type><name pos:start="9:18" pos:end="9:21">alac</name> <init pos:start="9:23" pos:end="9:40">= <expr pos:start="9:25" pos:end="9:40"><name pos:start="9:25" pos:end="9:40"><name pos:start="9:25" pos:end="9:29">avctx</name><operator pos:start="9:30" pos:end="9:31">-&gt;</operator><name pos:start="9:32" pos:end="9:40">priv_data</name></name></expr></init></decl>;</decl_stmt>
+
+
+
+    <decl_stmt pos:start="13:5" pos:end="13:17"><decl pos:start="13:5" pos:end="13:16"><type pos:start="13:5" pos:end="13:7"><name pos:start="13:5" pos:end="13:7">int</name></type> <name pos:start="13:9" pos:end="13:16">channels</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:26"><decl pos:start="15:5" pos:end="15:25"><type pos:start="15:5" pos:end="15:11"><name pos:start="15:5" pos:end="15:11">int32_t</name></type> <name pos:start="15:13" pos:end="15:25">outputsamples</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="19:5" pos:end="19:36">/* short-circuit null buffers */</comment>
+
+    <if_stmt pos:start="21:5" pos:end="23:33"><if pos:start="21:5" pos:end="23:33">if <condition pos:start="21:8" pos:end="21:40">(<expr pos:start="21:9" pos:end="21:39"><operator pos:start="21:9" pos:end="21:9">!</operator><name pos:start="21:10" pos:end="21:17">inbuffer</name> <operator pos:start="21:19" pos:end="21:20">||</operator> <operator pos:start="21:22" pos:end="21:22">!</operator><name pos:start="21:23" pos:end="21:39">input_buffer_size</name></expr>)</condition><block type="pseudo" pos:start="23:9" pos:end="23:33"><block_content pos:start="23:9" pos:end="23:33">
+
+        <return pos:start="23:9" pos:end="23:33">return <expr pos:start="23:16" pos:end="23:32"><name pos:start="23:16" pos:end="23:32">input_buffer_size</name></expr>;</return></block_content></block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="27:5" pos:end="27:39">/* initialize from the extradata */</comment>
+
+    <if_stmt pos:start="29:5" pos:end="45:5"><if pos:start="29:5" pos:end="45:5">if <condition pos:start="29:8" pos:end="29:35">(<expr pos:start="29:9" pos:end="29:34"><operator pos:start="29:9" pos:end="29:9">!</operator><name pos:start="29:10" pos:end="29:34"><name pos:start="29:10" pos:end="29:13">alac</name><operator pos:start="29:14" pos:end="29:15">-&gt;</operator><name pos:start="29:16" pos:end="29:34">context_initialized</name></name></expr>)</condition> <block pos:start="29:37" pos:end="45:5">{<block_content pos:start="31:9" pos:end="43:38">
+
+        <if_stmt pos:start="31:9" pos:end="39:9"><if pos:start="31:9" pos:end="39:9">if <condition pos:start="31:12" pos:end="31:63">(<expr pos:start="31:13" pos:end="31:62"><name pos:start="31:13" pos:end="31:39"><name pos:start="31:13" pos:end="31:16">alac</name><operator pos:start="31:17" pos:end="31:18">-&gt;</operator><name pos:start="31:19" pos:end="31:23">avctx</name><operator pos:start="31:24" pos:end="31:25">-&gt;</operator><name pos:start="31:26" pos:end="31:39">extradata_size</name></name> <operator pos:start="31:41" pos:end="31:42">!=</operator> <name pos:start="31:44" pos:end="31:62">ALAC_EXTRADATA_SIZE</name></expr>)</condition> <block pos:start="31:65" pos:end="39:9">{<block_content pos:start="33:13" pos:end="37:37">
+
+            <expr_stmt pos:start="33:13" pos:end="35:37"><expr pos:start="33:13" pos:end="35:36"><call pos:start="33:13" pos:end="35:36"><name pos:start="33:13" pos:end="33:18">av_log</name><argument_list pos:start="33:19" pos:end="35:36">(<argument pos:start="33:20" pos:end="33:24"><expr pos:start="33:20" pos:end="33:24"><name pos:start="33:20" pos:end="33:24">avctx</name></expr></argument>, <argument pos:start="33:27" pos:end="33:38"><expr pos:start="33:27" pos:end="33:38"><name pos:start="33:27" pos:end="33:38">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="33:41" pos:end="33:77"><expr pos:start="33:41" pos:end="33:77"><literal type="string" pos:start="33:41" pos:end="33:77">"alac: expected %d extradata bytes\n"</literal></expr></argument>,
+
+                <argument pos:start="35:17" pos:end="35:35"><expr pos:start="35:17" pos:end="35:35"><name pos:start="35:17" pos:end="35:35">ALAC_EXTRADATA_SIZE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <return pos:start="37:13" pos:end="37:37">return <expr pos:start="37:20" pos:end="37:36"><name pos:start="37:20" pos:end="37:36">input_buffer_size</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="41:9" pos:end="41:28"><expr pos:start="41:9" pos:end="41:27"><call pos:start="41:9" pos:end="41:27"><name pos:start="41:9" pos:end="41:21">alac_set_info</name><argument_list pos:start="41:22" pos:end="41:27">(<argument pos:start="41:23" pos:end="41:26"><expr pos:start="41:23" pos:end="41:26"><name pos:start="41:23" pos:end="41:26">alac</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="43:9" pos:end="43:38"><expr pos:start="43:9" pos:end="43:37"><name pos:start="43:9" pos:end="43:33"><name pos:start="43:9" pos:end="43:12">alac</name><operator pos:start="43:13" pos:end="43:14">-&gt;</operator><name pos:start="43:15" pos:end="43:33">context_initialized</name></name> <operator pos:start="43:35" pos:end="43:35">=</operator> <literal type="number" pos:start="43:37" pos:end="43:37">1</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="49:5" pos:end="49:56"><expr pos:start="49:5" pos:end="49:55"><name pos:start="49:5" pos:end="49:17">outputsamples</name> <operator pos:start="49:19" pos:end="49:19">=</operator> <name pos:start="49:21" pos:end="49:55"><name pos:start="49:21" pos:end="49:24">alac</name><operator pos:start="49:25" pos:end="49:26">-&gt;</operator><name pos:start="49:27" pos:end="49:55">setinfo_max_samples_per_frame</name></name></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="53:5" pos:end="53:62"><expr pos:start="53:5" pos:end="53:61"><call pos:start="53:5" pos:end="53:61"><name pos:start="53:5" pos:end="53:17">init_get_bits</name><argument_list pos:start="53:18" pos:end="53:61">(<argument pos:start="53:19" pos:end="53:27"><expr pos:start="53:19" pos:end="53:27"><operator pos:start="53:19" pos:end="53:19">&amp;</operator><name pos:start="53:20" pos:end="53:27"><name pos:start="53:20" pos:end="53:23">alac</name><operator pos:start="53:24" pos:end="53:25">-&gt;</operator><name pos:start="53:26" pos:end="53:27">gb</name></name></expr></argument>, <argument pos:start="53:30" pos:end="53:37"><expr pos:start="53:30" pos:end="53:37"><name pos:start="53:30" pos:end="53:37">inbuffer</name></expr></argument>, <argument pos:start="53:40" pos:end="53:60"><expr pos:start="53:40" pos:end="53:60"><name pos:start="53:40" pos:end="53:56">input_buffer_size</name> <operator pos:start="53:58" pos:end="53:58">*</operator> <literal type="number" pos:start="53:60" pos:end="53:60">8</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="57:5" pos:end="57:38"><expr pos:start="57:5" pos:end="57:37"><name pos:start="57:5" pos:end="57:12">channels</name> <operator pos:start="57:14" pos:end="57:14">=</operator> <call pos:start="57:16" pos:end="57:37"><name pos:start="57:16" pos:end="57:23">get_bits</name><argument_list pos:start="57:24" pos:end="57:37">(<argument pos:start="57:25" pos:end="57:33"><expr pos:start="57:25" pos:end="57:33"><operator pos:start="57:25" pos:end="57:25">&amp;</operator><name pos:start="57:26" pos:end="57:33"><name pos:start="57:26" pos:end="57:29">alac</name><operator pos:start="57:30" pos:end="57:31">-&gt;</operator><name pos:start="57:32" pos:end="57:33">gb</name></name></expr></argument>, <argument pos:start="57:36" pos:end="57:36"><expr pos:start="57:36" pos:end="57:36"><literal type="number" pos:start="57:36" pos:end="57:36">3</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="61:5" pos:end="61:55"><expr pos:start="61:5" pos:end="61:54"><operator pos:start="61:5" pos:end="61:5">*</operator><name pos:start="61:6" pos:end="61:15">outputsize</name> <operator pos:start="61:17" pos:end="61:17">=</operator> <name pos:start="61:19" pos:end="61:31">outputsamples</name> <operator pos:start="61:33" pos:end="61:33">*</operator> <name pos:start="61:35" pos:end="61:54"><name pos:start="61:35" pos:end="61:38">alac</name><operator pos:start="61:39" pos:end="61:40">-&gt;</operator><name pos:start="61:41" pos:end="61:54">bytespersample</name></name></expr>;</expr_stmt>
+
+
+
+    <switch pos:start="65:5" pos:end="723:5">switch<condition pos:start="65:11" pos:end="65:20">(<expr pos:start="65:12" pos:end="65:19"><name pos:start="65:12" pos:end="65:19">channels</name></expr>)</condition> <block pos:start="65:22" pos:end="723:5">{<block_content pos:start="67:5" pos:end="721:5">
+
+    <case pos:start="67:5" pos:end="67:11">case <expr pos:start="67:10" pos:end="67:10"><literal type="number" pos:start="67:10" pos:end="67:10">0</literal></expr>:</case> <block pos:start="67:13" pos:end="343:5">{<block_content pos:start="69:9" pos:end="341:14"> <comment type="block" pos:start="67:15" pos:end="67:29">/* 1 channel */</comment>
+
+        <decl_stmt pos:start="69:9" pos:end="69:20"><decl pos:start="69:9" pos:end="69:19"><type pos:start="69:9" pos:end="69:11"><name pos:start="69:9" pos:end="69:11">int</name></type> <name pos:start="69:13" pos:end="69:19">hassize</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="71:9" pos:end="71:28"><decl pos:start="71:9" pos:end="71:27"><type pos:start="71:9" pos:end="71:11"><name pos:start="71:9" pos:end="71:11">int</name></type> <name pos:start="71:13" pos:end="71:27">isnotcompressed</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="73:9" pos:end="73:27"><decl pos:start="73:9" pos:end="73:26"><type pos:start="73:9" pos:end="73:11"><name pos:start="73:9" pos:end="73:11">int</name></type> <name pos:start="73:13" pos:end="73:26">readsamplesize</name></decl>;</decl_stmt>
+
+
+
+        <decl_stmt pos:start="77:9" pos:end="77:25"><decl pos:start="77:9" pos:end="77:24"><type pos:start="77:9" pos:end="77:11"><name pos:start="77:9" pos:end="77:11">int</name></type> <name pos:start="77:13" pos:end="77:24">wasted_bytes</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="79:9" pos:end="79:25"><decl pos:start="79:9" pos:end="79:24"><type pos:start="79:9" pos:end="79:11"><name pos:start="79:9" pos:end="79:11">int</name></type> <name pos:start="79:13" pos:end="79:24">ricemodifier</name></decl>;</decl_stmt>
+
+
+
+
+
+        <comment type="block" pos:start="85:9" pos:end="89:11">/* 2^result = something to do with output waiting.
+
+         * perhaps matters if we read &gt; 1 frame in a pass?
+
+         */</comment>
+
+        <expr_stmt pos:start="91:9" pos:end="91:31"><expr pos:start="91:9" pos:end="91:30"><call pos:start="91:9" pos:end="91:30"><name pos:start="91:9" pos:end="91:16">get_bits</name><argument_list pos:start="91:17" pos:end="91:30">(<argument pos:start="91:18" pos:end="91:26"><expr pos:start="91:18" pos:end="91:26"><operator pos:start="91:18" pos:end="91:18">&amp;</operator><name pos:start="91:19" pos:end="91:26"><name pos:start="91:19" pos:end="91:22">alac</name><operator pos:start="91:23" pos:end="91:24">-&gt;</operator><name pos:start="91:25" pos:end="91:26">gb</name></name></expr></argument>, <argument pos:start="91:29" pos:end="91:29"><expr pos:start="91:29" pos:end="91:29"><literal type="number" pos:start="91:29" pos:end="91:29">4</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="95:9" pos:end="95:32"><expr pos:start="95:9" pos:end="95:31"><call pos:start="95:9" pos:end="95:31"><name pos:start="95:9" pos:end="95:16">get_bits</name><argument_list pos:start="95:17" pos:end="95:31">(<argument pos:start="95:18" pos:end="95:26"><expr pos:start="95:18" pos:end="95:26"><operator pos:start="95:18" pos:end="95:18">&amp;</operator><name pos:start="95:19" pos:end="95:26"><name pos:start="95:19" pos:end="95:22">alac</name><operator pos:start="95:23" pos:end="95:24">-&gt;</operator><name pos:start="95:25" pos:end="95:26">gb</name></name></expr></argument>, <argument pos:start="95:29" pos:end="95:30"><expr pos:start="95:29" pos:end="95:30"><literal type="number" pos:start="95:29" pos:end="95:30">12</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="block" pos:start="95:34" pos:end="95:60">/* unknown, skip 12 bits */</comment>
+
+
+
+        <expr_stmt pos:start="99:9" pos:end="99:41"><expr pos:start="99:9" pos:end="99:40"><name pos:start="99:9" pos:end="99:15">hassize</name> <operator pos:start="99:17" pos:end="99:17">=</operator> <call pos:start="99:19" pos:end="99:40"><name pos:start="99:19" pos:end="99:26">get_bits</name><argument_list pos:start="99:27" pos:end="99:40">(<argument pos:start="99:28" pos:end="99:36"><expr pos:start="99:28" pos:end="99:36"><operator pos:start="99:28" pos:end="99:28">&amp;</operator><name pos:start="99:29" pos:end="99:36"><name pos:start="99:29" pos:end="99:32">alac</name><operator pos:start="99:33" pos:end="99:34">-&gt;</operator><name pos:start="99:35" pos:end="99:36">gb</name></name></expr></argument>, <argument pos:start="99:39" pos:end="99:39"><expr pos:start="99:39" pos:end="99:39"><literal type="number" pos:start="99:39" pos:end="99:39">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="block" pos:start="99:43" pos:end="99:85">/* the output sample size is stored soon */</comment>
+
+
+
+        <expr_stmt pos:start="103:9" pos:end="103:46"><expr pos:start="103:9" pos:end="103:45"><name pos:start="103:9" pos:end="103:20">wasted_bytes</name> <operator pos:start="103:22" pos:end="103:22">=</operator> <call pos:start="103:24" pos:end="103:45"><name pos:start="103:24" pos:end="103:31">get_bits</name><argument_list pos:start="103:32" pos:end="103:45">(<argument pos:start="103:33" pos:end="103:41"><expr pos:start="103:33" pos:end="103:41"><operator pos:start="103:33" pos:end="103:33">&amp;</operator><name pos:start="103:34" pos:end="103:41"><name pos:start="103:34" pos:end="103:37">alac</name><operator pos:start="103:38" pos:end="103:39">-&gt;</operator><name pos:start="103:40" pos:end="103:41">gb</name></name></expr></argument>, <argument pos:start="103:44" pos:end="103:44"><expr pos:start="103:44" pos:end="103:44"><literal type="number" pos:start="103:44" pos:end="103:44">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="block" pos:start="103:48" pos:end="103:62">/* unknown ? */</comment>
+
+
+
+        <expr_stmt pos:start="107:9" pos:end="107:49"><expr pos:start="107:9" pos:end="107:48"><name pos:start="107:9" pos:end="107:23">isnotcompressed</name> <operator pos:start="107:25" pos:end="107:25">=</operator> <call pos:start="107:27" pos:end="107:48"><name pos:start="107:27" pos:end="107:34">get_bits</name><argument_list pos:start="107:35" pos:end="107:48">(<argument pos:start="107:36" pos:end="107:44"><expr pos:start="107:36" pos:end="107:44"><operator pos:start="107:36" pos:end="107:36">&amp;</operator><name pos:start="107:37" pos:end="107:44"><name pos:start="107:37" pos:end="107:40">alac</name><operator pos:start="107:41" pos:end="107:42">-&gt;</operator><name pos:start="107:43" pos:end="107:44">gb</name></name></expr></argument>, <argument pos:start="107:47" pos:end="107:47"><expr pos:start="107:47" pos:end="107:47"><literal type="number" pos:start="107:47" pos:end="107:47">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="block" pos:start="107:51" pos:end="107:87">/* whether the frame is compressed */</comment>
+
+
+
+        <if_stmt pos:start="111:9" pos:end="121:9"><if pos:start="111:9" pos:end="121:9">if <condition pos:start="111:12" pos:end="111:20">(<expr pos:start="111:13" pos:end="111:19"><name pos:start="111:13" pos:end="111:19">hassize</name></expr>)</condition> <block pos:start="111:22" pos:end="121:9">{<block_content pos:start="117:13" pos:end="119:63">
+
+            <comment type="block" pos:start="113:13" pos:end="115:36">/* now read the number of samples,
+
+             * as a 32bit integer */</comment>
+
+            <expr_stmt pos:start="117:13" pos:end="117:52"><expr pos:start="117:13" pos:end="117:51"><name pos:start="117:13" pos:end="117:25">outputsamples</name> <operator pos:start="117:27" pos:end="117:27">=</operator> <call pos:start="117:29" pos:end="117:51"><name pos:start="117:29" pos:end="117:36">get_bits</name><argument_list pos:start="117:37" pos:end="117:51">(<argument pos:start="117:38" pos:end="117:46"><expr pos:start="117:38" pos:end="117:46"><operator pos:start="117:38" pos:end="117:38">&amp;</operator><name pos:start="117:39" pos:end="117:46"><name pos:start="117:39" pos:end="117:42">alac</name><operator pos:start="117:43" pos:end="117:44">-&gt;</operator><name pos:start="117:45" pos:end="117:46">gb</name></name></expr></argument>, <argument pos:start="117:49" pos:end="117:50"><expr pos:start="117:49" pos:end="117:50"><literal type="number" pos:start="117:49" pos:end="117:50">32</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="119:13" pos:end="119:63"><expr pos:start="119:13" pos:end="119:62"><operator pos:start="119:13" pos:end="119:13">*</operator><name pos:start="119:14" pos:end="119:23">outputsize</name> <operator pos:start="119:25" pos:end="119:25">=</operator> <name pos:start="119:27" pos:end="119:39">outputsamples</name> <operator pos:start="119:41" pos:end="119:41">*</operator> <name pos:start="119:43" pos:end="119:62"><name pos:start="119:43" pos:end="119:46">alac</name><operator pos:start="119:47" pos:end="119:48">-&gt;</operator><name pos:start="119:49" pos:end="119:62">bytespersample</name></name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="125:9" pos:end="125:72"><expr pos:start="125:9" pos:end="125:71"><name pos:start="125:9" pos:end="125:22">readsamplesize</name> <operator pos:start="125:24" pos:end="125:24">=</operator> <name pos:start="125:26" pos:end="125:50"><name pos:start="125:26" pos:end="125:29">alac</name><operator pos:start="125:30" pos:end="125:31">-&gt;</operator><name pos:start="125:32" pos:end="125:50">setinfo_sample_size</name></name> <operator pos:start="125:52" pos:end="125:52">-</operator> <operator pos:start="125:54" pos:end="125:54">(</operator><name pos:start="125:55" pos:end="125:66">wasted_bytes</name> <operator pos:start="125:68" pos:end="125:68">*</operator> <literal type="number" pos:start="125:70" pos:end="125:70">8</literal><operator pos:start="125:71" pos:end="125:71">)</operator></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="129:9" pos:end="303:9"><if pos:start="129:9" pos:end="247:9">if <condition pos:start="129:12" pos:end="129:29">(<expr pos:start="129:13" pos:end="129:28"><operator pos:start="129:13" pos:end="129:13">!</operator><name pos:start="129:14" pos:end="129:28">isnotcompressed</name></expr>)</condition> <block pos:start="129:31" pos:end="247:9">{<block_content pos:start="133:13" pos:end="243:13">
+
+         <comment type="block" pos:start="131:10" pos:end="131:34">/* so it is compressed */</comment>
+
+            <decl_stmt pos:start="133:13" pos:end="133:45"><decl pos:start="133:13" pos:end="133:44"><type pos:start="133:13" pos:end="133:19"><name pos:start="133:13" pos:end="133:19">int16_t</name></type> <name pos:start="133:21" pos:end="133:44"><name pos:start="133:21" pos:end="133:40">predictor_coef_table</name><index pos:start="133:41" pos:end="133:44">[<expr pos:start="133:42" pos:end="133:43"><literal type="number" pos:start="133:42" pos:end="133:43">32</literal></expr>]</index></name></decl>;</decl_stmt>
+
+            <decl_stmt pos:start="135:13" pos:end="135:35"><decl pos:start="135:13" pos:end="135:34"><type pos:start="135:13" pos:end="135:15"><name pos:start="135:13" pos:end="135:15">int</name></type> <name pos:start="135:17" pos:end="135:34">predictor_coef_num</name></decl>;</decl_stmt>
+
+            <decl_stmt pos:start="137:13" pos:end="137:32"><decl pos:start="137:13" pos:end="137:31"><type pos:start="137:13" pos:end="137:15"><name pos:start="137:13" pos:end="137:15">int</name></type> <name pos:start="137:17" pos:end="137:31">prediction_type</name></decl>;</decl_stmt>
+
+            <decl_stmt pos:start="139:13" pos:end="139:42"><decl pos:start="139:13" pos:end="139:41"><type pos:start="139:13" pos:end="139:15"><name pos:start="139:13" pos:end="139:15">int</name></type> <name pos:start="139:17" pos:end="139:41">prediction_quantitization</name></decl>;</decl_stmt>
+
+            <decl_stmt pos:start="141:13" pos:end="141:18"><decl pos:start="141:13" pos:end="141:17"><type pos:start="141:13" pos:end="141:15"><name pos:start="141:13" pos:end="141:15">int</name></type> <name pos:start="141:17" pos:end="141:17">i</name></decl>;</decl_stmt>
+
+
+
+            <comment type="block" pos:start="145:13" pos:end="147:34">/* FIXME: skip 16 bits, not sure what they are. seem to be used in
+
+             * two channel case */</comment>
+
+            <expr_stmt pos:start="149:13" pos:end="149:35"><expr pos:start="149:13" pos:end="149:34"><call pos:start="149:13" pos:end="149:34"><name pos:start="149:13" pos:end="149:20">get_bits</name><argument_list pos:start="149:21" pos:end="149:34">(<argument pos:start="149:22" pos:end="149:30"><expr pos:start="149:22" pos:end="149:30"><operator pos:start="149:22" pos:end="149:22">&amp;</operator><name pos:start="149:23" pos:end="149:30"><name pos:start="149:23" pos:end="149:26">alac</name><operator pos:start="149:27" pos:end="149:28">-&gt;</operator><name pos:start="149:29" pos:end="149:30">gb</name></name></expr></argument>, <argument pos:start="149:33" pos:end="149:33"><expr pos:start="149:33" pos:end="149:33"><literal type="number" pos:start="149:33" pos:end="149:33">8</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="151:13" pos:end="151:35"><expr pos:start="151:13" pos:end="151:34"><call pos:start="151:13" pos:end="151:34"><name pos:start="151:13" pos:end="151:20">get_bits</name><argument_list pos:start="151:21" pos:end="151:34">(<argument pos:start="151:22" pos:end="151:30"><expr pos:start="151:22" pos:end="151:30"><operator pos:start="151:22" pos:end="151:22">&amp;</operator><name pos:start="151:23" pos:end="151:30"><name pos:start="151:23" pos:end="151:26">alac</name><operator pos:start="151:27" pos:end="151:28">-&gt;</operator><name pos:start="151:29" pos:end="151:30">gb</name></name></expr></argument>, <argument pos:start="151:33" pos:end="151:33"><expr pos:start="151:33" pos:end="151:33"><literal type="number" pos:start="151:33" pos:end="151:33">8</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <expr_stmt pos:start="155:13" pos:end="155:53"><expr pos:start="155:13" pos:end="155:52"><name pos:start="155:13" pos:end="155:27">prediction_type</name> <operator pos:start="155:29" pos:end="155:29">=</operator> <call pos:start="155:31" pos:end="155:52"><name pos:start="155:31" pos:end="155:38">get_bits</name><argument_list pos:start="155:39" pos:end="155:52">(<argument pos:start="155:40" pos:end="155:48"><expr pos:start="155:40" pos:end="155:48"><operator pos:start="155:40" pos:end="155:40">&amp;</operator><name pos:start="155:41" pos:end="155:48"><name pos:start="155:41" pos:end="155:44">alac</name><operator pos:start="155:45" pos:end="155:46">-&gt;</operator><name pos:start="155:47" pos:end="155:48">gb</name></name></expr></argument>, <argument pos:start="155:51" pos:end="155:51"><expr pos:start="155:51" pos:end="155:51"><literal type="number" pos:start="155:51" pos:end="155:51">4</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="157:13" pos:end="157:63"><expr pos:start="157:13" pos:end="157:62"><name pos:start="157:13" pos:end="157:37">prediction_quantitization</name> <operator pos:start="157:39" pos:end="157:39">=</operator> <call pos:start="157:41" pos:end="157:62"><name pos:start="157:41" pos:end="157:48">get_bits</name><argument_list pos:start="157:49" pos:end="157:62">(<argument pos:start="157:50" pos:end="157:58"><expr pos:start="157:50" pos:end="157:58"><operator pos:start="157:50" pos:end="157:50">&amp;</operator><name pos:start="157:51" pos:end="157:58"><name pos:start="157:51" pos:end="157:54">alac</name><operator pos:start="157:55" pos:end="157:56">-&gt;</operator><name pos:start="157:57" pos:end="157:58">gb</name></name></expr></argument>, <argument pos:start="157:61" pos:end="157:61"><expr pos:start="157:61" pos:end="157:61"><literal type="number" pos:start="157:61" pos:end="157:61">4</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <expr_stmt pos:start="161:13" pos:end="161:50"><expr pos:start="161:13" pos:end="161:49"><name pos:start="161:13" pos:end="161:24">ricemodifier</name> <operator pos:start="161:26" pos:end="161:26">=</operator> <call pos:start="161:28" pos:end="161:49"><name pos:start="161:28" pos:end="161:35">get_bits</name><argument_list pos:start="161:36" pos:end="161:49">(<argument pos:start="161:37" pos:end="161:45"><expr pos:start="161:37" pos:end="161:45"><operator pos:start="161:37" pos:end="161:37">&amp;</operator><name pos:start="161:38" pos:end="161:45"><name pos:start="161:38" pos:end="161:41">alac</name><operator pos:start="161:42" pos:end="161:43">-&gt;</operator><name pos:start="161:44" pos:end="161:45">gb</name></name></expr></argument>, <argument pos:start="161:48" pos:end="161:48"><expr pos:start="161:48" pos:end="161:48"><literal type="number" pos:start="161:48" pos:end="161:48">3</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="163:13" pos:end="163:56"><expr pos:start="163:13" pos:end="163:55"><name pos:start="163:13" pos:end="163:30">predictor_coef_num</name> <operator pos:start="163:32" pos:end="163:32">=</operator> <call pos:start="163:34" pos:end="163:55"><name pos:start="163:34" pos:end="163:41">get_bits</name><argument_list pos:start="163:42" pos:end="163:55">(<argument pos:start="163:43" pos:end="163:51"><expr pos:start="163:43" pos:end="163:51"><operator pos:start="163:43" pos:end="163:43">&amp;</operator><name pos:start="163:44" pos:end="163:51"><name pos:start="163:44" pos:end="163:47">alac</name><operator pos:start="163:48" pos:end="163:49">-&gt;</operator><name pos:start="163:50" pos:end="163:51">gb</name></name></expr></argument>, <argument pos:start="163:54" pos:end="163:54"><expr pos:start="163:54" pos:end="163:54"><literal type="number" pos:start="163:54" pos:end="163:54">5</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <comment type="block" pos:start="167:13" pos:end="167:42">/* read the predictor table */</comment>
+
+            <for pos:start="169:13" pos:end="173:13">for <control pos:start="169:17" pos:end="169:52">(<init pos:start="169:18" pos:end="169:23"><expr pos:start="169:18" pos:end="169:22"><name pos:start="169:18" pos:end="169:18">i</name> <operator pos:start="169:20" pos:end="169:20">=</operator> <literal type="number" pos:start="169:22" pos:end="169:22">0</literal></expr>;</init> <condition pos:start="169:25" pos:end="169:47"><expr pos:start="169:25" pos:end="169:46"><name pos:start="169:25" pos:end="169:25">i</name> <operator pos:start="169:27" pos:end="169:27">&lt;</operator> <name pos:start="169:29" pos:end="169:46">predictor_coef_num</name></expr>;</condition> <incr pos:start="169:49" pos:end="169:51"><expr pos:start="169:49" pos:end="169:51"><name pos:start="169:49" pos:end="169:49">i</name><operator pos:start="169:50" pos:end="169:51">++</operator></expr></incr>)</control> <block pos:start="169:54" pos:end="173:13">{<block_content pos:start="171:17" pos:end="171:75">
+
+                <expr_stmt pos:start="171:17" pos:end="171:75"><expr pos:start="171:17" pos:end="171:74"><name pos:start="171:17" pos:end="171:39"><name pos:start="171:17" pos:end="171:36">predictor_coef_table</name><index pos:start="171:37" pos:end="171:39">[<expr pos:start="171:38" pos:end="171:38"><name pos:start="171:38" pos:end="171:38">i</name></expr>]</index></name> <operator pos:start="171:41" pos:end="171:41">=</operator> <operator pos:start="171:43" pos:end="171:43">(</operator><name pos:start="171:44" pos:end="171:50">int16_t</name><operator pos:start="171:51" pos:end="171:51">)</operator><call pos:start="171:52" pos:end="171:74"><name pos:start="171:52" pos:end="171:59">get_bits</name><argument_list pos:start="171:60" pos:end="171:74">(<argument pos:start="171:61" pos:end="171:69"><expr pos:start="171:61" pos:end="171:69"><operator pos:start="171:61" pos:end="171:61">&amp;</operator><name pos:start="171:62" pos:end="171:69"><name pos:start="171:62" pos:end="171:65">alac</name><operator pos:start="171:66" pos:end="171:67">-&gt;</operator><name pos:start="171:68" pos:end="171:69">gb</name></name></expr></argument>, <argument pos:start="171:72" pos:end="171:73"><expr pos:start="171:72" pos:end="171:73"><literal type="number" pos:start="171:72" pos:end="171:73">16</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></for>
+
+
+
+            <if_stmt pos:start="177:13" pos:end="187:13"><if pos:start="177:13" pos:end="187:13">if <condition pos:start="177:16" pos:end="177:29">(<expr pos:start="177:17" pos:end="177:28"><name pos:start="177:17" pos:end="177:28">wasted_bytes</name></expr>)</condition> <block pos:start="177:31" pos:end="187:13">{<block_content pos:start="185:17" pos:end="185:98">
+
+                <comment type="block" pos:start="179:17" pos:end="183:19">/* these bytes seem to have something to do with
+
+                 * &gt; 2 channel files.
+
+                 */</comment>
+
+                <expr_stmt pos:start="185:17" pos:end="185:98"><expr pos:start="185:17" pos:end="185:97"><call pos:start="185:17" pos:end="185:97"><name pos:start="185:17" pos:end="185:22">av_log</name><argument_list pos:start="185:23" pos:end="185:97">(<argument pos:start="185:24" pos:end="185:28"><expr pos:start="185:24" pos:end="185:28"><name pos:start="185:24" pos:end="185:28">avctx</name></expr></argument>, <argument pos:start="185:31" pos:end="185:42"><expr pos:start="185:31" pos:end="185:42"><name pos:start="185:31" pos:end="185:42">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="185:45" pos:end="185:96"><expr pos:start="185:45" pos:end="185:96"><literal type="string" pos:start="185:45" pos:end="185:96">"FIXME: unimplemented, unhandling of wasted_bytes\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+
+
+            <expr_stmt pos:start="191:13" pos:end="205:81"><expr pos:start="191:13" pos:end="205:80"><call pos:start="191:13" pos:end="205:80"><name pos:start="191:13" pos:end="191:39">bastardized_rice_decompress</name><argument_list pos:start="191:40" pos:end="205:80">(<argument pos:start="191:41" pos:end="191:44"><expr pos:start="191:41" pos:end="191:44"><name pos:start="191:41" pos:end="191:44">alac</name></expr></argument>,
+
+                                        <argument pos:start="193:41" pos:end="193:67"><expr pos:start="193:41" pos:end="193:67"><name pos:start="193:41" pos:end="193:67"><name pos:start="193:41" pos:end="193:44">alac</name><operator pos:start="193:45" pos:end="193:46">-&gt;</operator><name pos:start="193:47" pos:end="193:67">predicterror_buffer_a</name></name></expr></argument>,
+
+                                        <argument pos:start="195:41" pos:end="195:53"><expr pos:start="195:41" pos:end="195:53"><name pos:start="195:41" pos:end="195:53">outputsamples</name></expr></argument>,
+
+                                        <argument pos:start="197:41" pos:end="197:54"><expr pos:start="197:41" pos:end="197:54"><name pos:start="197:41" pos:end="197:54">readsamplesize</name></expr></argument>,
+
+                                        <argument pos:start="199:41" pos:end="199:73"><expr pos:start="199:41" pos:end="199:73"><name pos:start="199:41" pos:end="199:73"><name pos:start="199:41" pos:end="199:44">alac</name><operator pos:start="199:45" pos:end="199:46">-&gt;</operator><name pos:start="199:47" pos:end="199:73">setinfo_rice_initialhistory</name></name></expr></argument>,
+
+                                        <argument pos:start="201:41" pos:end="201:68"><expr pos:start="201:41" pos:end="201:68"><name pos:start="201:41" pos:end="201:68"><name pos:start="201:41" pos:end="201:44">alac</name><operator pos:start="201:45" pos:end="201:46">-&gt;</operator><name pos:start="201:47" pos:end="201:68">setinfo_rice_kmodifier</name></name></expr></argument>,
+
+                                        <argument pos:start="203:41" pos:end="203:89"><expr pos:start="203:41" pos:end="203:89"><name pos:start="203:41" pos:end="203:52">ricemodifier</name> <operator pos:start="203:54" pos:end="203:54">*</operator> <name pos:start="203:56" pos:end="203:85"><name pos:start="203:56" pos:end="203:59">alac</name><operator pos:start="203:60" pos:end="203:61">-&gt;</operator><name pos:start="203:62" pos:end="203:85">setinfo_rice_historymult</name></name> <operator pos:start="203:87" pos:end="203:87">/</operator> <literal type="number" pos:start="203:89" pos:end="203:89">4</literal></expr></argument>,
+
+                                        <argument pos:start="205:41" pos:end="205:79"><expr pos:start="205:41" pos:end="205:79"><operator pos:start="205:41" pos:end="205:41">(</operator><literal type="number" pos:start="205:42" pos:end="205:42">1</literal> <operator pos:start="205:44" pos:end="205:45">&lt;&lt;</operator> <name pos:start="205:47" pos:end="205:74"><name pos:start="205:47" pos:end="205:50">alac</name><operator pos:start="205:51" pos:end="205:52">-&gt;</operator><name pos:start="205:53" pos:end="205:74">setinfo_rice_kmodifier</name></name><operator pos:start="205:75" pos:end="205:75">)</operator> <operator pos:start="205:77" pos:end="205:77">-</operator> <literal type="number" pos:start="205:79" pos:end="205:79">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <if_stmt pos:start="209:13" pos:end="243:13"><if pos:start="209:13" pos:end="227:13">if <condition pos:start="209:16" pos:end="209:37">(<expr pos:start="209:17" pos:end="209:36"><name pos:start="209:17" pos:end="209:31">prediction_type</name> <operator pos:start="209:33" pos:end="209:34">==</operator> <literal type="number" pos:start="209:36" pos:end="209:36">0</literal></expr>)</condition> <block pos:start="209:39" pos:end="227:13">{<block_content pos:start="213:17" pos:end="225:74">
+
+              <comment type="block" pos:start="211:15" pos:end="211:32">/* adaptive fir */</comment>
+
+                <expr_stmt pos:start="213:17" pos:end="225:74"><expr pos:start="213:17" pos:end="225:73"><call pos:start="213:17" pos:end="225:73"><name pos:start="213:17" pos:end="213:46">predictor_decompress_fir_adapt</name><argument_list pos:start="213:47" pos:end="225:73">(<argument pos:start="213:48" pos:end="213:74"><expr pos:start="213:48" pos:end="213:74"><name pos:start="213:48" pos:end="213:74"><name pos:start="213:48" pos:end="213:51">alac</name><operator pos:start="213:52" pos:end="213:53">-&gt;</operator><name pos:start="213:54" pos:end="213:74">predicterror_buffer_a</name></name></expr></argument>,
+
+                                               <argument pos:start="215:48" pos:end="215:75"><expr pos:start="215:48" pos:end="215:75"><name pos:start="215:48" pos:end="215:75"><name pos:start="215:48" pos:end="215:51">alac</name><operator pos:start="215:52" pos:end="215:53">-&gt;</operator><name pos:start="215:54" pos:end="215:75">outputsamples_buffer_a</name></name></expr></argument>,
+
+                                               <argument pos:start="217:48" pos:end="217:60"><expr pos:start="217:48" pos:end="217:60"><name pos:start="217:48" pos:end="217:60">outputsamples</name></expr></argument>,
+
+                                               <argument pos:start="219:48" pos:end="219:61"><expr pos:start="219:48" pos:end="219:61"><name pos:start="219:48" pos:end="219:61">readsamplesize</name></expr></argument>,
+
+                                               <argument pos:start="221:48" pos:end="221:67"><expr pos:start="221:48" pos:end="221:67"><name pos:start="221:48" pos:end="221:67">predictor_coef_table</name></expr></argument>,
+
+                                               <argument pos:start="223:48" pos:end="223:65"><expr pos:start="223:48" pos:end="223:65"><name pos:start="223:48" pos:end="223:65">predictor_coef_num</name></expr></argument>,
+
+                                               <argument pos:start="225:48" pos:end="225:72"><expr pos:start="225:48" pos:end="225:72"><name pos:start="225:48" pos:end="225:72">prediction_quantitization</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if> <else pos:start="227:15" pos:end="243:13">else <block pos:start="227:20" pos:end="243:13">{<block_content pos:start="229:17" pos:end="229:103">
+
+                <expr_stmt pos:start="229:17" pos:end="229:103"><expr pos:start="229:17" pos:end="229:102"><call pos:start="229:17" pos:end="229:102"><name pos:start="229:17" pos:end="229:22">av_log</name><argument_list pos:start="229:23" pos:end="229:102">(<argument pos:start="229:24" pos:end="229:28"><expr pos:start="229:24" pos:end="229:28"><name pos:start="229:24" pos:end="229:28">avctx</name></expr></argument>, <argument pos:start="229:31" pos:end="229:42"><expr pos:start="229:31" pos:end="229:42"><name pos:start="229:31" pos:end="229:42">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="229:45" pos:end="229:84"><expr pos:start="229:45" pos:end="229:84"><literal type="string" pos:start="229:45" pos:end="229:84">"FIXME: unhandled prediction type: %i\n"</literal></expr></argument>, <argument pos:start="229:87" pos:end="229:101"><expr pos:start="229:87" pos:end="229:101"><name pos:start="229:87" pos:end="229:101">prediction_type</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <comment type="block" pos:start="231:17" pos:end="241:19">/* i think the only other prediction type (or perhaps this is just a
+
+                 * boolean?) runs adaptive fir twice.. like:
+
+                 * predictor_decompress_fir_adapt(predictor_error, tempout, ...)
+
+                 * predictor_decompress_fir_adapt(predictor_error, outputsamples ...)
+
+                 * little strange..
+
+                 */</comment>
+
+            </block_content>}</block></else></if_stmt>
+
+
+
+        </block_content>}</block></if> <else pos:start="247:11" pos:end="303:9">else <block pos:start="247:16" pos:end="303:9">{<block_content pos:start="251:13" pos:end="299:13">
+
+          <comment type="block" pos:start="249:11" pos:end="249:41">/* not compressed, easy case */</comment>
+
+            <if_stmt pos:start="251:13" pos:end="299:13"><if pos:start="251:13" pos:end="269:13">if <condition pos:start="251:16" pos:end="251:37">(<expr pos:start="251:17" pos:end="251:36"><name pos:start="251:17" pos:end="251:30">readsamplesize</name> <operator pos:start="251:32" pos:end="251:33">&lt;=</operator> <literal type="number" pos:start="251:35" pos:end="251:36">16</literal></expr>)</condition> <block pos:start="251:39" pos:end="269:13">{<block_content pos:start="253:17" pos:end="267:17">
+
+                <decl_stmt pos:start="253:17" pos:end="253:22"><decl pos:start="253:17" pos:end="253:21"><type pos:start="253:17" pos:end="253:19"><name pos:start="253:17" pos:end="253:19">int</name></type> <name pos:start="253:21" pos:end="253:21">i</name></decl>;</decl_stmt>
+
+                <for pos:start="255:17" pos:end="267:17">for <control pos:start="255:21" pos:end="255:51">(<init pos:start="255:22" pos:end="255:27"><expr pos:start="255:22" pos:end="255:26"><name pos:start="255:22" pos:end="255:22">i</name> <operator pos:start="255:24" pos:end="255:24">=</operator> <literal type="number" pos:start="255:26" pos:end="255:26">0</literal></expr>;</init> <condition pos:start="255:29" pos:end="255:46"><expr pos:start="255:29" pos:end="255:45"><name pos:start="255:29" pos:end="255:29">i</name> <operator pos:start="255:31" pos:end="255:31">&lt;</operator> <name pos:start="255:33" pos:end="255:45">outputsamples</name></expr>;</condition> <incr pos:start="255:48" pos:end="255:50"><expr pos:start="255:48" pos:end="255:50"><name pos:start="255:48" pos:end="255:48">i</name><operator pos:start="255:49" pos:end="255:50">++</operator></expr></incr>)</control> <block pos:start="255:53" pos:end="267:17">{<block_content pos:start="257:21" pos:end="265:64">
+
+                    <decl_stmt pos:start="257:21" pos:end="257:76"><decl pos:start="257:21" pos:end="257:75"><type pos:start="257:21" pos:end="257:27"><name pos:start="257:21" pos:end="257:27">int32_t</name></type> <name pos:start="257:29" pos:end="257:37">audiobits</name> <init pos:start="257:39" pos:end="257:75">= <expr pos:start="257:41" pos:end="257:75"><call pos:start="257:41" pos:end="257:75"><name pos:start="257:41" pos:end="257:48">get_bits</name><argument_list pos:start="257:49" pos:end="257:75">(<argument pos:start="257:50" pos:end="257:58"><expr pos:start="257:50" pos:end="257:58"><operator pos:start="257:50" pos:end="257:50">&amp;</operator><name pos:start="257:51" pos:end="257:58"><name pos:start="257:51" pos:end="257:54">alac</name><operator pos:start="257:55" pos:end="257:56">-&gt;</operator><name pos:start="257:57" pos:end="257:58">gb</name></name></expr></argument>, <argument pos:start="257:61" pos:end="257:74"><expr pos:start="257:61" pos:end="257:74"><name pos:start="257:61" pos:end="257:74">readsamplesize</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+
+
+                    <expr_stmt pos:start="261:21" pos:end="261:75"><expr pos:start="261:21" pos:end="261:74"><name pos:start="261:21" pos:end="261:29">audiobits</name> <operator pos:start="261:31" pos:end="261:31">=</operator> <call pos:start="261:33" pos:end="261:74"><name pos:start="261:33" pos:end="261:47">SIGN_EXTENDED32</name><argument_list pos:start="261:48" pos:end="261:74">(<argument pos:start="261:49" pos:end="261:57"><expr pos:start="261:49" pos:end="261:57"><name pos:start="261:49" pos:end="261:57">audiobits</name></expr></argument>, <argument pos:start="261:60" pos:end="261:73"><expr pos:start="261:60" pos:end="261:73"><name pos:start="261:60" pos:end="261:73">readsamplesize</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+                    <expr_stmt pos:start="265:21" pos:end="265:64"><expr pos:start="265:21" pos:end="265:63"><name pos:start="265:21" pos:end="265:51"><name pos:start="265:21" pos:end="265:24">alac</name><operator pos:start="265:25" pos:end="265:26">-&gt;</operator><name pos:start="265:27" pos:end="265:48">outputsamples_buffer_a</name><index pos:start="265:49" pos:end="265:51">[<expr pos:start="265:50" pos:end="265:50"><name pos:start="265:50" pos:end="265:50">i</name></expr>]</index></name> <operator pos:start="265:53" pos:end="265:53">=</operator> <name pos:start="265:55" pos:end="265:63">audiobits</name></expr>;</expr_stmt>
+
+                </block_content>}</block></for>
+
+            </block_content>}</block></if> <else pos:start="269:15" pos:end="299:13">else <block pos:start="269:20" pos:end="299:13">{<block_content pos:start="271:17" pos:end="297:17">
+
+                <decl_stmt pos:start="271:17" pos:end="271:22"><decl pos:start="271:17" pos:end="271:21"><type pos:start="271:17" pos:end="271:19"><name pos:start="271:17" pos:end="271:19">int</name></type> <name pos:start="271:21" pos:end="271:21">i</name></decl>;</decl_stmt>
+
+                <for pos:start="273:17" pos:end="297:17">for <control pos:start="273:21" pos:end="273:51">(<init pos:start="273:22" pos:end="273:27"><expr pos:start="273:22" pos:end="273:26"><name pos:start="273:22" pos:end="273:22">i</name> <operator pos:start="273:24" pos:end="273:24">=</operator> <literal type="number" pos:start="273:26" pos:end="273:26">0</literal></expr>;</init> <condition pos:start="273:29" pos:end="273:46"><expr pos:start="273:29" pos:end="273:45"><name pos:start="273:29" pos:end="273:29">i</name> <operator pos:start="273:31" pos:end="273:31">&lt;</operator> <name pos:start="273:33" pos:end="273:45">outputsamples</name></expr>;</condition> <incr pos:start="273:48" pos:end="273:50"><expr pos:start="273:48" pos:end="273:50"><name pos:start="273:48" pos:end="273:48">i</name><operator pos:start="273:49" pos:end="273:50">++</operator></expr></incr>)</control> <block pos:start="273:53" pos:end="297:17">{<block_content pos:start="275:21" pos:end="295:64">
+
+                    <decl_stmt pos:start="275:21" pos:end="275:38"><decl pos:start="275:21" pos:end="275:37"><type pos:start="275:21" pos:end="275:27"><name pos:start="275:21" pos:end="275:27">int32_t</name></type> <name pos:start="275:29" pos:end="275:37">audiobits</name></decl>;</decl_stmt>
+
+
+
+                    <expr_stmt pos:start="279:21" pos:end="279:56"><expr pos:start="279:21" pos:end="279:55"><name pos:start="279:21" pos:end="279:29">audiobits</name> <operator pos:start="279:31" pos:end="279:31">=</operator> <call pos:start="279:33" pos:end="279:55"><name pos:start="279:33" pos:end="279:40">get_bits</name><argument_list pos:start="279:41" pos:end="279:55">(<argument pos:start="279:42" pos:end="279:50"><expr pos:start="279:42" pos:end="279:50"><operator pos:start="279:42" pos:end="279:42">&amp;</operator><name pos:start="279:43" pos:end="279:50"><name pos:start="279:43" pos:end="279:46">alac</name><operator pos:start="279:47" pos:end="279:48">-&gt;</operator><name pos:start="279:49" pos:end="279:50">gb</name></name></expr></argument>, <argument pos:start="279:53" pos:end="279:54"><expr pos:start="279:53" pos:end="279:54"><literal type="number" pos:start="279:53" pos:end="279:54">16</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                    <comment type="block" pos:start="281:21" pos:end="283:68">/* special case of sign extension..
+
+                     * as we'll be ORing the low 16bits into this */</comment>
+
+                    <expr_stmt pos:start="285:21" pos:end="285:48"><expr pos:start="285:21" pos:end="285:47"><name pos:start="285:21" pos:end="285:29">audiobits</name> <operator pos:start="285:31" pos:end="285:31">=</operator> <name pos:start="285:33" pos:end="285:41">audiobits</name> <operator pos:start="285:43" pos:end="285:44">&lt;&lt;</operator> <literal type="number" pos:start="285:46" pos:end="285:47">16</literal></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="287:21" pos:end="287:67"><expr pos:start="287:21" pos:end="287:66"><name pos:start="287:21" pos:end="287:29">audiobits</name> <operator pos:start="287:31" pos:end="287:31">=</operator> <name pos:start="287:33" pos:end="287:41">audiobits</name> <operator pos:start="287:43" pos:end="287:44">&gt;&gt;</operator> <operator pos:start="287:46" pos:end="287:46">(</operator><literal type="number" pos:start="287:47" pos:end="287:50">32</literal> <operator pos:start="287:50" pos:end="287:50">-</operator> <name pos:start="287:52" pos:end="287:65">readsamplesize</name><operator pos:start="287:66" pos:end="287:66">)</operator></expr>;</expr_stmt>
+
+
+
+                    <expr_stmt pos:start="291:21" pos:end="291:74"><expr pos:start="291:21" pos:end="291:73"><name pos:start="291:21" pos:end="291:29">audiobits</name> <operator pos:start="291:31" pos:end="291:32">|=</operator> <call pos:start="291:34" pos:end="291:73"><name pos:start="291:34" pos:end="291:41">get_bits</name><argument_list pos:start="291:42" pos:end="291:73">(<argument pos:start="291:43" pos:end="291:51"><expr pos:start="291:43" pos:end="291:51"><operator pos:start="291:43" pos:end="291:43">&amp;</operator><name pos:start="291:44" pos:end="291:51"><name pos:start="291:44" pos:end="291:47">alac</name><operator pos:start="291:48" pos:end="291:49">-&gt;</operator><name pos:start="291:50" pos:end="291:51">gb</name></name></expr></argument>, <argument pos:start="291:54" pos:end="291:72"><expr pos:start="291:54" pos:end="291:72"><name pos:start="291:54" pos:end="291:67">readsamplesize</name> <operator pos:start="291:69" pos:end="291:69">-</operator> <literal type="number" pos:start="291:71" pos:end="291:72">16</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+                    <expr_stmt pos:start="295:21" pos:end="295:64"><expr pos:start="295:21" pos:end="295:63"><name pos:start="295:21" pos:end="295:51"><name pos:start="295:21" pos:end="295:24">alac</name><operator pos:start="295:25" pos:end="295:26">-&gt;</operator><name pos:start="295:27" pos:end="295:48">outputsamples_buffer_a</name><index pos:start="295:49" pos:end="295:51">[<expr pos:start="295:50" pos:end="295:50"><name pos:start="295:50" pos:end="295:50">i</name></expr>]</index></name> <operator pos:start="295:53" pos:end="295:53">=</operator> <name pos:start="295:55" pos:end="295:63">audiobits</name></expr>;</expr_stmt>
+
+                </block_content>}</block></for>
+
+            </block_content>}</block></else></if_stmt>
+
+            <comment type="block" pos:start="301:13" pos:end="301:45">/* wasted_bytes = 0; // unused */</comment>
+
+        </block_content>}</block></else></if_stmt>
+
+
+
+        <switch pos:start="307:9" pos:end="339:9">switch<condition pos:start="307:15" pos:end="307:41">(<expr pos:start="307:16" pos:end="307:40"><name pos:start="307:16" pos:end="307:40"><name pos:start="307:16" pos:end="307:19">alac</name><operator pos:start="307:20" pos:end="307:21">-&gt;</operator><name pos:start="307:22" pos:end="307:40">setinfo_sample_size</name></name></expr>)</condition> <block pos:start="307:43" pos:end="339:9">{<block_content pos:start="309:9" pos:end="337:18">
+
+        <case pos:start="309:9" pos:end="309:16">case <expr pos:start="309:14" pos:end="309:15"><literal type="number" pos:start="309:14" pos:end="309:15">16</literal></expr>:</case> <block pos:start="309:18" pos:end="323:9">{<block_content pos:start="311:13" pos:end="321:18">
+
+            <decl_stmt pos:start="311:13" pos:end="311:18"><decl pos:start="311:13" pos:end="311:17"><type pos:start="311:13" pos:end="311:15"><name pos:start="311:13" pos:end="311:15">int</name></type> <name pos:start="311:17" pos:end="311:17">i</name></decl>;</decl_stmt>
+
+            <for pos:start="313:13" pos:end="319:13">for <control pos:start="313:17" pos:end="313:47">(<init pos:start="313:18" pos:end="313:23"><expr pos:start="313:18" pos:end="313:22"><name pos:start="313:18" pos:end="313:18">i</name> <operator pos:start="313:20" pos:end="313:20">=</operator> <literal type="number" pos:start="313:22" pos:end="313:22">0</literal></expr>;</init> <condition pos:start="313:25" pos:end="313:42"><expr pos:start="313:25" pos:end="313:41"><name pos:start="313:25" pos:end="313:25">i</name> <operator pos:start="313:27" pos:end="313:27">&lt;</operator> <name pos:start="313:29" pos:end="313:41">outputsamples</name></expr>;</condition> <incr pos:start="313:44" pos:end="313:46"><expr pos:start="313:44" pos:end="313:46"><name pos:start="313:44" pos:end="313:44">i</name><operator pos:start="313:45" pos:end="313:46">++</operator></expr></incr>)</control> <block pos:start="313:49" pos:end="319:13">{<block_content pos:start="315:17" pos:end="317:70">
+
+                <decl_stmt pos:start="315:17" pos:end="315:65"><decl pos:start="315:17" pos:end="315:64"><type pos:start="315:17" pos:end="315:23"><name pos:start="315:17" pos:end="315:23">int16_t</name></type> <name pos:start="315:25" pos:end="315:30">sample</name> <init pos:start="315:32" pos:end="315:64">= <expr pos:start="315:34" pos:end="315:64"><name pos:start="315:34" pos:end="315:64"><name pos:start="315:34" pos:end="315:37">alac</name><operator pos:start="315:38" pos:end="315:39">-&gt;</operator><name pos:start="315:40" pos:end="315:61">outputsamples_buffer_a</name><index pos:start="315:62" pos:end="315:64">[<expr pos:start="315:63" pos:end="315:63"><name pos:start="315:63" pos:end="315:63">i</name></expr>]</index></name></expr></init></decl>;</decl_stmt>
+
+                <expr_stmt pos:start="317:17" pos:end="317:70"><expr pos:start="317:17" pos:end="317:69"><operator pos:start="317:17" pos:end="317:17">(</operator><operator pos:start="317:18" pos:end="317:18">(</operator><name pos:start="317:19" pos:end="317:25">int16_t</name><operator pos:start="317:26" pos:end="317:26">*</operator><operator pos:start="317:27" pos:end="317:27">)</operator><name pos:start="317:28" pos:end="317:36">outbuffer</name><operator pos:start="317:37" pos:end="317:37">)</operator><index pos:start="317:38" pos:end="317:60">[<expr pos:start="317:39" pos:end="317:59"><name pos:start="317:39" pos:end="317:39">i</name> <operator pos:start="317:41" pos:end="317:41">*</operator> <name pos:start="317:43" pos:end="317:59"><name pos:start="317:43" pos:end="317:46">alac</name><operator pos:start="317:47" pos:end="317:48">-&gt;</operator><name pos:start="317:49" pos:end="317:59">numchannels</name></name></expr>]</index> <operator pos:start="317:62" pos:end="317:62">=</operator> <name pos:start="317:64" pos:end="317:69">sample</name></expr>;</expr_stmt>
+
+            </block_content>}</block></for>
+
+            <break pos:start="321:13" pos:end="321:18">break;</break>
+
+        </block_content>}</block>
+
+        <case pos:start="325:9" pos:end="325:16">case <expr pos:start="325:14" pos:end="325:15"><literal type="number" pos:start="325:14" pos:end="325:15">20</literal></expr>:</case>
+
+        <case pos:start="327:9" pos:end="327:16">case <expr pos:start="327:14" pos:end="327:15"><literal type="number" pos:start="327:14" pos:end="327:15">24</literal></expr>:</case>
+
+        <case pos:start="329:9" pos:end="329:16">case <expr pos:start="329:14" pos:end="329:15"><literal type="number" pos:start="329:14" pos:end="329:15">32</literal></expr>:</case>
+
+            <expr_stmt pos:start="331:13" pos:end="331:108"><expr pos:start="331:13" pos:end="331:107"><call pos:start="331:13" pos:end="331:107"><name pos:start="331:13" pos:end="331:18">av_log</name><argument_list pos:start="331:19" pos:end="331:107">(<argument pos:start="331:20" pos:end="331:24"><expr pos:start="331:20" pos:end="331:24"><name pos:start="331:20" pos:end="331:24">avctx</name></expr></argument>, <argument pos:start="331:27" pos:end="331:38"><expr pos:start="331:27" pos:end="331:38"><name pos:start="331:27" pos:end="331:38">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="331:41" pos:end="331:79"><expr pos:start="331:41" pos:end="331:79"><literal type="string" pos:start="331:41" pos:end="331:79">"FIXME: unimplemented sample size %i\n"</literal></expr></argument>, <argument pos:start="331:82" pos:end="331:106"><expr pos:start="331:82" pos:end="331:106"><name pos:start="331:82" pos:end="331:106"><name pos:start="331:82" pos:end="331:85">alac</name><operator pos:start="331:86" pos:end="331:87">-&gt;</operator><name pos:start="331:88" pos:end="331:106">setinfo_sample_size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="333:13" pos:end="333:18">break;</break>
+
+        <default pos:start="335:9" pos:end="335:16">default:</default>
+
+            <break pos:start="337:13" pos:end="337:18">break;</break>
+
+        </block_content>}</block></switch>
+
+        <break pos:start="341:9" pos:end="341:14">break;</break>
+
+    </block_content>}</block>
+
+    <case pos:start="345:5" pos:end="345:11">case <expr pos:start="345:10" pos:end="345:10"><literal type="number" pos:start="345:10" pos:end="345:10">1</literal></expr>:</case> <block pos:start="345:13" pos:end="721:5">{<block_content pos:start="347:9" pos:end="719:14"> <comment type="block" pos:start="345:15" pos:end="345:30">/* 2 channels */</comment>
+
+        <decl_stmt pos:start="347:9" pos:end="347:20"><decl pos:start="347:9" pos:end="347:19"><type pos:start="347:9" pos:end="347:11"><name pos:start="347:9" pos:end="347:11">int</name></type> <name pos:start="347:13" pos:end="347:19">hassize</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="349:9" pos:end="349:28"><decl pos:start="349:9" pos:end="349:27"><type pos:start="349:9" pos:end="349:11"><name pos:start="349:9" pos:end="349:11">int</name></type> <name pos:start="349:13" pos:end="349:27">isnotcompressed</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="351:9" pos:end="351:27"><decl pos:start="351:9" pos:end="351:26"><type pos:start="351:9" pos:end="351:11"><name pos:start="351:9" pos:end="351:11">int</name></type> <name pos:start="351:13" pos:end="351:26">readsamplesize</name></decl>;</decl_stmt>
+
+
+
+        <decl_stmt pos:start="355:9" pos:end="355:25"><decl pos:start="355:9" pos:end="355:24"><type pos:start="355:9" pos:end="355:11"><name pos:start="355:9" pos:end="355:11">int</name></type> <name pos:start="355:13" pos:end="355:24">wasted_bytes</name></decl>;</decl_stmt>
+
+
+
+        <decl_stmt pos:start="359:9" pos:end="359:34"><decl pos:start="359:9" pos:end="359:33"><type pos:start="359:9" pos:end="359:15"><name pos:start="359:9" pos:end="359:15">uint8_t</name></type> <name pos:start="359:17" pos:end="359:33">interlacing_shift</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="361:9" pos:end="361:39"><decl pos:start="361:9" pos:end="361:38"><type pos:start="361:9" pos:end="361:15"><name pos:start="361:9" pos:end="361:15">uint8_t</name></type> <name pos:start="361:17" pos:end="361:38">interlacing_leftweight</name></decl>;</decl_stmt>
+
+
+
+        <comment type="block" pos:start="365:9" pos:end="369:11">/* 2^result = something to do with output waiting.
+
+         * perhaps matters if we read &gt; 1 frame in a pass?
+
+         */</comment>
+
+        <expr_stmt pos:start="371:9" pos:end="371:31"><expr pos:start="371:9" pos:end="371:30"><call pos:start="371:9" pos:end="371:30"><name pos:start="371:9" pos:end="371:16">get_bits</name><argument_list pos:start="371:17" pos:end="371:30">(<argument pos:start="371:18" pos:end="371:26"><expr pos:start="371:18" pos:end="371:26"><operator pos:start="371:18" pos:end="371:18">&amp;</operator><name pos:start="371:19" pos:end="371:26"><name pos:start="371:19" pos:end="371:22">alac</name><operator pos:start="371:23" pos:end="371:24">-&gt;</operator><name pos:start="371:25" pos:end="371:26">gb</name></name></expr></argument>, <argument pos:start="371:29" pos:end="371:29"><expr pos:start="371:29" pos:end="371:29"><literal type="number" pos:start="371:29" pos:end="371:29">4</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="375:9" pos:end="375:32"><expr pos:start="375:9" pos:end="375:31"><call pos:start="375:9" pos:end="375:31"><name pos:start="375:9" pos:end="375:16">get_bits</name><argument_list pos:start="375:17" pos:end="375:31">(<argument pos:start="375:18" pos:end="375:26"><expr pos:start="375:18" pos:end="375:26"><operator pos:start="375:18" pos:end="375:18">&amp;</operator><name pos:start="375:19" pos:end="375:26"><name pos:start="375:19" pos:end="375:22">alac</name><operator pos:start="375:23" pos:end="375:24">-&gt;</operator><name pos:start="375:25" pos:end="375:26">gb</name></name></expr></argument>, <argument pos:start="375:29" pos:end="375:30"><expr pos:start="375:29" pos:end="375:30"><literal type="number" pos:start="375:29" pos:end="375:30">12</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="block" pos:start="375:34" pos:end="375:60">/* unknown, skip 12 bits */</comment>
+
+
+
+        <expr_stmt pos:start="379:9" pos:end="379:41"><expr pos:start="379:9" pos:end="379:40"><name pos:start="379:9" pos:end="379:15">hassize</name> <operator pos:start="379:17" pos:end="379:17">=</operator> <call pos:start="379:19" pos:end="379:40"><name pos:start="379:19" pos:end="379:26">get_bits</name><argument_list pos:start="379:27" pos:end="379:40">(<argument pos:start="379:28" pos:end="379:36"><expr pos:start="379:28" pos:end="379:36"><operator pos:start="379:28" pos:end="379:28">&amp;</operator><name pos:start="379:29" pos:end="379:36"><name pos:start="379:29" pos:end="379:32">alac</name><operator pos:start="379:33" pos:end="379:34">-&gt;</operator><name pos:start="379:35" pos:end="379:36">gb</name></name></expr></argument>, <argument pos:start="379:39" pos:end="379:39"><expr pos:start="379:39" pos:end="379:39"><literal type="number" pos:start="379:39" pos:end="379:39">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="block" pos:start="379:43" pos:end="379:85">/* the output sample size is stored soon */</comment>
+
+
+
+        <expr_stmt pos:start="383:9" pos:end="383:46"><expr pos:start="383:9" pos:end="383:45"><name pos:start="383:9" pos:end="383:20">wasted_bytes</name> <operator pos:start="383:22" pos:end="383:22">=</operator> <call pos:start="383:24" pos:end="383:45"><name pos:start="383:24" pos:end="383:31">get_bits</name><argument_list pos:start="383:32" pos:end="383:45">(<argument pos:start="383:33" pos:end="383:41"><expr pos:start="383:33" pos:end="383:41"><operator pos:start="383:33" pos:end="383:33">&amp;</operator><name pos:start="383:34" pos:end="383:41"><name pos:start="383:34" pos:end="383:37">alac</name><operator pos:start="383:38" pos:end="383:39">-&gt;</operator><name pos:start="383:40" pos:end="383:41">gb</name></name></expr></argument>, <argument pos:start="383:44" pos:end="383:44"><expr pos:start="383:44" pos:end="383:44"><literal type="number" pos:start="383:44" pos:end="383:44">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="block" pos:start="383:48" pos:end="383:62">/* unknown ? */</comment>
+
+
+
+        <expr_stmt pos:start="387:9" pos:end="387:49"><expr pos:start="387:9" pos:end="387:48"><name pos:start="387:9" pos:end="387:23">isnotcompressed</name> <operator pos:start="387:25" pos:end="387:25">=</operator> <call pos:start="387:27" pos:end="387:48"><name pos:start="387:27" pos:end="387:34">get_bits</name><argument_list pos:start="387:35" pos:end="387:48">(<argument pos:start="387:36" pos:end="387:44"><expr pos:start="387:36" pos:end="387:44"><operator pos:start="387:36" pos:end="387:36">&amp;</operator><name pos:start="387:37" pos:end="387:44"><name pos:start="387:37" pos:end="387:40">alac</name><operator pos:start="387:41" pos:end="387:42">-&gt;</operator><name pos:start="387:43" pos:end="387:44">gb</name></name></expr></argument>, <argument pos:start="387:47" pos:end="387:47"><expr pos:start="387:47" pos:end="387:47"><literal type="number" pos:start="387:47" pos:end="387:47">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt> <comment type="block" pos:start="387:51" pos:end="387:87">/* whether the frame is compressed */</comment>
+
+
+
+        <if_stmt pos:start="391:9" pos:end="401:9"><if pos:start="391:9" pos:end="401:9">if <condition pos:start="391:12" pos:end="391:20">(<expr pos:start="391:13" pos:end="391:19"><name pos:start="391:13" pos:end="391:19">hassize</name></expr>)</condition> <block pos:start="391:22" pos:end="401:9">{<block_content pos:start="397:13" pos:end="399:63">
+
+            <comment type="block" pos:start="393:13" pos:end="395:36">/* now read the number of samples,
+
+             * as a 32bit integer */</comment>
+
+            <expr_stmt pos:start="397:13" pos:end="397:52"><expr pos:start="397:13" pos:end="397:51"><name pos:start="397:13" pos:end="397:25">outputsamples</name> <operator pos:start="397:27" pos:end="397:27">=</operator> <call pos:start="397:29" pos:end="397:51"><name pos:start="397:29" pos:end="397:36">get_bits</name><argument_list pos:start="397:37" pos:end="397:51">(<argument pos:start="397:38" pos:end="397:46"><expr pos:start="397:38" pos:end="397:46"><operator pos:start="397:38" pos:end="397:38">&amp;</operator><name pos:start="397:39" pos:end="397:46"><name pos:start="397:39" pos:end="397:42">alac</name><operator pos:start="397:43" pos:end="397:44">-&gt;</operator><name pos:start="397:45" pos:end="397:46">gb</name></name></expr></argument>, <argument pos:start="397:49" pos:end="397:50"><expr pos:start="397:49" pos:end="397:50"><literal type="number" pos:start="397:49" pos:end="397:50">32</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="399:13" pos:end="399:63"><expr pos:start="399:13" pos:end="399:62"><operator pos:start="399:13" pos:end="399:13">*</operator><name pos:start="399:14" pos:end="399:23">outputsize</name> <operator pos:start="399:25" pos:end="399:25">=</operator> <name pos:start="399:27" pos:end="399:39">outputsamples</name> <operator pos:start="399:41" pos:end="399:41">*</operator> <name pos:start="399:43" pos:end="399:62"><name pos:start="399:43" pos:end="399:46">alac</name><operator pos:start="399:47" pos:end="399:48">-&gt;</operator><name pos:start="399:49" pos:end="399:62">bytespersample</name></name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="405:9" pos:end="405:76"><expr pos:start="405:9" pos:end="405:75"><name pos:start="405:9" pos:end="405:22">readsamplesize</name> <operator pos:start="405:24" pos:end="405:24">=</operator> <name pos:start="405:26" pos:end="405:50"><name pos:start="405:26" pos:end="405:29">alac</name><operator pos:start="405:30" pos:end="405:31">-&gt;</operator><name pos:start="405:32" pos:end="405:50">setinfo_sample_size</name></name> <operator pos:start="405:52" pos:end="405:52">-</operator> <operator pos:start="405:54" pos:end="405:54">(</operator><name pos:start="405:55" pos:end="405:66">wasted_bytes</name> <operator pos:start="405:68" pos:end="405:68">*</operator> <literal type="number" pos:start="405:70" pos:end="405:70">8</literal><operator pos:start="405:71" pos:end="405:71">)</operator> <operator pos:start="405:73" pos:end="405:73">+</operator> <literal type="number" pos:start="405:75" pos:end="405:75">1</literal></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="409:9" pos:end="675:9"><if pos:start="409:9" pos:end="599:9">if <condition pos:start="409:12" pos:end="409:29">(<expr pos:start="409:13" pos:end="409:28"><operator pos:start="409:13" pos:end="409:13">!</operator><name pos:start="409:14" pos:end="409:28">isnotcompressed</name></expr>)</condition> <block pos:start="409:31" pos:end="599:9">{<block_content pos:start="413:13" pos:end="597:13">
+
+         <comment type="block" pos:start="411:10" pos:end="411:25">/* compressed */</comment>
+
+            <decl_stmt pos:start="413:13" pos:end="413:47"><decl pos:start="413:13" pos:end="413:46"><type pos:start="413:13" pos:end="413:19"><name pos:start="413:13" pos:end="413:19">int16_t</name></type> <name pos:start="413:21" pos:end="413:46"><name pos:start="413:21" pos:end="413:42">predictor_coef_table_a</name><index pos:start="413:43" pos:end="413:46">[<expr pos:start="413:44" pos:end="413:45"><literal type="number" pos:start="413:44" pos:end="413:45">32</literal></expr>]</index></name></decl>;</decl_stmt>
+
+            <decl_stmt pos:start="415:13" pos:end="415:37"><decl pos:start="415:13" pos:end="415:36"><type pos:start="415:13" pos:end="415:15"><name pos:start="415:13" pos:end="415:15">int</name></type> <name pos:start="415:17" pos:end="415:36">predictor_coef_num_a</name></decl>;</decl_stmt>
+
+            <decl_stmt pos:start="417:13" pos:end="417:34"><decl pos:start="417:13" pos:end="417:33"><type pos:start="417:13" pos:end="417:15"><name pos:start="417:13" pos:end="417:15">int</name></type> <name pos:start="417:17" pos:end="417:33">prediction_type_a</name></decl>;</decl_stmt>
+
+            <decl_stmt pos:start="419:13" pos:end="419:44"><decl pos:start="419:13" pos:end="419:43"><type pos:start="419:13" pos:end="419:15"><name pos:start="419:13" pos:end="419:15">int</name></type> <name pos:start="419:17" pos:end="419:43">prediction_quantitization_a</name></decl>;</decl_stmt>
+
+            <decl_stmt pos:start="421:13" pos:end="421:31"><decl pos:start="421:13" pos:end="421:30"><type pos:start="421:13" pos:end="421:15"><name pos:start="421:13" pos:end="421:15">int</name></type> <name pos:start="421:17" pos:end="421:30">ricemodifier_a</name></decl>;</decl_stmt>
+
+
+
+            <decl_stmt pos:start="425:13" pos:end="425:47"><decl pos:start="425:13" pos:end="425:46"><type pos:start="425:13" pos:end="425:19"><name pos:start="425:13" pos:end="425:19">int16_t</name></type> <name pos:start="425:21" pos:end="425:46"><name pos:start="425:21" pos:end="425:42">predictor_coef_table_b</name><index pos:start="425:43" pos:end="425:46">[<expr pos:start="425:44" pos:end="425:45"><literal type="number" pos:start="425:44" pos:end="425:45">32</literal></expr>]</index></name></decl>;</decl_stmt>
+
+            <decl_stmt pos:start="427:13" pos:end="427:37"><decl pos:start="427:13" pos:end="427:36"><type pos:start="427:13" pos:end="427:15"><name pos:start="427:13" pos:end="427:15">int</name></type> <name pos:start="427:17" pos:end="427:36">predictor_coef_num_b</name></decl>;</decl_stmt>
+
+            <decl_stmt pos:start="429:13" pos:end="429:34"><decl pos:start="429:13" pos:end="429:33"><type pos:start="429:13" pos:end="429:15"><name pos:start="429:13" pos:end="429:15">int</name></type> <name pos:start="429:17" pos:end="429:33">prediction_type_b</name></decl>;</decl_stmt>
+
+            <decl_stmt pos:start="431:13" pos:end="431:44"><decl pos:start="431:13" pos:end="431:43"><type pos:start="431:13" pos:end="431:15"><name pos:start="431:13" pos:end="431:15">int</name></type> <name pos:start="431:17" pos:end="431:43">prediction_quantitization_b</name></decl>;</decl_stmt>
+
+            <decl_stmt pos:start="433:13" pos:end="433:31"><decl pos:start="433:13" pos:end="433:30"><type pos:start="433:13" pos:end="433:15"><name pos:start="433:13" pos:end="433:15">int</name></type> <name pos:start="433:17" pos:end="433:30">ricemodifier_b</name></decl>;</decl_stmt>
+
+
+
+            <decl_stmt pos:start="437:13" pos:end="437:18"><decl pos:start="437:13" pos:end="437:17"><type pos:start="437:13" pos:end="437:15"><name pos:start="437:13" pos:end="437:15">int</name></type> <name pos:start="437:17" pos:end="437:17">i</name></decl>;</decl_stmt>
+
+
+
+            <expr_stmt pos:start="441:13" pos:end="441:55"><expr pos:start="441:13" pos:end="441:54"><name pos:start="441:13" pos:end="441:29">interlacing_shift</name> <operator pos:start="441:31" pos:end="441:31">=</operator> <call pos:start="441:33" pos:end="441:54"><name pos:start="441:33" pos:end="441:40">get_bits</name><argument_list pos:start="441:41" pos:end="441:54">(<argument pos:start="441:42" pos:end="441:50"><expr pos:start="441:42" pos:end="441:50"><operator pos:start="441:42" pos:end="441:42">&amp;</operator><name pos:start="441:43" pos:end="441:50"><name pos:start="441:43" pos:end="441:46">alac</name><operator pos:start="441:47" pos:end="441:48">-&gt;</operator><name pos:start="441:49" pos:end="441:50">gb</name></name></expr></argument>, <argument pos:start="441:53" pos:end="441:53"><expr pos:start="441:53" pos:end="441:53"><literal type="number" pos:start="441:53" pos:end="441:53">8</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="443:13" pos:end="443:60"><expr pos:start="443:13" pos:end="443:59"><name pos:start="443:13" pos:end="443:34">interlacing_leftweight</name> <operator pos:start="443:36" pos:end="443:36">=</operator> <call pos:start="443:38" pos:end="443:59"><name pos:start="443:38" pos:end="443:45">get_bits</name><argument_list pos:start="443:46" pos:end="443:59">(<argument pos:start="443:47" pos:end="443:55"><expr pos:start="443:47" pos:end="443:55"><operator pos:start="443:47" pos:end="443:47">&amp;</operator><name pos:start="443:48" pos:end="443:55"><name pos:start="443:48" pos:end="443:51">alac</name><operator pos:start="443:52" pos:end="443:53">-&gt;</operator><name pos:start="443:54" pos:end="443:55">gb</name></name></expr></argument>, <argument pos:start="443:58" pos:end="443:58"><expr pos:start="443:58" pos:end="443:58"><literal type="number" pos:start="443:58" pos:end="443:58">8</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <comment type="block" format="doxygen" pos:start="447:13" pos:end="447:44">/******** channel 1 ***********/</comment>
+
+            <expr_stmt pos:start="449:13" pos:end="449:55"><expr pos:start="449:13" pos:end="449:54"><name pos:start="449:13" pos:end="449:29">prediction_type_a</name> <operator pos:start="449:31" pos:end="449:31">=</operator> <call pos:start="449:33" pos:end="449:54"><name pos:start="449:33" pos:end="449:40">get_bits</name><argument_list pos:start="449:41" pos:end="449:54">(<argument pos:start="449:42" pos:end="449:50"><expr pos:start="449:42" pos:end="449:50"><operator pos:start="449:42" pos:end="449:42">&amp;</operator><name pos:start="449:43" pos:end="449:50"><name pos:start="449:43" pos:end="449:46">alac</name><operator pos:start="449:47" pos:end="449:48">-&gt;</operator><name pos:start="449:49" pos:end="449:50">gb</name></name></expr></argument>, <argument pos:start="449:53" pos:end="449:53"><expr pos:start="449:53" pos:end="449:53"><literal type="number" pos:start="449:53" pos:end="449:53">4</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="451:13" pos:end="451:65"><expr pos:start="451:13" pos:end="451:64"><name pos:start="451:13" pos:end="451:39">prediction_quantitization_a</name> <operator pos:start="451:41" pos:end="451:41">=</operator> <call pos:start="451:43" pos:end="451:64"><name pos:start="451:43" pos:end="451:50">get_bits</name><argument_list pos:start="451:51" pos:end="451:64">(<argument pos:start="451:52" pos:end="451:60"><expr pos:start="451:52" pos:end="451:60"><operator pos:start="451:52" pos:end="451:52">&amp;</operator><name pos:start="451:53" pos:end="451:60"><name pos:start="451:53" pos:end="451:56">alac</name><operator pos:start="451:57" pos:end="451:58">-&gt;</operator><name pos:start="451:59" pos:end="451:60">gb</name></name></expr></argument>, <argument pos:start="451:63" pos:end="451:63"><expr pos:start="451:63" pos:end="451:63"><literal type="number" pos:start="451:63" pos:end="451:63">4</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <expr_stmt pos:start="455:13" pos:end="455:52"><expr pos:start="455:13" pos:end="455:51"><name pos:start="455:13" pos:end="455:26">ricemodifier_a</name> <operator pos:start="455:28" pos:end="455:28">=</operator> <call pos:start="455:30" pos:end="455:51"><name pos:start="455:30" pos:end="455:37">get_bits</name><argument_list pos:start="455:38" pos:end="455:51">(<argument pos:start="455:39" pos:end="455:47"><expr pos:start="455:39" pos:end="455:47"><operator pos:start="455:39" pos:end="455:39">&amp;</operator><name pos:start="455:40" pos:end="455:47"><name pos:start="455:40" pos:end="455:43">alac</name><operator pos:start="455:44" pos:end="455:45">-&gt;</operator><name pos:start="455:46" pos:end="455:47">gb</name></name></expr></argument>, <argument pos:start="455:50" pos:end="455:50"><expr pos:start="455:50" pos:end="455:50"><literal type="number" pos:start="455:50" pos:end="455:50">3</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="457:13" pos:end="457:58"><expr pos:start="457:13" pos:end="457:57"><name pos:start="457:13" pos:end="457:32">predictor_coef_num_a</name> <operator pos:start="457:34" pos:end="457:34">=</operator> <call pos:start="457:36" pos:end="457:57"><name pos:start="457:36" pos:end="457:43">get_bits</name><argument_list pos:start="457:44" pos:end="457:57">(<argument pos:start="457:45" pos:end="457:53"><expr pos:start="457:45" pos:end="457:53"><operator pos:start="457:45" pos:end="457:45">&amp;</operator><name pos:start="457:46" pos:end="457:53"><name pos:start="457:46" pos:end="457:49">alac</name><operator pos:start="457:50" pos:end="457:51">-&gt;</operator><name pos:start="457:52" pos:end="457:53">gb</name></name></expr></argument>, <argument pos:start="457:56" pos:end="457:56"><expr pos:start="457:56" pos:end="457:56"><literal type="number" pos:start="457:56" pos:end="457:56">5</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <comment type="block" pos:start="461:13" pos:end="461:42">/* read the predictor table */</comment>
+
+            <for pos:start="463:13" pos:end="467:13">for <control pos:start="463:17" pos:end="463:54">(<init pos:start="463:18" pos:end="463:23"><expr pos:start="463:18" pos:end="463:22"><name pos:start="463:18" pos:end="463:18">i</name> <operator pos:start="463:20" pos:end="463:20">=</operator> <literal type="number" pos:start="463:22" pos:end="463:22">0</literal></expr>;</init> <condition pos:start="463:25" pos:end="463:49"><expr pos:start="463:25" pos:end="463:48"><name pos:start="463:25" pos:end="463:25">i</name> <operator pos:start="463:27" pos:end="463:27">&lt;</operator> <name pos:start="463:29" pos:end="463:48">predictor_coef_num_a</name></expr>;</condition> <incr pos:start="463:51" pos:end="463:53"><expr pos:start="463:51" pos:end="463:53"><name pos:start="463:51" pos:end="463:51">i</name><operator pos:start="463:52" pos:end="463:53">++</operator></expr></incr>)</control> <block pos:start="463:56" pos:end="467:13">{<block_content pos:start="465:17" pos:end="465:77">
+
+                <expr_stmt pos:start="465:17" pos:end="465:77"><expr pos:start="465:17" pos:end="465:76"><name pos:start="465:17" pos:end="465:41"><name pos:start="465:17" pos:end="465:38">predictor_coef_table_a</name><index pos:start="465:39" pos:end="465:41">[<expr pos:start="465:40" pos:end="465:40"><name pos:start="465:40" pos:end="465:40">i</name></expr>]</index></name> <operator pos:start="465:43" pos:end="465:43">=</operator> <operator pos:start="465:45" pos:end="465:45">(</operator><name pos:start="465:46" pos:end="465:52">int16_t</name><operator pos:start="465:53" pos:end="465:53">)</operator><call pos:start="465:54" pos:end="465:76"><name pos:start="465:54" pos:end="465:61">get_bits</name><argument_list pos:start="465:62" pos:end="465:76">(<argument pos:start="465:63" pos:end="465:71"><expr pos:start="465:63" pos:end="465:71"><operator pos:start="465:63" pos:end="465:63">&amp;</operator><name pos:start="465:64" pos:end="465:71"><name pos:start="465:64" pos:end="465:67">alac</name><operator pos:start="465:68" pos:end="465:69">-&gt;</operator><name pos:start="465:70" pos:end="465:71">gb</name></name></expr></argument>, <argument pos:start="465:74" pos:end="465:75"><expr pos:start="465:74" pos:end="465:75"><literal type="number" pos:start="465:74" pos:end="465:75">16</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></for>
+
+
+
+            <comment type="block" format="doxygen" pos:start="471:13" pos:end="471:42">/******** channel 2 *********/</comment>
+
+            <expr_stmt pos:start="473:13" pos:end="473:55"><expr pos:start="473:13" pos:end="473:54"><name pos:start="473:13" pos:end="473:29">prediction_type_b</name> <operator pos:start="473:31" pos:end="473:31">=</operator> <call pos:start="473:33" pos:end="473:54"><name pos:start="473:33" pos:end="473:40">get_bits</name><argument_list pos:start="473:41" pos:end="473:54">(<argument pos:start="473:42" pos:end="473:50"><expr pos:start="473:42" pos:end="473:50"><operator pos:start="473:42" pos:end="473:42">&amp;</operator><name pos:start="473:43" pos:end="473:50"><name pos:start="473:43" pos:end="473:46">alac</name><operator pos:start="473:47" pos:end="473:48">-&gt;</operator><name pos:start="473:49" pos:end="473:50">gb</name></name></expr></argument>, <argument pos:start="473:53" pos:end="473:53"><expr pos:start="473:53" pos:end="473:53"><literal type="number" pos:start="473:53" pos:end="473:53">4</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="475:13" pos:end="475:65"><expr pos:start="475:13" pos:end="475:64"><name pos:start="475:13" pos:end="475:39">prediction_quantitization_b</name> <operator pos:start="475:41" pos:end="475:41">=</operator> <call pos:start="475:43" pos:end="475:64"><name pos:start="475:43" pos:end="475:50">get_bits</name><argument_list pos:start="475:51" pos:end="475:64">(<argument pos:start="475:52" pos:end="475:60"><expr pos:start="475:52" pos:end="475:60"><operator pos:start="475:52" pos:end="475:52">&amp;</operator><name pos:start="475:53" pos:end="475:60"><name pos:start="475:53" pos:end="475:56">alac</name><operator pos:start="475:57" pos:end="475:58">-&gt;</operator><name pos:start="475:59" pos:end="475:60">gb</name></name></expr></argument>, <argument pos:start="475:63" pos:end="475:63"><expr pos:start="475:63" pos:end="475:63"><literal type="number" pos:start="475:63" pos:end="475:63">4</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <expr_stmt pos:start="479:13" pos:end="479:52"><expr pos:start="479:13" pos:end="479:51"><name pos:start="479:13" pos:end="479:26">ricemodifier_b</name> <operator pos:start="479:28" pos:end="479:28">=</operator> <call pos:start="479:30" pos:end="479:51"><name pos:start="479:30" pos:end="479:37">get_bits</name><argument_list pos:start="479:38" pos:end="479:51">(<argument pos:start="479:39" pos:end="479:47"><expr pos:start="479:39" pos:end="479:47"><operator pos:start="479:39" pos:end="479:39">&amp;</operator><name pos:start="479:40" pos:end="479:47"><name pos:start="479:40" pos:end="479:43">alac</name><operator pos:start="479:44" pos:end="479:45">-&gt;</operator><name pos:start="479:46" pos:end="479:47">gb</name></name></expr></argument>, <argument pos:start="479:50" pos:end="479:50"><expr pos:start="479:50" pos:end="479:50"><literal type="number" pos:start="479:50" pos:end="479:50">3</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="481:13" pos:end="481:58"><expr pos:start="481:13" pos:end="481:57"><name pos:start="481:13" pos:end="481:32">predictor_coef_num_b</name> <operator pos:start="481:34" pos:end="481:34">=</operator> <call pos:start="481:36" pos:end="481:57"><name pos:start="481:36" pos:end="481:43">get_bits</name><argument_list pos:start="481:44" pos:end="481:57">(<argument pos:start="481:45" pos:end="481:53"><expr pos:start="481:45" pos:end="481:53"><operator pos:start="481:45" pos:end="481:45">&amp;</operator><name pos:start="481:46" pos:end="481:53"><name pos:start="481:46" pos:end="481:49">alac</name><operator pos:start="481:50" pos:end="481:51">-&gt;</operator><name pos:start="481:52" pos:end="481:53">gb</name></name></expr></argument>, <argument pos:start="481:56" pos:end="481:56"><expr pos:start="481:56" pos:end="481:56"><literal type="number" pos:start="481:56" pos:end="481:56">5</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <comment type="block" pos:start="485:13" pos:end="485:42">/* read the predictor table */</comment>
+
+            <for pos:start="487:13" pos:end="491:13">for <control pos:start="487:17" pos:end="487:54">(<init pos:start="487:18" pos:end="487:23"><expr pos:start="487:18" pos:end="487:22"><name pos:start="487:18" pos:end="487:18">i</name> <operator pos:start="487:20" pos:end="487:20">=</operator> <literal type="number" pos:start="487:22" pos:end="487:22">0</literal></expr>;</init> <condition pos:start="487:25" pos:end="487:49"><expr pos:start="487:25" pos:end="487:48"><name pos:start="487:25" pos:end="487:25">i</name> <operator pos:start="487:27" pos:end="487:27">&lt;</operator> <name pos:start="487:29" pos:end="487:48">predictor_coef_num_b</name></expr>;</condition> <incr pos:start="487:51" pos:end="487:53"><expr pos:start="487:51" pos:end="487:53"><name pos:start="487:51" pos:end="487:51">i</name><operator pos:start="487:52" pos:end="487:53">++</operator></expr></incr>)</control> <block pos:start="487:56" pos:end="491:13">{<block_content pos:start="489:17" pos:end="489:77">
+
+                <expr_stmt pos:start="489:17" pos:end="489:77"><expr pos:start="489:17" pos:end="489:76"><name pos:start="489:17" pos:end="489:41"><name pos:start="489:17" pos:end="489:38">predictor_coef_table_b</name><index pos:start="489:39" pos:end="489:41">[<expr pos:start="489:40" pos:end="489:40"><name pos:start="489:40" pos:end="489:40">i</name></expr>]</index></name> <operator pos:start="489:43" pos:end="489:43">=</operator> <operator pos:start="489:45" pos:end="489:45">(</operator><name pos:start="489:46" pos:end="489:52">int16_t</name><operator pos:start="489:53" pos:end="489:53">)</operator><call pos:start="489:54" pos:end="489:76"><name pos:start="489:54" pos:end="489:61">get_bits</name><argument_list pos:start="489:62" pos:end="489:76">(<argument pos:start="489:63" pos:end="489:71"><expr pos:start="489:63" pos:end="489:71"><operator pos:start="489:63" pos:end="489:63">&amp;</operator><name pos:start="489:64" pos:end="489:71"><name pos:start="489:64" pos:end="489:67">alac</name><operator pos:start="489:68" pos:end="489:69">-&gt;</operator><name pos:start="489:70" pos:end="489:71">gb</name></name></expr></argument>, <argument pos:start="489:74" pos:end="489:75"><expr pos:start="489:74" pos:end="489:75"><literal type="number" pos:start="489:74" pos:end="489:75">16</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></for>
+
+
+
+            <comment type="block" format="doxygen" pos:start="495:13" pos:end="495:35">/*********************/</comment>
+
+            <if_stmt pos:start="497:13" pos:end="503:13"><if pos:start="497:13" pos:end="503:13">if <condition pos:start="497:16" pos:end="497:29">(<expr pos:start="497:17" pos:end="497:28"><name pos:start="497:17" pos:end="497:28">wasted_bytes</name></expr>)</condition> <block pos:start="497:31" pos:end="503:13">{<block_content pos:start="501:17" pos:end="501:98">
+
+              <comment type="block" pos:start="499:15" pos:end="499:33">/* see mono case */</comment>
+
+                <expr_stmt pos:start="501:17" pos:end="501:98"><expr pos:start="501:17" pos:end="501:97"><call pos:start="501:17" pos:end="501:97"><name pos:start="501:17" pos:end="501:22">av_log</name><argument_list pos:start="501:23" pos:end="501:97">(<argument pos:start="501:24" pos:end="501:28"><expr pos:start="501:24" pos:end="501:28"><name pos:start="501:24" pos:end="501:28">avctx</name></expr></argument>, <argument pos:start="501:31" pos:end="501:42"><expr pos:start="501:31" pos:end="501:42"><name pos:start="501:31" pos:end="501:42">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="501:45" pos:end="501:96"><expr pos:start="501:45" pos:end="501:96"><literal type="string" pos:start="501:45" pos:end="501:96">"FIXME: unimplemented, unhandling of wasted_bytes\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+
+
+            <comment type="block" pos:start="507:13" pos:end="507:27">/* channel 1 */</comment>
+
+            <expr_stmt pos:start="509:13" pos:end="523:81"><expr pos:start="509:13" pos:end="523:80"><call pos:start="509:13" pos:end="523:80"><name pos:start="509:13" pos:end="509:39">bastardized_rice_decompress</name><argument_list pos:start="509:40" pos:end="523:80">(<argument pos:start="509:41" pos:end="509:44"><expr pos:start="509:41" pos:end="509:44"><name pos:start="509:41" pos:end="509:44">alac</name></expr></argument>,
+
+                                        <argument pos:start="511:41" pos:end="511:67"><expr pos:start="511:41" pos:end="511:67"><name pos:start="511:41" pos:end="511:67"><name pos:start="511:41" pos:end="511:44">alac</name><operator pos:start="511:45" pos:end="511:46">-&gt;</operator><name pos:start="511:47" pos:end="511:67">predicterror_buffer_a</name></name></expr></argument>,
+
+                                        <argument pos:start="513:41" pos:end="513:53"><expr pos:start="513:41" pos:end="513:53"><name pos:start="513:41" pos:end="513:53">outputsamples</name></expr></argument>,
+
+                                        <argument pos:start="515:41" pos:end="515:54"><expr pos:start="515:41" pos:end="515:54"><name pos:start="515:41" pos:end="515:54">readsamplesize</name></expr></argument>,
+
+                                        <argument pos:start="517:41" pos:end="517:73"><expr pos:start="517:41" pos:end="517:73"><name pos:start="517:41" pos:end="517:73"><name pos:start="517:41" pos:end="517:44">alac</name><operator pos:start="517:45" pos:end="517:46">-&gt;</operator><name pos:start="517:47" pos:end="517:73">setinfo_rice_initialhistory</name></name></expr></argument>,
+
+                                        <argument pos:start="519:41" pos:end="519:68"><expr pos:start="519:41" pos:end="519:68"><name pos:start="519:41" pos:end="519:68"><name pos:start="519:41" pos:end="519:44">alac</name><operator pos:start="519:45" pos:end="519:46">-&gt;</operator><name pos:start="519:47" pos:end="519:68">setinfo_rice_kmodifier</name></name></expr></argument>,
+
+                                        <argument pos:start="521:41" pos:end="521:91"><expr pos:start="521:41" pos:end="521:91"><name pos:start="521:41" pos:end="521:54">ricemodifier_a</name> <operator pos:start="521:56" pos:end="521:56">*</operator> <name pos:start="521:58" pos:end="521:87"><name pos:start="521:58" pos:end="521:61">alac</name><operator pos:start="521:62" pos:end="521:63">-&gt;</operator><name pos:start="521:64" pos:end="521:87">setinfo_rice_historymult</name></name> <operator pos:start="521:89" pos:end="521:89">/</operator> <literal type="number" pos:start="521:91" pos:end="521:91">4</literal></expr></argument>,
+
+                                        <argument pos:start="523:41" pos:end="523:79"><expr pos:start="523:41" pos:end="523:79"><operator pos:start="523:41" pos:end="523:41">(</operator><literal type="number" pos:start="523:42" pos:end="523:42">1</literal> <operator pos:start="523:44" pos:end="523:45">&lt;&lt;</operator> <name pos:start="523:47" pos:end="523:74"><name pos:start="523:47" pos:end="523:50">alac</name><operator pos:start="523:51" pos:end="523:52">-&gt;</operator><name pos:start="523:53" pos:end="523:74">setinfo_rice_kmodifier</name></name><operator pos:start="523:75" pos:end="523:75">)</operator> <operator pos:start="523:77" pos:end="523:77">-</operator> <literal type="number" pos:start="523:79" pos:end="523:79">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <if_stmt pos:start="527:13" pos:end="551:13"><if pos:start="527:13" pos:end="545:13">if <condition pos:start="527:16" pos:end="527:39">(<expr pos:start="527:17" pos:end="527:38"><name pos:start="527:17" pos:end="527:33">prediction_type_a</name> <operator pos:start="527:35" pos:end="527:36">==</operator> <literal type="number" pos:start="527:38" pos:end="527:38">0</literal></expr>)</condition> <block pos:start="527:41" pos:end="545:13">{<block_content pos:start="531:17" pos:end="543:76">
+
+              <comment type="block" pos:start="529:15" pos:end="529:32">/* adaptive fir */</comment>
+
+                <expr_stmt pos:start="531:17" pos:end="543:76"><expr pos:start="531:17" pos:end="543:75"><call pos:start="531:17" pos:end="543:75"><name pos:start="531:17" pos:end="531:46">predictor_decompress_fir_adapt</name><argument_list pos:start="531:47" pos:end="543:75">(<argument pos:start="531:48" pos:end="531:74"><expr pos:start="531:48" pos:end="531:74"><name pos:start="531:48" pos:end="531:74"><name pos:start="531:48" pos:end="531:51">alac</name><operator pos:start="531:52" pos:end="531:53">-&gt;</operator><name pos:start="531:54" pos:end="531:74">predicterror_buffer_a</name></name></expr></argument>,
+
+                                               <argument pos:start="533:48" pos:end="533:75"><expr pos:start="533:48" pos:end="533:75"><name pos:start="533:48" pos:end="533:75"><name pos:start="533:48" pos:end="533:51">alac</name><operator pos:start="533:52" pos:end="533:53">-&gt;</operator><name pos:start="533:54" pos:end="533:75">outputsamples_buffer_a</name></name></expr></argument>,
+
+                                               <argument pos:start="535:48" pos:end="535:60"><expr pos:start="535:48" pos:end="535:60"><name pos:start="535:48" pos:end="535:60">outputsamples</name></expr></argument>,
+
+                                               <argument pos:start="537:48" pos:end="537:61"><expr pos:start="537:48" pos:end="537:61"><name pos:start="537:48" pos:end="537:61">readsamplesize</name></expr></argument>,
+
+                                               <argument pos:start="539:48" pos:end="539:69"><expr pos:start="539:48" pos:end="539:69"><name pos:start="539:48" pos:end="539:69">predictor_coef_table_a</name></expr></argument>,
+
+                                               <argument pos:start="541:48" pos:end="541:67"><expr pos:start="541:48" pos:end="541:67"><name pos:start="541:48" pos:end="541:67">predictor_coef_num_a</name></expr></argument>,
+
+                                               <argument pos:start="543:48" pos:end="543:74"><expr pos:start="543:48" pos:end="543:74"><name pos:start="543:48" pos:end="543:74">prediction_quantitization_a</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if> <else pos:start="545:15" pos:end="551:13">else <block pos:start="545:20" pos:end="551:13">{<block_content pos:start="549:17" pos:end="549:105">
+
+              <comment type="block" pos:start="547:15" pos:end="547:33">/* see mono case */</comment>
+
+                <expr_stmt pos:start="549:17" pos:end="549:105"><expr pos:start="549:17" pos:end="549:104"><call pos:start="549:17" pos:end="549:104"><name pos:start="549:17" pos:end="549:22">av_log</name><argument_list pos:start="549:23" pos:end="549:104">(<argument pos:start="549:24" pos:end="549:28"><expr pos:start="549:24" pos:end="549:28"><name pos:start="549:24" pos:end="549:28">avctx</name></expr></argument>, <argument pos:start="549:31" pos:end="549:42"><expr pos:start="549:31" pos:end="549:42"><name pos:start="549:31" pos:end="549:42">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="549:45" pos:end="549:84"><expr pos:start="549:45" pos:end="549:84"><literal type="string" pos:start="549:45" pos:end="549:84">"FIXME: unhandled prediction type: %i\n"</literal></expr></argument>, <argument pos:start="549:87" pos:end="549:103"><expr pos:start="549:87" pos:end="549:103"><name pos:start="549:87" pos:end="549:103">prediction_type_a</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></else></if_stmt>
+
+
+
+            <comment type="block" pos:start="555:13" pos:end="555:27">/* channel 2 */</comment>
+
+            <expr_stmt pos:start="557:13" pos:end="571:81"><expr pos:start="557:13" pos:end="571:80"><call pos:start="557:13" pos:end="571:80"><name pos:start="557:13" pos:end="557:39">bastardized_rice_decompress</name><argument_list pos:start="557:40" pos:end="571:80">(<argument pos:start="557:41" pos:end="557:44"><expr pos:start="557:41" pos:end="557:44"><name pos:start="557:41" pos:end="557:44">alac</name></expr></argument>,
+
+                                        <argument pos:start="559:41" pos:end="559:67"><expr pos:start="559:41" pos:end="559:67"><name pos:start="559:41" pos:end="559:67"><name pos:start="559:41" pos:end="559:44">alac</name><operator pos:start="559:45" pos:end="559:46">-&gt;</operator><name pos:start="559:47" pos:end="559:67">predicterror_buffer_b</name></name></expr></argument>,
+
+                                        <argument pos:start="561:41" pos:end="561:53"><expr pos:start="561:41" pos:end="561:53"><name pos:start="561:41" pos:end="561:53">outputsamples</name></expr></argument>,
+
+                                        <argument pos:start="563:41" pos:end="563:54"><expr pos:start="563:41" pos:end="563:54"><name pos:start="563:41" pos:end="563:54">readsamplesize</name></expr></argument>,
+
+                                        <argument pos:start="565:41" pos:end="565:73"><expr pos:start="565:41" pos:end="565:73"><name pos:start="565:41" pos:end="565:73"><name pos:start="565:41" pos:end="565:44">alac</name><operator pos:start="565:45" pos:end="565:46">-&gt;</operator><name pos:start="565:47" pos:end="565:73">setinfo_rice_initialhistory</name></name></expr></argument>,
+
+                                        <argument pos:start="567:41" pos:end="567:68"><expr pos:start="567:41" pos:end="567:68"><name pos:start="567:41" pos:end="567:68"><name pos:start="567:41" pos:end="567:44">alac</name><operator pos:start="567:45" pos:end="567:46">-&gt;</operator><name pos:start="567:47" pos:end="567:68">setinfo_rice_kmodifier</name></name></expr></argument>,
+
+                                        <argument pos:start="569:41" pos:end="569:91"><expr pos:start="569:41" pos:end="569:91"><name pos:start="569:41" pos:end="569:54">ricemodifier_b</name> <operator pos:start="569:56" pos:end="569:56">*</operator> <name pos:start="569:58" pos:end="569:87"><name pos:start="569:58" pos:end="569:61">alac</name><operator pos:start="569:62" pos:end="569:63">-&gt;</operator><name pos:start="569:64" pos:end="569:87">setinfo_rice_historymult</name></name> <operator pos:start="569:89" pos:end="569:89">/</operator> <literal type="number" pos:start="569:91" pos:end="569:91">4</literal></expr></argument>,
+
+                                        <argument pos:start="571:41" pos:end="571:79"><expr pos:start="571:41" pos:end="571:79"><operator pos:start="571:41" pos:end="571:41">(</operator><literal type="number" pos:start="571:42" pos:end="571:42">1</literal> <operator pos:start="571:44" pos:end="571:45">&lt;&lt;</operator> <name pos:start="571:47" pos:end="571:74"><name pos:start="571:47" pos:end="571:50">alac</name><operator pos:start="571:51" pos:end="571:52">-&gt;</operator><name pos:start="571:53" pos:end="571:74">setinfo_rice_kmodifier</name></name><operator pos:start="571:75" pos:end="571:75">)</operator> <operator pos:start="571:77" pos:end="571:77">-</operator> <literal type="number" pos:start="571:79" pos:end="571:79">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <if_stmt pos:start="575:13" pos:end="597:13"><if pos:start="575:13" pos:end="593:13">if <condition pos:start="575:16" pos:end="575:39">(<expr pos:start="575:17" pos:end="575:38"><name pos:start="575:17" pos:end="575:33">prediction_type_b</name> <operator pos:start="575:35" pos:end="575:36">==</operator> <literal type="number" pos:start="575:38" pos:end="575:38">0</literal></expr>)</condition> <block pos:start="575:41" pos:end="593:13">{<block_content pos:start="579:17" pos:end="591:76">
+
+              <comment type="block" pos:start="577:15" pos:end="577:32">/* adaptive fir */</comment>
+
+                <expr_stmt pos:start="579:17" pos:end="591:76"><expr pos:start="579:17" pos:end="591:75"><call pos:start="579:17" pos:end="591:75"><name pos:start="579:17" pos:end="579:46">predictor_decompress_fir_adapt</name><argument_list pos:start="579:47" pos:end="591:75">(<argument pos:start="579:48" pos:end="579:74"><expr pos:start="579:48" pos:end="579:74"><name pos:start="579:48" pos:end="579:74"><name pos:start="579:48" pos:end="579:51">alac</name><operator pos:start="579:52" pos:end="579:53">-&gt;</operator><name pos:start="579:54" pos:end="579:74">predicterror_buffer_b</name></name></expr></argument>,
+
+                                               <argument pos:start="581:48" pos:end="581:75"><expr pos:start="581:48" pos:end="581:75"><name pos:start="581:48" pos:end="581:75"><name pos:start="581:48" pos:end="581:51">alac</name><operator pos:start="581:52" pos:end="581:53">-&gt;</operator><name pos:start="581:54" pos:end="581:75">outputsamples_buffer_b</name></name></expr></argument>,
+
+                                               <argument pos:start="583:48" pos:end="583:60"><expr pos:start="583:48" pos:end="583:60"><name pos:start="583:48" pos:end="583:60">outputsamples</name></expr></argument>,
+
+                                               <argument pos:start="585:48" pos:end="585:61"><expr pos:start="585:48" pos:end="585:61"><name pos:start="585:48" pos:end="585:61">readsamplesize</name></expr></argument>,
+
+                                               <argument pos:start="587:48" pos:end="587:69"><expr pos:start="587:48" pos:end="587:69"><name pos:start="587:48" pos:end="587:69">predictor_coef_table_b</name></expr></argument>,
+
+                                               <argument pos:start="589:48" pos:end="589:67"><expr pos:start="589:48" pos:end="589:67"><name pos:start="589:48" pos:end="589:67">predictor_coef_num_b</name></expr></argument>,
+
+                                               <argument pos:start="591:48" pos:end="591:74"><expr pos:start="591:48" pos:end="591:74"><name pos:start="591:48" pos:end="591:74">prediction_quantitization_b</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if> <else pos:start="593:15" pos:end="597:13">else <block pos:start="593:20" pos:end="597:13">{<block_content pos:start="595:17" pos:end="595:105">
+
+                <expr_stmt pos:start="595:17" pos:end="595:105"><expr pos:start="595:17" pos:end="595:104"><call pos:start="595:17" pos:end="595:104"><name pos:start="595:17" pos:end="595:22">av_log</name><argument_list pos:start="595:23" pos:end="595:104">(<argument pos:start="595:24" pos:end="595:28"><expr pos:start="595:24" pos:end="595:28"><name pos:start="595:24" pos:end="595:28">avctx</name></expr></argument>, <argument pos:start="595:31" pos:end="595:42"><expr pos:start="595:31" pos:end="595:42"><name pos:start="595:31" pos:end="595:42">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="595:45" pos:end="595:84"><expr pos:start="595:45" pos:end="595:84"><literal type="string" pos:start="595:45" pos:end="595:84">"FIXME: unhandled prediction type: %i\n"</literal></expr></argument>, <argument pos:start="595:87" pos:end="595:103"><expr pos:start="595:87" pos:end="595:103"><name pos:start="595:87" pos:end="595:103">prediction_type_b</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></else></if_stmt>
+
+        </block_content>}</block></if> <else pos:start="599:11" pos:end="675:9">else <block pos:start="599:16" pos:end="675:9">{<block_content pos:start="603:13" pos:end="673:39">
+
+         <comment type="block" pos:start="601:10" pos:end="601:40">/* not compressed, easy case */</comment>
+
+            <if_stmt pos:start="603:13" pos:end="667:13"><if pos:start="603:13" pos:end="631:13">if <condition pos:start="603:16" pos:end="603:48">(<expr pos:start="603:17" pos:end="603:47"><name pos:start="603:17" pos:end="603:41"><name pos:start="603:17" pos:end="603:20">alac</name><operator pos:start="603:21" pos:end="603:22">-&gt;</operator><name pos:start="603:23" pos:end="603:41">setinfo_sample_size</name></name> <operator pos:start="603:43" pos:end="603:44">&lt;=</operator> <literal type="number" pos:start="603:46" pos:end="603:47">16</literal></expr>)</condition> <block pos:start="603:50" pos:end="631:13">{<block_content pos:start="605:17" pos:end="629:17">
+
+                <decl_stmt pos:start="605:17" pos:end="605:22"><decl pos:start="605:17" pos:end="605:21"><type pos:start="605:17" pos:end="605:19"><name pos:start="605:17" pos:end="605:19">int</name></type> <name pos:start="605:21" pos:end="605:21">i</name></decl>;</decl_stmt>
+
+                <for pos:start="607:17" pos:end="629:17">for <control pos:start="607:21" pos:end="607:51">(<init pos:start="607:22" pos:end="607:27"><expr pos:start="607:22" pos:end="607:26"><name pos:start="607:22" pos:end="607:22">i</name> <operator pos:start="607:24" pos:end="607:24">=</operator> <literal type="number" pos:start="607:26" pos:end="607:26">0</literal></expr>;</init> <condition pos:start="607:29" pos:end="607:46"><expr pos:start="607:29" pos:end="607:45"><name pos:start="607:29" pos:end="607:29">i</name> <operator pos:start="607:31" pos:end="607:31">&lt;</operator> <name pos:start="607:33" pos:end="607:45">outputsamples</name></expr>;</condition> <incr pos:start="607:48" pos:end="607:50"><expr pos:start="607:48" pos:end="607:50"><name pos:start="607:48" pos:end="607:48">i</name><operator pos:start="607:49" pos:end="607:50">++</operator></expr></incr>)</control> <block pos:start="607:53" pos:end="629:17">{<block_content pos:start="609:21" pos:end="627:66">
+
+                    <decl_stmt pos:start="609:21" pos:end="609:53"><decl pos:start="609:21" pos:end="609:39"><type pos:start="609:21" pos:end="609:27"><name pos:start="609:21" pos:end="609:27">int32_t</name></type> <name pos:start="609:29" pos:end="609:39">audiobits_a</name></decl>, <decl pos:start="609:42" pos:end="609:52"><type ref="prev" pos:start="609:21" pos:end="609:27"/><name pos:start="609:42" pos:end="609:52">audiobits_b</name></decl>;</decl_stmt>
+
+
+
+                    <expr_stmt pos:start="613:21" pos:end="613:81"><expr pos:start="613:21" pos:end="613:80"><name pos:start="613:21" pos:end="613:31">audiobits_a</name> <operator pos:start="613:33" pos:end="613:33">=</operator> <call pos:start="613:35" pos:end="613:80"><name pos:start="613:35" pos:end="613:42">get_bits</name><argument_list pos:start="613:43" pos:end="613:80">(<argument pos:start="613:44" pos:end="613:52"><expr pos:start="613:44" pos:end="613:52"><operator pos:start="613:44" pos:end="613:44">&amp;</operator><name pos:start="613:45" pos:end="613:52"><name pos:start="613:45" pos:end="613:48">alac</name><operator pos:start="613:49" pos:end="613:50">-&gt;</operator><name pos:start="613:51" pos:end="613:52">gb</name></name></expr></argument>, <argument pos:start="613:55" pos:end="613:79"><expr pos:start="613:55" pos:end="613:79"><name pos:start="613:55" pos:end="613:79"><name pos:start="613:55" pos:end="613:58">alac</name><operator pos:start="613:59" pos:end="613:60">-&gt;</operator><name pos:start="613:61" pos:end="613:79">setinfo_sample_size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="615:21" pos:end="615:81"><expr pos:start="615:21" pos:end="615:80"><name pos:start="615:21" pos:end="615:31">audiobits_b</name> <operator pos:start="615:33" pos:end="615:33">=</operator> <call pos:start="615:35" pos:end="615:80"><name pos:start="615:35" pos:end="615:42">get_bits</name><argument_list pos:start="615:43" pos:end="615:80">(<argument pos:start="615:44" pos:end="615:52"><expr pos:start="615:44" pos:end="615:52"><operator pos:start="615:44" pos:end="615:44">&amp;</operator><name pos:start="615:45" pos:end="615:52"><name pos:start="615:45" pos:end="615:48">alac</name><operator pos:start="615:49" pos:end="615:50">-&gt;</operator><name pos:start="615:51" pos:end="615:52">gb</name></name></expr></argument>, <argument pos:start="615:55" pos:end="615:79"><expr pos:start="615:55" pos:end="615:79"><name pos:start="615:55" pos:end="615:79"><name pos:start="615:55" pos:end="615:58">alac</name><operator pos:start="615:59" pos:end="615:60">-&gt;</operator><name pos:start="615:61" pos:end="615:79">setinfo_sample_size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+                    <expr_stmt pos:start="619:21" pos:end="619:90"><expr pos:start="619:21" pos:end="619:89"><name pos:start="619:21" pos:end="619:31">audiobits_a</name> <operator pos:start="619:33" pos:end="619:33">=</operator> <call pos:start="619:35" pos:end="619:89"><name pos:start="619:35" pos:end="619:49">SIGN_EXTENDED32</name><argument_list pos:start="619:50" pos:end="619:89">(<argument pos:start="619:51" pos:end="619:61"><expr pos:start="619:51" pos:end="619:61"><name pos:start="619:51" pos:end="619:61">audiobits_a</name></expr></argument>, <argument pos:start="619:64" pos:end="619:88"><expr pos:start="619:64" pos:end="619:88"><name pos:start="619:64" pos:end="619:88"><name pos:start="619:64" pos:end="619:67">alac</name><operator pos:start="619:68" pos:end="619:69">-&gt;</operator><name pos:start="619:70" pos:end="619:88">setinfo_sample_size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="621:21" pos:end="621:90"><expr pos:start="621:21" pos:end="621:89"><name pos:start="621:21" pos:end="621:31">audiobits_b</name> <operator pos:start="621:33" pos:end="621:33">=</operator> <call pos:start="621:35" pos:end="621:89"><name pos:start="621:35" pos:end="621:49">SIGN_EXTENDED32</name><argument_list pos:start="621:50" pos:end="621:89">(<argument pos:start="621:51" pos:end="621:61"><expr pos:start="621:51" pos:end="621:61"><name pos:start="621:51" pos:end="621:61">audiobits_b</name></expr></argument>, <argument pos:start="621:64" pos:end="621:88"><expr pos:start="621:64" pos:end="621:88"><name pos:start="621:64" pos:end="621:88"><name pos:start="621:64" pos:end="621:67">alac</name><operator pos:start="621:68" pos:end="621:69">-&gt;</operator><name pos:start="621:70" pos:end="621:88">setinfo_sample_size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+                    <expr_stmt pos:start="625:21" pos:end="625:66"><expr pos:start="625:21" pos:end="625:65"><name pos:start="625:21" pos:end="625:51"><name pos:start="625:21" pos:end="625:24">alac</name><operator pos:start="625:25" pos:end="625:26">-&gt;</operator><name pos:start="625:27" pos:end="625:48">outputsamples_buffer_a</name><index pos:start="625:49" pos:end="625:51">[<expr pos:start="625:50" pos:end="625:50"><name pos:start="625:50" pos:end="625:50">i</name></expr>]</index></name> <operator pos:start="625:53" pos:end="625:53">=</operator> <name pos:start="625:55" pos:end="625:65">audiobits_a</name></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="627:21" pos:end="627:66"><expr pos:start="627:21" pos:end="627:65"><name pos:start="627:21" pos:end="627:51"><name pos:start="627:21" pos:end="627:24">alac</name><operator pos:start="627:25" pos:end="627:26">-&gt;</operator><name pos:start="627:27" pos:end="627:48">outputsamples_buffer_b</name><index pos:start="627:49" pos:end="627:51">[<expr pos:start="627:50" pos:end="627:50"><name pos:start="627:50" pos:end="627:50">i</name></expr>]</index></name> <operator pos:start="627:53" pos:end="627:53">=</operator> <name pos:start="627:55" pos:end="627:65">audiobits_b</name></expr>;</expr_stmt>
+
+                </block_content>}</block></for>
+
+            </block_content>}</block></if> <else pos:start="631:15" pos:end="667:13">else <block pos:start="631:20" pos:end="667:13">{<block_content pos:start="633:17" pos:end="665:17">
+
+                <decl_stmt pos:start="633:17" pos:end="633:22"><decl pos:start="633:17" pos:end="633:21"><type pos:start="633:17" pos:end="633:19"><name pos:start="633:17" pos:end="633:19">int</name></type> <name pos:start="633:21" pos:end="633:21">i</name></decl>;</decl_stmt>
+
+                <for pos:start="635:17" pos:end="665:17">for <control pos:start="635:21" pos:end="635:51">(<init pos:start="635:22" pos:end="635:27"><expr pos:start="635:22" pos:end="635:26"><name pos:start="635:22" pos:end="635:22">i</name> <operator pos:start="635:24" pos:end="635:24">=</operator> <literal type="number" pos:start="635:26" pos:end="635:26">0</literal></expr>;</init> <condition pos:start="635:29" pos:end="635:46"><expr pos:start="635:29" pos:end="635:45"><name pos:start="635:29" pos:end="635:29">i</name> <operator pos:start="635:31" pos:end="635:31">&lt;</operator> <name pos:start="635:33" pos:end="635:45">outputsamples</name></expr>;</condition> <incr pos:start="635:48" pos:end="635:50"><expr pos:start="635:48" pos:end="635:50"><name pos:start="635:48" pos:end="635:48">i</name><operator pos:start="635:49" pos:end="635:50">++</operator></expr></incr>)</control> <block pos:start="635:53" pos:end="665:17">{<block_content pos:start="637:21" pos:end="663:66">
+
+                    <decl_stmt pos:start="637:21" pos:end="637:53"><decl pos:start="637:21" pos:end="637:39"><type pos:start="637:21" pos:end="637:27"><name pos:start="637:21" pos:end="637:27">int32_t</name></type> <name pos:start="637:29" pos:end="637:39">audiobits_a</name></decl>, <decl pos:start="637:42" pos:end="637:52"><type ref="prev" pos:start="637:21" pos:end="637:27"/><name pos:start="637:42" pos:end="637:52">audiobits_b</name></decl>;</decl_stmt>
+
+
+
+                    <expr_stmt pos:start="641:21" pos:end="641:58"><expr pos:start="641:21" pos:end="641:57"><name pos:start="641:21" pos:end="641:31">audiobits_a</name> <operator pos:start="641:33" pos:end="641:33">=</operator> <call pos:start="641:35" pos:end="641:57"><name pos:start="641:35" pos:end="641:42">get_bits</name><argument_list pos:start="641:43" pos:end="641:57">(<argument pos:start="641:44" pos:end="641:52"><expr pos:start="641:44" pos:end="641:52"><operator pos:start="641:44" pos:end="641:44">&amp;</operator><name pos:start="641:45" pos:end="641:52"><name pos:start="641:45" pos:end="641:48">alac</name><operator pos:start="641:49" pos:end="641:50">-&gt;</operator><name pos:start="641:51" pos:end="641:52">gb</name></name></expr></argument>, <argument pos:start="641:55" pos:end="641:56"><expr pos:start="641:55" pos:end="641:56"><literal type="number" pos:start="641:55" pos:end="641:56">16</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="643:21" pos:end="643:52"><expr pos:start="643:21" pos:end="643:51"><name pos:start="643:21" pos:end="643:31">audiobits_a</name> <operator pos:start="643:33" pos:end="643:33">=</operator> <name pos:start="643:35" pos:end="643:45">audiobits_a</name> <operator pos:start="643:47" pos:end="643:48">&lt;&lt;</operator> <literal type="number" pos:start="643:50" pos:end="643:51">16</literal></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="645:21" pos:end="645:82"><expr pos:start="645:21" pos:end="645:81"><name pos:start="645:21" pos:end="645:31">audiobits_a</name> <operator pos:start="645:33" pos:end="645:33">=</operator> <name pos:start="645:35" pos:end="645:45">audiobits_a</name> <operator pos:start="645:47" pos:end="645:48">&gt;&gt;</operator> <operator pos:start="645:50" pos:end="645:50">(</operator><literal type="number" pos:start="645:51" pos:end="645:54">32</literal> <operator pos:start="645:54" pos:end="645:54">-</operator> <name pos:start="645:56" pos:end="645:80"><name pos:start="645:56" pos:end="645:59">alac</name><operator pos:start="645:60" pos:end="645:61">-&gt;</operator><name pos:start="645:62" pos:end="645:80">setinfo_sample_size</name></name><operator pos:start="645:81" pos:end="645:81">)</operator></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="647:21" pos:end="647:87"><expr pos:start="647:21" pos:end="647:86"><name pos:start="647:21" pos:end="647:31">audiobits_a</name> <operator pos:start="647:33" pos:end="647:34">|=</operator> <call pos:start="647:36" pos:end="647:86"><name pos:start="647:36" pos:end="647:43">get_bits</name><argument_list pos:start="647:44" pos:end="647:86">(<argument pos:start="647:45" pos:end="647:53"><expr pos:start="647:45" pos:end="647:53"><operator pos:start="647:45" pos:end="647:45">&amp;</operator><name pos:start="647:46" pos:end="647:53"><name pos:start="647:46" pos:end="647:49">alac</name><operator pos:start="647:50" pos:end="647:51">-&gt;</operator><name pos:start="647:52" pos:end="647:53">gb</name></name></expr></argument>, <argument pos:start="647:56" pos:end="647:85"><expr pos:start="647:56" pos:end="647:85"><name pos:start="647:56" pos:end="647:80"><name pos:start="647:56" pos:end="647:59">alac</name><operator pos:start="647:60" pos:end="647:61">-&gt;</operator><name pos:start="647:62" pos:end="647:80">setinfo_sample_size</name></name> <operator pos:start="647:82" pos:end="647:82">-</operator> <literal type="number" pos:start="647:84" pos:end="647:85">16</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+                    <expr_stmt pos:start="651:21" pos:end="651:58"><expr pos:start="651:21" pos:end="651:57"><name pos:start="651:21" pos:end="651:31">audiobits_b</name> <operator pos:start="651:33" pos:end="651:33">=</operator> <call pos:start="651:35" pos:end="651:57"><name pos:start="651:35" pos:end="651:42">get_bits</name><argument_list pos:start="651:43" pos:end="651:57">(<argument pos:start="651:44" pos:end="651:52"><expr pos:start="651:44" pos:end="651:52"><operator pos:start="651:44" pos:end="651:44">&amp;</operator><name pos:start="651:45" pos:end="651:52"><name pos:start="651:45" pos:end="651:48">alac</name><operator pos:start="651:49" pos:end="651:50">-&gt;</operator><name pos:start="651:51" pos:end="651:52">gb</name></name></expr></argument>, <argument pos:start="651:55" pos:end="651:56"><expr pos:start="651:55" pos:end="651:56"><literal type="number" pos:start="651:55" pos:end="651:56">16</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="653:21" pos:end="653:52"><expr pos:start="653:21" pos:end="653:51"><name pos:start="653:21" pos:end="653:31">audiobits_b</name> <operator pos:start="653:33" pos:end="653:33">=</operator> <name pos:start="653:35" pos:end="653:45">audiobits_b</name> <operator pos:start="653:47" pos:end="653:48">&lt;&lt;</operator> <literal type="number" pos:start="653:50" pos:end="653:51">16</literal></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="655:21" pos:end="655:82"><expr pos:start="655:21" pos:end="655:81"><name pos:start="655:21" pos:end="655:31">audiobits_b</name> <operator pos:start="655:33" pos:end="655:33">=</operator> <name pos:start="655:35" pos:end="655:45">audiobits_b</name> <operator pos:start="655:47" pos:end="655:48">&gt;&gt;</operator> <operator pos:start="655:50" pos:end="655:50">(</operator><literal type="number" pos:start="655:51" pos:end="655:54">32</literal> <operator pos:start="655:54" pos:end="655:54">-</operator> <name pos:start="655:56" pos:end="655:80"><name pos:start="655:56" pos:end="655:59">alac</name><operator pos:start="655:60" pos:end="655:61">-&gt;</operator><name pos:start="655:62" pos:end="655:80">setinfo_sample_size</name></name><operator pos:start="655:81" pos:end="655:81">)</operator></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="657:21" pos:end="657:87"><expr pos:start="657:21" pos:end="657:86"><name pos:start="657:21" pos:end="657:31">audiobits_b</name> <operator pos:start="657:33" pos:end="657:34">|=</operator> <call pos:start="657:36" pos:end="657:86"><name pos:start="657:36" pos:end="657:43">get_bits</name><argument_list pos:start="657:44" pos:end="657:86">(<argument pos:start="657:45" pos:end="657:53"><expr pos:start="657:45" pos:end="657:53"><operator pos:start="657:45" pos:end="657:45">&amp;</operator><name pos:start="657:46" pos:end="657:53"><name pos:start="657:46" pos:end="657:49">alac</name><operator pos:start="657:50" pos:end="657:51">-&gt;</operator><name pos:start="657:52" pos:end="657:53">gb</name></name></expr></argument>, <argument pos:start="657:56" pos:end="657:85"><expr pos:start="657:56" pos:end="657:85"><name pos:start="657:56" pos:end="657:80"><name pos:start="657:56" pos:end="657:59">alac</name><operator pos:start="657:60" pos:end="657:61">-&gt;</operator><name pos:start="657:62" pos:end="657:80">setinfo_sample_size</name></name> <operator pos:start="657:82" pos:end="657:82">-</operator> <literal type="number" pos:start="657:84" pos:end="657:85">16</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+                    <expr_stmt pos:start="661:21" pos:end="661:66"><expr pos:start="661:21" pos:end="661:65"><name pos:start="661:21" pos:end="661:51"><name pos:start="661:21" pos:end="661:24">alac</name><operator pos:start="661:25" pos:end="661:26">-&gt;</operator><name pos:start="661:27" pos:end="661:48">outputsamples_buffer_a</name><index pos:start="661:49" pos:end="661:51">[<expr pos:start="661:50" pos:end="661:50"><name pos:start="661:50" pos:end="661:50">i</name></expr>]</index></name> <operator pos:start="661:53" pos:end="661:53">=</operator> <name pos:start="661:55" pos:end="661:65">audiobits_a</name></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="663:21" pos:end="663:66"><expr pos:start="663:21" pos:end="663:65"><name pos:start="663:21" pos:end="663:51"><name pos:start="663:21" pos:end="663:24">alac</name><operator pos:start="663:25" pos:end="663:26">-&gt;</operator><name pos:start="663:27" pos:end="663:48">outputsamples_buffer_b</name><index pos:start="663:49" pos:end="663:51">[<expr pos:start="663:50" pos:end="663:50"><name pos:start="663:50" pos:end="663:50">i</name></expr>]</index></name> <operator pos:start="663:53" pos:end="663:53">=</operator> <name pos:start="663:55" pos:end="663:65">audiobits_b</name></expr>;</expr_stmt>
+
+                </block_content>}</block></for>
+
+            </block_content>}</block></else></if_stmt>
+
+            <comment type="block" pos:start="669:13" pos:end="669:35">/* wasted_bytes = 0; */</comment>
+
+            <expr_stmt pos:start="671:13" pos:end="671:34"><expr pos:start="671:13" pos:end="671:33"><name pos:start="671:13" pos:end="671:29">interlacing_shift</name> <operator pos:start="671:31" pos:end="671:31">=</operator> <literal type="number" pos:start="671:33" pos:end="671:33">0</literal></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="673:13" pos:end="673:39"><expr pos:start="673:13" pos:end="673:38"><name pos:start="673:13" pos:end="673:34">interlacing_leftweight</name> <operator pos:start="673:36" pos:end="673:36">=</operator> <literal type="number" pos:start="673:38" pos:end="673:38">0</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+
+
+        <switch pos:start="679:9" pos:end="715:9">switch<condition pos:start="679:15" pos:end="679:41">(<expr pos:start="679:16" pos:end="679:40"><name pos:start="679:16" pos:end="679:40"><name pos:start="679:16" pos:end="679:19">alac</name><operator pos:start="679:20" pos:end="679:21">-&gt;</operator><name pos:start="679:22" pos:end="679:40">setinfo_sample_size</name></name></expr>)</condition> <block pos:start="679:43" pos:end="715:9">{<block_content pos:start="681:9" pos:end="713:18">
+
+        <case pos:start="681:9" pos:end="681:16">case <expr pos:start="681:14" pos:end="681:15"><literal type="number" pos:start="681:14" pos:end="681:15">16</literal></expr>:</case> <block pos:start="681:18" pos:end="699:9">{<block_content pos:start="683:13" pos:end="697:18">
+
+            <expr_stmt pos:start="683:13" pos:end="695:51"><expr pos:start="683:13" pos:end="695:50"><call pos:start="683:13" pos:end="695:50"><name pos:start="683:13" pos:end="683:26">deinterlace_16</name><argument_list pos:start="683:27" pos:end="695:50">(<argument pos:start="683:28" pos:end="683:55"><expr pos:start="683:28" pos:end="683:55"><name pos:start="683:28" pos:end="683:55"><name pos:start="683:28" pos:end="683:31">alac</name><operator pos:start="683:32" pos:end="683:33">-&gt;</operator><name pos:start="683:34" pos:end="683:55">outputsamples_buffer_a</name></name></expr></argument>,
+
+                           <argument pos:start="685:28" pos:end="685:55"><expr pos:start="685:28" pos:end="685:55"><name pos:start="685:28" pos:end="685:55"><name pos:start="685:28" pos:end="685:31">alac</name><operator pos:start="685:32" pos:end="685:33">-&gt;</operator><name pos:start="685:34" pos:end="685:55">outputsamples_buffer_b</name></name></expr></argument>,
+
+                           <argument pos:start="687:28" pos:end="687:46"><expr pos:start="687:28" pos:end="687:46"><operator pos:start="687:28" pos:end="687:28">(</operator><name pos:start="687:29" pos:end="687:35">int16_t</name><operator pos:start="687:36" pos:end="687:36">*</operator><operator pos:start="687:37" pos:end="687:37">)</operator><name pos:start="687:38" pos:end="687:46">outbuffer</name></expr></argument>,
+
+                           <argument pos:start="689:28" pos:end="689:44"><expr pos:start="689:28" pos:end="689:44"><name pos:start="689:28" pos:end="689:44"><name pos:start="689:28" pos:end="689:31">alac</name><operator pos:start="689:32" pos:end="689:33">-&gt;</operator><name pos:start="689:34" pos:end="689:44">numchannels</name></name></expr></argument>,
+
+                           <argument pos:start="691:28" pos:end="691:40"><expr pos:start="691:28" pos:end="691:40"><name pos:start="691:28" pos:end="691:40">outputsamples</name></expr></argument>,
+
+                           <argument pos:start="693:28" pos:end="693:44"><expr pos:start="693:28" pos:end="693:44"><name pos:start="693:28" pos:end="693:44">interlacing_shift</name></expr></argument>,
+
+                           <argument pos:start="695:28" pos:end="695:49"><expr pos:start="695:28" pos:end="695:49"><name pos:start="695:28" pos:end="695:49">interlacing_leftweight</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="697:13" pos:end="697:18">break;</break>
+
+        </block_content>}</block>
+
+        <case pos:start="701:9" pos:end="701:16">case <expr pos:start="701:14" pos:end="701:15"><literal type="number" pos:start="701:14" pos:end="701:15">20</literal></expr>:</case>
+
+        <case pos:start="703:9" pos:end="703:16">case <expr pos:start="703:14" pos:end="703:15"><literal type="number" pos:start="703:14" pos:end="703:15">24</literal></expr>:</case>
+
+        <case pos:start="705:9" pos:end="705:16">case <expr pos:start="705:14" pos:end="705:15"><literal type="number" pos:start="705:14" pos:end="705:15">32</literal></expr>:</case>
+
+            <expr_stmt pos:start="707:13" pos:end="707:108"><expr pos:start="707:13" pos:end="707:107"><call pos:start="707:13" pos:end="707:107"><name pos:start="707:13" pos:end="707:18">av_log</name><argument_list pos:start="707:19" pos:end="707:107">(<argument pos:start="707:20" pos:end="707:24"><expr pos:start="707:20" pos:end="707:24"><name pos:start="707:20" pos:end="707:24">avctx</name></expr></argument>, <argument pos:start="707:27" pos:end="707:38"><expr pos:start="707:27" pos:end="707:38"><name pos:start="707:27" pos:end="707:38">AV_LOG_ERROR</name></expr></argument>, <argument pos:start="707:41" pos:end="707:79"><expr pos:start="707:41" pos:end="707:79"><literal type="string" pos:start="707:41" pos:end="707:79">"FIXME: unimplemented sample size %i\n"</literal></expr></argument>, <argument pos:start="707:82" pos:end="707:106"><expr pos:start="707:82" pos:end="707:106"><name pos:start="707:82" pos:end="707:106"><name pos:start="707:82" pos:end="707:85">alac</name><operator pos:start="707:86" pos:end="707:87">-&gt;</operator><name pos:start="707:88" pos:end="707:106">setinfo_sample_size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="709:13" pos:end="709:18">break;</break>
+
+        <default pos:start="711:9" pos:end="711:16">default:</default>
+
+            <break pos:start="713:13" pos:end="713:18">break;</break>
+
+        </block_content>}</block></switch>
+
+
+
+        <break pos:start="719:9" pos:end="719:14">break;</break>
+
+    </block_content>}</block>
+
+    </block_content>}</block></switch>
+
+
+
+    <return pos:start="727:5" pos:end="727:29">return <expr pos:start="727:12" pos:end="727:28"><name pos:start="727:12" pos:end="727:28">input_buffer_size</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

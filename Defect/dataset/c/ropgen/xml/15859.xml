@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/15859.c" pos:tabs="8"><function pos:start="1:1" pos:end="63:1"><type pos:start="1:1" pos:end="1:25"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <specifier pos:start="1:8" pos:end="1:13">inline</specifier> <name pos:start="1:15" pos:end="1:18">void</name> <name pos:start="1:20" pos:end="1:25">RENAME</name></type>(<name pos:start="1:27" pos:end="1:32">BEToUV</name>)<parameter_list pos:start="1:34" pos:end="1:134">(<parameter pos:start="1:35" pos:end="1:47"><decl pos:start="1:35" pos:end="1:47"><type pos:start="1:35" pos:end="1:47"><name pos:start="1:35" pos:end="1:41">uint8_t</name> <modifier pos:start="1:43" pos:end="1:43">*</modifier></type><name pos:start="1:44" pos:end="1:47">dstU</name></decl></parameter>, <parameter pos:start="1:50" pos:end="1:62"><decl pos:start="1:50" pos:end="1:62"><type pos:start="1:50" pos:end="1:62"><name pos:start="1:50" pos:end="1:56">uint8_t</name> <modifier pos:start="1:58" pos:end="1:58">*</modifier></type><name pos:start="1:59" pos:end="1:62">dstV</name></decl></parameter>, <parameter pos:start="1:65" pos:end="1:83"><decl pos:start="1:65" pos:end="1:83"><type pos:start="1:65" pos:end="1:83"><specifier pos:start="1:65" pos:end="1:69">const</specifier> <name pos:start="1:71" pos:end="1:77">uint8_t</name> <modifier pos:start="1:79" pos:end="1:79">*</modifier></type><name pos:start="1:80" pos:end="1:83">src1</name></decl></parameter>, <parameter pos:start="1:86" pos:end="1:104"><decl pos:start="1:86" pos:end="1:104"><type pos:start="1:86" pos:end="1:104"><specifier pos:start="1:86" pos:end="1:90">const</specifier> <name pos:start="1:92" pos:end="1:98">uint8_t</name> <modifier pos:start="1:100" pos:end="1:100">*</modifier></type><name pos:start="1:101" pos:end="1:104">src2</name></decl></parameter>, <parameter pos:start="1:107" pos:end="1:115"><decl pos:start="1:107" pos:end="1:115"><type pos:start="1:107" pos:end="1:115"><name pos:start="1:107" pos:end="1:109">int</name></type> <name pos:start="1:111" pos:end="1:115">width</name></decl></parameter>, <parameter pos:start="1:118" pos:end="1:133"><decl pos:start="1:118" pos:end="1:133"><type pos:start="1:118" pos:end="1:133"><name pos:start="1:118" pos:end="1:125">uint32_t</name> <modifier pos:start="1:127" pos:end="1:127">*</modifier></type><name pos:start="1:128" pos:end="1:133">unused</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="63:1">{<block_content pos:start="7:5" pos:end="62:0">
+
+<cpp:if pos:start="5:1" pos:end="5:24">#<cpp:directive pos:start="5:2" pos:end="5:3">if</cpp:directive> <expr pos:start="5:5" pos:end="5:24"><name pos:start="5:5" pos:end="5:24">COMPILE_TEMPLATE_MMX</name></expr></cpp:if>
+
+    <asm pos:start="7:5" pos:end="50:0">__asm__ <specifier pos:start="7:13" pos:end="7:20">volatile</specifier>(
+
+        "movq "MANGLE(bm01010101)", %%mm4           \n\t"
+
+        "mov                    %0, %%"REG_a"       \n\t"
+
+        "1:                                         \n\t"
+
+        "movq    (%1, %%"REG_a",2), %%mm0           \n\t"
+
+        "movq   8(%1, %%"REG_a",2), %%mm1           \n\t"
+
+        "movq    (%2, %%"REG_a",2), %%mm2           \n\t"
+
+        "movq   8(%2, %%"REG_a",2), %%mm3           \n\t"
+
+        "pand                %%mm4, %%mm0           \n\t"
+
+        "pand                %%mm4, %%mm1           \n\t"
+
+        "pand                %%mm4, %%mm2           \n\t"
+
+        "pand                %%mm4, %%mm3           \n\t"
+
+        "packuswb            %%mm1, %%mm0           \n\t"
+
+        "packuswb            %%mm3, %%mm2           \n\t"
+
+        "movq                %%mm0, (%3, %%"REG_a") \n\t"
+
+        "movq                %%mm2, (%4, %%"REG_a") \n\t"
+
+        "add                    $8, %%"REG_a"       \n\t"
+
+        " js                    1b                  \n\t"
+
+        : : "g" ((x86_reg)-width), "r" (src1+width*2), "r" (src2+width*2), "r" (dstU+width), "r" (dstV+width)
+
+        : "%"REG_a
+
+    );</asm>
+
+<cpp:else pos:start="49:1" pos:end="49:5">#<cpp:directive pos:start="49:2" pos:end="49:5">else</cpp:directive></cpp:else>
+
+    <decl_stmt pos:start="51:5" pos:end="51:10"><decl pos:start="51:5" pos:end="51:9"><type pos:start="51:5" pos:end="51:7"><name pos:start="51:5" pos:end="51:7">int</name></type> <name pos:start="51:9" pos:end="51:9">i</name></decl>;</decl_stmt>
+
+    <for pos:start="53:5" pos:end="62:0">for <control pos:start="53:9" pos:end="53:27">(<init pos:start="53:10" pos:end="53:13"><expr pos:start="53:10" pos:end="53:12"><name pos:start="53:10" pos:end="53:10">i</name><operator pos:start="53:11" pos:end="53:11">=</operator><literal type="number" pos:start="53:12" pos:end="53:12">0</literal></expr>;</init> <condition pos:start="53:15" pos:end="53:22"><expr pos:start="53:15" pos:end="53:21"><name pos:start="53:15" pos:end="53:15">i</name><operator pos:start="53:16" pos:end="53:16">&lt;</operator><name pos:start="53:17" pos:end="53:21">width</name></expr>;</condition> <incr pos:start="53:24" pos:end="53:26"><expr pos:start="53:24" pos:end="53:26"><name pos:start="53:24" pos:end="53:24">i</name><operator pos:start="53:25" pos:end="53:26">++</operator></expr></incr>)</control> <block pos:start="53:29" pos:end="62:0">{<block_content pos:start="55:9" pos:end="57:27">
+
+        <expr_stmt pos:start="55:9" pos:end="55:27"><expr pos:start="55:9" pos:end="55:26"><name pos:start="55:9" pos:end="55:15"><name pos:start="55:9" pos:end="55:12">dstU</name><index pos:start="55:13" pos:end="55:15">[<expr pos:start="55:14" pos:end="55:14"><name pos:start="55:14" pos:end="55:14">i</name></expr>]</index></name><operator pos:start="55:16" pos:end="55:16">=</operator> <name pos:start="55:18" pos:end="55:26"><name pos:start="55:18" pos:end="55:21">src1</name><index pos:start="55:22" pos:end="55:26">[<expr pos:start="55:23" pos:end="55:25"><literal type="number" pos:start="55:23" pos:end="55:23">2</literal><operator pos:start="55:24" pos:end="55:24">*</operator><name pos:start="55:25" pos:end="55:25">i</name></expr>]</index></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="57:9" pos:end="57:27"><expr pos:start="57:9" pos:end="57:26"><name pos:start="57:9" pos:end="57:15"><name pos:start="57:9" pos:end="57:12">dstV</name><index pos:start="57:13" pos:end="57:15">[<expr pos:start="57:14" pos:end="57:14"><name pos:start="57:14" pos:end="57:14">i</name></expr>]</index></name><operator pos:start="57:16" pos:end="57:16">=</operator> <name pos:start="57:18" pos:end="57:26"><name pos:start="57:18" pos:end="57:21">src2</name><index pos:start="57:22" pos:end="57:26">[<expr pos:start="57:23" pos:end="57:25"><literal type="number" pos:start="57:23" pos:end="57:23">2</literal><operator pos:start="57:24" pos:end="57:24">*</operator><name pos:start="57:25" pos:end="57:25">i</name></expr>]</index></name></expr>;</expr_stmt>
+
+    </block_content>}</block></for>
+
+<cpp:endif pos:start="61:1" pos:end="61:6">#<cpp:directive pos:start="61:2" pos:end="61:6">endif</cpp:directive></cpp:endif>
+
+</block_content>}</block></function>
+</unit>

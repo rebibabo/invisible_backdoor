@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/21443.c" pos:tabs="8"><function pos:start="1:1" pos:end="177:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:30">ehci_advance_state</name><parameter_list pos:start="1:31" pos:end="3:41">(<parameter pos:start="1:32" pos:end="1:46"><decl pos:start="1:32" pos:end="1:46"><type pos:start="1:32" pos:end="1:46"><name pos:start="1:32" pos:end="1:40">EHCIState</name> <modifier pos:start="1:42" pos:end="1:42">*</modifier></type><name pos:start="1:43" pos:end="1:46">ehci</name></decl></parameter>,
+
+                               <parameter pos:start="3:32" pos:end="3:40"><decl pos:start="3:32" pos:end="3:40"><type pos:start="3:32" pos:end="3:40"><name pos:start="3:32" pos:end="3:34">int</name></type> <name pos:start="3:36" pos:end="3:40">async</name></decl></parameter>)</parameter_list>
+
+<block pos:start="5:1" pos:end="177:1">{<block_content pos:start="7:5" pos:end="175:32">
+
+    <decl_stmt pos:start="7:5" pos:end="7:24"><decl pos:start="7:5" pos:end="7:23"><type pos:start="7:5" pos:end="7:15"><name pos:start="7:5" pos:end="7:13">EHCIQueue</name> <modifier pos:start="7:15" pos:end="7:15">*</modifier></type><name pos:start="7:16" pos:end="7:16">q</name> <init pos:start="7:18" pos:end="7:23">= <expr pos:start="7:20" pos:end="7:23"><name pos:start="7:20" pos:end="7:23">NULL</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:14"><decl pos:start="9:5" pos:end="9:13"><type pos:start="9:5" pos:end="9:7"><name pos:start="9:5" pos:end="9:7">int</name></type> <name pos:start="9:9" pos:end="9:13">again</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:17"><decl pos:start="11:5" pos:end="11:16"><type pos:start="11:5" pos:end="11:7"><name pos:start="11:5" pos:end="11:7">int</name></type> <name pos:start="11:9" pos:end="11:12">iter</name> <init pos:start="11:14" pos:end="11:16">= <expr pos:start="11:16" pos:end="11:16"><literal type="number" pos:start="11:16" pos:end="11:16">0</literal></expr></init></decl>;</decl_stmt>
+
+
+
+    <do pos:start="15:5" pos:end="171:18">do <block pos:start="15:8" pos:end="169:5">{<block_content pos:start="17:9" pos:end="167:9">
+
+        <if_stmt pos:start="17:9" pos:end="45:9"><if pos:start="17:9" pos:end="45:9">if <condition pos:start="17:12" pos:end="17:55">(<expr pos:start="17:13" pos:end="17:54"><call pos:start="17:13" pos:end="17:39"><name pos:start="17:13" pos:end="17:26">ehci_get_state</name><argument_list pos:start="17:27" pos:end="17:39">(<argument pos:start="17:28" pos:end="17:31"><expr pos:start="17:28" pos:end="17:31"><name pos:start="17:28" pos:end="17:31">ehci</name></expr></argument>, <argument pos:start="17:34" pos:end="17:38"><expr pos:start="17:34" pos:end="17:38"><name pos:start="17:34" pos:end="17:38">async</name></expr></argument>)</argument_list></call> <operator pos:start="17:41" pos:end="17:42">==</operator> <name pos:start="17:44" pos:end="17:54">EST_FETCHQH</name></expr>)</condition> <block pos:start="17:57" pos:end="45:9">{<block_content pos:start="19:13" pos:end="44:0">
+
+            <expr_stmt pos:start="19:13" pos:end="19:19"><expr pos:start="19:13" pos:end="19:18"><name pos:start="19:13" pos:end="19:16">iter</name><operator pos:start="19:17" pos:end="19:18">++</operator></expr>;</expr_stmt>
+
+            <comment type="block" pos:start="21:13" pos:end="27:15">/* if we are roaming a lot of QH without executing a qTD
+
+             * something is wrong with the linked list. TO-DO: why is
+
+             * this hack needed?
+
+             */</comment>
+
+            <expr_stmt pos:start="29:13" pos:end="44:0"><expr pos:start="29:13" pos:end="29:41"><call pos:start="29:13" pos:end="29:41"><name pos:start="29:13" pos:end="29:18">assert</name><argument_list pos:start="29:19" pos:end="29:41">(<argument pos:start="29:20" pos:end="29:40"><expr pos:start="29:20" pos:end="29:40"><name pos:start="29:20" pos:end="29:23">iter</name> <operator pos:start="29:25" pos:end="29:25">&lt;</operator> <name pos:start="29:27" pos:end="29:40">MAX_ITERATIONS</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+<cpp:if pos:start="31:1" pos:end="31:5">#<cpp:directive pos:start="31:2" pos:end="31:3">if</cpp:directive> <expr pos:start="31:5" pos:end="31:5"><literal type="number" pos:start="31:5" pos:end="31:5">0</literal></expr></cpp:if>
+
+            if (iter &gt; MAX_ITERATIONS) {
+
+                DPRINTF("\n*** advance_state: bailing on MAX ITERATIONS***\n");
+
+                ehci_set_state(ehci, async, EST_ACTIVE);
+
+                break;
+
+            }
+
+<cpp:endif pos:start="43:1" pos:end="43:6">#<cpp:directive pos:start="43:2" pos:end="43:6">endif</cpp:directive></cpp:endif>
+
+        </block_content>}</block></if></if_stmt>
+
+        <switch pos:start="47:9" pos:end="155:9">switch<condition pos:start="47:15" pos:end="47:43">(<expr pos:start="47:16" pos:end="47:42"><call pos:start="47:16" pos:end="47:42"><name pos:start="47:16" pos:end="47:29">ehci_get_state</name><argument_list pos:start="47:30" pos:end="47:42">(<argument pos:start="47:31" pos:end="47:34"><expr pos:start="47:31" pos:end="47:34"><name pos:start="47:31" pos:end="47:34">ehci</name></expr></argument>, <argument pos:start="47:37" pos:end="47:41"><expr pos:start="47:37" pos:end="47:41"><name pos:start="47:37" pos:end="47:41">async</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="47:45" pos:end="155:9">{<block_content pos:start="49:9" pos:end="153:18">
+
+        <case pos:start="49:9" pos:end="49:30">case <expr pos:start="49:14" pos:end="49:29"><name pos:start="49:14" pos:end="49:29">EST_WAITLISTHEAD</name></expr>:</case>
+
+            <expr_stmt pos:start="51:13" pos:end="51:57"><expr pos:start="51:13" pos:end="51:56"><name pos:start="51:13" pos:end="51:17">again</name> <operator pos:start="51:19" pos:end="51:19">=</operator> <call pos:start="51:21" pos:end="51:56"><name pos:start="51:21" pos:end="51:43">ehci_state_waitlisthead</name><argument_list pos:start="51:44" pos:end="51:56">(<argument pos:start="51:45" pos:end="51:48"><expr pos:start="51:45" pos:end="51:48"><name pos:start="51:45" pos:end="51:48">ehci</name></expr></argument>, <argument pos:start="51:51" pos:end="51:55"><expr pos:start="51:51" pos:end="51:55"><name pos:start="51:51" pos:end="51:55">async</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="53:13" pos:end="53:18">break;</break>
+
+
+
+        <case pos:start="57:9" pos:end="57:28">case <expr pos:start="57:14" pos:end="57:27"><name pos:start="57:14" pos:end="57:27">EST_FETCHENTRY</name></expr>:</case>
+
+            <expr_stmt pos:start="59:13" pos:end="59:55"><expr pos:start="59:13" pos:end="59:54"><name pos:start="59:13" pos:end="59:17">again</name> <operator pos:start="59:19" pos:end="59:19">=</operator> <call pos:start="59:21" pos:end="59:54"><name pos:start="59:21" pos:end="59:41">ehci_state_fetchentry</name><argument_list pos:start="59:42" pos:end="59:54">(<argument pos:start="59:43" pos:end="59:46"><expr pos:start="59:43" pos:end="59:46"><name pos:start="59:43" pos:end="59:46">ehci</name></expr></argument>, <argument pos:start="59:49" pos:end="59:53"><expr pos:start="59:49" pos:end="59:53"><name pos:start="59:49" pos:end="59:53">async</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="61:13" pos:end="61:18">break;</break>
+
+
+
+        <case pos:start="65:9" pos:end="65:25">case <expr pos:start="65:14" pos:end="65:24"><name pos:start="65:14" pos:end="65:24">EST_FETCHQH</name></expr>:</case>
+
+            <expr_stmt pos:start="67:13" pos:end="67:48"><expr pos:start="67:13" pos:end="67:47"><name pos:start="67:13" pos:end="67:13">q</name> <operator pos:start="67:15" pos:end="67:15">=</operator> <call pos:start="67:17" pos:end="67:47"><name pos:start="67:17" pos:end="67:34">ehci_state_fetchqh</name><argument_list pos:start="67:35" pos:end="67:47">(<argument pos:start="67:36" pos:end="67:39"><expr pos:start="67:36" pos:end="67:39"><name pos:start="67:36" pos:end="67:39">ehci</name></expr></argument>, <argument pos:start="67:42" pos:end="67:46"><expr pos:start="67:42" pos:end="67:46"><name pos:start="67:42" pos:end="67:46">async</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="69:13" pos:end="69:30"><expr pos:start="69:13" pos:end="69:29"><name pos:start="69:13" pos:end="69:17">again</name> <operator pos:start="69:19" pos:end="69:19">=</operator> <ternary pos:start="69:21" pos:end="69:29"><condition pos:start="69:21" pos:end="69:23"><expr pos:start="69:21" pos:end="69:21"><name pos:start="69:21" pos:end="69:21">q</name></expr> ?</condition><then pos:start="69:25" pos:end="69:25"> <expr pos:start="69:25" pos:end="69:25"><literal type="number" pos:start="69:25" pos:end="69:25">1</literal></expr> </then><else pos:start="69:27" pos:end="69:29">: <expr pos:start="69:29" pos:end="69:29"><literal type="number" pos:start="69:29" pos:end="69:29">0</literal></expr></else></ternary></expr>;</expr_stmt>
+
+            <break pos:start="71:13" pos:end="71:18">break;</break>
+
+
+
+        <case pos:start="75:9" pos:end="75:26">case <expr pos:start="75:14" pos:end="75:25"><name pos:start="75:14" pos:end="75:25">EST_FETCHITD</name></expr>:</case>
+
+            <expr_stmt pos:start="77:13" pos:end="77:53"><expr pos:start="77:13" pos:end="77:52"><name pos:start="77:13" pos:end="77:17">again</name> <operator pos:start="77:19" pos:end="77:19">=</operator> <call pos:start="77:21" pos:end="77:52"><name pos:start="77:21" pos:end="77:39">ehci_state_fetchitd</name><argument_list pos:start="77:40" pos:end="77:52">(<argument pos:start="77:41" pos:end="77:44"><expr pos:start="77:41" pos:end="77:44"><name pos:start="77:41" pos:end="77:44">ehci</name></expr></argument>, <argument pos:start="77:47" pos:end="77:51"><expr pos:start="77:47" pos:end="77:51"><name pos:start="77:47" pos:end="77:51">async</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="79:13" pos:end="79:18">break;</break>
+
+
+
+        <case pos:start="83:9" pos:end="83:27">case <expr pos:start="83:14" pos:end="83:26"><name pos:start="83:14" pos:end="83:26">EST_FETCHSITD</name></expr>:</case>
+
+            <expr_stmt pos:start="85:13" pos:end="85:54"><expr pos:start="85:13" pos:end="85:53"><name pos:start="85:13" pos:end="85:17">again</name> <operator pos:start="85:19" pos:end="85:19">=</operator> <call pos:start="85:21" pos:end="85:53"><name pos:start="85:21" pos:end="85:40">ehci_state_fetchsitd</name><argument_list pos:start="85:41" pos:end="85:53">(<argument pos:start="85:42" pos:end="85:45"><expr pos:start="85:42" pos:end="85:45"><name pos:start="85:42" pos:end="85:45">ehci</name></expr></argument>, <argument pos:start="85:48" pos:end="85:52"><expr pos:start="85:48" pos:end="85:52"><name pos:start="85:48" pos:end="85:52">async</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="87:13" pos:end="87:18">break;</break>
+
+
+
+        <case pos:start="91:9" pos:end="91:30">case <expr pos:start="91:14" pos:end="91:29"><name pos:start="91:14" pos:end="91:29">EST_ADVANCEQUEUE</name></expr>:</case>
+
+            <expr_stmt pos:start="93:13" pos:end="93:50"><expr pos:start="93:13" pos:end="93:49"><name pos:start="93:13" pos:end="93:17">again</name> <operator pos:start="93:19" pos:end="93:19">=</operator> <call pos:start="93:21" pos:end="93:49"><name pos:start="93:21" pos:end="93:39">ehci_state_advqueue</name><argument_list pos:start="93:40" pos:end="93:49">(<argument pos:start="93:41" pos:end="93:41"><expr pos:start="93:41" pos:end="93:41"><name pos:start="93:41" pos:end="93:41">q</name></expr></argument>, <argument pos:start="93:44" pos:end="93:48"><expr pos:start="93:44" pos:end="93:48"><name pos:start="93:44" pos:end="93:48">async</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="95:13" pos:end="95:18">break;</break>
+
+
+
+        <case pos:start="99:9" pos:end="99:26">case <expr pos:start="99:14" pos:end="99:25"><name pos:start="99:14" pos:end="99:25">EST_FETCHQTD</name></expr>:</case>
+
+            <expr_stmt pos:start="101:13" pos:end="101:50"><expr pos:start="101:13" pos:end="101:49"><name pos:start="101:13" pos:end="101:17">again</name> <operator pos:start="101:19" pos:end="101:19">=</operator> <call pos:start="101:21" pos:end="101:49"><name pos:start="101:21" pos:end="101:39">ehci_state_fetchqtd</name><argument_list pos:start="101:40" pos:end="101:49">(<argument pos:start="101:41" pos:end="101:41"><expr pos:start="101:41" pos:end="101:41"><name pos:start="101:41" pos:end="101:41">q</name></expr></argument>, <argument pos:start="101:44" pos:end="101:48"><expr pos:start="101:44" pos:end="101:48"><name pos:start="101:44" pos:end="101:48">async</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="103:13" pos:end="103:18">break;</break>
+
+
+
+        <case pos:start="107:9" pos:end="107:30">case <expr pos:start="107:14" pos:end="107:29"><name pos:start="107:14" pos:end="107:29">EST_HORIZONTALQH</name></expr>:</case>
+
+            <expr_stmt pos:start="109:13" pos:end="109:49"><expr pos:start="109:13" pos:end="109:48"><name pos:start="109:13" pos:end="109:17">again</name> <operator pos:start="109:19" pos:end="109:19">=</operator> <call pos:start="109:21" pos:end="109:48"><name pos:start="109:21" pos:end="109:38">ehci_state_horizqh</name><argument_list pos:start="109:39" pos:end="109:48">(<argument pos:start="109:40" pos:end="109:40"><expr pos:start="109:40" pos:end="109:40"><name pos:start="109:40" pos:end="109:40">q</name></expr></argument>, <argument pos:start="109:43" pos:end="109:47"><expr pos:start="109:43" pos:end="109:47"><name pos:start="109:43" pos:end="109:47">async</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="111:13" pos:end="111:18">break;</break>
+
+
+
+        <case pos:start="115:9" pos:end="115:25">case <expr pos:start="115:14" pos:end="115:24"><name pos:start="115:14" pos:end="115:24">EST_EXECUTE</name></expr>:</case>
+
+            <expr_stmt pos:start="117:13" pos:end="117:21"><expr pos:start="117:13" pos:end="117:20"><name pos:start="117:13" pos:end="117:16">iter</name> <operator pos:start="117:18" pos:end="117:18">=</operator> <literal type="number" pos:start="117:20" pos:end="117:20">0</literal></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="119:13" pos:end="119:49"><expr pos:start="119:13" pos:end="119:48"><name pos:start="119:13" pos:end="119:17">again</name> <operator pos:start="119:19" pos:end="119:19">=</operator> <call pos:start="119:21" pos:end="119:48"><name pos:start="119:21" pos:end="119:38">ehci_state_execute</name><argument_list pos:start="119:39" pos:end="119:48">(<argument pos:start="119:40" pos:end="119:40"><expr pos:start="119:40" pos:end="119:40"><name pos:start="119:40" pos:end="119:40">q</name></expr></argument>, <argument pos:start="119:43" pos:end="119:47"><expr pos:start="119:43" pos:end="119:47"><name pos:start="119:43" pos:end="119:47">async</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="121:13" pos:end="121:18">break;</break>
+
+
+
+        <case pos:start="125:9" pos:end="125:27">case <expr pos:start="125:14" pos:end="125:26"><name pos:start="125:14" pos:end="125:26">EST_EXECUTING</name></expr>:</case>
+
+            <expr_stmt pos:start="127:13" pos:end="127:30"><expr pos:start="127:13" pos:end="127:29"><call pos:start="127:13" pos:end="127:29"><name pos:start="127:13" pos:end="127:18">assert</name><argument_list pos:start="127:19" pos:end="127:29">(<argument pos:start="127:20" pos:end="127:28"><expr pos:start="127:20" pos:end="127:28"><name pos:start="127:20" pos:end="127:20">q</name> <operator pos:start="127:22" pos:end="127:23">!=</operator> <name pos:start="127:25" pos:end="127:28">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="129:13" pos:end="129:51"><expr pos:start="129:13" pos:end="129:50"><name pos:start="129:13" pos:end="129:17">again</name> <operator pos:start="129:19" pos:end="129:19">=</operator> <call pos:start="129:21" pos:end="129:50"><name pos:start="129:21" pos:end="129:40">ehci_state_executing</name><argument_list pos:start="129:41" pos:end="129:50">(<argument pos:start="129:42" pos:end="129:42"><expr pos:start="129:42" pos:end="129:42"><name pos:start="129:42" pos:end="129:42">q</name></expr></argument>, <argument pos:start="129:45" pos:end="129:49"><expr pos:start="129:45" pos:end="129:49"><name pos:start="129:45" pos:end="129:49">async</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="131:13" pos:end="131:18">break;</break>
+
+
+
+        <case pos:start="135:9" pos:end="135:27">case <expr pos:start="135:14" pos:end="135:26"><name pos:start="135:14" pos:end="135:26">EST_WRITEBACK</name></expr>:</case>
+
+            <expr_stmt pos:start="137:13" pos:end="137:30"><expr pos:start="137:13" pos:end="137:29"><call pos:start="137:13" pos:end="137:29"><name pos:start="137:13" pos:end="137:18">assert</name><argument_list pos:start="137:19" pos:end="137:29">(<argument pos:start="137:20" pos:end="137:28"><expr pos:start="137:20" pos:end="137:28"><name pos:start="137:20" pos:end="137:20">q</name> <operator pos:start="137:22" pos:end="137:23">!=</operator> <name pos:start="137:25" pos:end="137:28">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="139:13" pos:end="139:51"><expr pos:start="139:13" pos:end="139:50"><name pos:start="139:13" pos:end="139:17">again</name> <operator pos:start="139:19" pos:end="139:19">=</operator> <call pos:start="139:21" pos:end="139:50"><name pos:start="139:21" pos:end="139:40">ehci_state_writeback</name><argument_list pos:start="139:41" pos:end="139:50">(<argument pos:start="139:42" pos:end="139:42"><expr pos:start="139:42" pos:end="139:42"><name pos:start="139:42" pos:end="139:42">q</name></expr></argument>, <argument pos:start="139:45" pos:end="139:49"><expr pos:start="139:45" pos:end="139:49"><name pos:start="139:45" pos:end="139:49">async</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="141:13" pos:end="141:18">break;</break>
+
+
+
+        <default pos:start="145:9" pos:end="145:16">default:</default>
+
+            <expr_stmt pos:start="147:13" pos:end="147:44"><expr pos:start="147:13" pos:end="147:43"><call pos:start="147:13" pos:end="147:43"><name pos:start="147:13" pos:end="147:19">fprintf</name><argument_list pos:start="147:20" pos:end="147:43">(<argument pos:start="147:21" pos:end="147:26"><expr pos:start="147:21" pos:end="147:26"><name pos:start="147:21" pos:end="147:26">stderr</name></expr></argument>, <argument pos:start="147:29" pos:end="147:42"><expr pos:start="147:29" pos:end="147:42"><literal type="string" pos:start="147:29" pos:end="147:42">"Bad state!\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="149:13" pos:end="149:23"><expr pos:start="149:13" pos:end="149:22"><name pos:start="149:13" pos:end="149:17">again</name> <operator pos:start="149:19" pos:end="149:19">=</operator> <operator pos:start="149:21" pos:end="149:21">-</operator><literal type="number" pos:start="149:22" pos:end="149:22">1</literal></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="151:13" pos:end="151:22"><expr pos:start="151:13" pos:end="151:21"><call pos:start="151:13" pos:end="151:21"><name pos:start="151:13" pos:end="151:18">assert</name><argument_list pos:start="151:19" pos:end="151:21">(<argument pos:start="151:20" pos:end="151:20"><expr pos:start="151:20" pos:end="151:20"><literal type="number" pos:start="151:20" pos:end="151:20">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="153:13" pos:end="153:18">break;</break>
+
+        </block_content>}</block></switch>
+
+
+
+        <if_stmt pos:start="159:9" pos:end="167:9"><if pos:start="159:9" pos:end="167:9">if <condition pos:start="159:12" pos:end="159:22">(<expr pos:start="159:13" pos:end="159:21"><name pos:start="159:13" pos:end="159:17">again</name> <operator pos:start="159:19" pos:end="159:19">&lt;</operator> <literal type="number" pos:start="159:21" pos:end="159:21">0</literal></expr>)</condition> <block pos:start="159:24" pos:end="167:9">{<block_content pos:start="161:13" pos:end="165:22">
+
+            <expr_stmt pos:start="161:13" pos:end="161:70"><expr pos:start="161:13" pos:end="161:69"><call pos:start="161:13" pos:end="161:69"><name pos:start="161:13" pos:end="161:19">fprintf</name><argument_list pos:start="161:20" pos:end="161:69">(<argument pos:start="161:21" pos:end="161:26"><expr pos:start="161:21" pos:end="161:26"><name pos:start="161:21" pos:end="161:26">stderr</name></expr></argument>, <argument pos:start="161:29" pos:end="161:68"><expr pos:start="161:29" pos:end="161:68"><literal type="string" pos:start="161:29" pos:end="161:68">"processing error - resetting ehci HC\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="163:13" pos:end="163:29"><expr pos:start="163:13" pos:end="163:28"><call pos:start="163:13" pos:end="163:28"><name pos:start="163:13" pos:end="163:22">ehci_reset</name><argument_list pos:start="163:23" pos:end="163:28">(<argument pos:start="163:24" pos:end="163:27"><expr pos:start="163:24" pos:end="163:27"><name pos:start="163:24" pos:end="163:27">ehci</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="165:13" pos:end="165:22"><expr pos:start="165:13" pos:end="165:21"><name pos:start="165:13" pos:end="165:17">again</name> <operator pos:start="165:19" pos:end="165:19">=</operator> <literal type="number" pos:start="165:21" pos:end="165:21">0</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block>
+
+    while <condition pos:start="171:11" pos:end="171:17">(<expr pos:start="171:12" pos:end="171:16"><name pos:start="171:12" pos:end="171:16">again</name></expr>)</condition>;</do>
+
+
+
+    <expr_stmt pos:start="175:5" pos:end="175:32"><expr pos:start="175:5" pos:end="175:31"><call pos:start="175:5" pos:end="175:31"><name pos:start="175:5" pos:end="175:25">ehci_commit_interrupt</name><argument_list pos:start="175:26" pos:end="175:31">(<argument pos:start="175:27" pos:end="175:30"><expr pos:start="175:27" pos:end="175:30"><name pos:start="175:27" pos:end="175:30">ehci</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+</block_content>}</block></function>
+</unit>

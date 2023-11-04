@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/9236.c" pos:tabs="8"><function pos:start="1:1" pos:end="233:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:18">do_fork</name><parameter_list pos:start="1:19" pos:end="5:42">(<parameter pos:start="1:20" pos:end="1:36"><decl pos:start="1:20" pos:end="1:36"><type pos:start="1:20" pos:end="1:36"><name pos:start="1:20" pos:end="1:31">CPUArchState</name> <modifier pos:start="1:33" pos:end="1:33">*</modifier></type><name pos:start="1:34" pos:end="1:36">env</name></decl></parameter>, <parameter pos:start="1:39" pos:end="1:56"><decl pos:start="1:39" pos:end="1:56"><type pos:start="1:39" pos:end="1:56"><name pos:start="1:39" pos:end="1:46">unsigned</name> <name pos:start="1:48" pos:end="1:50">int</name></type> <name pos:start="1:52" pos:end="1:56">flags</name></decl></parameter>, <parameter pos:start="1:59" pos:end="1:73"><decl pos:start="1:59" pos:end="1:73"><type pos:start="1:59" pos:end="1:73"><name pos:start="1:59" pos:end="1:67">abi_ulong</name></type> <name pos:start="1:69" pos:end="1:73">newsp</name></decl></parameter>,
+
+                   <parameter pos:start="3:20" pos:end="3:42"><decl pos:start="3:20" pos:end="3:42"><type pos:start="3:20" pos:end="3:42"><name pos:start="3:20" pos:end="3:28">abi_ulong</name></type> <name pos:start="3:30" pos:end="3:42">parent_tidptr</name></decl></parameter>, <parameter pos:start="3:45" pos:end="3:63"><decl pos:start="3:45" pos:end="3:63"><type pos:start="3:45" pos:end="3:63"><name pos:start="3:45" pos:end="3:56">target_ulong</name></type> <name pos:start="3:58" pos:end="3:63">newtls</name></decl></parameter>,
+
+                   <parameter pos:start="5:20" pos:end="5:41"><decl pos:start="5:20" pos:end="5:41"><type pos:start="5:20" pos:end="5:41"><name pos:start="5:20" pos:end="5:28">abi_ulong</name></type> <name pos:start="5:30" pos:end="5:41">child_tidptr</name></decl></parameter>)</parameter_list>
+
+<block pos:start="7:1" pos:end="233:1">{<block_content pos:start="9:5" pos:end="231:15">
+
+    <decl_stmt pos:start="9:5" pos:end="9:37"><decl pos:start="9:5" pos:end="9:36"><type pos:start="9:5" pos:end="9:14"><name pos:start="9:5" pos:end="9:12">CPUState</name> <modifier pos:start="9:14" pos:end="9:14">*</modifier></type><name pos:start="9:15" pos:end="9:17">cpu</name> <init pos:start="9:19" pos:end="9:36">= <expr pos:start="9:21" pos:end="9:36"><call pos:start="9:21" pos:end="9:36"><name pos:start="9:21" pos:end="9:31">ENV_GET_CPU</name><argument_list pos:start="9:32" pos:end="9:36">(<argument pos:start="9:33" pos:end="9:35"><expr pos:start="9:33" pos:end="9:35"><name pos:start="9:33" pos:end="9:35">env</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:12"><decl pos:start="11:5" pos:end="11:11"><type pos:start="11:5" pos:end="11:7"><name pos:start="11:5" pos:end="11:7">int</name></type> <name pos:start="11:9" pos:end="11:11">ret</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:18"><decl pos:start="13:5" pos:end="13:17"><type pos:start="13:5" pos:end="13:15"><name pos:start="13:5" pos:end="13:13">TaskState</name> <modifier pos:start="13:15" pos:end="13:15">*</modifier></type><name pos:start="13:16" pos:end="13:17">ts</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:22"><decl pos:start="15:5" pos:end="15:21"><type pos:start="15:5" pos:end="15:14"><name pos:start="15:5" pos:end="15:12">CPUState</name> <modifier pos:start="15:14" pos:end="15:14">*</modifier></type><name pos:start="15:15" pos:end="15:21">new_cpu</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="17:5" pos:end="17:26"><decl pos:start="17:5" pos:end="17:25"><type pos:start="17:5" pos:end="17:18"><name pos:start="17:5" pos:end="17:16">CPUArchState</name> <modifier pos:start="17:18" pos:end="17:18">*</modifier></type><name pos:start="17:19" pos:end="17:25">new_env</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:21"><decl pos:start="19:5" pos:end="19:20"><type pos:start="19:5" pos:end="19:12"><name pos:start="19:5" pos:end="19:12">sigset_t</name></type> <name pos:start="19:14" pos:end="19:20">sigmask</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="23:5" pos:end="23:37">/* Emulate vfork() with fork() */</comment>
+
+    <if_stmt pos:start="25:5" pos:end="27:43"><if pos:start="25:5" pos:end="27:43">if <condition pos:start="25:8" pos:end="25:28">(<expr pos:start="25:9" pos:end="25:27"><name pos:start="25:9" pos:end="25:13">flags</name> <operator pos:start="25:15" pos:end="25:15">&amp;</operator> <name pos:start="25:17" pos:end="25:27">CLONE_VFORK</name></expr>)</condition><block type="pseudo" pos:start="27:9" pos:end="27:43"><block_content pos:start="27:9" pos:end="27:43">
+
+        <expr_stmt pos:start="27:9" pos:end="27:43"><expr pos:start="27:9" pos:end="27:42"><name pos:start="27:9" pos:end="27:13">flags</name> <operator pos:start="27:15" pos:end="27:16">&amp;=</operator> <operator pos:start="27:18" pos:end="27:18">~</operator><operator pos:start="27:19" pos:end="27:19">(</operator><name pos:start="27:20" pos:end="27:30">CLONE_VFORK</name> <operator pos:start="27:32" pos:end="27:32">|</operator> <name pos:start="27:34" pos:end="27:41">CLONE_VM</name><operator pos:start="27:42" pos:end="27:42">)</operator></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="31:5" pos:end="229:5"><if pos:start="31:5" pos:end="159:5">if <condition pos:start="31:8" pos:end="31:25">(<expr pos:start="31:9" pos:end="31:24"><name pos:start="31:9" pos:end="31:13">flags</name> <operator pos:start="31:15" pos:end="31:15">&amp;</operator> <name pos:start="31:17" pos:end="31:24">CLONE_VM</name></expr>)</condition> <block pos:start="31:27" pos:end="159:5">{<block_content pos:start="33:9" pos:end="157:42">
+
+        <decl_stmt pos:start="33:9" pos:end="33:56"><decl pos:start="33:9" pos:end="33:55"><type pos:start="33:9" pos:end="33:19"><name pos:start="33:9" pos:end="33:17">TaskState</name> <modifier pos:start="33:19" pos:end="33:19">*</modifier></type><name pos:start="33:20" pos:end="33:28">parent_ts</name> <init pos:start="33:30" pos:end="33:55">= <expr pos:start="33:32" pos:end="33:55"><operator pos:start="33:32" pos:end="33:32">(</operator><name pos:start="33:33" pos:end="33:41">TaskState</name> <operator pos:start="33:43" pos:end="33:43">*</operator><operator pos:start="33:44" pos:end="33:44">)</operator><name pos:start="33:45" pos:end="33:55"><name pos:start="33:45" pos:end="33:47">cpu</name><operator pos:start="33:48" pos:end="33:49">-&gt;</operator><name pos:start="33:50" pos:end="33:55">opaque</name></name></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="35:9" pos:end="35:29"><decl pos:start="35:9" pos:end="35:28"><type pos:start="35:9" pos:end="35:23"><name pos:start="35:9" pos:end="35:23">new_thread_info</name></type> <name pos:start="35:25" pos:end="35:28">info</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="37:9" pos:end="37:28"><decl pos:start="37:9" pos:end="37:27"><type pos:start="37:9" pos:end="37:22"><name pos:start="37:9" pos:end="37:22">pthread_attr_t</name></type> <name pos:start="37:24" pos:end="37:27">attr</name></decl>;</decl_stmt>
+
+
+
+        <expr_stmt pos:start="41:9" pos:end="41:34"><expr pos:start="41:9" pos:end="41:33"><name pos:start="41:9" pos:end="41:10">ts</name> <operator pos:start="41:12" pos:end="41:12">=</operator> <call pos:start="41:14" pos:end="41:33"><name pos:start="41:14" pos:end="41:19">g_new0</name><argument_list pos:start="41:20" pos:end="41:33">(<argument pos:start="41:21" pos:end="41:29"><expr pos:start="41:21" pos:end="41:29"><name pos:start="41:21" pos:end="41:29">TaskState</name></expr></argument>, <argument pos:start="41:32" pos:end="41:32"><expr pos:start="41:32" pos:end="41:32"><literal type="number" pos:start="41:32" pos:end="41:32">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="43:9" pos:end="43:28"><expr pos:start="43:9" pos:end="43:27"><call pos:start="43:9" pos:end="43:27"><name pos:start="43:9" pos:end="43:23">init_task_state</name><argument_list pos:start="43:24" pos:end="43:27">(<argument pos:start="43:25" pos:end="43:26"><expr pos:start="43:25" pos:end="43:26"><name pos:start="43:25" pos:end="43:26">ts</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <comment type="block" pos:start="45:9" pos:end="45:43">/* we create a new CPU instance. */</comment>
+
+        <expr_stmt pos:start="47:9" pos:end="47:32"><expr pos:start="47:9" pos:end="47:31"><name pos:start="47:9" pos:end="47:15">new_env</name> <operator pos:start="47:17" pos:end="47:17">=</operator> <call pos:start="47:19" pos:end="47:31"><name pos:start="47:19" pos:end="47:26">cpu_copy</name><argument_list pos:start="47:27" pos:end="47:31">(<argument pos:start="47:28" pos:end="47:30"><expr pos:start="47:28" pos:end="47:30"><name pos:start="47:28" pos:end="47:30">env</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <comment type="block" pos:start="49:9" pos:end="49:53">/* Init regs that differ from the parent.  */</comment>
+
+        <expr_stmt pos:start="51:9" pos:end="51:39"><expr pos:start="51:9" pos:end="51:38"><call pos:start="51:9" pos:end="51:38"><name pos:start="51:9" pos:end="51:22">cpu_clone_regs</name><argument_list pos:start="51:23" pos:end="51:38">(<argument pos:start="51:24" pos:end="51:30"><expr pos:start="51:24" pos:end="51:30"><name pos:start="51:24" pos:end="51:30">new_env</name></expr></argument>, <argument pos:start="51:33" pos:end="51:37"><expr pos:start="51:33" pos:end="51:37"><name pos:start="51:33" pos:end="51:37">newsp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="53:9" pos:end="53:39"><expr pos:start="53:9" pos:end="53:38"><name pos:start="53:9" pos:end="53:15">new_cpu</name> <operator pos:start="53:17" pos:end="53:17">=</operator> <call pos:start="53:19" pos:end="53:38"><name pos:start="53:19" pos:end="53:29">ENV_GET_CPU</name><argument_list pos:start="53:30" pos:end="53:38">(<argument pos:start="53:31" pos:end="53:37"><expr pos:start="53:31" pos:end="53:37"><name pos:start="53:31" pos:end="53:37">new_env</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="55:9" pos:end="55:29"><expr pos:start="55:9" pos:end="55:28"><name pos:start="55:9" pos:end="55:23"><name pos:start="55:9" pos:end="55:15">new_cpu</name><operator pos:start="55:16" pos:end="55:17">-&gt;</operator><name pos:start="55:18" pos:end="55:23">opaque</name></name> <operator pos:start="55:25" pos:end="55:25">=</operator> <name pos:start="55:27" pos:end="55:28">ts</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="57:9" pos:end="57:35"><expr pos:start="57:9" pos:end="57:34"><name pos:start="57:9" pos:end="57:16"><name pos:start="57:9" pos:end="57:10">ts</name><operator pos:start="57:11" pos:end="57:12">-&gt;</operator><name pos:start="57:13" pos:end="57:16">bprm</name></name> <operator pos:start="57:18" pos:end="57:18">=</operator> <name pos:start="57:20" pos:end="57:34"><name pos:start="57:20" pos:end="57:28">parent_ts</name><operator pos:start="57:29" pos:end="57:30">-&gt;</operator><name pos:start="57:31" pos:end="57:34">bprm</name></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="59:9" pos:end="59:35"><expr pos:start="59:9" pos:end="59:34"><name pos:start="59:9" pos:end="59:16"><name pos:start="59:9" pos:end="59:10">ts</name><operator pos:start="59:11" pos:end="59:12">-&gt;</operator><name pos:start="59:13" pos:end="59:16">info</name></name> <operator pos:start="59:18" pos:end="59:18">=</operator> <name pos:start="59:20" pos:end="59:34"><name pos:start="59:20" pos:end="59:28">parent_ts</name><operator pos:start="59:29" pos:end="59:30">-&gt;</operator><name pos:start="59:31" pos:end="59:34">info</name></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="61:9" pos:end="61:49"><expr pos:start="61:9" pos:end="61:48"><name pos:start="61:9" pos:end="61:23"><name pos:start="61:9" pos:end="61:10">ts</name><operator pos:start="61:11" pos:end="61:12">-&gt;</operator><name pos:start="61:13" pos:end="61:23">signal_mask</name></name> <operator pos:start="61:25" pos:end="61:25">=</operator> <name pos:start="61:27" pos:end="61:48"><name pos:start="61:27" pos:end="61:35">parent_ts</name><operator pos:start="61:36" pos:end="61:37">-&gt;</operator><name pos:start="61:38" pos:end="61:48">signal_mask</name></name></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="65:9" pos:end="69:9"><if pos:start="65:9" pos:end="69:9">if <condition pos:start="65:12" pos:end="65:41">(<expr pos:start="65:13" pos:end="65:40"><name pos:start="65:13" pos:end="65:17">flags</name> <operator pos:start="65:19" pos:end="65:19">&amp;</operator> <name pos:start="65:21" pos:end="65:40">CLONE_CHILD_CLEARTID</name></expr>)</condition> <block pos:start="65:43" pos:end="69:9">{<block_content pos:start="67:13" pos:end="67:44">
+
+            <expr_stmt pos:start="67:13" pos:end="67:44"><expr pos:start="67:13" pos:end="67:43"><name pos:start="67:13" pos:end="67:28"><name pos:start="67:13" pos:end="67:14">ts</name><operator pos:start="67:15" pos:end="67:16">-&gt;</operator><name pos:start="67:17" pos:end="67:28">child_tidptr</name></name> <operator pos:start="67:30" pos:end="67:30">=</operator> <name pos:start="67:32" pos:end="67:43">child_tidptr</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <if_stmt pos:start="73:9" pos:end="77:9"><if pos:start="73:9" pos:end="77:9">if <condition pos:start="73:12" pos:end="73:33">(<expr pos:start="73:13" pos:end="73:32"><name pos:start="73:13" pos:end="73:17">flags</name> <operator pos:start="73:19" pos:end="73:19">&amp;</operator> <name pos:start="73:21" pos:end="73:32">CLONE_SETTLS</name></expr>)</condition> <block pos:start="73:35" pos:end="77:9">{<block_content pos:start="75:13" pos:end="75:42">
+
+            <expr_stmt pos:start="75:13" pos:end="75:42"><expr pos:start="75:13" pos:end="75:41"><call pos:start="75:13" pos:end="75:41"><name pos:start="75:13" pos:end="75:23">cpu_set_tls</name> <argument_list pos:start="75:25" pos:end="75:41">(<argument pos:start="75:26" pos:end="75:32"><expr pos:start="75:26" pos:end="75:32"><name pos:start="75:26" pos:end="75:32">new_env</name></expr></argument>, <argument pos:start="75:35" pos:end="75:40"><expr pos:start="75:35" pos:end="75:40"><name pos:start="75:35" pos:end="75:40">newtls</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <comment type="block" pos:start="81:9" pos:end="81:64">/* Grab a mutex so that thread setup appears atomic.  */</comment>
+
+        <expr_stmt pos:start="83:9" pos:end="83:40"><expr pos:start="83:9" pos:end="83:39"><call pos:start="83:9" pos:end="83:39"><name pos:start="83:9" pos:end="83:26">pthread_mutex_lock</name><argument_list pos:start="83:27" pos:end="83:39">(<argument pos:start="83:28" pos:end="83:38"><expr pos:start="83:28" pos:end="83:38"><operator pos:start="83:28" pos:end="83:28">&amp;</operator><name pos:start="83:29" pos:end="83:38">clone_lock</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="87:9" pos:end="87:39"><expr pos:start="87:9" pos:end="87:38"><call pos:start="87:9" pos:end="87:38"><name pos:start="87:9" pos:end="87:14">memset</name><argument_list pos:start="87:15" pos:end="87:38">(<argument pos:start="87:16" pos:end="87:20"><expr pos:start="87:16" pos:end="87:20"><operator pos:start="87:16" pos:end="87:16">&amp;</operator><name pos:start="87:17" pos:end="87:20">info</name></expr></argument>, <argument pos:start="87:23" pos:end="87:23"><expr pos:start="87:23" pos:end="87:23"><literal type="number" pos:start="87:23" pos:end="87:23">0</literal></expr></argument>, <argument pos:start="87:26" pos:end="87:37"><expr pos:start="87:26" pos:end="87:37"><sizeof pos:start="87:26" pos:end="87:37">sizeof<argument_list pos:start="87:32" pos:end="87:37">(<argument pos:start="87:33" pos:end="87:36"><expr pos:start="87:33" pos:end="87:36"><name pos:start="87:33" pos:end="87:36">info</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="89:9" pos:end="89:46"><expr pos:start="89:9" pos:end="89:45"><call pos:start="89:9" pos:end="89:45"><name pos:start="89:9" pos:end="89:26">pthread_mutex_init</name><argument_list pos:start="89:27" pos:end="89:45">(<argument pos:start="89:28" pos:end="89:38"><expr pos:start="89:28" pos:end="89:38"><operator pos:start="89:28" pos:end="89:28">&amp;</operator><name pos:start="89:29" pos:end="89:38"><name pos:start="89:29" pos:end="89:32">info</name><operator pos:start="89:33" pos:end="89:33">.</operator><name pos:start="89:34" pos:end="89:38">mutex</name></name></expr></argument>, <argument pos:start="89:41" pos:end="89:44"><expr pos:start="89:41" pos:end="89:44"><name pos:start="89:41" pos:end="89:44">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="91:9" pos:end="91:40"><expr pos:start="91:9" pos:end="91:39"><call pos:start="91:9" pos:end="91:39"><name pos:start="91:9" pos:end="91:26">pthread_mutex_lock</name><argument_list pos:start="91:27" pos:end="91:39">(<argument pos:start="91:28" pos:end="91:38"><expr pos:start="91:28" pos:end="91:38"><operator pos:start="91:28" pos:end="91:28">&amp;</operator><name pos:start="91:29" pos:end="91:38"><name pos:start="91:29" pos:end="91:32">info</name><operator pos:start="91:33" pos:end="91:33">.</operator><name pos:start="91:34" pos:end="91:38">mutex</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="93:9" pos:end="93:44"><expr pos:start="93:9" pos:end="93:43"><call pos:start="93:9" pos:end="93:43"><name pos:start="93:9" pos:end="93:25">pthread_cond_init</name><argument_list pos:start="93:26" pos:end="93:43">(<argument pos:start="93:27" pos:end="93:36"><expr pos:start="93:27" pos:end="93:36"><operator pos:start="93:27" pos:end="93:27">&amp;</operator><name pos:start="93:28" pos:end="93:36"><name pos:start="93:28" pos:end="93:31">info</name><operator pos:start="93:32" pos:end="93:32">.</operator><name pos:start="93:33" pos:end="93:36">cond</name></name></expr></argument>, <argument pos:start="93:39" pos:end="93:42"><expr pos:start="93:39" pos:end="93:42"><name pos:start="93:39" pos:end="93:42">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="95:9" pos:end="95:27"><expr pos:start="95:9" pos:end="95:26"><name pos:start="95:9" pos:end="95:16"><name pos:start="95:9" pos:end="95:12">info</name><operator pos:start="95:13" pos:end="95:13">.</operator><name pos:start="95:14" pos:end="95:16">env</name></name> <operator pos:start="95:18" pos:end="95:18">=</operator> <name pos:start="95:20" pos:end="95:26">new_env</name></expr>;</expr_stmt>
+
+        <if_stmt pos:start="97:9" pos:end="101:9"><if pos:start="97:9" pos:end="101:9">if <condition pos:start="97:12" pos:end="97:39">(<expr pos:start="97:13" pos:end="97:38"><name pos:start="97:13" pos:end="97:17">flags</name> <operator pos:start="97:19" pos:end="97:19">&amp;</operator> <name pos:start="97:21" pos:end="97:38">CLONE_CHILD_SETTID</name></expr>)</condition> <block pos:start="97:41" pos:end="101:9">{<block_content pos:start="99:13" pos:end="99:45">
+
+            <expr_stmt pos:start="99:13" pos:end="99:45"><expr pos:start="99:13" pos:end="99:44"><name pos:start="99:13" pos:end="99:29"><name pos:start="99:13" pos:end="99:16">info</name><operator pos:start="99:17" pos:end="99:17">.</operator><name pos:start="99:18" pos:end="99:29">child_tidptr</name></name> <operator pos:start="99:31" pos:end="99:31">=</operator> <name pos:start="99:33" pos:end="99:44">child_tidptr</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <if_stmt pos:start="103:9" pos:end="107:9"><if pos:start="103:9" pos:end="107:9">if <condition pos:start="103:12" pos:end="103:40">(<expr pos:start="103:13" pos:end="103:39"><name pos:start="103:13" pos:end="103:17">flags</name> <operator pos:start="103:19" pos:end="103:19">&amp;</operator> <name pos:start="103:21" pos:end="103:39">CLONE_PARENT_SETTID</name></expr>)</condition> <block pos:start="103:42" pos:end="107:9">{<block_content pos:start="105:13" pos:end="105:47">
+
+            <expr_stmt pos:start="105:13" pos:end="105:47"><expr pos:start="105:13" pos:end="105:46"><name pos:start="105:13" pos:end="105:30"><name pos:start="105:13" pos:end="105:16">info</name><operator pos:start="105:17" pos:end="105:17">.</operator><name pos:start="105:18" pos:end="105:30">parent_tidptr</name></name> <operator pos:start="105:32" pos:end="105:32">=</operator> <name pos:start="105:34" pos:end="105:46">parent_tidptr</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="111:9" pos:end="111:39"><expr pos:start="111:9" pos:end="111:38"><name pos:start="111:9" pos:end="111:11">ret</name> <operator pos:start="111:13" pos:end="111:13">=</operator> <call pos:start="111:15" pos:end="111:38"><name pos:start="111:15" pos:end="111:31">pthread_attr_init</name><argument_list pos:start="111:32" pos:end="111:38">(<argument pos:start="111:33" pos:end="111:37"><expr pos:start="111:33" pos:end="111:37"><operator pos:start="111:33" pos:end="111:33">&amp;</operator><name pos:start="111:34" pos:end="111:37">attr</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="113:9" pos:end="113:63"><expr pos:start="113:9" pos:end="113:62"><name pos:start="113:9" pos:end="113:11">ret</name> <operator pos:start="113:13" pos:end="113:13">=</operator> <call pos:start="113:15" pos:end="113:62"><name pos:start="113:15" pos:end="113:39">pthread_attr_setstacksize</name><argument_list pos:start="113:40" pos:end="113:62">(<argument pos:start="113:41" pos:end="113:45"><expr pos:start="113:41" pos:end="113:45"><operator pos:start="113:41" pos:end="113:41">&amp;</operator><name pos:start="113:42" pos:end="113:45">attr</name></expr></argument>, <argument pos:start="113:48" pos:end="113:61"><expr pos:start="113:48" pos:end="113:61"><name pos:start="113:48" pos:end="113:61">NEW_STACK_SIZE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="115:9" pos:end="115:74"><expr pos:start="115:9" pos:end="115:73"><name pos:start="115:9" pos:end="115:11">ret</name> <operator pos:start="115:13" pos:end="115:13">=</operator> <call pos:start="115:15" pos:end="115:73"><name pos:start="115:15" pos:end="115:41">pthread_attr_setdetachstate</name><argument_list pos:start="115:42" pos:end="115:73">(<argument pos:start="115:43" pos:end="115:47"><expr pos:start="115:43" pos:end="115:47"><operator pos:start="115:43" pos:end="115:43">&amp;</operator><name pos:start="115:44" pos:end="115:47">attr</name></expr></argument>, <argument pos:start="115:50" pos:end="115:72"><expr pos:start="115:50" pos:end="115:72"><name pos:start="115:50" pos:end="115:72">PTHREAD_CREATE_DETACHED</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <comment type="block" pos:start="117:9" pos:end="119:62">/* It is not safe to deliver signals until the child has finished
+
+           initializing, so temporarily block all signals.  */</comment>
+
+        <expr_stmt pos:start="121:9" pos:end="121:29"><expr pos:start="121:9" pos:end="121:28"><call pos:start="121:9" pos:end="121:28"><name pos:start="121:9" pos:end="121:18">sigfillset</name><argument_list pos:start="121:19" pos:end="121:28">(<argument pos:start="121:20" pos:end="121:27"><expr pos:start="121:20" pos:end="121:27"><operator pos:start="121:20" pos:end="121:20">&amp;</operator><name pos:start="121:21" pos:end="121:27">sigmask</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="123:9" pos:end="123:56"><expr pos:start="123:9" pos:end="123:55"><call pos:start="123:9" pos:end="123:55"><name pos:start="123:9" pos:end="123:19">sigprocmask</name><argument_list pos:start="123:20" pos:end="123:55">(<argument pos:start="123:21" pos:end="123:29"><expr pos:start="123:21" pos:end="123:29"><name pos:start="123:21" pos:end="123:29">SIG_BLOCK</name></expr></argument>, <argument pos:start="123:32" pos:end="123:39"><expr pos:start="123:32" pos:end="123:39"><operator pos:start="123:32" pos:end="123:32">&amp;</operator><name pos:start="123:33" pos:end="123:39">sigmask</name></expr></argument>, <argument pos:start="123:42" pos:end="123:54"><expr pos:start="123:42" pos:end="123:54"><operator pos:start="123:42" pos:end="123:42">&amp;</operator><name pos:start="123:43" pos:end="123:54"><name pos:start="123:43" pos:end="123:46">info</name><operator pos:start="123:47" pos:end="123:47">.</operator><name pos:start="123:48" pos:end="123:54">sigmask</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="127:9" pos:end="127:69"><expr pos:start="127:9" pos:end="127:68"><name pos:start="127:9" pos:end="127:11">ret</name> <operator pos:start="127:13" pos:end="127:13">=</operator> <call pos:start="127:15" pos:end="127:68"><name pos:start="127:15" pos:end="127:28">pthread_create</name><argument_list pos:start="127:29" pos:end="127:68">(<argument pos:start="127:30" pos:end="127:41"><expr pos:start="127:30" pos:end="127:41"><operator pos:start="127:30" pos:end="127:30">&amp;</operator><name pos:start="127:31" pos:end="127:41"><name pos:start="127:31" pos:end="127:34">info</name><operator pos:start="127:35" pos:end="127:35">.</operator><name pos:start="127:36" pos:end="127:41">thread</name></name></expr></argument>, <argument pos:start="127:44" pos:end="127:48"><expr pos:start="127:44" pos:end="127:48"><operator pos:start="127:44" pos:end="127:44">&amp;</operator><name pos:start="127:45" pos:end="127:48">attr</name></expr></argument>, <argument pos:start="127:51" pos:end="127:60"><expr pos:start="127:51" pos:end="127:60"><name pos:start="127:51" pos:end="127:60">clone_func</name></expr></argument>, <argument pos:start="127:63" pos:end="127:67"><expr pos:start="127:63" pos:end="127:67"><operator pos:start="127:63" pos:end="127:63">&amp;</operator><name pos:start="127:64" pos:end="127:67">info</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <comment type="block" pos:start="129:9" pos:end="129:66">/* TODO: Free new CPU state if thread creation failed.  */</comment>
+
+
+
+        <expr_stmt pos:start="133:9" pos:end="133:54"><expr pos:start="133:9" pos:end="133:53"><call pos:start="133:9" pos:end="133:53"><name pos:start="133:9" pos:end="133:19">sigprocmask</name><argument_list pos:start="133:20" pos:end="133:53">(<argument pos:start="133:21" pos:end="133:31"><expr pos:start="133:21" pos:end="133:31"><name pos:start="133:21" pos:end="133:31">SIG_SETMASK</name></expr></argument>, <argument pos:start="133:34" pos:end="133:46"><expr pos:start="133:34" pos:end="133:46"><operator pos:start="133:34" pos:end="133:34">&amp;</operator><name pos:start="133:35" pos:end="133:46"><name pos:start="133:35" pos:end="133:38">info</name><operator pos:start="133:39" pos:end="133:39">.</operator><name pos:start="133:40" pos:end="133:46">sigmask</name></name></expr></argument>, <argument pos:start="133:49" pos:end="133:52"><expr pos:start="133:49" pos:end="133:52"><name pos:start="133:49" pos:end="133:52">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="135:9" pos:end="135:36"><expr pos:start="135:9" pos:end="135:35"><call pos:start="135:9" pos:end="135:35"><name pos:start="135:9" pos:end="135:28">pthread_attr_destroy</name><argument_list pos:start="135:29" pos:end="135:35">(<argument pos:start="135:30" pos:end="135:34"><expr pos:start="135:30" pos:end="135:34"><operator pos:start="135:30" pos:end="135:30">&amp;</operator><name pos:start="135:31" pos:end="135:34">attr</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="137:9" pos:end="149:9"><if pos:start="137:9" pos:end="145:9">if <condition pos:start="137:12" pos:end="137:21">(<expr pos:start="137:13" pos:end="137:20"><name pos:start="137:13" pos:end="137:15">ret</name> <operator pos:start="137:17" pos:end="137:18">==</operator> <literal type="number" pos:start="137:20" pos:end="137:20">0</literal></expr>)</condition> <block pos:start="137:23" pos:end="145:9">{<block_content pos:start="141:13" pos:end="143:27">
+
+            <comment type="block" pos:start="139:13" pos:end="139:52">/* Wait for the child to initialize.  */</comment>
+
+            <expr_stmt pos:start="141:13" pos:end="141:55"><expr pos:start="141:13" pos:end="141:54"><call pos:start="141:13" pos:end="141:54"><name pos:start="141:13" pos:end="141:29">pthread_cond_wait</name><argument_list pos:start="141:30" pos:end="141:54">(<argument pos:start="141:31" pos:end="141:40"><expr pos:start="141:31" pos:end="141:40"><operator pos:start="141:31" pos:end="141:31">&amp;</operator><name pos:start="141:32" pos:end="141:40"><name pos:start="141:32" pos:end="141:35">info</name><operator pos:start="141:36" pos:end="141:36">.</operator><name pos:start="141:37" pos:end="141:40">cond</name></name></expr></argument>, <argument pos:start="141:43" pos:end="141:53"><expr pos:start="141:43" pos:end="141:53"><operator pos:start="141:43" pos:end="141:43">&amp;</operator><name pos:start="141:44" pos:end="141:53"><name pos:start="141:44" pos:end="141:47">info</name><operator pos:start="141:48" pos:end="141:48">.</operator><name pos:start="141:49" pos:end="141:53">mutex</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="143:13" pos:end="143:27"><expr pos:start="143:13" pos:end="143:26"><name pos:start="143:13" pos:end="143:15">ret</name> <operator pos:start="143:17" pos:end="143:17">=</operator> <name pos:start="143:19" pos:end="143:26"><name pos:start="143:19" pos:end="143:22">info</name><operator pos:start="143:23" pos:end="143:23">.</operator><name pos:start="143:24" pos:end="143:26">tid</name></name></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="145:11" pos:end="149:9">else <block pos:start="145:16" pos:end="149:9">{<block_content pos:start="147:13" pos:end="147:21">
+
+            <expr_stmt pos:start="147:13" pos:end="147:21"><expr pos:start="147:13" pos:end="147:20"><name pos:start="147:13" pos:end="147:15">ret</name> <operator pos:start="147:17" pos:end="147:17">=</operator> <operator pos:start="147:19" pos:end="147:19">-</operator><literal type="number" pos:start="147:20" pos:end="147:20">1</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+        <expr_stmt pos:start="151:9" pos:end="151:42"><expr pos:start="151:9" pos:end="151:41"><call pos:start="151:9" pos:end="151:41"><name pos:start="151:9" pos:end="151:28">pthread_mutex_unlock</name><argument_list pos:start="151:29" pos:end="151:41">(<argument pos:start="151:30" pos:end="151:40"><expr pos:start="151:30" pos:end="151:40"><operator pos:start="151:30" pos:end="151:30">&amp;</operator><name pos:start="151:31" pos:end="151:40"><name pos:start="151:31" pos:end="151:34">info</name><operator pos:start="151:35" pos:end="151:35">.</operator><name pos:start="151:36" pos:end="151:40">mutex</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="153:9" pos:end="153:41"><expr pos:start="153:9" pos:end="153:40"><call pos:start="153:9" pos:end="153:40"><name pos:start="153:9" pos:end="153:28">pthread_cond_destroy</name><argument_list pos:start="153:29" pos:end="153:40">(<argument pos:start="153:30" pos:end="153:39"><expr pos:start="153:30" pos:end="153:39"><operator pos:start="153:30" pos:end="153:30">&amp;</operator><name pos:start="153:31" pos:end="153:39"><name pos:start="153:31" pos:end="153:34">info</name><operator pos:start="153:35" pos:end="153:35">.</operator><name pos:start="153:36" pos:end="153:39">cond</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="155:9" pos:end="155:43"><expr pos:start="155:9" pos:end="155:42"><call pos:start="155:9" pos:end="155:42"><name pos:start="155:9" pos:end="155:29">pthread_mutex_destroy</name><argument_list pos:start="155:30" pos:end="155:42">(<argument pos:start="155:31" pos:end="155:41"><expr pos:start="155:31" pos:end="155:41"><operator pos:start="155:31" pos:end="155:31">&amp;</operator><name pos:start="155:32" pos:end="155:41"><name pos:start="155:32" pos:end="155:35">info</name><operator pos:start="155:36" pos:end="155:36">.</operator><name pos:start="155:37" pos:end="155:41">mutex</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="157:9" pos:end="157:42"><expr pos:start="157:9" pos:end="157:41"><call pos:start="157:9" pos:end="157:41"><name pos:start="157:9" pos:end="157:28">pthread_mutex_unlock</name><argument_list pos:start="157:29" pos:end="157:41">(<argument pos:start="157:30" pos:end="157:40"><expr pos:start="157:30" pos:end="157:40"><operator pos:start="157:30" pos:end="157:30">&amp;</operator><name pos:start="157:31" pos:end="157:40">clone_lock</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="159:7" pos:end="229:5">else <block pos:start="159:12" pos:end="229:5">{<block_content pos:start="163:9" pos:end="227:9">
+
+        <comment type="block" pos:start="161:9" pos:end="161:54">/* if no CLONE_VM, we consider it is a fork */</comment>
+
+        <if_stmt pos:start="163:9" pos:end="167:9"><if pos:start="163:9" pos:end="167:9">if <condition pos:start="163:12" pos:end="163:58">(<expr pos:start="163:13" pos:end="163:57"><operator pos:start="163:13" pos:end="163:13">(</operator><name pos:start="163:14" pos:end="163:18">flags</name> <operator pos:start="163:20" pos:end="163:20">&amp;</operator> <operator pos:start="163:22" pos:end="163:22">~</operator><operator pos:start="163:23" pos:end="163:23">(</operator><name pos:start="163:24" pos:end="163:30">CSIGNAL</name> <operator pos:start="163:32" pos:end="163:32">|</operator> <name pos:start="163:34" pos:end="163:50">CLONE_NPTL_FLAGS2</name><operator pos:start="163:51" pos:end="163:51">)</operator><operator pos:start="163:52" pos:end="163:52">)</operator> <operator pos:start="163:54" pos:end="163:55">!=</operator> <literal type="number" pos:start="163:57" pos:end="163:57">0</literal></expr>)</condition> <block pos:start="163:60" pos:end="167:9">{<block_content pos:start="165:13" pos:end="165:34">
+
+            <return pos:start="165:13" pos:end="165:34">return <expr pos:start="165:20" pos:end="165:33"><operator pos:start="165:20" pos:end="165:20">-</operator><name pos:start="165:21" pos:end="165:33">TARGET_EINVAL</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <if_stmt pos:start="171:9" pos:end="175:9"><if pos:start="171:9" pos:end="175:9">if <condition pos:start="171:12" pos:end="171:28">(<expr pos:start="171:13" pos:end="171:27"><call pos:start="171:13" pos:end="171:27"><name pos:start="171:13" pos:end="171:25">block_signals</name><argument_list pos:start="171:26" pos:end="171:27">()</argument_list></call></expr>)</condition> <block pos:start="171:30" pos:end="175:9">{<block_content pos:start="173:13" pos:end="173:39">
+
+            <return pos:start="173:13" pos:end="173:39">return <expr pos:start="173:20" pos:end="173:38"><operator pos:start="173:20" pos:end="173:20">-</operator><name pos:start="173:21" pos:end="173:38">TARGET_ERESTARTSYS</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="179:9" pos:end="179:21"><expr pos:start="179:9" pos:end="179:20"><call pos:start="179:9" pos:end="179:20"><name pos:start="179:9" pos:end="179:18">fork_start</name><argument_list pos:start="179:19" pos:end="179:20">()</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="181:9" pos:end="181:21"><expr pos:start="181:9" pos:end="181:20"><name pos:start="181:9" pos:end="181:11">ret</name> <operator pos:start="181:13" pos:end="181:13">=</operator> <call pos:start="181:15" pos:end="181:20"><name pos:start="181:15" pos:end="181:18">fork</name><argument_list pos:start="181:19" pos:end="181:20">()</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="183:9" pos:end="227:9"><if pos:start="183:9" pos:end="223:9">if <condition pos:start="183:12" pos:end="183:21">(<expr pos:start="183:13" pos:end="183:20"><name pos:start="183:13" pos:end="183:15">ret</name> <operator pos:start="183:17" pos:end="183:18">==</operator> <literal type="number" pos:start="183:20" pos:end="183:20">0</literal></expr>)</condition> <block pos:start="183:23" pos:end="223:9">{<block_content pos:start="187:13" pos:end="221:48">
+
+            <comment type="block" pos:start="185:13" pos:end="185:33">/* Child Process.  */</comment>
+
+            <expr_stmt pos:start="187:13" pos:end="187:29"><expr pos:start="187:13" pos:end="187:28"><call pos:start="187:13" pos:end="187:28"><name pos:start="187:13" pos:end="187:26">rcu_after_fork</name><argument_list pos:start="187:27" pos:end="187:28">()</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="189:13" pos:end="189:39"><expr pos:start="189:13" pos:end="189:38"><call pos:start="189:13" pos:end="189:38"><name pos:start="189:13" pos:end="189:26">cpu_clone_regs</name><argument_list pos:start="189:27" pos:end="189:38">(<argument pos:start="189:28" pos:end="189:30"><expr pos:start="189:28" pos:end="189:30"><name pos:start="189:28" pos:end="189:30">env</name></expr></argument>, <argument pos:start="189:33" pos:end="189:37"><expr pos:start="189:33" pos:end="189:37"><name pos:start="189:33" pos:end="189:37">newsp</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="191:13" pos:end="191:24"><expr pos:start="191:13" pos:end="191:23"><call pos:start="191:13" pos:end="191:23"><name pos:start="191:13" pos:end="191:20">fork_end</name><argument_list pos:start="191:21" pos:end="191:23">(<argument pos:start="191:22" pos:end="191:22"><expr pos:start="191:22" pos:end="191:22"><literal type="number" pos:start="191:22" pos:end="191:22">1</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <comment type="block" pos:start="193:13" pos:end="203:67">/* There is a race condition here.  The parent process could
+
+               theoretically read the TID in the child process before the child
+
+               tid is set.  This would require using either ptrace
+
+               (not implemented) or having *_tidptr to point at a shared memory
+
+               mapping.  We can't repeat the spinlock hack used above because
+
+               the child process gets its own copy of the lock.  */</comment>
+
+            <if_stmt pos:start="205:13" pos:end="207:53"><if pos:start="205:13" pos:end="207:53">if <condition pos:start="205:16" pos:end="205:43">(<expr pos:start="205:17" pos:end="205:42"><name pos:start="205:17" pos:end="205:21">flags</name> <operator pos:start="205:23" pos:end="205:23">&amp;</operator> <name pos:start="205:25" pos:end="205:42">CLONE_CHILD_SETTID</name></expr>)</condition><block type="pseudo" pos:start="207:17" pos:end="207:53"><block_content pos:start="207:17" pos:end="207:53">
+
+                <expr_stmt pos:start="207:17" pos:end="207:53"><expr pos:start="207:17" pos:end="207:52"><call pos:start="207:17" pos:end="207:52"><name pos:start="207:17" pos:end="207:28">put_user_u32</name><argument_list pos:start="207:29" pos:end="207:52">(<argument pos:start="207:30" pos:end="207:37"><expr pos:start="207:30" pos:end="207:37"><call pos:start="207:30" pos:end="207:37"><name pos:start="207:30" pos:end="207:35">gettid</name><argument_list pos:start="207:36" pos:end="207:37">()</argument_list></call></expr></argument>, <argument pos:start="207:40" pos:end="207:51"><expr pos:start="207:40" pos:end="207:51"><name pos:start="207:40" pos:end="207:51">child_tidptr</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+            <if_stmt pos:start="209:13" pos:end="211:54"><if pos:start="209:13" pos:end="211:54">if <condition pos:start="209:16" pos:end="209:44">(<expr pos:start="209:17" pos:end="209:43"><name pos:start="209:17" pos:end="209:21">flags</name> <operator pos:start="209:23" pos:end="209:23">&amp;</operator> <name pos:start="209:25" pos:end="209:43">CLONE_PARENT_SETTID</name></expr>)</condition><block type="pseudo" pos:start="211:17" pos:end="211:54"><block_content pos:start="211:17" pos:end="211:54">
+
+                <expr_stmt pos:start="211:17" pos:end="211:54"><expr pos:start="211:17" pos:end="211:53"><call pos:start="211:17" pos:end="211:53"><name pos:start="211:17" pos:end="211:28">put_user_u32</name><argument_list pos:start="211:29" pos:end="211:53">(<argument pos:start="211:30" pos:end="211:37"><expr pos:start="211:30" pos:end="211:37"><call pos:start="211:30" pos:end="211:37"><name pos:start="211:30" pos:end="211:35">gettid</name><argument_list pos:start="211:36" pos:end="211:37">()</argument_list></call></expr></argument>, <argument pos:start="211:40" pos:end="211:52"><expr pos:start="211:40" pos:end="211:52"><name pos:start="211:40" pos:end="211:52">parent_tidptr</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+            <expr_stmt pos:start="213:13" pos:end="213:42"><expr pos:start="213:13" pos:end="213:41"><name pos:start="213:13" pos:end="213:14">ts</name> <operator pos:start="213:16" pos:end="213:16">=</operator> <operator pos:start="213:18" pos:end="213:18">(</operator><name pos:start="213:19" pos:end="213:27">TaskState</name> <operator pos:start="213:29" pos:end="213:29">*</operator><operator pos:start="213:30" pos:end="213:30">)</operator><name pos:start="213:31" pos:end="213:41"><name pos:start="213:31" pos:end="213:33">cpu</name><operator pos:start="213:34" pos:end="213:35">-&gt;</operator><name pos:start="213:36" pos:end="213:41">opaque</name></name></expr>;</expr_stmt>
+
+            <if_stmt pos:start="215:13" pos:end="217:42"><if pos:start="215:13" pos:end="217:42">if <condition pos:start="215:16" pos:end="215:37">(<expr pos:start="215:17" pos:end="215:36"><name pos:start="215:17" pos:end="215:21">flags</name> <operator pos:start="215:23" pos:end="215:23">&amp;</operator> <name pos:start="215:25" pos:end="215:36">CLONE_SETTLS</name></expr>)</condition><block type="pseudo" pos:start="217:17" pos:end="217:42"><block_content pos:start="217:17" pos:end="217:42">
+
+                <expr_stmt pos:start="217:17" pos:end="217:42"><expr pos:start="217:17" pos:end="217:41"><call pos:start="217:17" pos:end="217:41"><name pos:start="217:17" pos:end="217:27">cpu_set_tls</name> <argument_list pos:start="217:29" pos:end="217:41">(<argument pos:start="217:30" pos:end="217:32"><expr pos:start="217:30" pos:end="217:32"><name pos:start="217:30" pos:end="217:32">env</name></expr></argument>, <argument pos:start="217:35" pos:end="217:40"><expr pos:start="217:35" pos:end="217:40"><name pos:start="217:35" pos:end="217:40">newtls</name></expr></argument>)</argument_list></call></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+            <if_stmt pos:start="219:13" pos:end="221:48"><if pos:start="219:13" pos:end="221:48">if <condition pos:start="219:16" pos:end="219:45">(<expr pos:start="219:17" pos:end="219:44"><name pos:start="219:17" pos:end="219:21">flags</name> <operator pos:start="219:23" pos:end="219:23">&amp;</operator> <name pos:start="219:25" pos:end="219:44">CLONE_CHILD_CLEARTID</name></expr>)</condition><block type="pseudo" pos:start="221:17" pos:end="221:48"><block_content pos:start="221:17" pos:end="221:48">
+
+                <expr_stmt pos:start="221:17" pos:end="221:48"><expr pos:start="221:17" pos:end="221:47"><name pos:start="221:17" pos:end="221:32"><name pos:start="221:17" pos:end="221:18">ts</name><operator pos:start="221:19" pos:end="221:20">-&gt;</operator><name pos:start="221:21" pos:end="221:32">child_tidptr</name></name> <operator pos:start="221:34" pos:end="221:34">=</operator> <name pos:start="221:36" pos:end="221:47">child_tidptr</name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+        </block_content>}</block></if> <else pos:start="223:11" pos:end="227:9">else <block pos:start="223:16" pos:end="227:9">{<block_content pos:start="225:13" pos:end="225:24">
+
+            <expr_stmt pos:start="225:13" pos:end="225:24"><expr pos:start="225:13" pos:end="225:23"><call pos:start="225:13" pos:end="225:23"><name pos:start="225:13" pos:end="225:20">fork_end</name><argument_list pos:start="225:21" pos:end="225:23">(<argument pos:start="225:22" pos:end="225:22"><expr pos:start="225:22" pos:end="225:22"><literal type="number" pos:start="225:22" pos:end="225:22">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+    <return pos:start="231:5" pos:end="231:15">return <expr pos:start="231:12" pos:end="231:14"><name pos:start="231:12" pos:end="231:14">ret</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

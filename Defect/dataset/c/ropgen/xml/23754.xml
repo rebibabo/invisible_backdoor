@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/23754.c" pos:tabs="8"><function pos:start="1:1" pos:end="89:1"><type pos:start="1:1" pos:end="1:4"><name pos:start="1:1" pos:end="1:4">void</name></type> <name pos:start="1:6" pos:end="1:23">qmp_guest_set_time</name><parameter_list pos:start="1:24" pos:end="1:69">(<parameter pos:start="1:25" pos:end="1:37"><decl pos:start="1:25" pos:end="1:37"><type pos:start="1:25" pos:end="1:37"><name pos:start="1:25" pos:end="1:28">bool</name></type> <name pos:start="1:30" pos:end="1:37">has_time</name></decl></parameter>, <parameter pos:start="1:40" pos:end="1:54"><decl pos:start="1:40" pos:end="1:54"><type pos:start="1:40" pos:end="1:54"><name pos:start="1:40" pos:end="1:46">int64_t</name></type> <name pos:start="1:48" pos:end="1:54">time_ns</name></decl></parameter>, <parameter pos:start="1:57" pos:end="1:68"><decl pos:start="1:57" pos:end="1:68"><type pos:start="1:57" pos:end="1:68"><name pos:start="1:57" pos:end="1:61">Error</name> <modifier pos:start="1:63" pos:end="1:63">*</modifier><modifier pos:start="1:64" pos:end="1:64">*</modifier></type><name pos:start="1:65" pos:end="1:68">errp</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="89:1">{<block_content pos:start="5:5" pos:end="87:5">
+
+    <decl_stmt pos:start="5:5" pos:end="5:28"><decl pos:start="5:5" pos:end="5:27"><type pos:start="5:5" pos:end="5:11"><name pos:start="5:5" pos:end="5:9">Error</name> <modifier pos:start="5:11" pos:end="5:11">*</modifier></type><name pos:start="5:12" pos:end="5:20">local_err</name> <init pos:start="5:22" pos:end="5:27">= <expr pos:start="5:24" pos:end="5:27"><name pos:start="5:24" pos:end="5:27">NULL</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:18"><decl pos:start="7:5" pos:end="7:17"><type pos:start="7:5" pos:end="7:14"><name pos:start="7:5" pos:end="7:14">SYSTEMTIME</name></type> <name pos:start="7:16" pos:end="7:17">ts</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:16"><decl pos:start="9:5" pos:end="9:15"><type pos:start="9:5" pos:end="9:12"><name pos:start="9:5" pos:end="9:12">FILETIME</name></type> <name pos:start="9:14" pos:end="9:15">tf</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:18"><decl pos:start="11:5" pos:end="11:17"><type pos:start="11:5" pos:end="11:12"><name pos:start="11:5" pos:end="11:12">LONGLONG</name></type> <name pos:start="11:14" pos:end="11:17">time</name></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="15:5" pos:end="31:5"><if pos:start="15:5" pos:end="31:5">if <condition pos:start="15:8" pos:end="15:18">(<expr pos:start="15:9" pos:end="15:17"><operator pos:start="15:9" pos:end="15:9">!</operator><name pos:start="15:10" pos:end="15:17">has_time</name></expr>)</condition> <block pos:start="15:20" pos:end="31:5">{<block_content pos:start="27:9" pos:end="29:15">
+
+        <comment type="block" pos:start="17:9" pos:end="25:11">/* Unfortunately, Windows libraries don't provide an easy way to access
+
+         * RTC yet:
+
+         *
+
+         * https://msdn.microsoft.com/en-us/library/aa908981.aspx
+
+         */</comment>
+
+        <expr_stmt pos:start="27:9" pos:end="27:71"><expr pos:start="27:9" pos:end="27:70"><call pos:start="27:9" pos:end="27:70"><name pos:start="27:9" pos:end="27:18">error_setg</name><argument_list pos:start="27:19" pos:end="27:70">(<argument pos:start="27:20" pos:end="27:23"><expr pos:start="27:20" pos:end="27:23"><name pos:start="27:20" pos:end="27:23">errp</name></expr></argument>, <argument pos:start="27:26" pos:end="27:69"><expr pos:start="27:26" pos:end="27:69"><literal type="string" pos:start="27:26" pos:end="27:69">"Time argument is required on this platform"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="29:9" pos:end="29:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="35:5" pos:end="35:39">/* Validate time passed by user. */</comment>
+
+    <if_stmt pos:start="37:5" pos:end="43:5"><if pos:start="37:5" pos:end="43:5">if <condition pos:start="37:8" pos:end="37:65">(<expr pos:start="37:9" pos:end="37:64"><name pos:start="37:9" pos:end="37:38"><name pos:start="37:9" pos:end="37:15">time_ns</name> <argument_list type="generic" pos:start="37:17" pos:end="37:38">&lt; <argument pos:start="37:19" pos:end="37:36"><expr pos:start="37:19" pos:end="37:36"><literal type="number" pos:start="37:19" pos:end="37:19">0</literal> <operator pos:start="37:21" pos:end="37:22">||</operator> <name pos:start="37:24" pos:end="37:30">time_ns</name> <operator pos:start="37:32" pos:end="37:32">/</operator> <literal type="number" pos:start="37:34" pos:end="37:36">100</literal></expr></argument> &gt;</argument_list></name> <name pos:start="37:40" pos:end="37:48">INT64_MAX</name> <operator pos:start="37:50" pos:end="37:50">-</operator> <name pos:start="37:52" pos:end="37:64">W32_FT_OFFSET</name></expr>)</condition> <block pos:start="37:67" pos:end="43:5">{<block_content pos:start="39:9" pos:end="41:15">
+
+        <expr_stmt pos:start="39:9" pos:end="39:64"><expr pos:start="39:9" pos:end="39:63"><call pos:start="39:9" pos:end="39:63"><name pos:start="39:9" pos:end="39:18">error_setg</name><argument_list pos:start="39:19" pos:end="39:63">(<argument pos:start="39:20" pos:end="39:23"><expr pos:start="39:20" pos:end="39:23"><name pos:start="39:20" pos:end="39:23">errp</name></expr></argument>, <argument pos:start="39:26" pos:end="39:53"><expr pos:start="39:26" pos:end="39:53"><literal type="string" pos:start="39:26" pos:end="39:33">"Time %"</literal> <name pos:start="39:35" pos:end="39:40">PRId64</name> <literal type="string" pos:start="39:42" pos:end="39:53">"is invalid"</literal></expr></argument>, <argument pos:start="39:56" pos:end="39:62"><expr pos:start="39:56" pos:end="39:62"><name pos:start="39:56" pos:end="39:62">time_ns</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="41:9" pos:end="41:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="47:5" pos:end="47:41"><expr pos:start="47:5" pos:end="47:40"><name pos:start="47:5" pos:end="47:8">time</name> <operator pos:start="47:10" pos:end="47:10">=</operator> <name pos:start="47:12" pos:end="47:18">time_ns</name> <operator pos:start="47:20" pos:end="47:20">/</operator> <literal type="number" pos:start="47:22" pos:end="47:26">100</literal> <operator pos:start="47:26" pos:end="47:26">+</operator> <name pos:start="47:28" pos:end="47:40">W32_FT_OFFSET</name></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="51:5" pos:end="51:36"><expr pos:start="51:5" pos:end="51:35"><name pos:start="51:5" pos:end="51:20"><name pos:start="51:5" pos:end="51:6">tf</name><operator pos:start="51:7" pos:end="51:7">.</operator><name pos:start="51:8" pos:end="51:20">dwLowDateTime</name></name> <operator pos:start="51:22" pos:end="51:22">=</operator> <operator pos:start="51:24" pos:end="51:24">(</operator><name pos:start="51:25" pos:end="51:29">DWORD</name><operator pos:start="51:30" pos:end="51:30">)</operator> <name pos:start="51:32" pos:end="51:35">time</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="53:5" pos:end="53:45"><expr pos:start="53:5" pos:end="53:44"><name pos:start="53:5" pos:end="53:21"><name pos:start="53:5" pos:end="53:6">tf</name><operator pos:start="53:7" pos:end="53:7">.</operator><name pos:start="53:8" pos:end="53:21">dwHighDateTime</name></name> <operator pos:start="53:23" pos:end="53:23">=</operator> <operator pos:start="53:25" pos:end="53:25">(</operator><name pos:start="53:26" pos:end="53:30">DWORD</name><operator pos:start="53:31" pos:end="53:31">)</operator> <operator pos:start="53:33" pos:end="53:33">(</operator><name pos:start="53:34" pos:end="53:37">time</name> <operator pos:start="53:39" pos:end="53:40">&gt;&gt;</operator> <literal type="number" pos:start="53:42" pos:end="53:43">32</literal><operator pos:start="53:44" pos:end="53:44">)</operator></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="57:5" pos:end="65:5"><if pos:start="57:5" pos:end="65:5">if <condition pos:start="57:8" pos:end="57:40">(<expr pos:start="57:9" pos:end="57:39"><operator pos:start="57:9" pos:end="57:9">!</operator><call pos:start="57:10" pos:end="57:39"><name pos:start="57:10" pos:end="57:29">FileTimeToSystemTime</name><argument_list pos:start="57:30" pos:end="57:39">(<argument pos:start="57:31" pos:end="57:33"><expr pos:start="57:31" pos:end="57:33"><operator pos:start="57:31" pos:end="57:31">&amp;</operator><name pos:start="57:32" pos:end="57:33">tf</name></expr></argument>, <argument pos:start="57:36" pos:end="57:38"><expr pos:start="57:36" pos:end="57:38"><operator pos:start="57:36" pos:end="57:36">&amp;</operator><name pos:start="57:37" pos:end="57:38">ts</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="57:42" pos:end="65:5">{<block_content pos:start="59:9" pos:end="63:15">
+
+        <expr_stmt pos:start="59:9" pos:end="61:40"><expr pos:start="59:9" pos:end="61:39"><call pos:start="59:9" pos:end="61:39"><name pos:start="59:9" pos:end="59:18">error_setg</name><argument_list pos:start="59:19" pos:end="61:39">(<argument pos:start="59:20" pos:end="59:23"><expr pos:start="59:20" pos:end="59:23"><name pos:start="59:20" pos:end="59:23">errp</name></expr></argument>, <argument pos:start="59:26" pos:end="59:59"><expr pos:start="59:26" pos:end="59:59"><literal type="string" pos:start="59:26" pos:end="59:59">"Failed to convert system time %d"</literal></expr></argument>,
+
+                   <argument pos:start="61:20" pos:end="61:38"><expr pos:start="61:20" pos:end="61:38"><operator pos:start="61:20" pos:end="61:20">(</operator><name pos:start="61:21" pos:end="61:23">int</name><operator pos:start="61:24" pos:end="61:24">)</operator><call pos:start="61:25" pos:end="61:38"><name pos:start="61:25" pos:end="61:36">GetLastError</name><argument_list pos:start="61:37" pos:end="61:38">()</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="63:9" pos:end="63:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="69:5" pos:end="69:54"><expr pos:start="69:5" pos:end="69:53"><call pos:start="69:5" pos:end="69:53"><name pos:start="69:5" pos:end="69:21">acquire_privilege</name><argument_list pos:start="69:22" pos:end="69:53">(<argument pos:start="69:23" pos:end="69:40"><expr pos:start="69:23" pos:end="69:40"><name pos:start="69:23" pos:end="69:40">SE_SYSTEMTIME_NAME</name></expr></argument>, <argument pos:start="69:43" pos:end="69:52"><expr pos:start="69:43" pos:end="69:52"><operator pos:start="69:43" pos:end="69:43">&amp;</operator><name pos:start="69:44" pos:end="69:52">local_err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="71:5" pos:end="77:5"><if pos:start="71:5" pos:end="77:5">if <condition pos:start="71:8" pos:end="71:18">(<expr pos:start="71:9" pos:end="71:17"><name pos:start="71:9" pos:end="71:17">local_err</name></expr>)</condition> <block pos:start="71:20" pos:end="77:5">{<block_content pos:start="73:9" pos:end="75:15">
+
+        <expr_stmt pos:start="73:9" pos:end="73:41"><expr pos:start="73:9" pos:end="73:40"><call pos:start="73:9" pos:end="73:40"><name pos:start="73:9" pos:end="73:23">error_propagate</name><argument_list pos:start="73:24" pos:end="73:40">(<argument pos:start="73:25" pos:end="73:28"><expr pos:start="73:25" pos:end="73:28"><name pos:start="73:25" pos:end="73:28">errp</name></expr></argument>, <argument pos:start="73:31" pos:end="73:39"><expr pos:start="73:31" pos:end="73:39"><name pos:start="73:31" pos:end="73:39">local_err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="75:9" pos:end="75:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="81:5" pos:end="87:5"><if pos:start="81:5" pos:end="87:5">if <condition pos:start="81:8" pos:end="81:28">(<expr pos:start="81:9" pos:end="81:27"><operator pos:start="81:9" pos:end="81:9">!</operator><call pos:start="81:10" pos:end="81:27"><name pos:start="81:10" pos:end="81:22">SetSystemTime</name><argument_list pos:start="81:23" pos:end="81:27">(<argument pos:start="81:24" pos:end="81:26"><expr pos:start="81:24" pos:end="81:26"><operator pos:start="81:24" pos:end="81:24">&amp;</operator><name pos:start="81:25" pos:end="81:26">ts</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="81:30" pos:end="87:5">{<block_content pos:start="83:9" pos:end="85:15">
+
+        <expr_stmt pos:start="83:9" pos:end="83:81"><expr pos:start="83:9" pos:end="83:80"><call pos:start="83:9" pos:end="83:80"><name pos:start="83:9" pos:end="83:18">error_setg</name><argument_list pos:start="83:19" pos:end="83:80">(<argument pos:start="83:20" pos:end="83:23"><expr pos:start="83:20" pos:end="83:23"><name pos:start="83:20" pos:end="83:23">errp</name></expr></argument>, <argument pos:start="83:26" pos:end="83:58"><expr pos:start="83:26" pos:end="83:58"><literal type="string" pos:start="83:26" pos:end="83:58">"Failed to set time to guest: %d"</literal></expr></argument>, <argument pos:start="83:61" pos:end="83:79"><expr pos:start="83:61" pos:end="83:79"><operator pos:start="83:61" pos:end="83:61">(</operator><name pos:start="83:62" pos:end="83:64">int</name><operator pos:start="83:65" pos:end="83:65">)</operator><call pos:start="83:66" pos:end="83:79"><name pos:start="83:66" pos:end="83:77">GetLastError</name><argument_list pos:start="83:78" pos:end="83:79">()</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="85:9" pos:end="85:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+</block_content>}</block></function>
+</unit>

@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/17565.c" pos:tabs="8"><macro pos:start="1:1" pos:end="1:32"><name pos:start="1:1" pos:end="1:7">LF_FUNC</name> <argument_list pos:start="1:9" pos:end="1:32">(<argument pos:start="1:10" pos:end="1:10">h</argument>,  <argument pos:start="1:14" pos:end="1:17">luma</argument>,         <argument pos:start="1:28" pos:end="1:31">sse2</argument>)</argument_list></macro>
+
+<macro pos:start="3:1" pos:end="3:32"><name pos:start="3:1" pos:end="3:8">LF_IFUNC</name><argument_list pos:start="3:9" pos:end="3:32">(<argument pos:start="3:10" pos:end="3:10">h</argument>,  <argument pos:start="3:14" pos:end="3:23">luma_intra</argument>,   <argument pos:start="3:28" pos:end="3:31">sse2</argument>)</argument_list></macro>
+
+<macro pos:start="5:1" pos:end="5:32"><name pos:start="5:1" pos:end="5:7">LF_FUNC</name> <argument_list pos:start="5:9" pos:end="5:32">(<argument pos:start="5:10" pos:end="5:10">v</argument>,  <argument pos:start="5:14" pos:end="5:17">luma</argument>,         <argument pos:start="5:28" pos:end="5:31">sse2</argument>)</argument_list></macro>
+
+<macro pos:start="7:1" pos:end="52:0"><name pos:start="7:1" pos:end="7:8">LF_IFUNC</name><argument_list pos:start="7:9" pos:end="52:0">(<argument pos:start="7:10" pos:end="7:10">v</argument>,  <argument pos:start="7:14" pos:end="7:23">luma_intra</argument>,   <argument pos:start="7:28" pos:end="7:31">sse2</argument>)</argument_list></macro>
+
+
+
+<comment type="block" format="doxygen" pos:start="11:1" pos:end="11:37">/***********************************/</comment>
+
+<comment type="block" pos:start="13:1" pos:end="13:25">/* weighted prediction */</comment>
+
+
+
+<cpp:define pos:start="17:1" pos:end="21:56">#<cpp:directive pos:start="17:2" pos:end="17:7">define</cpp:directive> <cpp:macro pos:start="17:9" pos:end="17:30"><name pos:start="17:9" pos:end="17:19">H264_WEIGHT</name><parameter_list pos:start="17:20" pos:end="17:30">(<parameter pos:start="17:21" pos:end="17:21"><type pos:start="17:21" pos:end="17:21"><name pos:start="17:21" pos:end="17:21">W</name></type></parameter>, <parameter pos:start="17:24" pos:end="17:24"><type pos:start="17:24" pos:end="17:24"><name pos:start="17:24" pos:end="17:24">H</name></type></parameter>, <parameter pos:start="17:27" pos:end="17:29"><type pos:start="17:27" pos:end="17:29"><name pos:start="17:27" pos:end="17:29">OPT</name></type></parameter>)</parameter_list></cpp:macro> \
+
+<cpp:value pos:start="19:1" pos:end="21:56">void ff_h264_weight_ ## W ## x ## H ## _ ## OPT(uint8_t *dst, \
+
+    int stride, int log2_denom, int weight, int offset);</cpp:value></cpp:define>
+
+
+
+<cpp:define pos:start="25:1" pos:end="31:29">#<cpp:directive pos:start="25:2" pos:end="25:7">define</cpp:directive> <cpp:macro pos:start="25:9" pos:end="25:32"><name pos:start="25:9" pos:end="25:21">H264_BIWEIGHT</name><parameter_list pos:start="25:22" pos:end="25:32">(<parameter pos:start="25:23" pos:end="25:23"><type pos:start="25:23" pos:end="25:23"><name pos:start="25:23" pos:end="25:23">W</name></type></parameter>, <parameter pos:start="25:26" pos:end="25:26"><type pos:start="25:26" pos:end="25:26"><name pos:start="25:26" pos:end="25:26">H</name></type></parameter>, <parameter pos:start="25:29" pos:end="25:31"><type pos:start="25:29" pos:end="25:31"><name pos:start="25:29" pos:end="25:31">OPT</name></type></parameter>)</parameter_list></cpp:macro> \
+
+<cpp:value pos:start="27:1" pos:end="31:29">void ff_h264_biweight_ ## W ## x ## H ## _ ## OPT(uint8_t *dst, \
+
+    uint8_t *src, int stride, int log2_denom, int weightd, \
+
+    int weights, int offset);</cpp:value></cpp:define>
+
+
+
+<cpp:define pos:start="35:1" pos:end="39:25">#<cpp:directive pos:start="35:2" pos:end="35:7">define</cpp:directive> <cpp:macro pos:start="35:9" pos:end="35:30"><name pos:start="35:9" pos:end="35:25">H264_BIWEIGHT_MMX</name><parameter_list pos:start="35:26" pos:end="35:30">(<parameter pos:start="35:27" pos:end="35:27"><type pos:start="35:27" pos:end="35:27"><name pos:start="35:27" pos:end="35:27">W</name></type></parameter>,<parameter pos:start="35:29" pos:end="35:29"><type pos:start="35:29" pos:end="35:29"><name pos:start="35:29" pos:end="35:29">H</name></type></parameter>)</parameter_list></cpp:macro> \
+
+<cpp:value pos:start="37:1" pos:end="39:25">H264_WEIGHT  (W, H, mmx2) \
+
+H264_BIWEIGHT(W, H, mmx2)</cpp:value></cpp:define>
+
+
+
+<cpp:define pos:start="43:1" pos:end="51:30">#<cpp:directive pos:start="43:2" pos:end="43:7">define</cpp:directive> <cpp:macro pos:start="43:9" pos:end="43:34"><name pos:start="43:9" pos:end="43:29">H264_BIWEIGHT_MMX_SSE</name><parameter_list pos:start="43:30" pos:end="43:34">(<parameter pos:start="43:31" pos:end="43:31"><type pos:start="43:31" pos:end="43:31"><name pos:start="43:31" pos:end="43:31">W</name></type></parameter>,<parameter pos:start="43:33" pos:end="43:33"><type pos:start="43:33" pos:end="43:33"><name pos:start="43:33" pos:end="43:33">H</name></type></parameter>)</parameter_list></cpp:macro> \
+
+<cpp:value pos:start="45:1" pos:end="51:30">H264_BIWEIGHT_MMX(W, H) \
+
+H264_WEIGHT      (W, H, sse2) \
+
+H264_BIWEIGHT    (W, H, sse2) \
+
+H264_BIWEIGHT    (W, H, ssse3)</cpp:value></cpp:define>
+
+
+
+<macro pos:start="55:1" pos:end="55:29"><name pos:start="55:1" pos:end="55:21">H264_BIWEIGHT_MMX_SSE</name><argument_list pos:start="55:22" pos:end="55:29">(<argument pos:start="55:23" pos:end="55:24"><literal type="number" pos:start="55:23" pos:end="55:24">16</literal></argument>, <argument pos:start="55:27" pos:end="55:28"><literal type="number" pos:start="55:27" pos:end="55:28">16</literal></argument>)</argument_list></macro>
+
+<macro pos:start="57:1" pos:end="57:29"><name pos:start="57:1" pos:end="57:21">H264_BIWEIGHT_MMX_SSE</name><argument_list pos:start="57:22" pos:end="57:29">(<argument pos:start="57:23" pos:end="57:24"><literal type="number" pos:start="57:23" pos:end="57:24">16</literal></argument>,  <argument pos:start="57:28" pos:end="57:28"><literal type="number" pos:start="57:28" pos:end="57:28">8</literal></argument>)</argument_list></macro>
+
+<macro pos:start="59:1" pos:end="59:29"><name pos:start="59:1" pos:end="59:21">H264_BIWEIGHT_MMX_SSE</name><argument_list pos:start="59:22" pos:end="59:29">( <argument pos:start="59:24" pos:end="59:24"><literal type="number" pos:start="59:24" pos:end="59:24">8</literal></argument>, <argument pos:start="59:27" pos:end="59:28"><literal type="number" pos:start="59:27" pos:end="59:28">16</literal></argument>)</argument_list></macro>
+
+<macro pos:start="61:1" pos:end="61:29"><name pos:start="61:1" pos:end="61:21">H264_BIWEIGHT_MMX_SSE</name><argument_list pos:start="61:22" pos:end="61:29">( <argument pos:start="61:24" pos:end="61:24"><literal type="number" pos:start="61:24" pos:end="61:24">8</literal></argument>,  <argument pos:start="61:28" pos:end="61:28"><literal type="number" pos:start="61:28" pos:end="61:28">8</literal></argument>)</argument_list></macro>
+
+<macro pos:start="63:1" pos:end="63:29"><name pos:start="63:1" pos:end="63:21">H264_BIWEIGHT_MMX_SSE</name><argument_list pos:start="63:22" pos:end="63:29">( <argument pos:start="63:24" pos:end="63:24"><literal type="number" pos:start="63:24" pos:end="63:24">8</literal></argument>,  <argument pos:start="63:28" pos:end="63:28"><literal type="number" pos:start="63:28" pos:end="63:28">4</literal></argument>)</argument_list></macro>
+
+<macro pos:start="65:1" pos:end="65:29"><name pos:start="65:1" pos:end="65:17">H264_BIWEIGHT_MMX</name>    <argument_list pos:start="65:22" pos:end="65:29">( <argument pos:start="65:24" pos:end="65:24"><literal type="number" pos:start="65:24" pos:end="65:24">4</literal></argument>,  <argument pos:start="65:28" pos:end="65:28"><literal type="number" pos:start="65:28" pos:end="65:28">8</literal></argument>)</argument_list></macro>
+
+<macro pos:start="67:1" pos:end="67:29"><name pos:start="67:1" pos:end="67:17">H264_BIWEIGHT_MMX</name>    <argument_list pos:start="67:22" pos:end="67:29">( <argument pos:start="67:24" pos:end="67:24"><literal type="number" pos:start="67:24" pos:end="67:24">4</literal></argument>,  <argument pos:start="67:28" pos:end="67:28"><literal type="number" pos:start="67:28" pos:end="67:28">4</literal></argument>)</argument_list></macro>
+
+<macro pos:start="69:1" pos:end="69:29"><name pos:start="69:1" pos:end="69:17">H264_BIWEIGHT_MMX</name>    <argument_list pos:start="69:22" pos:end="69:29">( <argument pos:start="69:24" pos:end="69:24"><literal type="number" pos:start="69:24" pos:end="69:24">4</literal></argument>,  <argument pos:start="69:28" pos:end="69:28"><literal type="number" pos:start="69:28" pos:end="69:28">2</literal></argument>)</argument_list></macro>
+
+
+
+<function pos:start="73:1" pos:end="259:1"><type pos:start="73:1" pos:end="73:4"><name pos:start="73:1" pos:end="73:4">void</name></type> <name pos:start="73:6" pos:end="73:24">ff_h264dsp_init_x86</name><parameter_list pos:start="73:25" pos:end="73:43">(<parameter pos:start="73:26" pos:end="73:42"><decl pos:start="73:26" pos:end="73:42"><type pos:start="73:26" pos:end="73:41"><name pos:start="73:26" pos:end="73:39">H264DSPContext</name> <modifier pos:start="73:41" pos:end="73:41">*</modifier></type><name pos:start="73:42" pos:end="73:42">c</name></decl></parameter>)</parameter_list>
+
+<block pos:start="75:1" pos:end="259:1">{<block_content pos:start="77:5" pos:end="257:5">
+
+    <decl_stmt pos:start="77:5" pos:end="77:38"><decl pos:start="77:5" pos:end="77:37"><type pos:start="77:5" pos:end="77:7"><name pos:start="77:5" pos:end="77:7">int</name></type> <name pos:start="77:9" pos:end="77:16">mm_flags</name> <init pos:start="77:18" pos:end="77:37">= <expr pos:start="77:20" pos:end="77:37"><call pos:start="77:20" pos:end="77:37"><name pos:start="77:20" pos:end="77:35">av_get_cpu_flags</name><argument_list pos:start="77:36" pos:end="77:37">()</argument_list></call></expr></init></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="81:5" pos:end="257:5"><if pos:start="81:5" pos:end="257:5">if <condition pos:start="81:8" pos:end="81:35">(<expr pos:start="81:9" pos:end="81:34"><name pos:start="81:9" pos:end="81:16">mm_flags</name> <operator pos:start="81:18" pos:end="81:18">&amp;</operator> <name pos:start="81:20" pos:end="81:34">AV_CPU_FLAG_MMX</name></expr>)</condition> <block pos:start="81:37" pos:end="257:5">{<block_content pos:start="83:9" pos:end="256:0">
+
+        <expr_stmt pos:start="83:9" pos:end="85:47"><expr pos:start="83:9" pos:end="85:46"><name pos:start="83:9" pos:end="83:27"><name pos:start="83:9" pos:end="83:9">c</name><operator pos:start="83:10" pos:end="83:11">-&gt;</operator><name pos:start="83:12" pos:end="83:27">h264_idct_dc_add</name></name><operator pos:start="83:28" pos:end="83:28">=</operator>
+
+        <name pos:start="85:9" pos:end="85:24"><name pos:start="85:9" pos:end="85:9">c</name><operator pos:start="85:10" pos:end="85:11">-&gt;</operator><name pos:start="85:12" pos:end="85:24">h264_idct_add</name></name><operator pos:start="85:25" pos:end="85:25">=</operator> <name pos:start="85:27" pos:end="85:46">ff_h264_idct_add_mmx</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="87:9" pos:end="89:49"><expr pos:start="87:9" pos:end="89:48"><name pos:start="87:9" pos:end="87:28"><name pos:start="87:9" pos:end="87:9">c</name><operator pos:start="87:10" pos:end="87:11">-&gt;</operator><name pos:start="87:12" pos:end="87:28">h264_idct8_dc_add</name></name><operator pos:start="87:29" pos:end="87:29">=</operator>
+
+        <name pos:start="89:9" pos:end="89:25"><name pos:start="89:9" pos:end="89:9">c</name><operator pos:start="89:10" pos:end="89:11">-&gt;</operator><name pos:start="89:12" pos:end="89:25">h264_idct8_add</name></name><operator pos:start="89:26" pos:end="89:26">=</operator> <name pos:start="89:28" pos:end="89:48">ff_h264_idct8_add_mmx</name></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="93:9" pos:end="93:56"><expr pos:start="93:9" pos:end="93:55"><name pos:start="93:9" pos:end="93:26"><name pos:start="93:9" pos:end="93:9">c</name><operator pos:start="93:10" pos:end="93:11">-&gt;</operator><name pos:start="93:12" pos:end="93:26">h264_idct_add16</name></name>     <operator pos:start="93:32" pos:end="93:32">=</operator> <name pos:start="93:34" pos:end="93:55">ff_h264_idct_add16_mmx</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="95:9" pos:end="95:56"><expr pos:start="95:9" pos:end="95:55"><name pos:start="95:9" pos:end="95:26"><name pos:start="95:9" pos:end="95:9">c</name><operator pos:start="95:10" pos:end="95:11">-&gt;</operator><name pos:start="95:12" pos:end="95:26">h264_idct8_add4</name></name>     <operator pos:start="95:32" pos:end="95:32">=</operator> <name pos:start="95:34" pos:end="95:55">ff_h264_idct8_add4_mmx</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="97:9" pos:end="97:55"><expr pos:start="97:9" pos:end="97:54"><name pos:start="97:9" pos:end="97:25"><name pos:start="97:9" pos:end="97:9">c</name><operator pos:start="97:10" pos:end="97:11">-&gt;</operator><name pos:start="97:12" pos:end="97:25">h264_idct_add8</name></name>      <operator pos:start="97:32" pos:end="97:32">=</operator> <name pos:start="97:34" pos:end="97:54">ff_h264_idct_add8_mmx</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="99:9" pos:end="99:61"><expr pos:start="99:9" pos:end="99:60"><name pos:start="99:9" pos:end="99:31"><name pos:start="99:9" pos:end="99:9">c</name><operator pos:start="99:10" pos:end="99:11">-&gt;</operator><name pos:start="99:12" pos:end="99:31">h264_idct_add16intra</name></name><operator pos:start="99:32" pos:end="99:32">=</operator> <name pos:start="99:34" pos:end="99:60">ff_h264_idct_add16intra_mmx</name></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="103:9" pos:end="121:9"><if pos:start="103:9" pos:end="121:9">if <condition pos:start="103:12" pos:end="103:40">(<expr pos:start="103:13" pos:end="103:39"><name pos:start="103:13" pos:end="103:20">mm_flags</name> <operator pos:start="103:22" pos:end="103:22">&amp;</operator> <name pos:start="103:24" pos:end="103:39">AV_CPU_FLAG_MMX2</name></expr>)</condition> <block pos:start="103:42" pos:end="121:9">{<block_content pos:start="105:13" pos:end="119:73">
+
+            <expr_stmt pos:start="105:13" pos:end="105:58"><expr pos:start="105:13" pos:end="105:57"><name pos:start="105:13" pos:end="105:31"><name pos:start="105:13" pos:end="105:13">c</name><operator pos:start="105:14" pos:end="105:15">-&gt;</operator><name pos:start="105:16" pos:end="105:31">h264_idct_dc_add</name></name><operator pos:start="105:32" pos:end="105:32">=</operator> <name pos:start="105:34" pos:end="105:57">ff_h264_idct_dc_add_mmx2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="107:13" pos:end="107:60"><expr pos:start="107:13" pos:end="107:59"><name pos:start="107:13" pos:end="107:32"><name pos:start="107:13" pos:end="107:13">c</name><operator pos:start="107:14" pos:end="107:15">-&gt;</operator><name pos:start="107:16" pos:end="107:32">h264_idct8_dc_add</name></name><operator pos:start="107:33" pos:end="107:33">=</operator> <name pos:start="107:35" pos:end="107:59">ff_h264_idct8_dc_add_mmx2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="109:13" pos:end="109:61"><expr pos:start="109:13" pos:end="109:60"><name pos:start="109:13" pos:end="109:30"><name pos:start="109:13" pos:end="109:13">c</name><operator pos:start="109:14" pos:end="109:15">-&gt;</operator><name pos:start="109:16" pos:end="109:30">h264_idct_add16</name></name>     <operator pos:start="109:36" pos:end="109:36">=</operator> <name pos:start="109:38" pos:end="109:60">ff_h264_idct_add16_mmx2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="111:13" pos:end="111:61"><expr pos:start="111:13" pos:end="111:60"><name pos:start="111:13" pos:end="111:30"><name pos:start="111:13" pos:end="111:13">c</name><operator pos:start="111:14" pos:end="111:15">-&gt;</operator><name pos:start="111:16" pos:end="111:30">h264_idct8_add4</name></name>     <operator pos:start="111:36" pos:end="111:36">=</operator> <name pos:start="111:38" pos:end="111:60">ff_h264_idct8_add4_mmx2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="113:13" pos:end="113:60"><expr pos:start="113:13" pos:end="113:59"><name pos:start="113:13" pos:end="113:29"><name pos:start="113:13" pos:end="113:13">c</name><operator pos:start="113:14" pos:end="113:15">-&gt;</operator><name pos:start="113:16" pos:end="113:29">h264_idct_add8</name></name>      <operator pos:start="113:36" pos:end="113:36">=</operator> <name pos:start="113:38" pos:end="113:59">ff_h264_idct_add8_mmx2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="115:13" pos:end="115:66"><expr pos:start="115:13" pos:end="115:65"><name pos:start="115:13" pos:end="115:35"><name pos:start="115:13" pos:end="115:13">c</name><operator pos:start="115:14" pos:end="115:15">-&gt;</operator><name pos:start="115:16" pos:end="115:35">h264_idct_add16intra</name></name><operator pos:start="115:36" pos:end="115:36">=</operator> <name pos:start="115:38" pos:end="115:65">ff_h264_idct_add16intra_mmx2</name></expr>;</expr_stmt>
+
+
+
+            <expr_stmt pos:start="119:13" pos:end="119:73"><expr pos:start="119:13" pos:end="119:72"><name pos:start="119:13" pos:end="119:40"><name pos:start="119:13" pos:end="119:13">c</name><operator pos:start="119:14" pos:end="119:15">-&gt;</operator><name pos:start="119:16" pos:end="119:40">h264_loop_filter_strength</name></name><operator pos:start="119:41" pos:end="119:41">=</operator> <name pos:start="119:43" pos:end="119:72">h264_loop_filter_strength_mmx2</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <if_stmt pos:start="123:9" pos:end="134:0"><if pos:start="123:9" pos:end="134:0">if<condition pos:start="123:11" pos:end="123:39">(<expr pos:start="123:12" pos:end="123:38"><name pos:start="123:12" pos:end="123:19">mm_flags</name> <operator pos:start="123:21" pos:end="123:21">&amp;</operator> <name pos:start="123:23" pos:end="123:38">AV_CPU_FLAG_SSE2</name></expr>)</condition><block pos:start="123:40" pos:end="134:0">{<block_content pos:start="125:13" pos:end="127:56">
+
+            <expr_stmt pos:start="125:13" pos:end="125:55"><expr pos:start="125:13" pos:end="125:54"><name pos:start="125:13" pos:end="125:29"><name pos:start="125:13" pos:end="125:13">c</name><operator pos:start="125:14" pos:end="125:15">-&gt;</operator><name pos:start="125:16" pos:end="125:29">h264_idct8_add</name></name> <operator pos:start="125:31" pos:end="125:31">=</operator> <name pos:start="125:33" pos:end="125:54">ff_h264_idct8_add_sse2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="127:13" pos:end="127:56"><expr pos:start="127:13" pos:end="127:55"><name pos:start="127:13" pos:end="127:30"><name pos:start="127:13" pos:end="127:13">c</name><operator pos:start="127:14" pos:end="127:15">-&gt;</operator><name pos:start="127:16" pos:end="127:30">h264_idct8_add4</name></name><operator pos:start="127:31" pos:end="127:31">=</operator> <name pos:start="127:33" pos:end="127:55">ff_h264_idct8_add4_sse2</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+<cpp:if pos:start="133:1" pos:end="133:13">#<cpp:directive pos:start="133:2" pos:end="133:3">if</cpp:directive> <expr pos:start="133:5" pos:end="133:13"><name pos:start="133:5" pos:end="133:13">HAVE_YASM</name></expr></cpp:if>
+
+        <if_stmt pos:start="135:9" pos:end="256:0"><if pos:start="135:9" pos:end="256:0">if <condition pos:start="135:12" pos:end="135:40">(<expr pos:start="135:13" pos:end="135:39"><name pos:start="135:13" pos:end="135:20">mm_flags</name> <operator pos:start="135:22" pos:end="135:22">&amp;</operator> <name pos:start="135:24" pos:end="135:39">AV_CPU_FLAG_MMX2</name></expr>)</condition><block pos:start="135:41" pos:end="256:0">{<block_content pos:start="137:13" pos:end="251:13">
+
+            <expr_stmt pos:start="137:13" pos:end="137:74"><expr pos:start="137:13" pos:end="137:73"><name pos:start="137:13" pos:end="137:40"><name pos:start="137:13" pos:end="137:13">c</name><operator pos:start="137:14" pos:end="137:15">-&gt;</operator><name pos:start="137:16" pos:end="137:40">h264_v_loop_filter_chroma</name></name><operator pos:start="137:41" pos:end="137:41">=</operator> <name pos:start="137:43" pos:end="137:73">ff_x264_deblock_v_chroma_mmxext</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="139:13" pos:end="139:74"><expr pos:start="139:13" pos:end="139:73"><name pos:start="139:13" pos:end="139:40"><name pos:start="139:13" pos:end="139:13">c</name><operator pos:start="139:14" pos:end="139:15">-&gt;</operator><name pos:start="139:16" pos:end="139:40">h264_h_loop_filter_chroma</name></name><operator pos:start="139:41" pos:end="139:41">=</operator> <name pos:start="139:43" pos:end="139:73">ff_x264_deblock_h_chroma_mmxext</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="141:13" pos:end="141:86"><expr pos:start="141:13" pos:end="141:85"><name pos:start="141:13" pos:end="141:46"><name pos:start="141:13" pos:end="141:13">c</name><operator pos:start="141:14" pos:end="141:15">-&gt;</operator><name pos:start="141:16" pos:end="141:46">h264_v_loop_filter_chroma_intra</name></name><operator pos:start="141:47" pos:end="141:47">=</operator> <name pos:start="141:49" pos:end="141:85">ff_x264_deblock_v_chroma_intra_mmxext</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="143:13" pos:end="146:0"><expr pos:start="143:13" pos:end="143:85"><name pos:start="143:13" pos:end="143:46"><name pos:start="143:13" pos:end="143:13">c</name><operator pos:start="143:14" pos:end="143:15">-&gt;</operator><name pos:start="143:16" pos:end="143:46">h264_h_loop_filter_chroma_intra</name></name><operator pos:start="143:47" pos:end="143:47">=</operator> <name pos:start="143:49" pos:end="143:85">ff_x264_deblock_h_chroma_intra_mmxext</name></expr>;</expr_stmt>
+
+<cpp:if pos:start="145:1" pos:end="145:15">#<cpp:directive pos:start="145:2" pos:end="145:3">if</cpp:directive> <expr pos:start="145:5" pos:end="145:15"><name pos:start="145:5" pos:end="145:15">ARCH_X86_32</name></expr></cpp:if>
+
+            <expr_stmt pos:start="147:13" pos:end="147:70"><expr pos:start="147:13" pos:end="147:69"><name pos:start="147:13" pos:end="147:38"><name pos:start="147:13" pos:end="147:13">c</name><operator pos:start="147:14" pos:end="147:15">-&gt;</operator><name pos:start="147:16" pos:end="147:38">h264_v_loop_filter_luma</name></name><operator pos:start="147:39" pos:end="147:39">=</operator> <name pos:start="147:41" pos:end="147:69">ff_x264_deblock_v_luma_mmxext</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="149:13" pos:end="149:70"><expr pos:start="149:13" pos:end="149:69"><name pos:start="149:13" pos:end="149:38"><name pos:start="149:13" pos:end="149:13">c</name><operator pos:start="149:14" pos:end="149:15">-&gt;</operator><name pos:start="149:16" pos:end="149:38">h264_h_loop_filter_luma</name></name><operator pos:start="149:39" pos:end="149:39">=</operator> <name pos:start="149:41" pos:end="149:69">ff_x264_deblock_h_luma_mmxext</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="151:13" pos:end="151:83"><expr pos:start="151:13" pos:end="151:82"><name pos:start="151:13" pos:end="151:44"><name pos:start="151:13" pos:end="151:13">c</name><operator pos:start="151:14" pos:end="151:15">-&gt;</operator><name pos:start="151:16" pos:end="151:44">h264_v_loop_filter_luma_intra</name></name> <operator pos:start="151:46" pos:end="151:46">=</operator> <name pos:start="151:48" pos:end="151:82">ff_x264_deblock_v_luma_intra_mmxext</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="153:13" pos:end="156:0"><expr pos:start="153:13" pos:end="153:82"><name pos:start="153:13" pos:end="153:44"><name pos:start="153:13" pos:end="153:13">c</name><operator pos:start="153:14" pos:end="153:15">-&gt;</operator><name pos:start="153:16" pos:end="153:44">h264_h_loop_filter_luma_intra</name></name> <operator pos:start="153:46" pos:end="153:46">=</operator> <name pos:start="153:48" pos:end="153:82">ff_x264_deblock_h_luma_intra_mmxext</name></expr>;</expr_stmt>
+
+<cpp:endif pos:start="155:1" pos:end="155:6">#<cpp:directive pos:start="155:2" pos:end="155:6">endif</cpp:directive></cpp:endif>
+
+            <expr_stmt pos:start="157:13" pos:end="157:68"><expr pos:start="157:13" pos:end="157:67"><name pos:start="157:13" pos:end="157:40"><name pos:start="157:13" pos:end="157:13">c</name><operator pos:start="157:14" pos:end="157:15">-&gt;</operator><name pos:start="157:16" pos:end="157:37">weight_h264_pixels_tab</name><index pos:start="157:38" pos:end="157:40">[<expr pos:start="157:39" pos:end="157:39"><literal type="number" pos:start="157:39" pos:end="157:39">0</literal></expr>]</index></name><operator pos:start="157:41" pos:end="157:41">=</operator> <name pos:start="157:43" pos:end="157:67">ff_h264_weight_16x16_mmx2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="159:13" pos:end="159:67"><expr pos:start="159:13" pos:end="159:66"><name pos:start="159:13" pos:end="159:40"><name pos:start="159:13" pos:end="159:13">c</name><operator pos:start="159:14" pos:end="159:15">-&gt;</operator><name pos:start="159:16" pos:end="159:37">weight_h264_pixels_tab</name><index pos:start="159:38" pos:end="159:40">[<expr pos:start="159:39" pos:end="159:39"><literal type="number" pos:start="159:39" pos:end="159:39">1</literal></expr>]</index></name><operator pos:start="159:41" pos:end="159:41">=</operator> <name pos:start="159:43" pos:end="159:66">ff_h264_weight_16x8_mmx2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="161:13" pos:end="161:67"><expr pos:start="161:13" pos:end="161:66"><name pos:start="161:13" pos:end="161:40"><name pos:start="161:13" pos:end="161:13">c</name><operator pos:start="161:14" pos:end="161:15">-&gt;</operator><name pos:start="161:16" pos:end="161:37">weight_h264_pixels_tab</name><index pos:start="161:38" pos:end="161:40">[<expr pos:start="161:39" pos:end="161:39"><literal type="number" pos:start="161:39" pos:end="161:39">2</literal></expr>]</index></name><operator pos:start="161:41" pos:end="161:41">=</operator> <name pos:start="161:43" pos:end="161:66">ff_h264_weight_8x16_mmx2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="163:13" pos:end="163:66"><expr pos:start="163:13" pos:end="163:65"><name pos:start="163:13" pos:end="163:40"><name pos:start="163:13" pos:end="163:13">c</name><operator pos:start="163:14" pos:end="163:15">-&gt;</operator><name pos:start="163:16" pos:end="163:37">weight_h264_pixels_tab</name><index pos:start="163:38" pos:end="163:40">[<expr pos:start="163:39" pos:end="163:39"><literal type="number" pos:start="163:39" pos:end="163:39">3</literal></expr>]</index></name><operator pos:start="163:41" pos:end="163:41">=</operator> <name pos:start="163:43" pos:end="163:65">ff_h264_weight_8x8_mmx2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="165:13" pos:end="165:66"><expr pos:start="165:13" pos:end="165:65"><name pos:start="165:13" pos:end="165:40"><name pos:start="165:13" pos:end="165:13">c</name><operator pos:start="165:14" pos:end="165:15">-&gt;</operator><name pos:start="165:16" pos:end="165:37">weight_h264_pixels_tab</name><index pos:start="165:38" pos:end="165:40">[<expr pos:start="165:39" pos:end="165:39"><literal type="number" pos:start="165:39" pos:end="165:39">4</literal></expr>]</index></name><operator pos:start="165:41" pos:end="165:41">=</operator> <name pos:start="165:43" pos:end="165:65">ff_h264_weight_8x4_mmx2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="167:13" pos:end="167:66"><expr pos:start="167:13" pos:end="167:65"><name pos:start="167:13" pos:end="167:40"><name pos:start="167:13" pos:end="167:13">c</name><operator pos:start="167:14" pos:end="167:15">-&gt;</operator><name pos:start="167:16" pos:end="167:37">weight_h264_pixels_tab</name><index pos:start="167:38" pos:end="167:40">[<expr pos:start="167:39" pos:end="167:39"><literal type="number" pos:start="167:39" pos:end="167:39">5</literal></expr>]</index></name><operator pos:start="167:41" pos:end="167:41">=</operator> <name pos:start="167:43" pos:end="167:65">ff_h264_weight_4x8_mmx2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="169:13" pos:end="169:66"><expr pos:start="169:13" pos:end="169:65"><name pos:start="169:13" pos:end="169:40"><name pos:start="169:13" pos:end="169:13">c</name><operator pos:start="169:14" pos:end="169:15">-&gt;</operator><name pos:start="169:16" pos:end="169:37">weight_h264_pixels_tab</name><index pos:start="169:38" pos:end="169:40">[<expr pos:start="169:39" pos:end="169:39"><literal type="number" pos:start="169:39" pos:end="169:39">6</literal></expr>]</index></name><operator pos:start="169:41" pos:end="169:41">=</operator> <name pos:start="169:43" pos:end="169:65">ff_h264_weight_4x4_mmx2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="171:13" pos:end="171:66"><expr pos:start="171:13" pos:end="171:65"><name pos:start="171:13" pos:end="171:40"><name pos:start="171:13" pos:end="171:13">c</name><operator pos:start="171:14" pos:end="171:15">-&gt;</operator><name pos:start="171:16" pos:end="171:37">weight_h264_pixels_tab</name><index pos:start="171:38" pos:end="171:40">[<expr pos:start="171:39" pos:end="171:39"><literal type="number" pos:start="171:39" pos:end="171:39">7</literal></expr>]</index></name><operator pos:start="171:41" pos:end="171:41">=</operator> <name pos:start="171:43" pos:end="171:65">ff_h264_weight_4x2_mmx2</name></expr>;</expr_stmt>
+
+
+
+            <expr_stmt pos:start="175:13" pos:end="175:72"><expr pos:start="175:13" pos:end="175:71"><name pos:start="175:13" pos:end="175:42"><name pos:start="175:13" pos:end="175:13">c</name><operator pos:start="175:14" pos:end="175:15">-&gt;</operator><name pos:start="175:16" pos:end="175:39">biweight_h264_pixels_tab</name><index pos:start="175:40" pos:end="175:42">[<expr pos:start="175:41" pos:end="175:41"><literal type="number" pos:start="175:41" pos:end="175:41">0</literal></expr>]</index></name><operator pos:start="175:43" pos:end="175:43">=</operator> <name pos:start="175:45" pos:end="175:71">ff_h264_biweight_16x16_mmx2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="177:13" pos:end="177:71"><expr pos:start="177:13" pos:end="177:70"><name pos:start="177:13" pos:end="177:42"><name pos:start="177:13" pos:end="177:13">c</name><operator pos:start="177:14" pos:end="177:15">-&gt;</operator><name pos:start="177:16" pos:end="177:39">biweight_h264_pixels_tab</name><index pos:start="177:40" pos:end="177:42">[<expr pos:start="177:41" pos:end="177:41"><literal type="number" pos:start="177:41" pos:end="177:41">1</literal></expr>]</index></name><operator pos:start="177:43" pos:end="177:43">=</operator> <name pos:start="177:45" pos:end="177:70">ff_h264_biweight_16x8_mmx2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="179:13" pos:end="179:71"><expr pos:start="179:13" pos:end="179:70"><name pos:start="179:13" pos:end="179:42"><name pos:start="179:13" pos:end="179:13">c</name><operator pos:start="179:14" pos:end="179:15">-&gt;</operator><name pos:start="179:16" pos:end="179:39">biweight_h264_pixels_tab</name><index pos:start="179:40" pos:end="179:42">[<expr pos:start="179:41" pos:end="179:41"><literal type="number" pos:start="179:41" pos:end="179:41">2</literal></expr>]</index></name><operator pos:start="179:43" pos:end="179:43">=</operator> <name pos:start="179:45" pos:end="179:70">ff_h264_biweight_8x16_mmx2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="181:13" pos:end="181:70"><expr pos:start="181:13" pos:end="181:69"><name pos:start="181:13" pos:end="181:42"><name pos:start="181:13" pos:end="181:13">c</name><operator pos:start="181:14" pos:end="181:15">-&gt;</operator><name pos:start="181:16" pos:end="181:39">biweight_h264_pixels_tab</name><index pos:start="181:40" pos:end="181:42">[<expr pos:start="181:41" pos:end="181:41"><literal type="number" pos:start="181:41" pos:end="181:41">3</literal></expr>]</index></name><operator pos:start="181:43" pos:end="181:43">=</operator> <name pos:start="181:45" pos:end="181:69">ff_h264_biweight_8x8_mmx2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="183:13" pos:end="183:70"><expr pos:start="183:13" pos:end="183:69"><name pos:start="183:13" pos:end="183:42"><name pos:start="183:13" pos:end="183:13">c</name><operator pos:start="183:14" pos:end="183:15">-&gt;</operator><name pos:start="183:16" pos:end="183:39">biweight_h264_pixels_tab</name><index pos:start="183:40" pos:end="183:42">[<expr pos:start="183:41" pos:end="183:41"><literal type="number" pos:start="183:41" pos:end="183:41">4</literal></expr>]</index></name><operator pos:start="183:43" pos:end="183:43">=</operator> <name pos:start="183:45" pos:end="183:69">ff_h264_biweight_8x4_mmx2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="185:13" pos:end="185:70"><expr pos:start="185:13" pos:end="185:69"><name pos:start="185:13" pos:end="185:42"><name pos:start="185:13" pos:end="185:13">c</name><operator pos:start="185:14" pos:end="185:15">-&gt;</operator><name pos:start="185:16" pos:end="185:39">biweight_h264_pixels_tab</name><index pos:start="185:40" pos:end="185:42">[<expr pos:start="185:41" pos:end="185:41"><literal type="number" pos:start="185:41" pos:end="185:41">5</literal></expr>]</index></name><operator pos:start="185:43" pos:end="185:43">=</operator> <name pos:start="185:45" pos:end="185:69">ff_h264_biweight_4x8_mmx2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="187:13" pos:end="187:70"><expr pos:start="187:13" pos:end="187:69"><name pos:start="187:13" pos:end="187:42"><name pos:start="187:13" pos:end="187:13">c</name><operator pos:start="187:14" pos:end="187:15">-&gt;</operator><name pos:start="187:16" pos:end="187:39">biweight_h264_pixels_tab</name><index pos:start="187:40" pos:end="187:42">[<expr pos:start="187:41" pos:end="187:41"><literal type="number" pos:start="187:41" pos:end="187:41">6</literal></expr>]</index></name><operator pos:start="187:43" pos:end="187:43">=</operator> <name pos:start="187:45" pos:end="187:69">ff_h264_biweight_4x4_mmx2</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="189:13" pos:end="189:70"><expr pos:start="189:13" pos:end="189:69"><name pos:start="189:13" pos:end="189:42"><name pos:start="189:13" pos:end="189:13">c</name><operator pos:start="189:14" pos:end="189:15">-&gt;</operator><name pos:start="189:16" pos:end="189:39">biweight_h264_pixels_tab</name><index pos:start="189:40" pos:end="189:42">[<expr pos:start="189:41" pos:end="189:41"><literal type="number" pos:start="189:41" pos:end="189:41">7</literal></expr>]</index></name><operator pos:start="189:43" pos:end="189:43">=</operator> <name pos:start="189:45" pos:end="189:69">ff_h264_biweight_4x2_mmx2</name></expr>;</expr_stmt>
+
+
+
+            <if_stmt pos:start="193:13" pos:end="237:13"><if pos:start="193:13" pos:end="237:13">if <condition pos:start="193:16" pos:end="193:42">(<expr pos:start="193:17" pos:end="193:41"><name pos:start="193:17" pos:end="193:24">mm_flags</name><operator pos:start="193:25" pos:end="193:25">&amp;</operator><name pos:start="193:26" pos:end="193:41">AV_CPU_FLAG_SSE2</name></expr>)</condition> <block pos:start="193:44" pos:end="237:13">{<block_content pos:start="195:17" pos:end="235:71">
+
+                <expr_stmt pos:start="195:17" pos:end="195:72"><expr pos:start="195:17" pos:end="195:71"><name pos:start="195:17" pos:end="195:44"><name pos:start="195:17" pos:end="195:17">c</name><operator pos:start="195:18" pos:end="195:19">-&gt;</operator><name pos:start="195:20" pos:end="195:41">weight_h264_pixels_tab</name><index pos:start="195:42" pos:end="195:44">[<expr pos:start="195:43" pos:end="195:43"><literal type="number" pos:start="195:43" pos:end="195:43">0</literal></expr>]</index></name><operator pos:start="195:45" pos:end="195:45">=</operator> <name pos:start="195:47" pos:end="195:71">ff_h264_weight_16x16_sse2</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="197:17" pos:end="197:71"><expr pos:start="197:17" pos:end="197:70"><name pos:start="197:17" pos:end="197:44"><name pos:start="197:17" pos:end="197:17">c</name><operator pos:start="197:18" pos:end="197:19">-&gt;</operator><name pos:start="197:20" pos:end="197:41">weight_h264_pixels_tab</name><index pos:start="197:42" pos:end="197:44">[<expr pos:start="197:43" pos:end="197:43"><literal type="number" pos:start="197:43" pos:end="197:43">1</literal></expr>]</index></name><operator pos:start="197:45" pos:end="197:45">=</operator> <name pos:start="197:47" pos:end="197:70">ff_h264_weight_16x8_sse2</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="199:17" pos:end="199:71"><expr pos:start="199:17" pos:end="199:70"><name pos:start="199:17" pos:end="199:44"><name pos:start="199:17" pos:end="199:17">c</name><operator pos:start="199:18" pos:end="199:19">-&gt;</operator><name pos:start="199:20" pos:end="199:41">weight_h264_pixels_tab</name><index pos:start="199:42" pos:end="199:44">[<expr pos:start="199:43" pos:end="199:43"><literal type="number" pos:start="199:43" pos:end="199:43">2</literal></expr>]</index></name><operator pos:start="199:45" pos:end="199:45">=</operator> <name pos:start="199:47" pos:end="199:70">ff_h264_weight_8x16_sse2</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="201:17" pos:end="201:70"><expr pos:start="201:17" pos:end="201:69"><name pos:start="201:17" pos:end="201:44"><name pos:start="201:17" pos:end="201:17">c</name><operator pos:start="201:18" pos:end="201:19">-&gt;</operator><name pos:start="201:20" pos:end="201:41">weight_h264_pixels_tab</name><index pos:start="201:42" pos:end="201:44">[<expr pos:start="201:43" pos:end="201:43"><literal type="number" pos:start="201:43" pos:end="201:43">3</literal></expr>]</index></name><operator pos:start="201:45" pos:end="201:45">=</operator> <name pos:start="201:47" pos:end="201:69">ff_h264_weight_8x8_sse2</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="203:17" pos:end="203:70"><expr pos:start="203:17" pos:end="203:69"><name pos:start="203:17" pos:end="203:44"><name pos:start="203:17" pos:end="203:17">c</name><operator pos:start="203:18" pos:end="203:19">-&gt;</operator><name pos:start="203:20" pos:end="203:41">weight_h264_pixels_tab</name><index pos:start="203:42" pos:end="203:44">[<expr pos:start="203:43" pos:end="203:43"><literal type="number" pos:start="203:43" pos:end="203:43">4</literal></expr>]</index></name><operator pos:start="203:45" pos:end="203:45">=</operator> <name pos:start="203:47" pos:end="203:69">ff_h264_weight_8x4_sse2</name></expr>;</expr_stmt>
+
+
+
+                <expr_stmt pos:start="207:17" pos:end="207:76"><expr pos:start="207:17" pos:end="207:75"><name pos:start="207:17" pos:end="207:46"><name pos:start="207:17" pos:end="207:17">c</name><operator pos:start="207:18" pos:end="207:19">-&gt;</operator><name pos:start="207:20" pos:end="207:43">biweight_h264_pixels_tab</name><index pos:start="207:44" pos:end="207:46">[<expr pos:start="207:45" pos:end="207:45"><literal type="number" pos:start="207:45" pos:end="207:45">0</literal></expr>]</index></name><operator pos:start="207:47" pos:end="207:47">=</operator> <name pos:start="207:49" pos:end="207:75">ff_h264_biweight_16x16_sse2</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="209:17" pos:end="209:75"><expr pos:start="209:17" pos:end="209:74"><name pos:start="209:17" pos:end="209:46"><name pos:start="209:17" pos:end="209:17">c</name><operator pos:start="209:18" pos:end="209:19">-&gt;</operator><name pos:start="209:20" pos:end="209:43">biweight_h264_pixels_tab</name><index pos:start="209:44" pos:end="209:46">[<expr pos:start="209:45" pos:end="209:45"><literal type="number" pos:start="209:45" pos:end="209:45">1</literal></expr>]</index></name><operator pos:start="209:47" pos:end="209:47">=</operator> <name pos:start="209:49" pos:end="209:74">ff_h264_biweight_16x8_sse2</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="211:17" pos:end="211:75"><expr pos:start="211:17" pos:end="211:74"><name pos:start="211:17" pos:end="211:46"><name pos:start="211:17" pos:end="211:17">c</name><operator pos:start="211:18" pos:end="211:19">-&gt;</operator><name pos:start="211:20" pos:end="211:43">biweight_h264_pixels_tab</name><index pos:start="211:44" pos:end="211:46">[<expr pos:start="211:45" pos:end="211:45"><literal type="number" pos:start="211:45" pos:end="211:45">2</literal></expr>]</index></name><operator pos:start="211:47" pos:end="211:47">=</operator> <name pos:start="211:49" pos:end="211:74">ff_h264_biweight_8x16_sse2</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="213:17" pos:end="213:74"><expr pos:start="213:17" pos:end="213:73"><name pos:start="213:17" pos:end="213:46"><name pos:start="213:17" pos:end="213:17">c</name><operator pos:start="213:18" pos:end="213:19">-&gt;</operator><name pos:start="213:20" pos:end="213:43">biweight_h264_pixels_tab</name><index pos:start="213:44" pos:end="213:46">[<expr pos:start="213:45" pos:end="213:45"><literal type="number" pos:start="213:45" pos:end="213:45">3</literal></expr>]</index></name><operator pos:start="213:47" pos:end="213:47">=</operator> <name pos:start="213:49" pos:end="213:73">ff_h264_biweight_8x8_sse2</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="215:17" pos:end="220:0"><expr pos:start="215:17" pos:end="215:73"><name pos:start="215:17" pos:end="215:46"><name pos:start="215:17" pos:end="215:17">c</name><operator pos:start="215:18" pos:end="215:19">-&gt;</operator><name pos:start="215:20" pos:end="215:43">biweight_h264_pixels_tab</name><index pos:start="215:44" pos:end="215:46">[<expr pos:start="215:45" pos:end="215:45"><literal type="number" pos:start="215:45" pos:end="215:45">4</literal></expr>]</index></name><operator pos:start="215:47" pos:end="215:47">=</operator> <name pos:start="215:49" pos:end="215:73">ff_h264_biweight_8x4_sse2</name></expr>;</expr_stmt>
+
+
+
+<cpp:if pos:start="219:1" pos:end="219:50">#<cpp:directive pos:start="219:2" pos:end="219:3">if</cpp:directive> <expr pos:start="219:5" pos:end="219:50"><name pos:start="219:5" pos:end="219:15">ARCH_X86_64</name> <operator pos:start="219:17" pos:end="219:18">||</operator> <operator pos:start="219:20" pos:end="219:20">!</operator><call pos:start="219:21" pos:end="219:34"><name pos:start="219:21" pos:end="219:27">defined</name><argument_list pos:start="219:28" pos:end="219:34">(<argument pos:start="219:29" pos:end="219:33"><expr pos:start="219:29" pos:end="219:33"><name pos:start="219:29" pos:end="219:33">__ICC</name></expr></argument>)</argument_list></call> <operator pos:start="219:36" pos:end="219:37">||</operator> <name pos:start="219:39" pos:end="219:43">__ICC</name> <operator pos:start="219:45" pos:end="219:45">&gt;</operator> <literal type="number" pos:start="219:47" pos:end="219:50">1110</literal></expr></cpp:if>
+
+                <expr_stmt pos:start="221:17" pos:end="221:73"><expr pos:start="221:17" pos:end="221:72"><name pos:start="221:17" pos:end="221:42"><name pos:start="221:17" pos:end="221:17">c</name><operator pos:start="221:18" pos:end="221:19">-&gt;</operator><name pos:start="221:20" pos:end="221:42">h264_v_loop_filter_luma</name></name> <operator pos:start="221:44" pos:end="221:44">=</operator> <name pos:start="221:46" pos:end="221:72">ff_x264_deblock_v_luma_sse2</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="223:17" pos:end="223:73"><expr pos:start="223:17" pos:end="223:72"><name pos:start="223:17" pos:end="223:42"><name pos:start="223:17" pos:end="223:17">c</name><operator pos:start="223:18" pos:end="223:19">-&gt;</operator><name pos:start="223:20" pos:end="223:42">h264_h_loop_filter_luma</name></name> <operator pos:start="223:44" pos:end="223:44">=</operator> <name pos:start="223:46" pos:end="223:72">ff_x264_deblock_h_luma_sse2</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="225:17" pos:end="225:85"><expr pos:start="225:17" pos:end="225:84"><name pos:start="225:17" pos:end="225:48"><name pos:start="225:17" pos:end="225:17">c</name><operator pos:start="225:18" pos:end="225:19">-&gt;</operator><name pos:start="225:20" pos:end="225:48">h264_v_loop_filter_luma_intra</name></name> <operator pos:start="225:50" pos:end="225:50">=</operator> <name pos:start="225:52" pos:end="225:84">ff_x264_deblock_v_luma_intra_sse2</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="227:17" pos:end="230:0"><expr pos:start="227:17" pos:end="227:84"><name pos:start="227:17" pos:end="227:48"><name pos:start="227:17" pos:end="227:17">c</name><operator pos:start="227:18" pos:end="227:19">-&gt;</operator><name pos:start="227:20" pos:end="227:48">h264_h_loop_filter_luma_intra</name></name> <operator pos:start="227:50" pos:end="227:50">=</operator> <name pos:start="227:52" pos:end="227:84">ff_x264_deblock_h_luma_intra_sse2</name></expr>;</expr_stmt>
+
+<cpp:endif pos:start="229:1" pos:end="229:6">#<cpp:directive pos:start="229:2" pos:end="229:6">endif</cpp:directive></cpp:endif>
+
+                <expr_stmt pos:start="231:17" pos:end="231:61"><expr pos:start="231:17" pos:end="231:60"><name pos:start="231:17" pos:end="231:34"><name pos:start="231:17" pos:end="231:17">c</name><operator pos:start="231:18" pos:end="231:19">-&gt;</operator><name pos:start="231:20" pos:end="231:34">h264_idct_add16</name></name> <operator pos:start="231:36" pos:end="231:36">=</operator> <name pos:start="231:38" pos:end="231:60">ff_h264_idct_add16_sse2</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="233:17" pos:end="233:60"><expr pos:start="233:17" pos:end="233:59"><name pos:start="233:17" pos:end="233:33"><name pos:start="233:17" pos:end="233:17">c</name><operator pos:start="233:18" pos:end="233:19">-&gt;</operator><name pos:start="233:20" pos:end="233:33">h264_idct_add8</name></name>  <operator pos:start="233:36" pos:end="233:36">=</operator> <name pos:start="233:38" pos:end="233:59">ff_h264_idct_add8_sse2</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="235:17" pos:end="235:71"><expr pos:start="235:17" pos:end="235:70"><name pos:start="235:17" pos:end="235:39"><name pos:start="235:17" pos:end="235:17">c</name><operator pos:start="235:18" pos:end="235:19">-&gt;</operator><name pos:start="235:20" pos:end="235:39">h264_idct_add16intra</name></name> <operator pos:start="235:41" pos:end="235:41">=</operator> <name pos:start="235:43" pos:end="235:70">ff_h264_idct_add16intra_sse2</name></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <if_stmt pos:start="239:13" pos:end="251:13"><if pos:start="239:13" pos:end="251:13">if <condition pos:start="239:16" pos:end="239:43">(<expr pos:start="239:17" pos:end="239:42"><name pos:start="239:17" pos:end="239:24">mm_flags</name><operator pos:start="239:25" pos:end="239:25">&amp;</operator><name pos:start="239:26" pos:end="239:42">AV_CPU_FLAG_SSSE3</name></expr>)</condition> <block pos:start="239:45" pos:end="251:13">{<block_content pos:start="241:17" pos:end="249:75">
+
+                <expr_stmt pos:start="241:17" pos:end="241:77"><expr pos:start="241:17" pos:end="241:76"><name pos:start="241:17" pos:end="241:46"><name pos:start="241:17" pos:end="241:17">c</name><operator pos:start="241:18" pos:end="241:19">-&gt;</operator><name pos:start="241:20" pos:end="241:43">biweight_h264_pixels_tab</name><index pos:start="241:44" pos:end="241:46">[<expr pos:start="241:45" pos:end="241:45"><literal type="number" pos:start="241:45" pos:end="241:45">0</literal></expr>]</index></name><operator pos:start="241:47" pos:end="241:47">=</operator> <name pos:start="241:49" pos:end="241:76">ff_h264_biweight_16x16_ssse3</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="243:17" pos:end="243:76"><expr pos:start="243:17" pos:end="243:75"><name pos:start="243:17" pos:end="243:46"><name pos:start="243:17" pos:end="243:17">c</name><operator pos:start="243:18" pos:end="243:19">-&gt;</operator><name pos:start="243:20" pos:end="243:43">biweight_h264_pixels_tab</name><index pos:start="243:44" pos:end="243:46">[<expr pos:start="243:45" pos:end="243:45"><literal type="number" pos:start="243:45" pos:end="243:45">1</literal></expr>]</index></name><operator pos:start="243:47" pos:end="243:47">=</operator> <name pos:start="243:49" pos:end="243:75">ff_h264_biweight_16x8_ssse3</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="245:17" pos:end="245:76"><expr pos:start="245:17" pos:end="245:75"><name pos:start="245:17" pos:end="245:46"><name pos:start="245:17" pos:end="245:17">c</name><operator pos:start="245:18" pos:end="245:19">-&gt;</operator><name pos:start="245:20" pos:end="245:43">biweight_h264_pixels_tab</name><index pos:start="245:44" pos:end="245:46">[<expr pos:start="245:45" pos:end="245:45"><literal type="number" pos:start="245:45" pos:end="245:45">2</literal></expr>]</index></name><operator pos:start="245:47" pos:end="245:47">=</operator> <name pos:start="245:49" pos:end="245:75">ff_h264_biweight_8x16_ssse3</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="247:17" pos:end="247:75"><expr pos:start="247:17" pos:end="247:74"><name pos:start="247:17" pos:end="247:46"><name pos:start="247:17" pos:end="247:17">c</name><operator pos:start="247:18" pos:end="247:19">-&gt;</operator><name pos:start="247:20" pos:end="247:43">biweight_h264_pixels_tab</name><index pos:start="247:44" pos:end="247:46">[<expr pos:start="247:45" pos:end="247:45"><literal type="number" pos:start="247:45" pos:end="247:45">3</literal></expr>]</index></name><operator pos:start="247:47" pos:end="247:47">=</operator> <name pos:start="247:49" pos:end="247:74">ff_h264_biweight_8x8_ssse3</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="249:17" pos:end="249:75"><expr pos:start="249:17" pos:end="249:74"><name pos:start="249:17" pos:end="249:46"><name pos:start="249:17" pos:end="249:17">c</name><operator pos:start="249:18" pos:end="249:19">-&gt;</operator><name pos:start="249:20" pos:end="249:43">biweight_h264_pixels_tab</name><index pos:start="249:44" pos:end="249:46">[<expr pos:start="249:45" pos:end="249:45"><literal type="number" pos:start="249:45" pos:end="249:45">4</literal></expr>]</index></name><operator pos:start="249:47" pos:end="249:47">=</operator> <name pos:start="249:49" pos:end="249:74">ff_h264_biweight_8x4_ssse3</name></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+<cpp:endif pos:start="255:1" pos:end="255:6">#<cpp:directive pos:start="255:2" pos:end="255:6">endif</cpp:directive></cpp:endif>
+
+    </block_content>}</block></if></if_stmt>
+
+</block_content>}</block></function>
+</unit>

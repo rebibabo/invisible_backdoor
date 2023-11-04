@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/6365.c" pos:tabs="8"><function pos:start="1:1" pos:end="79:1"><type pos:start="1:1" pos:end="1:3"><name pos:start="1:1" pos:end="1:3">int</name></type> <name pos:start="1:5" pos:end="1:26">qcow2_discard_clusters</name><parameter_list pos:start="1:27" pos:end="3:68">(<parameter pos:start="1:28" pos:end="1:47"><decl pos:start="1:28" pos:end="1:47"><type pos:start="1:28" pos:end="1:47"><name pos:start="1:28" pos:end="1:43">BlockDriverState</name> <modifier pos:start="1:45" pos:end="1:45">*</modifier></type><name pos:start="1:46" pos:end="1:47">bs</name></decl></parameter>, <parameter pos:start="1:50" pos:end="1:64"><decl pos:start="1:50" pos:end="1:64"><type pos:start="1:50" pos:end="1:64"><name pos:start="1:50" pos:end="1:57">uint64_t</name></type> <name pos:start="1:59" pos:end="1:64">offset</name></decl></parameter>,
+
+    <parameter pos:start="3:5" pos:end="3:18"><decl pos:start="3:5" pos:end="3:18"><type pos:start="3:5" pos:end="3:18"><name pos:start="3:5" pos:end="3:7">int</name></type> <name pos:start="3:9" pos:end="3:18">nb_sectors</name></decl></parameter>, <parameter pos:start="3:21" pos:end="3:48"><decl pos:start="3:21" pos:end="3:48"><type pos:start="3:21" pos:end="3:48"><name pos:start="3:21" pos:end="3:43"><name pos:start="3:21" pos:end="3:24">enum</name> <name pos:start="3:26" pos:end="3:43">qcow2_discard_type</name></name></type> <name pos:start="3:45" pos:end="3:48">type</name></decl></parameter>, <parameter pos:start="3:51" pos:end="3:67"><decl pos:start="3:51" pos:end="3:67"><type pos:start="3:51" pos:end="3:67"><name pos:start="3:51" pos:end="3:54">bool</name></type> <name pos:start="3:56" pos:end="3:67">full_discard</name></decl></parameter>)</parameter_list>
+
+<block pos:start="5:1" pos:end="79:1">{<block_content pos:start="7:5" pos:end="77:15">
+
+    <decl_stmt pos:start="7:5" pos:end="7:35"><decl pos:start="7:5" pos:end="7:34"><type pos:start="7:5" pos:end="7:20"><name pos:start="7:5" pos:end="7:18">BDRVQcow2State</name> <modifier pos:start="7:20" pos:end="7:20">*</modifier></type><name pos:start="7:21" pos:end="7:21">s</name> <init pos:start="7:23" pos:end="7:34">= <expr pos:start="7:25" pos:end="7:34"><name pos:start="7:25" pos:end="7:34"><name pos:start="7:25" pos:end="7:26">bs</name><operator pos:start="7:27" pos:end="7:28">-&gt;</operator><name pos:start="7:29" pos:end="7:34">opaque</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:24"><decl pos:start="9:5" pos:end="9:23"><type pos:start="9:5" pos:end="9:12"><name pos:start="9:5" pos:end="9:12">uint64_t</name></type> <name pos:start="9:14" pos:end="9:23">end_offset</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:25"><decl pos:start="11:5" pos:end="11:24"><type pos:start="11:5" pos:end="11:12"><name pos:start="11:5" pos:end="11:12">uint64_t</name></type> <name pos:start="11:14" pos:end="11:24">nb_clusters</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:12"><decl pos:start="13:5" pos:end="13:11"><type pos:start="13:5" pos:end="13:7"><name pos:start="13:5" pos:end="13:7">int</name></type> <name pos:start="13:9" pos:end="13:11">ret</name></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="17:5" pos:end="17:59"><expr pos:start="17:5" pos:end="17:58"><name pos:start="17:5" pos:end="17:14">end_offset</name> <operator pos:start="17:16" pos:end="17:16">=</operator> <name pos:start="17:18" pos:end="17:23">offset</name> <operator pos:start="17:25" pos:end="17:25">+</operator> <operator pos:start="17:27" pos:end="17:27">(</operator><name pos:start="17:28" pos:end="17:37">nb_sectors</name> <operator pos:start="17:39" pos:end="17:40">&lt;&lt;</operator> <name pos:start="17:42" pos:end="17:57">BDRV_SECTOR_BITS</name><operator pos:start="17:58" pos:end="17:58">)</operator></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="21:5" pos:end="21:37">/* Round start up and end down */</comment>
+
+    <expr_stmt pos:start="23:5" pos:end="23:51"><expr pos:start="23:5" pos:end="23:50"><name pos:start="23:5" pos:end="23:10">offset</name> <operator pos:start="23:12" pos:end="23:12">=</operator> <call pos:start="23:14" pos:end="23:50"><name pos:start="23:14" pos:end="23:25">align_offset</name><argument_list pos:start="23:26" pos:end="23:50">(<argument pos:start="23:27" pos:end="23:32"><expr pos:start="23:27" pos:end="23:32"><name pos:start="23:27" pos:end="23:32">offset</name></expr></argument>, <argument pos:start="23:35" pos:end="23:49"><expr pos:start="23:35" pos:end="23:49"><name pos:start="23:35" pos:end="23:49"><name pos:start="23:35" pos:end="23:35">s</name><operator pos:start="23:36" pos:end="23:37">-&gt;</operator><name pos:start="23:38" pos:end="23:49">cluster_size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="25:5" pos:end="25:49"><expr pos:start="25:5" pos:end="25:48"><name pos:start="25:5" pos:end="25:14">end_offset</name> <operator pos:start="25:16" pos:end="25:16">=</operator> <call pos:start="25:18" pos:end="25:48"><name pos:start="25:18" pos:end="25:33">start_of_cluster</name><argument_list pos:start="25:34" pos:end="25:48">(<argument pos:start="25:35" pos:end="25:35"><expr pos:start="25:35" pos:end="25:35"><name pos:start="25:35" pos:end="25:35">s</name></expr></argument>, <argument pos:start="25:38" pos:end="25:47"><expr pos:start="25:38" pos:end="25:47"><name pos:start="25:38" pos:end="25:47">end_offset</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="29:5" pos:end="33:5"><if pos:start="29:5" pos:end="33:5">if <condition pos:start="29:8" pos:end="29:28">(<expr pos:start="29:9" pos:end="29:27"><name pos:start="29:9" pos:end="29:14">offset</name> <operator pos:start="29:16" pos:end="29:16">&gt;</operator> <name pos:start="29:18" pos:end="29:27">end_offset</name></expr>)</condition> <block pos:start="29:30" pos:end="33:5">{<block_content pos:start="31:9" pos:end="31:17">
+
+        <return pos:start="31:9" pos:end="31:17">return <expr pos:start="31:16" pos:end="31:16"><literal type="number" pos:start="31:16" pos:end="31:16">0</literal></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="37:5" pos:end="37:59"><expr pos:start="37:5" pos:end="37:58"><name pos:start="37:5" pos:end="37:15">nb_clusters</name> <operator pos:start="37:17" pos:end="37:17">=</operator> <call pos:start="37:19" pos:end="37:58"><name pos:start="37:19" pos:end="37:34">size_to_clusters</name><argument_list pos:start="37:35" pos:end="37:58">(<argument pos:start="37:36" pos:end="37:36"><expr pos:start="37:36" pos:end="37:36"><name pos:start="37:36" pos:end="37:36">s</name></expr></argument>, <argument pos:start="37:39" pos:end="37:57"><expr pos:start="37:39" pos:end="37:57"><name pos:start="37:39" pos:end="37:48">end_offset</name> <operator pos:start="37:50" pos:end="37:50">-</operator> <name pos:start="37:52" pos:end="37:57">offset</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="41:5" pos:end="41:29"><expr pos:start="41:5" pos:end="41:28"><name pos:start="41:5" pos:end="41:21"><name pos:start="41:5" pos:end="41:5">s</name><operator pos:start="41:6" pos:end="41:7">-&gt;</operator><name pos:start="41:8" pos:end="41:21">cache_discards</name></name> <operator pos:start="41:23" pos:end="41:23">=</operator> <name pos:start="41:25" pos:end="41:28">true</name></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="45:5" pos:end="45:60">/* Each L2 table is handled by its own loop iteration */</comment>
+
+    <while pos:start="47:5" pos:end="63:5">while <condition pos:start="47:11" pos:end="47:27">(<expr pos:start="47:12" pos:end="47:26"><name pos:start="47:12" pos:end="47:22">nb_clusters</name> <operator pos:start="47:24" pos:end="47:24">&gt;</operator> <literal type="number" pos:start="47:26" pos:end="47:26">0</literal></expr>)</condition> <block pos:start="47:29" pos:end="63:5">{<block_content pos:start="49:9" pos:end="61:42">
+
+        <expr_stmt pos:start="49:9" pos:end="49:77"><expr pos:start="49:9" pos:end="49:76"><name pos:start="49:9" pos:end="49:11">ret</name> <operator pos:start="49:13" pos:end="49:13">=</operator> <call pos:start="49:15" pos:end="49:76"><name pos:start="49:15" pos:end="49:31">discard_single_l2</name><argument_list pos:start="49:32" pos:end="49:76">(<argument pos:start="49:33" pos:end="49:34"><expr pos:start="49:33" pos:end="49:34"><name pos:start="49:33" pos:end="49:34">bs</name></expr></argument>, <argument pos:start="49:37" pos:end="49:42"><expr pos:start="49:37" pos:end="49:42"><name pos:start="49:37" pos:end="49:42">offset</name></expr></argument>, <argument pos:start="49:45" pos:end="49:55"><expr pos:start="49:45" pos:end="49:55"><name pos:start="49:45" pos:end="49:55">nb_clusters</name></expr></argument>, <argument pos:start="49:58" pos:end="49:61"><expr pos:start="49:58" pos:end="49:61"><name pos:start="49:58" pos:end="49:61">type</name></expr></argument>, <argument pos:start="49:64" pos:end="49:75"><expr pos:start="49:64" pos:end="49:75"><name pos:start="49:64" pos:end="49:75">full_discard</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="51:9" pos:end="55:9"><if pos:start="51:9" pos:end="55:9">if <condition pos:start="51:12" pos:end="51:20">(<expr pos:start="51:13" pos:end="51:19"><name pos:start="51:13" pos:end="51:15">ret</name> <operator pos:start="51:17" pos:end="51:17">&lt;</operator> <literal type="number" pos:start="51:19" pos:end="51:19">0</literal></expr>)</condition> <block pos:start="51:22" pos:end="55:9">{<block_content pos:start="53:13" pos:end="53:22">
+
+            <goto pos:start="53:13" pos:end="53:22">goto <name pos:start="53:18" pos:end="53:21">fail</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="59:9" pos:end="59:27"><expr pos:start="59:9" pos:end="59:26"><name pos:start="59:9" pos:end="59:19">nb_clusters</name> <operator pos:start="59:21" pos:end="59:22">-=</operator> <name pos:start="59:24" pos:end="59:26">ret</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="61:9" pos:end="61:42"><expr pos:start="61:9" pos:end="61:41"><name pos:start="61:9" pos:end="61:14">offset</name> <operator pos:start="61:16" pos:end="61:17">+=</operator> <operator pos:start="61:19" pos:end="61:19">(</operator><name pos:start="61:20" pos:end="61:22">ret</name> <operator pos:start="61:24" pos:end="61:24">*</operator> <name pos:start="61:26" pos:end="61:40"><name pos:start="61:26" pos:end="61:26">s</name><operator pos:start="61:27" pos:end="61:28">-&gt;</operator><name pos:start="61:29" pos:end="61:40">cluster_size</name></name><operator pos:start="61:41" pos:end="61:41">)</operator></expr>;</expr_stmt>
+
+    </block_content>}</block></while>
+
+
+
+    <expr_stmt pos:start="67:5" pos:end="67:12"><expr pos:start="67:5" pos:end="67:11"><name pos:start="67:5" pos:end="67:7">ret</name> <operator pos:start="67:9" pos:end="67:9">=</operator> <literal type="number" pos:start="67:11" pos:end="67:11">0</literal></expr>;</expr_stmt>
+
+<label pos:start="69:1" pos:end="69:5"><name pos:start="69:1" pos:end="69:4">fail</name>:</label>
+
+    <expr_stmt pos:start="71:5" pos:end="71:30"><expr pos:start="71:5" pos:end="71:29"><name pos:start="71:5" pos:end="71:21"><name pos:start="71:5" pos:end="71:5">s</name><operator pos:start="71:6" pos:end="71:7">-&gt;</operator><name pos:start="71:8" pos:end="71:21">cache_discards</name></name> <operator pos:start="71:23" pos:end="71:23">=</operator> <name pos:start="71:25" pos:end="71:29">false</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="73:5" pos:end="73:36"><expr pos:start="73:5" pos:end="73:35"><call pos:start="73:5" pos:end="73:35"><name pos:start="73:5" pos:end="73:26">qcow2_process_discards</name><argument_list pos:start="73:27" pos:end="73:35">(<argument pos:start="73:28" pos:end="73:29"><expr pos:start="73:28" pos:end="73:29"><name pos:start="73:28" pos:end="73:29">bs</name></expr></argument>, <argument pos:start="73:32" pos:end="73:34"><expr pos:start="73:32" pos:end="73:34"><name pos:start="73:32" pos:end="73:34">ret</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <return pos:start="77:5" pos:end="77:15">return <expr pos:start="77:12" pos:end="77:14"><name pos:start="77:12" pos:end="77:14">ret</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

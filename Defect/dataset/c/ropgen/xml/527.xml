@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/527.c" pos:tabs="8"><macro pos:start="1:1" pos:end="1:80"><name pos:start="1:1" pos:end="1:12">get_sigframe</name><argument_list pos:start="1:13" pos:end="1:80">(<argument pos:start="1:14" pos:end="1:42">struct emulated_sigaction *ka</argument>, <argument pos:start="1:45" pos:end="1:60">CPUX86State *env</argument>, <argument pos:start="1:63" pos:end="1:79">size_t frame_size</argument>)</argument_list></macro>
+
+<block pos:start="3:1" pos:end="43:1">{<block_content pos:start="5:9" pos:end="41:51">
+
+	<decl_stmt pos:start="5:9" pos:end="5:26"><decl pos:start="5:9" pos:end="5:25"><type pos:start="5:9" pos:end="5:21"><name pos:start="5:9" pos:end="5:16">unsigned</name> <name pos:start="5:18" pos:end="5:21">long</name></type> <name pos:start="5:23" pos:end="5:25">esp</name></decl>;</decl_stmt>
+
+
+
+	<comment type="block" pos:start="9:9" pos:end="9:43">/* Default to using normal stack */</comment>
+
+	<expr_stmt pos:start="11:9" pos:end="40:0"><expr pos:start="11:9" pos:end="11:30"><name pos:start="11:9" pos:end="11:11">esp</name> <operator pos:start="11:13" pos:end="11:13">=</operator> <name pos:start="11:15" pos:end="11:30"><name pos:start="11:15" pos:end="11:17">env</name><operator pos:start="11:18" pos:end="11:19">-&gt;</operator><name pos:start="11:20" pos:end="11:23">regs</name><index pos:start="11:24" pos:end="11:30">[<expr pos:start="11:25" pos:end="11:29"><name pos:start="11:25" pos:end="11:29">R_ESP</name></expr>]</index></name></expr>;</expr_stmt>
+
+<cpp:if pos:start="13:1" pos:end="13:5">#<cpp:directive pos:start="13:2" pos:end="13:3">if</cpp:directive> <expr pos:start="13:5" pos:end="13:5"><literal type="number" pos:start="13:5" pos:end="13:5">0</literal></expr></cpp:if>
+
+	<comment type="block" pos:start="15:9" pos:end="15:68">/* This is the X/Open sanctioned signal stack switching.  */</comment>
+
+	if (ka-&gt;sa.sa_flags &amp; SA_ONSTACK) {
+
+		if (sas_ss_flags(esp) == 0)
+
+			esp = current-&gt;sas_ss_sp + current-&gt;sas_ss_size;
+
+	}
+
+
+
+	<comment type="block" pos:start="27:9" pos:end="27:56">/* This is the legacy signal stack switching. */</comment>
+
+	else if ((regs-&gt;xss &amp; 0xffff) != __USER_DS &amp;&amp;
+
+		 !(ka-&gt;sa.sa_flags &amp; SA_RESTORER) &amp;&amp;
+
+		 ka-&gt;sa.sa_restorer) {
+
+		esp = (unsigned long) ka-&gt;sa.sa_restorer;
+
+	}
+
+<cpp:endif pos:start="39:1" pos:end="39:6">#<cpp:directive pos:start="39:2" pos:end="39:6">endif</cpp:directive></cpp:endif>
+
+	<return pos:start="41:9" pos:end="41:51">return <expr pos:start="41:16" pos:end="41:50"><operator pos:start="41:16" pos:end="41:16">(</operator><name pos:start="41:17" pos:end="41:20">void</name> <operator pos:start="41:22" pos:end="41:22">*</operator><operator pos:start="41:23" pos:end="41:23">)</operator><operator pos:start="41:24" pos:end="41:24">(</operator><operator pos:start="41:25" pos:end="41:25">(</operator><name pos:start="41:26" pos:end="41:28">esp</name> <operator pos:start="41:30" pos:end="41:30">-</operator> <name pos:start="41:32" pos:end="41:41">frame_size</name><operator pos:start="41:42" pos:end="41:42">)</operator> <operator pos:start="41:44" pos:end="41:44">&amp;</operator> <operator pos:start="41:46" pos:end="41:46">-</operator><literal type="number" pos:start="41:47" pos:end="41:49">8ul</literal><operator pos:start="41:50" pos:end="41:50">)</operator></expr>;</return>
+
+</block_content>}</block>
+</unit>

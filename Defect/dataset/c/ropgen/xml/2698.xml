@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/2698.c" pos:tabs="8"><function pos:start="1:1" pos:end="333:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:25">postcopy_start</name><parameter_list pos:start="1:26" pos:end="1:67">(<parameter pos:start="1:27" pos:end="1:44"><decl pos:start="1:27" pos:end="1:44"><type pos:start="1:27" pos:end="1:44"><name pos:start="1:27" pos:end="1:40">MigrationState</name> <modifier pos:start="1:42" pos:end="1:42">*</modifier></type><name pos:start="1:43" pos:end="1:44">ms</name></decl></parameter>, <parameter pos:start="1:47" pos:end="1:66"><decl pos:start="1:47" pos:end="1:66"><type pos:start="1:47" pos:end="1:66"><name pos:start="1:47" pos:end="1:50">bool</name> <modifier pos:start="1:52" pos:end="1:52">*</modifier></type><name pos:start="1:53" pos:end="1:66">old_vm_running</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="333:1">{<block_content pos:start="5:5" pos:end="331:14">
+
+    <decl_stmt pos:start="5:5" pos:end="5:12"><decl pos:start="5:5" pos:end="5:11"><type pos:start="5:5" pos:end="5:7"><name pos:start="5:5" pos:end="5:7">int</name></type> <name pos:start="5:9" pos:end="5:11">ret</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:27"><decl pos:start="7:5" pos:end="7:26"><type pos:start="7:5" pos:end="7:22"><name pos:start="7:5" pos:end="7:20">QIOChannelBuffer</name> <modifier pos:start="7:22" pos:end="7:22">*</modifier></type><name pos:start="7:23" pos:end="7:26">bioc</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:17"><decl pos:start="9:5" pos:end="9:16"><type pos:start="9:5" pos:end="9:14"><name pos:start="9:5" pos:end="9:12">QEMUFile</name> <modifier pos:start="9:14" pos:end="9:14">*</modifier></type><name pos:start="9:15" pos:end="9:16">fb</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:66"><decl pos:start="11:5" pos:end="11:65"><type pos:start="11:5" pos:end="11:11"><name pos:start="11:5" pos:end="11:11">int64_t</name></type> <name pos:start="11:13" pos:end="11:24">time_at_stop</name> <init pos:start="11:26" pos:end="11:65">= <expr pos:start="11:28" pos:end="11:65"><call pos:start="11:28" pos:end="11:65"><name pos:start="11:28" pos:end="11:44">qemu_clock_get_ms</name><argument_list pos:start="11:45" pos:end="11:65">(<argument pos:start="11:46" pos:end="11:64"><expr pos:start="11:46" pos:end="11:64"><name pos:start="11:46" pos:end="11:64">QEMU_CLOCK_REALTIME</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:31"><decl pos:start="13:5" pos:end="13:30"><type pos:start="13:5" pos:end="13:8"><name pos:start="13:5" pos:end="13:8">bool</name></type> <name pos:start="13:10" pos:end="13:22">restart_block</name> <init pos:start="13:24" pos:end="13:30">= <expr pos:start="13:26" pos:end="13:30"><name pos:start="13:26" pos:end="13:30">false</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:44"><decl pos:start="15:5" pos:end="15:43"><type pos:start="15:5" pos:end="15:7"><name pos:start="15:5" pos:end="15:7">int</name></type> <name pos:start="15:9" pos:end="15:17">cur_state</name> <init pos:start="15:19" pos:end="15:43">= <expr pos:start="15:21" pos:end="15:43"><name pos:start="15:21" pos:end="15:43">MIGRATION_STATUS_ACTIVE</name></expr></init></decl>;</decl_stmt>
+
+    <if_stmt pos:start="17:5" pos:end="23:5"><if pos:start="17:5" pos:end="23:5">if <condition pos:start="17:8" pos:end="17:43">(<expr pos:start="17:9" pos:end="17:42"><operator pos:start="17:9" pos:end="17:9">!</operator><call pos:start="17:10" pos:end="17:42"><name pos:start="17:10" pos:end="17:40">migrate_pause_before_switchover</name><argument_list pos:start="17:41" pos:end="17:42">()</argument_list></call></expr>)</condition> <block pos:start="17:45" pos:end="23:5">{<block_content pos:start="19:9" pos:end="21:60">
+
+        <expr_stmt pos:start="19:9" pos:end="21:60"><expr pos:start="19:9" pos:end="21:59"><call pos:start="19:9" pos:end="21:59"><name pos:start="19:9" pos:end="19:25">migrate_set_state</name><argument_list pos:start="19:26" pos:end="21:59">(<argument pos:start="19:27" pos:end="19:36"><expr pos:start="19:27" pos:end="19:36"><operator pos:start="19:27" pos:end="19:27">&amp;</operator><name pos:start="19:28" pos:end="19:36"><name pos:start="19:28" pos:end="19:29">ms</name><operator pos:start="19:30" pos:end="19:31">-&gt;</operator><name pos:start="19:32" pos:end="19:36">state</name></name></expr></argument>, <argument pos:start="19:39" pos:end="19:61"><expr pos:start="19:39" pos:end="19:61"><name pos:start="19:39" pos:end="19:61">MIGRATION_STATUS_ACTIVE</name></expr></argument>,
+
+                          <argument pos:start="21:27" pos:end="21:58"><expr pos:start="21:27" pos:end="21:58"><name pos:start="21:27" pos:end="21:58">MIGRATION_STATUS_POSTCOPY_ACTIVE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="27:5" pos:end="27:27"><expr pos:start="27:5" pos:end="27:26"><call pos:start="27:5" pos:end="27:26"><name pos:start="27:5" pos:end="27:24">trace_postcopy_start</name><argument_list pos:start="27:25" pos:end="27:26">()</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="29:5" pos:end="29:31"><expr pos:start="29:5" pos:end="29:30"><call pos:start="29:5" pos:end="29:30"><name pos:start="29:5" pos:end="29:28">qemu_mutex_lock_iothread</name><argument_list pos:start="29:29" pos:end="29:30">()</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="31:5" pos:end="31:35"><expr pos:start="31:5" pos:end="31:34"><call pos:start="31:5" pos:end="31:34"><name pos:start="31:5" pos:end="31:32">trace_postcopy_start_set_run</name><argument_list pos:start="31:33" pos:end="31:34">()</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="35:5" pos:end="35:57"><expr pos:start="35:5" pos:end="35:56"><call pos:start="35:5" pos:end="35:56"><name pos:start="35:5" pos:end="35:30">qemu_system_wakeup_request</name><argument_list pos:start="35:31" pos:end="35:56">(<argument pos:start="35:32" pos:end="35:55"><expr pos:start="35:32" pos:end="35:55"><name pos:start="35:32" pos:end="35:55">QEMU_WAKEUP_REASON_OTHER</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="37:5" pos:end="37:44"><expr pos:start="37:5" pos:end="37:43"><operator pos:start="37:5" pos:end="37:5">*</operator><name pos:start="37:6" pos:end="37:19">old_vm_running</name> <operator pos:start="37:21" pos:end="37:21">=</operator> <call pos:start="37:23" pos:end="37:43"><name pos:start="37:23" pos:end="37:41">runstate_is_running</name><argument_list pos:start="37:42" pos:end="37:43">()</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="39:5" pos:end="39:25"><expr pos:start="39:5" pos:end="39:24"><call pos:start="39:5" pos:end="39:24"><name pos:start="39:5" pos:end="39:22">global_state_store</name><argument_list pos:start="39:23" pos:end="39:24">()</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="41:5" pos:end="41:56"><expr pos:start="41:5" pos:end="41:55"><name pos:start="41:5" pos:end="41:7">ret</name> <operator pos:start="41:9" pos:end="41:9">=</operator> <call pos:start="41:11" pos:end="41:55"><name pos:start="41:11" pos:end="41:29">vm_stop_force_state</name><argument_list pos:start="41:30" pos:end="41:55">(<argument pos:start="41:31" pos:end="41:54"><expr pos:start="41:31" pos:end="41:54"><name pos:start="41:31" pos:end="41:54">RUN_STATE_FINISH_MIGRATE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="43:5" pos:end="47:5"><if pos:start="43:5" pos:end="47:5">if <condition pos:start="43:8" pos:end="43:16">(<expr pos:start="43:9" pos:end="43:15"><name pos:start="43:9" pos:end="43:11">ret</name> <operator pos:start="43:13" pos:end="43:13">&lt;</operator> <literal type="number" pos:start="43:15" pos:end="43:15">0</literal></expr>)</condition> <block pos:start="43:18" pos:end="47:5">{<block_content pos:start="45:9" pos:end="45:18">
+
+        <goto pos:start="45:9" pos:end="45:18">goto <name pos:start="45:14" pos:end="45:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="51:5" pos:end="53:66"><expr pos:start="51:5" pos:end="53:65"><name pos:start="51:5" pos:end="51:7">ret</name> <operator pos:start="51:9" pos:end="51:9">=</operator> <call pos:start="51:11" pos:end="53:65"><name pos:start="51:11" pos:end="51:31">migration_maybe_pause</name><argument_list pos:start="51:32" pos:end="53:65">(<argument pos:start="51:33" pos:end="51:34"><expr pos:start="51:33" pos:end="51:34"><name pos:start="51:33" pos:end="51:34">ms</name></expr></argument>, <argument pos:start="51:37" pos:end="51:46"><expr pos:start="51:37" pos:end="51:46"><operator pos:start="51:37" pos:end="51:37">&amp;</operator><name pos:start="51:38" pos:end="51:46">cur_state</name></expr></argument>,
+
+                                <argument pos:start="53:33" pos:end="53:64"><expr pos:start="53:33" pos:end="53:64"><name pos:start="53:33" pos:end="53:64">MIGRATION_STATUS_POSTCOPY_ACTIVE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="55:5" pos:end="59:5"><if pos:start="55:5" pos:end="59:5">if <condition pos:start="55:8" pos:end="55:16">(<expr pos:start="55:9" pos:end="55:15"><name pos:start="55:9" pos:end="55:11">ret</name> <operator pos:start="55:13" pos:end="55:13">&lt;</operator> <literal type="number" pos:start="55:15" pos:end="55:15">0</literal></expr>)</condition> <block pos:start="55:18" pos:end="59:5">{<block_content pos:start="57:9" pos:end="57:18">
+
+        <goto pos:start="57:9" pos:end="57:18">goto <name pos:start="57:14" pos:end="57:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="63:5" pos:end="63:32"><expr pos:start="63:5" pos:end="63:31"><name pos:start="63:5" pos:end="63:7">ret</name> <operator pos:start="63:9" pos:end="63:9">=</operator> <call pos:start="63:11" pos:end="63:31"><name pos:start="63:11" pos:end="63:29">bdrv_inactivate_all</name><argument_list pos:start="63:30" pos:end="63:31">()</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="65:5" pos:end="69:5"><if pos:start="65:5" pos:end="69:5">if <condition pos:start="65:8" pos:end="65:16">(<expr pos:start="65:9" pos:end="65:15"><name pos:start="65:9" pos:end="65:11">ret</name> <operator pos:start="65:13" pos:end="65:13">&lt;</operator> <literal type="number" pos:start="65:15" pos:end="65:15">0</literal></expr>)</condition> <block pos:start="65:18" pos:end="69:5">{<block_content pos:start="67:9" pos:end="67:18">
+
+        <goto pos:start="67:9" pos:end="67:18">goto <name pos:start="67:14" pos:end="67:17">fail</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+    <expr_stmt pos:start="71:5" pos:end="71:25"><expr pos:start="71:5" pos:end="71:24"><name pos:start="71:5" pos:end="71:17">restart_block</name> <operator pos:start="71:19" pos:end="71:19">=</operator> <name pos:start="71:21" pos:end="71:24">true</name></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="75:5" pos:end="81:7">/*
+
+     * Cause any non-postcopiable, but iterative devices to
+
+     * send out their final data.
+
+     */</comment>
+
+    <expr_stmt pos:start="83:5" pos:end="83:69"><expr pos:start="83:5" pos:end="83:68"><call pos:start="83:5" pos:end="83:68"><name pos:start="83:5" pos:end="83:38">qemu_savevm_state_complete_precopy</name><argument_list pos:start="83:39" pos:end="83:68">(<argument pos:start="83:40" pos:end="83:54"><expr pos:start="83:40" pos:end="83:54"><name pos:start="83:40" pos:end="83:54"><name pos:start="83:40" pos:end="83:41">ms</name><operator pos:start="83:42" pos:end="83:43">-&gt;</operator><name pos:start="83:44" pos:end="83:54">to_dst_file</name></name></expr></argument>, <argument pos:start="83:57" pos:end="83:60"><expr pos:start="83:57" pos:end="83:60"><name pos:start="83:57" pos:end="83:60">true</name></expr></argument>, <argument pos:start="83:63" pos:end="83:67"><expr pos:start="83:63" pos:end="83:67"><name pos:start="83:63" pos:end="83:67">false</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="87:5" pos:end="97:7">/*
+
+     * in Finish migrate and with the io-lock held everything should
+
+     * be quiet, but we've potentially still got dirty pages and we
+
+     * need to tell the destination to throw any pages it's already received
+
+     * that are dirty
+
+     */</comment>
+
+    <if_stmt pos:start="99:5" pos:end="109:5"><if pos:start="99:5" pos:end="109:5">if <condition pos:start="99:8" pos:end="99:31">(<expr pos:start="99:9" pos:end="99:30"><call pos:start="99:9" pos:end="99:30"><name pos:start="99:9" pos:end="99:28">migrate_postcopy_ram</name><argument_list pos:start="99:29" pos:end="99:30">()</argument_list></call></expr>)</condition> <block pos:start="99:33" pos:end="109:5">{<block_content pos:start="101:9" pos:end="107:9">
+
+        <if_stmt pos:start="101:9" pos:end="107:9"><if pos:start="101:9" pos:end="107:9">if <condition pos:start="101:12" pos:end="101:49">(<expr pos:start="101:13" pos:end="101:48"><call pos:start="101:13" pos:end="101:48"><name pos:start="101:13" pos:end="101:44">ram_postcopy_send_discard_bitmap</name><argument_list pos:start="101:45" pos:end="101:48">(<argument pos:start="101:46" pos:end="101:47"><expr pos:start="101:46" pos:end="101:47"><name pos:start="101:46" pos:end="101:47">ms</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="101:51" pos:end="107:9">{<block_content pos:start="103:13" pos:end="105:22">
+
+            <expr_stmt pos:start="103:13" pos:end="103:64"><expr pos:start="103:13" pos:end="103:63"><call pos:start="103:13" pos:end="103:63"><name pos:start="103:13" pos:end="103:24">error_report</name><argument_list pos:start="103:25" pos:end="103:63">(<argument pos:start="103:26" pos:end="103:62"><expr pos:start="103:26" pos:end="103:62"><literal type="string" pos:start="103:26" pos:end="103:62">"postcopy send discard bitmap failed"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <goto pos:start="105:13" pos:end="105:22">goto <name pos:start="105:18" pos:end="105:21">fail</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="113:5" pos:end="121:7">/*
+
+     * send rest of state - note things that are doing postcopy
+
+     * will notice we're in POSTCOPY_ACTIVE and not actually
+
+     * wrap their state up here
+
+     */</comment>
+
+    <expr_stmt pos:start="123:5" pos:end="123:57"><expr pos:start="123:5" pos:end="123:56"><call pos:start="123:5" pos:end="123:56"><name pos:start="123:5" pos:end="123:28">qemu_file_set_rate_limit</name><argument_list pos:start="123:29" pos:end="123:56">(<argument pos:start="123:30" pos:end="123:44"><expr pos:start="123:30" pos:end="123:44"><name pos:start="123:30" pos:end="123:44"><name pos:start="123:30" pos:end="123:31">ms</name><operator pos:start="123:32" pos:end="123:33">-&gt;</operator><name pos:start="123:34" pos:end="123:44">to_dst_file</name></name></expr></argument>, <argument pos:start="123:47" pos:end="123:55"><expr pos:start="123:47" pos:end="123:55"><name pos:start="123:47" pos:end="123:55">INT64_MAX</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="125:5" pos:end="131:5"><if pos:start="125:5" pos:end="131:5">if <condition pos:start="125:8" pos:end="125:31">(<expr pos:start="125:9" pos:end="125:30"><call pos:start="125:9" pos:end="125:30"><name pos:start="125:9" pos:end="125:28">migrate_postcopy_ram</name><argument_list pos:start="125:29" pos:end="125:30">()</argument_list></call></expr>)</condition> <block pos:start="125:33" pos:end="131:5">{<block_content pos:start="129:9" pos:end="129:50">
+
+        <comment type="block" pos:start="127:9" pos:end="127:59">/* Ping just for debugging, helps line traces up */</comment>
+
+        <expr_stmt pos:start="129:9" pos:end="129:50"><expr pos:start="129:9" pos:end="129:49"><call pos:start="129:9" pos:end="129:49"><name pos:start="129:9" pos:end="129:29">qemu_savevm_send_ping</name><argument_list pos:start="129:30" pos:end="129:49">(<argument pos:start="129:31" pos:end="129:45"><expr pos:start="129:31" pos:end="129:45"><name pos:start="129:31" pos:end="129:45"><name pos:start="129:31" pos:end="129:32">ms</name><operator pos:start="129:33" pos:end="129:34">-&gt;</operator><name pos:start="129:35" pos:end="129:45">to_dst_file</name></name></expr></argument>, <argument pos:start="129:48" pos:end="129:48"><expr pos:start="129:48" pos:end="129:48"><literal type="number" pos:start="129:48" pos:end="129:48">2</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="135:5" pos:end="155:7">/*
+
+     * While loading the device state we may trigger page transfer
+
+     * requests and the fd must be free to process those, and thus
+
+     * the destination must read the whole device state off the fd before
+
+     * it starts processing it.  Unfortunately the ad-hoc migration format
+
+     * doesn't allow the destination to know the size to read without fully
+
+     * parsing it through each devices load-state code (especially the open
+
+     * coded devices that use get/put).
+
+     * So we wrap the device state up in a package with a length at the start;
+
+     * to do this we use a qemu_buf to hold the whole of the device state.
+
+     */</comment>
+
+    <expr_stmt pos:start="157:5" pos:end="157:40"><expr pos:start="157:5" pos:end="157:39"><name pos:start="157:5" pos:end="157:8">bioc</name> <operator pos:start="157:10" pos:end="157:10">=</operator> <call pos:start="157:12" pos:end="157:39"><name pos:start="157:12" pos:end="157:33">qio_channel_buffer_new</name><argument_list pos:start="157:34" pos:end="157:39">(<argument pos:start="157:35" pos:end="157:38"><expr pos:start="157:35" pos:end="157:38"><literal type="number" pos:start="157:35" pos:end="157:38">4096</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="159:5" pos:end="159:73"><expr pos:start="159:5" pos:end="159:72"><call pos:start="159:5" pos:end="159:72"><name pos:start="159:5" pos:end="159:24">qio_channel_set_name</name><argument_list pos:start="159:25" pos:end="159:72">(<argument pos:start="159:26" pos:end="159:42"><expr pos:start="159:26" pos:end="159:42"><call pos:start="159:26" pos:end="159:42"><name pos:start="159:26" pos:end="159:36">QIO_CHANNEL</name><argument_list pos:start="159:37" pos:end="159:42">(<argument pos:start="159:38" pos:end="159:41"><expr pos:start="159:38" pos:end="159:41"><name pos:start="159:38" pos:end="159:41">bioc</name></expr></argument>)</argument_list></call></expr></argument>, <argument pos:start="159:45" pos:end="159:71"><expr pos:start="159:45" pos:end="159:71"><literal type="string" pos:start="159:45" pos:end="159:71">"migration-postcopy-buffer"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="161:5" pos:end="161:54"><expr pos:start="161:5" pos:end="161:53"><name pos:start="161:5" pos:end="161:6">fb</name> <operator pos:start="161:8" pos:end="161:8">=</operator> <call pos:start="161:10" pos:end="161:53"><name pos:start="161:10" pos:end="161:34">qemu_fopen_channel_output</name><argument_list pos:start="161:35" pos:end="161:53">(<argument pos:start="161:36" pos:end="161:52"><expr pos:start="161:36" pos:end="161:52"><call pos:start="161:36" pos:end="161:52"><name pos:start="161:36" pos:end="161:46">QIO_CHANNEL</name><argument_list pos:start="161:47" pos:end="161:52">(<argument pos:start="161:48" pos:end="161:51"><expr pos:start="161:48" pos:end="161:51"><name pos:start="161:48" pos:end="161:51">bioc</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="163:5" pos:end="163:31"><expr pos:start="163:5" pos:end="163:30"><call pos:start="163:5" pos:end="163:30"><name pos:start="163:5" pos:end="163:16">object_unref</name><argument_list pos:start="163:17" pos:end="163:30">(<argument pos:start="163:18" pos:end="163:29"><expr pos:start="163:18" pos:end="163:29"><call pos:start="163:18" pos:end="163:29"><name pos:start="163:18" pos:end="163:23">OBJECT</name><argument_list pos:start="163:24" pos:end="163:29">(<argument pos:start="163:25" pos:end="163:28"><expr pos:start="163:25" pos:end="163:28"><name pos:start="163:25" pos:end="163:28">bioc</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="167:5" pos:end="173:7">/*
+
+     * Make sure the receiver can get incoming pages before we send the rest
+
+     * of the state
+
+     */</comment>
+
+    <expr_stmt pos:start="175:5" pos:end="175:41"><expr pos:start="175:5" pos:end="175:40"><call pos:start="175:5" pos:end="175:40"><name pos:start="175:5" pos:end="175:36">qemu_savevm_send_postcopy_listen</name><argument_list pos:start="175:37" pos:end="175:40">(<argument pos:start="175:38" pos:end="175:39"><expr pos:start="175:38" pos:end="175:39"><name pos:start="175:38" pos:end="175:39">fb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="179:5" pos:end="179:57"><expr pos:start="179:5" pos:end="179:56"><call pos:start="179:5" pos:end="179:56"><name pos:start="179:5" pos:end="179:38">qemu_savevm_state_complete_precopy</name><argument_list pos:start="179:39" pos:end="179:56">(<argument pos:start="179:40" pos:end="179:41"><expr pos:start="179:40" pos:end="179:41"><name pos:start="179:40" pos:end="179:41">fb</name></expr></argument>, <argument pos:start="179:44" pos:end="179:48"><expr pos:start="179:44" pos:end="179:48"><name pos:start="179:44" pos:end="179:48">false</name></expr></argument>, <argument pos:start="179:51" pos:end="179:55"><expr pos:start="179:51" pos:end="179:55"><name pos:start="179:51" pos:end="179:55">false</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="181:5" pos:end="185:5"><if pos:start="181:5" pos:end="185:5">if <condition pos:start="181:8" pos:end="181:31">(<expr pos:start="181:9" pos:end="181:30"><call pos:start="181:9" pos:end="181:30"><name pos:start="181:9" pos:end="181:28">migrate_postcopy_ram</name><argument_list pos:start="181:29" pos:end="181:30">()</argument_list></call></expr>)</condition> <block pos:start="181:33" pos:end="185:5">{<block_content pos:start="183:9" pos:end="183:37">
+
+        <expr_stmt pos:start="183:9" pos:end="183:37"><expr pos:start="183:9" pos:end="183:36"><call pos:start="183:9" pos:end="183:36"><name pos:start="183:9" pos:end="183:29">qemu_savevm_send_ping</name><argument_list pos:start="183:30" pos:end="183:36">(<argument pos:start="183:31" pos:end="183:32"><expr pos:start="183:31" pos:end="183:32"><name pos:start="183:31" pos:end="183:32">fb</name></expr></argument>, <argument pos:start="183:35" pos:end="183:35"><expr pos:start="183:35" pos:end="183:35"><literal type="number" pos:start="183:35" pos:end="183:35">3</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="189:5" pos:end="189:38"><expr pos:start="189:5" pos:end="189:37"><call pos:start="189:5" pos:end="189:37"><name pos:start="189:5" pos:end="189:33">qemu_savevm_send_postcopy_run</name><argument_list pos:start="189:34" pos:end="189:37">(<argument pos:start="189:35" pos:end="189:36"><expr pos:start="189:35" pos:end="189:36"><name pos:start="189:35" pos:end="189:36">fb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="193:5" pos:end="193:50">/* &lt;&gt;&lt;&gt; end of stuff going into the package */</comment>
+
+
+
+    <comment type="block" pos:start="197:5" pos:end="203:7">/* Last point of recovery; as soon as we send the package the destination
+
+     * can open devices and potentially start running.
+
+     * Lets just check again we've not got any errors.
+
+     */</comment>
+
+    <expr_stmt pos:start="205:5" pos:end="205:47"><expr pos:start="205:5" pos:end="205:46"><name pos:start="205:5" pos:end="205:7">ret</name> <operator pos:start="205:9" pos:end="205:9">=</operator> <call pos:start="205:11" pos:end="205:46"><name pos:start="205:11" pos:end="205:29">qemu_file_get_error</name><argument_list pos:start="205:30" pos:end="205:46">(<argument pos:start="205:31" pos:end="205:45"><expr pos:start="205:31" pos:end="205:45"><name pos:start="205:31" pos:end="205:45"><name pos:start="205:31" pos:end="205:32">ms</name><operator pos:start="205:33" pos:end="205:34">-&gt;</operator><name pos:start="205:35" pos:end="205:45">to_dst_file</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="207:5" pos:end="213:5"><if pos:start="207:5" pos:end="213:5">if <condition pos:start="207:8" pos:end="207:12">(<expr pos:start="207:9" pos:end="207:11"><name pos:start="207:9" pos:end="207:11">ret</name></expr>)</condition> <block pos:start="207:14" pos:end="213:5">{<block_content pos:start="209:9" pos:end="211:26">
+
+        <expr_stmt pos:start="209:9" pos:end="209:79"><expr pos:start="209:9" pos:end="209:78"><call pos:start="209:9" pos:end="209:78"><name pos:start="209:9" pos:end="209:20">error_report</name><argument_list pos:start="209:21" pos:end="209:78">(<argument pos:start="209:22" pos:end="209:77"><expr pos:start="209:22" pos:end="209:77"><literal type="string" pos:start="209:22" pos:end="209:77">"postcopy_start: Migration stream errored (pre package)"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <goto pos:start="211:9" pos:end="211:26">goto <name pos:start="211:14" pos:end="211:25">fail_closefb</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="217:5" pos:end="217:26"><expr pos:start="217:5" pos:end="217:25"><name pos:start="217:5" pos:end="217:17">restart_block</name> <operator pos:start="217:19" pos:end="217:19">=</operator> <name pos:start="217:21" pos:end="217:25">false</name></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="221:5" pos:end="221:28">/* Now send that blob */</comment>
+
+    <if_stmt pos:start="223:5" pos:end="227:5"><if pos:start="223:5" pos:end="227:5">if <condition pos:start="223:8" pos:end="223:76">(<expr pos:start="223:9" pos:end="223:75"><call pos:start="223:9" pos:end="223:75"><name pos:start="223:9" pos:end="223:33">qemu_savevm_send_packaged</name><argument_list pos:start="223:34" pos:end="223:75">(<argument pos:start="223:35" pos:end="223:49"><expr pos:start="223:35" pos:end="223:49"><name pos:start="223:35" pos:end="223:49"><name pos:start="223:35" pos:end="223:36">ms</name><operator pos:start="223:37" pos:end="223:38">-&gt;</operator><name pos:start="223:39" pos:end="223:49">to_dst_file</name></name></expr></argument>, <argument pos:start="223:52" pos:end="223:61"><expr pos:start="223:52" pos:end="223:61"><name pos:start="223:52" pos:end="223:61"><name pos:start="223:52" pos:end="223:55">bioc</name><operator pos:start="223:56" pos:end="223:57">-&gt;</operator><name pos:start="223:58" pos:end="223:61">data</name></name></expr></argument>, <argument pos:start="223:64" pos:end="223:74"><expr pos:start="223:64" pos:end="223:74"><name pos:start="223:64" pos:end="223:74"><name pos:start="223:64" pos:end="223:67">bioc</name><operator pos:start="223:68" pos:end="223:69">-&gt;</operator><name pos:start="223:70" pos:end="223:74">usage</name></name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="223:78" pos:end="227:5">{<block_content pos:start="225:9" pos:end="225:26">
+
+        <goto pos:start="225:9" pos:end="225:26">goto <name pos:start="225:14" pos:end="225:25">fail_closefb</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+    <expr_stmt pos:start="229:5" pos:end="229:20"><expr pos:start="229:5" pos:end="229:19"><call pos:start="229:5" pos:end="229:19"><name pos:start="229:5" pos:end="229:15">qemu_fclose</name><argument_list pos:start="229:16" pos:end="229:19">(<argument pos:start="229:17" pos:end="229:18"><expr pos:start="229:17" pos:end="229:18"><name pos:start="229:17" pos:end="229:18">fb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="233:5" pos:end="239:7">/* Send a notify to give a chance for anything that needs to happen
+
+     * at the transition to postcopy and after the device state; in particular
+
+     * spice needs to trigger a transition now
+
+     */</comment>
+
+    <expr_stmt pos:start="241:5" pos:end="241:38"><expr pos:start="241:5" pos:end="241:37"><name pos:start="241:5" pos:end="241:30"><name pos:start="241:5" pos:end="241:6">ms</name><operator pos:start="241:7" pos:end="241:8">-&gt;</operator><name pos:start="241:9" pos:end="241:30">postcopy_after_devices</name></name> <operator pos:start="241:32" pos:end="241:32">=</operator> <name pos:start="241:34" pos:end="241:37">true</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="243:5" pos:end="243:57"><expr pos:start="243:5" pos:end="243:56"><call pos:start="243:5" pos:end="243:56"><name pos:start="243:5" pos:end="243:24">notifier_list_notify</name><argument_list pos:start="243:25" pos:end="243:56">(<argument pos:start="243:26" pos:end="243:51"><expr pos:start="243:26" pos:end="243:51"><operator pos:start="243:26" pos:end="243:26">&amp;</operator><name pos:start="243:27" pos:end="243:51">migration_state_notifiers</name></expr></argument>, <argument pos:start="243:54" pos:end="243:55"><expr pos:start="243:54" pos:end="243:55"><name pos:start="243:54" pos:end="243:55">ms</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="247:5" pos:end="247:74"><expr pos:start="247:5" pos:end="247:73"><name pos:start="247:5" pos:end="247:16"><name pos:start="247:5" pos:end="247:6">ms</name><operator pos:start="247:7" pos:end="247:8">-&gt;</operator><name pos:start="247:9" pos:end="247:16">downtime</name></name> <operator pos:start="247:18" pos:end="247:18">=</operator>  <call pos:start="247:21" pos:end="247:58"><name pos:start="247:21" pos:end="247:37">qemu_clock_get_ms</name><argument_list pos:start="247:38" pos:end="247:58">(<argument pos:start="247:39" pos:end="247:57"><expr pos:start="247:39" pos:end="247:57"><name pos:start="247:39" pos:end="247:57">QEMU_CLOCK_REALTIME</name></expr></argument>)</argument_list></call> <operator pos:start="247:60" pos:end="247:60">-</operator> <name pos:start="247:62" pos:end="247:73">time_at_stop</name></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="251:5" pos:end="251:33"><expr pos:start="251:5" pos:end="251:32"><call pos:start="251:5" pos:end="251:32"><name pos:start="251:5" pos:end="251:30">qemu_mutex_unlock_iothread</name><argument_list pos:start="251:31" pos:end="251:32">()</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="255:5" pos:end="267:5"><if pos:start="255:5" pos:end="267:5">if <condition pos:start="255:8" pos:end="255:31">(<expr pos:start="255:9" pos:end="255:30"><call pos:start="255:9" pos:end="255:30"><name pos:start="255:9" pos:end="255:28">migrate_postcopy_ram</name><argument_list pos:start="255:29" pos:end="255:30">()</argument_list></call></expr>)</condition> <block pos:start="255:33" pos:end="267:5">{<block_content pos:start="265:9" pos:end="265:50">
+
+        <comment type="block" pos:start="257:9" pos:end="263:11">/*
+
+         * Although this ping is just for debug, it could potentially be
+
+         * used for getting a better measurement of downtime at the source.
+
+         */</comment>
+
+        <expr_stmt pos:start="265:9" pos:end="265:50"><expr pos:start="265:9" pos:end="265:49"><call pos:start="265:9" pos:end="265:49"><name pos:start="265:9" pos:end="265:29">qemu_savevm_send_ping</name><argument_list pos:start="265:30" pos:end="265:49">(<argument pos:start="265:31" pos:end="265:45"><expr pos:start="265:31" pos:end="265:45"><name pos:start="265:31" pos:end="265:45"><name pos:start="265:31" pos:end="265:32">ms</name><operator pos:start="265:33" pos:end="265:34">-&gt;</operator><name pos:start="265:35" pos:end="265:45">to_dst_file</name></name></expr></argument>, <argument pos:start="265:48" pos:end="265:48"><expr pos:start="265:48" pos:end="265:48"><literal type="number" pos:start="265:48" pos:end="265:48">4</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="271:5" pos:end="275:5"><if pos:start="271:5" pos:end="275:5">if <condition pos:start="271:8" pos:end="271:30">(<expr pos:start="271:9" pos:end="271:29"><call pos:start="271:9" pos:end="271:29"><name pos:start="271:9" pos:end="271:27">migrate_release_ram</name><argument_list pos:start="271:28" pos:end="271:29">()</argument_list></call></expr>)</condition> <block pos:start="271:32" pos:end="275:5">{<block_content pos:start="273:9" pos:end="273:49">
+
+        <expr_stmt pos:start="273:9" pos:end="273:49"><expr pos:start="273:9" pos:end="273:48"><call pos:start="273:9" pos:end="273:48"><name pos:start="273:9" pos:end="273:44">ram_postcopy_migrated_memory_release</name><argument_list pos:start="273:45" pos:end="273:48">(<argument pos:start="273:46" pos:end="273:47"><expr pos:start="273:46" pos:end="273:47"><name pos:start="273:46" pos:end="273:47">ms</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="279:5" pos:end="279:47"><expr pos:start="279:5" pos:end="279:46"><name pos:start="279:5" pos:end="279:7">ret</name> <operator pos:start="279:9" pos:end="279:9">=</operator> <call pos:start="279:11" pos:end="279:46"><name pos:start="279:11" pos:end="279:29">qemu_file_get_error</name><argument_list pos:start="279:30" pos:end="279:46">(<argument pos:start="279:31" pos:end="279:45"><expr pos:start="279:31" pos:end="279:45"><name pos:start="279:31" pos:end="279:45"><name pos:start="279:31" pos:end="279:32">ms</name><operator pos:start="279:33" pos:end="279:34">-&gt;</operator><name pos:start="279:35" pos:end="279:45">to_dst_file</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="281:5" pos:end="289:5"><if pos:start="281:5" pos:end="289:5">if <condition pos:start="281:8" pos:end="281:12">(<expr pos:start="281:9" pos:end="281:11"><name pos:start="281:9" pos:end="281:11">ret</name></expr>)</condition> <block pos:start="281:14" pos:end="289:5">{<block_content pos:start="283:9" pos:end="287:55">
+
+        <expr_stmt pos:start="283:9" pos:end="283:65"><expr pos:start="283:9" pos:end="283:64"><call pos:start="283:9" pos:end="283:64"><name pos:start="283:9" pos:end="283:20">error_report</name><argument_list pos:start="283:21" pos:end="283:64">(<argument pos:start="283:22" pos:end="283:63"><expr pos:start="283:22" pos:end="283:63"><literal type="string" pos:start="283:22" pos:end="283:63">"postcopy_start: Migration stream errored"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="285:9" pos:end="287:55"><expr pos:start="285:9" pos:end="287:54"><call pos:start="285:9" pos:end="287:54"><name pos:start="285:9" pos:end="285:25">migrate_set_state</name><argument_list pos:start="285:26" pos:end="287:54">(<argument pos:start="285:27" pos:end="285:36"><expr pos:start="285:27" pos:end="285:36"><operator pos:start="285:27" pos:end="285:27">&amp;</operator><name pos:start="285:28" pos:end="285:36"><name pos:start="285:28" pos:end="285:29">ms</name><operator pos:start="285:30" pos:end="285:31">-&gt;</operator><name pos:start="285:32" pos:end="285:36">state</name></name></expr></argument>, <argument pos:start="285:39" pos:end="285:70"><expr pos:start="285:39" pos:end="285:70"><name pos:start="285:39" pos:end="285:70">MIGRATION_STATUS_POSTCOPY_ACTIVE</name></expr></argument>,
+
+                              <argument pos:start="287:31" pos:end="287:53"><expr pos:start="287:31" pos:end="287:53"><name pos:start="287:31" pos:end="287:53">MIGRATION_STATUS_FAILED</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <return pos:start="293:5" pos:end="293:15">return <expr pos:start="293:12" pos:end="293:14"><name pos:start="293:12" pos:end="293:14">ret</name></expr>;</return>
+
+
+
+<label pos:start="297:1" pos:end="297:13"><name pos:start="297:1" pos:end="297:12">fail_closefb</name>:</label>
+
+    <expr_stmt pos:start="299:5" pos:end="299:20"><expr pos:start="299:5" pos:end="299:19"><call pos:start="299:5" pos:end="299:19"><name pos:start="299:5" pos:end="299:15">qemu_fclose</name><argument_list pos:start="299:16" pos:end="299:19">(<argument pos:start="299:17" pos:end="299:18"><expr pos:start="299:17" pos:end="299:18"><name pos:start="299:17" pos:end="299:18">fb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+<label pos:start="301:1" pos:end="301:5"><name pos:start="301:1" pos:end="301:4">fail</name>:</label>
+
+    <expr_stmt pos:start="303:5" pos:end="305:51"><expr pos:start="303:5" pos:end="305:50"><call pos:start="303:5" pos:end="305:50"><name pos:start="303:5" pos:end="303:21">migrate_set_state</name><argument_list pos:start="303:22" pos:end="305:50">(<argument pos:start="303:23" pos:end="303:32"><expr pos:start="303:23" pos:end="303:32"><operator pos:start="303:23" pos:end="303:23">&amp;</operator><name pos:start="303:24" pos:end="303:32"><name pos:start="303:24" pos:end="303:25">ms</name><operator pos:start="303:26" pos:end="303:27">-&gt;</operator><name pos:start="303:28" pos:end="303:32">state</name></name></expr></argument>, <argument pos:start="303:35" pos:end="303:66"><expr pos:start="303:35" pos:end="303:66"><name pos:start="303:35" pos:end="303:66">MIGRATION_STATUS_POSTCOPY_ACTIVE</name></expr></argument>,
+
+                          <argument pos:start="305:27" pos:end="305:49"><expr pos:start="305:27" pos:end="305:49"><name pos:start="305:27" pos:end="305:49">MIGRATION_STATUS_FAILED</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="307:5" pos:end="327:5"><if pos:start="307:5" pos:end="327:5">if <condition pos:start="307:8" pos:end="307:22">(<expr pos:start="307:9" pos:end="307:21"><name pos:start="307:9" pos:end="307:21">restart_block</name></expr>)</condition> <block pos:start="307:24" pos:end="327:5">{<block_content pos:start="315:9" pos:end="325:9">
+
+        <comment type="block" pos:start="309:9" pos:end="313:11">/* A failure happened early enough that we know the destination hasn't
+
+         * accessed block devices, so we're safe to recover.
+
+         */</comment>
+
+        <decl_stmt pos:start="315:9" pos:end="315:32"><decl pos:start="315:9" pos:end="315:31"><type pos:start="315:9" pos:end="315:15"><name pos:start="315:9" pos:end="315:13">Error</name> <modifier pos:start="315:15" pos:end="315:15">*</modifier></type><name pos:start="315:16" pos:end="315:24">local_err</name> <init pos:start="315:26" pos:end="315:31">= <expr pos:start="315:28" pos:end="315:31"><name pos:start="315:28" pos:end="315:31">NULL</name></expr></init></decl>;</decl_stmt>
+
+
+
+        <expr_stmt pos:start="319:9" pos:end="319:46"><expr pos:start="319:9" pos:end="319:45"><call pos:start="319:9" pos:end="319:45"><name pos:start="319:9" pos:end="319:33">bdrv_invalidate_cache_all</name><argument_list pos:start="319:34" pos:end="319:45">(<argument pos:start="319:35" pos:end="319:44"><expr pos:start="319:35" pos:end="319:44"><operator pos:start="319:35" pos:end="319:35">&amp;</operator><name pos:start="319:36" pos:end="319:44">local_err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="321:9" pos:end="325:9"><if pos:start="321:9" pos:end="325:9">if <condition pos:start="321:12" pos:end="321:22">(<expr pos:start="321:13" pos:end="321:21"><name pos:start="321:13" pos:end="321:21">local_err</name></expr>)</condition> <block pos:start="321:24" pos:end="325:9">{<block_content pos:start="323:13" pos:end="323:40">
+
+            <expr_stmt pos:start="323:13" pos:end="323:40"><expr pos:start="323:13" pos:end="323:39"><call pos:start="323:13" pos:end="323:39"><name pos:start="323:13" pos:end="323:28">error_report_err</name><argument_list pos:start="323:29" pos:end="323:39">(<argument pos:start="323:30" pos:end="323:38"><expr pos:start="323:30" pos:end="323:38"><name pos:start="323:30" pos:end="323:38">local_err</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <expr_stmt pos:start="329:5" pos:end="329:33"><expr pos:start="329:5" pos:end="329:32"><call pos:start="329:5" pos:end="329:32"><name pos:start="329:5" pos:end="329:30">qemu_mutex_unlock_iothread</name><argument_list pos:start="329:31" pos:end="329:32">()</argument_list></call></expr>;</expr_stmt>
+
+    <return pos:start="331:5" pos:end="331:14">return <expr pos:start="331:12" pos:end="331:13"><operator pos:start="331:12" pos:end="331:12">-</operator><literal type="number" pos:start="331:13" pos:end="331:13">1</literal></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/7741.c" pos:tabs="8"><function pos:start="1:1" pos:end="287:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:25">uhci_handle_td</name><parameter_list pos:start="1:26" pos:end="3:76">(<parameter pos:start="1:27" pos:end="1:38"><decl pos:start="1:27" pos:end="1:38"><type pos:start="1:27" pos:end="1:38"><name pos:start="1:27" pos:end="1:35">UHCIState</name> <modifier pos:start="1:37" pos:end="1:37">*</modifier></type><name pos:start="1:38" pos:end="1:38">s</name></decl></parameter>, <parameter pos:start="1:41" pos:end="1:52"><decl pos:start="1:41" pos:end="1:52"><type pos:start="1:41" pos:end="1:52"><name pos:start="1:41" pos:end="1:49">UHCIQueue</name> <modifier pos:start="1:51" pos:end="1:51">*</modifier></type><name pos:start="1:52" pos:end="1:52">q</name></decl></parameter>, <parameter pos:start="1:55" pos:end="1:70"><decl pos:start="1:55" pos:end="1:70"><type pos:start="1:55" pos:end="1:70"><name pos:start="1:55" pos:end="1:62">uint32_t</name></type> <name pos:start="1:64" pos:end="1:70">qh_addr</name></decl></parameter>,
+
+                          <parameter pos:start="3:27" pos:end="3:37"><decl pos:start="3:27" pos:end="3:37"><type pos:start="3:27" pos:end="3:37"><name pos:start="3:27" pos:end="3:33">UHCI_TD</name> <modifier pos:start="3:35" pos:end="3:35">*</modifier></type><name pos:start="3:36" pos:end="3:37">td</name></decl></parameter>, <parameter pos:start="3:40" pos:end="3:55"><decl pos:start="3:40" pos:end="3:55"><type pos:start="3:40" pos:end="3:55"><name pos:start="3:40" pos:end="3:47">uint32_t</name></type> <name pos:start="3:49" pos:end="3:55">td_addr</name></decl></parameter>, <parameter pos:start="3:58" pos:end="3:75"><decl pos:start="3:58" pos:end="3:75"><type pos:start="3:58" pos:end="3:75"><name pos:start="3:58" pos:end="3:65">uint32_t</name> <modifier pos:start="3:67" pos:end="3:67">*</modifier></type><name pos:start="3:68" pos:end="3:75">int_mask</name></decl></parameter>)</parameter_list>
+
+<block pos:start="5:1" pos:end="287:1">{<block_content pos:start="7:5" pos:end="285:15">
+
+    <decl_stmt pos:start="7:5" pos:end="7:21"><decl pos:start="7:5" pos:end="7:11"><type pos:start="7:5" pos:end="7:7"><name pos:start="7:5" pos:end="7:7">int</name></type> <name pos:start="7:9" pos:end="7:11">ret</name></decl>, <decl pos:start="7:14" pos:end="7:20"><type ref="prev" pos:start="7:5" pos:end="7:7"/><name pos:start="7:14" pos:end="7:20">max_len</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:13"><decl pos:start="9:5" pos:end="9:12"><type pos:start="9:5" pos:end="9:8"><name pos:start="9:5" pos:end="9:8">bool</name></type> <name pos:start="9:10" pos:end="9:12">spd</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:31"><decl pos:start="11:5" pos:end="11:30"><type pos:start="11:5" pos:end="11:8"><name pos:start="11:5" pos:end="11:8">bool</name></type> <name pos:start="11:10" pos:end="11:16">queuing</name> <init pos:start="11:18" pos:end="11:30">= <expr pos:start="11:20" pos:end="11:30"><operator pos:start="11:20" pos:end="11:20">(</operator><name pos:start="11:21" pos:end="11:21">q</name> <operator pos:start="11:23" pos:end="11:24">!=</operator> <name pos:start="11:26" pos:end="11:29">NULL</name><operator pos:start="11:30" pos:end="11:30">)</operator></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:35"><decl pos:start="13:5" pos:end="13:34"><type pos:start="13:5" pos:end="13:11"><name pos:start="13:5" pos:end="13:11">uint8_t</name></type> <name pos:start="13:13" pos:end="13:15">pid</name> <init pos:start="13:17" pos:end="13:34">= <expr pos:start="13:19" pos:end="13:34"><name pos:start="13:19" pos:end="13:27"><name pos:start="13:19" pos:end="13:20">td</name><operator pos:start="13:21" pos:end="13:22">-&gt;</operator><name pos:start="13:23" pos:end="13:27">token</name></name> <operator pos:start="13:29" pos:end="13:29">&amp;</operator> <literal type="number" pos:start="13:31" pos:end="13:34">0xff</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:21"><decl pos:start="15:5" pos:end="15:20"><type pos:start="15:5" pos:end="15:15"><name pos:start="15:5" pos:end="15:13">UHCIAsync</name> <modifier pos:start="15:15" pos:end="15:15">*</modifier></type><name pos:start="15:16" pos:end="15:20">async</name></decl>;</decl_stmt>
+
+
+
+    <switch pos:start="19:5" pos:end="41:5">switch <condition pos:start="19:12" pos:end="19:16">(<expr pos:start="19:13" pos:end="19:15"><name pos:start="19:13" pos:end="19:15">pid</name></expr>)</condition> <block pos:start="19:18" pos:end="41:5">{<block_content pos:start="21:5" pos:end="39:36">
+
+    <case pos:start="21:5" pos:end="21:23">case <expr pos:start="21:10" pos:end="21:22"><name pos:start="21:10" pos:end="21:22">USB_TOKEN_OUT</name></expr>:</case>
+
+    <case pos:start="23:5" pos:end="23:25">case <expr pos:start="23:10" pos:end="23:24"><name pos:start="23:10" pos:end="23:24">USB_TOKEN_SETUP</name></expr>:</case>
+
+    <case pos:start="25:5" pos:end="25:22">case <expr pos:start="25:10" pos:end="25:21"><name pos:start="25:10" pos:end="25:21">USB_TOKEN_IN</name></expr>:</case>
+
+        <break pos:start="27:9" pos:end="27:14">break;</break>
+
+    <default pos:start="29:5" pos:end="29:12">default:</default>
+
+        <comment type="block" pos:start="31:9" pos:end="31:45">/* invalid pid : frame interrupted */</comment>
+
+        <expr_stmt pos:start="33:9" pos:end="33:37"><expr pos:start="33:9" pos:end="33:36"><name pos:start="33:9" pos:end="33:17"><name pos:start="33:9" pos:end="33:9">s</name><operator pos:start="33:10" pos:end="33:11">-&gt;</operator><name pos:start="33:12" pos:end="33:17">status</name></name> <operator pos:start="33:19" pos:end="33:20">|=</operator> <name pos:start="33:22" pos:end="33:36">UHCI_STS_HCPERR</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="35:9" pos:end="35:31"><expr pos:start="35:9" pos:end="35:30"><name pos:start="35:9" pos:end="35:14"><name pos:start="35:9" pos:end="35:9">s</name><operator pos:start="35:10" pos:end="35:11">-&gt;</operator><name pos:start="35:12" pos:end="35:14">cmd</name></name> <operator pos:start="35:16" pos:end="35:17">&amp;=</operator> <operator pos:start="35:19" pos:end="35:19">~</operator><name pos:start="35:20" pos:end="35:30">UHCI_CMD_RS</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="37:9" pos:end="37:27"><expr pos:start="37:9" pos:end="37:26"><call pos:start="37:9" pos:end="37:26"><name pos:start="37:9" pos:end="37:23">uhci_update_irq</name><argument_list pos:start="37:24" pos:end="37:26">(<argument pos:start="37:25" pos:end="37:25"><expr pos:start="37:25" pos:end="37:25"><name pos:start="37:25" pos:end="37:25">s</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="39:9" pos:end="39:36">return <expr pos:start="39:16" pos:end="39:35"><name pos:start="39:16" pos:end="39:35">TD_RESULT_STOP_FRAME</name></expr>;</return>
+
+    </block_content>}</block></switch>
+
+
+
+    <expr_stmt pos:start="45:5" pos:end="45:43"><expr pos:start="45:5" pos:end="45:42"><name pos:start="45:5" pos:end="45:9">async</name> <operator pos:start="45:11" pos:end="45:11">=</operator> <call pos:start="45:13" pos:end="45:42"><name pos:start="45:13" pos:end="45:30">uhci_async_find_td</name><argument_list pos:start="45:31" pos:end="45:42">(<argument pos:start="45:32" pos:end="45:32"><expr pos:start="45:32" pos:end="45:32"><name pos:start="45:32" pos:end="45:32">s</name></expr></argument>, <argument pos:start="45:35" pos:end="45:41"><expr pos:start="45:35" pos:end="45:41"><name pos:start="45:35" pos:end="45:41">td_addr</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="47:5" pos:end="63:5"><if pos:start="47:5" pos:end="63:5">if <condition pos:start="47:8" pos:end="47:14">(<expr pos:start="47:9" pos:end="47:13"><name pos:start="47:9" pos:end="47:13">async</name></expr>)</condition> <block pos:start="47:16" pos:end="63:5">{<block_content pos:start="49:9" pos:end="61:9">
+
+        <if_stmt pos:start="49:9" pos:end="61:9"><if pos:start="49:9" pos:end="55:9">if <condition pos:start="49:12" pos:end="49:75">(<expr pos:start="49:13" pos:end="49:74"><call pos:start="49:13" pos:end="49:74"><name pos:start="49:13" pos:end="49:29">uhci_queue_verify</name><argument_list pos:start="49:30" pos:end="49:74">(<argument pos:start="49:31" pos:end="49:42"><expr pos:start="49:31" pos:end="49:42"><name pos:start="49:31" pos:end="49:42"><name pos:start="49:31" pos:end="49:35">async</name><operator pos:start="49:36" pos:end="49:37">-&gt;</operator><name pos:start="49:38" pos:end="49:42">queue</name></name></expr></argument>, <argument pos:start="49:45" pos:end="49:51"><expr pos:start="49:45" pos:end="49:51"><name pos:start="49:45" pos:end="49:51">qh_addr</name></expr></argument>, <argument pos:start="49:54" pos:end="49:55"><expr pos:start="49:54" pos:end="49:55"><name pos:start="49:54" pos:end="49:55">td</name></expr></argument>, <argument pos:start="49:58" pos:end="49:64"><expr pos:start="49:58" pos:end="49:64"><name pos:start="49:58" pos:end="49:64">td_addr</name></expr></argument>, <argument pos:start="49:67" pos:end="49:73"><expr pos:start="49:67" pos:end="49:73"><name pos:start="49:67" pos:end="49:73">queuing</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="49:77" pos:end="55:9">{<block_content pos:start="51:13" pos:end="53:29">
+
+            <expr_stmt pos:start="51:13" pos:end="51:51"><expr pos:start="51:13" pos:end="51:50"><call pos:start="51:13" pos:end="51:50"><name pos:start="51:13" pos:end="51:18">assert</name><argument_list pos:start="51:19" pos:end="51:50">(<argument pos:start="51:20" pos:end="51:49"><expr pos:start="51:20" pos:end="51:49"><name pos:start="51:20" pos:end="51:20">q</name> <operator pos:start="51:22" pos:end="51:23">==</operator> <name pos:start="51:25" pos:end="51:28">NULL</name> <operator pos:start="51:30" pos:end="51:31">||</operator> <name pos:start="51:33" pos:end="51:33">q</name> <operator pos:start="51:35" pos:end="51:36">==</operator> <name pos:start="51:38" pos:end="51:49"><name pos:start="51:38" pos:end="51:42">async</name><operator pos:start="51:43" pos:end="51:44">-&gt;</operator><name pos:start="51:45" pos:end="51:49">queue</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="53:13" pos:end="53:29"><expr pos:start="53:13" pos:end="53:28"><name pos:start="53:13" pos:end="53:13">q</name> <operator pos:start="53:15" pos:end="53:15">=</operator> <name pos:start="53:17" pos:end="53:28"><name pos:start="53:17" pos:end="53:21">async</name><operator pos:start="53:22" pos:end="53:23">-&gt;</operator><name pos:start="53:24" pos:end="53:28">queue</name></name></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="55:11" pos:end="61:9">else <block pos:start="55:16" pos:end="61:9">{<block_content pos:start="57:13" pos:end="59:25">
+
+            <expr_stmt pos:start="57:13" pos:end="57:70"><expr pos:start="57:13" pos:end="57:69"><call pos:start="57:13" pos:end="57:69"><name pos:start="57:13" pos:end="57:27">uhci_queue_free</name><argument_list pos:start="57:28" pos:end="57:69">(<argument pos:start="57:29" pos:end="57:40"><expr pos:start="57:29" pos:end="57:40"><name pos:start="57:29" pos:end="57:40"><name pos:start="57:29" pos:end="57:33">async</name><operator pos:start="57:34" pos:end="57:35">-&gt;</operator><name pos:start="57:36" pos:end="57:40">queue</name></name></expr></argument>, <argument pos:start="57:43" pos:end="57:68"><expr pos:start="57:43" pos:end="57:68"><literal type="string" pos:start="57:43" pos:end="57:68">"guest re-used pending td"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="59:13" pos:end="59:25"><expr pos:start="59:13" pos:end="59:24"><name pos:start="59:13" pos:end="59:17">async</name> <operator pos:start="59:19" pos:end="59:19">=</operator> <name pos:start="59:21" pos:end="59:24">NULL</name></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="67:5" pos:end="79:5"><if pos:start="67:5" pos:end="79:5">if <condition pos:start="67:8" pos:end="67:18">(<expr pos:start="67:9" pos:end="67:17"><name pos:start="67:9" pos:end="67:9">q</name> <operator pos:start="67:11" pos:end="67:12">==</operator> <name pos:start="67:14" pos:end="67:17">NULL</name></expr>)</condition> <block pos:start="67:20" pos:end="79:5">{<block_content pos:start="69:9" pos:end="77:9">
+
+        <expr_stmt pos:start="69:9" pos:end="69:35"><expr pos:start="69:9" pos:end="69:34"><name pos:start="69:9" pos:end="69:9">q</name> <operator pos:start="69:11" pos:end="69:11">=</operator> <call pos:start="69:13" pos:end="69:34"><name pos:start="69:13" pos:end="69:27">uhci_queue_find</name><argument_list pos:start="69:28" pos:end="69:34">(<argument pos:start="69:29" pos:end="69:29"><expr pos:start="69:29" pos:end="69:29"><name pos:start="69:29" pos:end="69:29">s</name></expr></argument>, <argument pos:start="69:32" pos:end="69:33"><expr pos:start="69:32" pos:end="69:33"><name pos:start="69:32" pos:end="69:33">td</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="71:9" pos:end="77:9"><if pos:start="71:9" pos:end="77:9">if <condition pos:start="71:12" pos:end="71:70">(<expr pos:start="71:13" pos:end="71:69"><name pos:start="71:13" pos:end="71:13">q</name> <operator pos:start="71:15" pos:end="71:16">&amp;&amp;</operator> <operator pos:start="71:18" pos:end="71:18">!</operator><call pos:start="71:19" pos:end="71:69"><name pos:start="71:19" pos:end="71:35">uhci_queue_verify</name><argument_list pos:start="71:36" pos:end="71:69">(<argument pos:start="71:37" pos:end="71:37"><expr pos:start="71:37" pos:end="71:37"><name pos:start="71:37" pos:end="71:37">q</name></expr></argument>, <argument pos:start="71:40" pos:end="71:46"><expr pos:start="71:40" pos:end="71:46"><name pos:start="71:40" pos:end="71:46">qh_addr</name></expr></argument>, <argument pos:start="71:49" pos:end="71:50"><expr pos:start="71:49" pos:end="71:50"><name pos:start="71:49" pos:end="71:50">td</name></expr></argument>, <argument pos:start="71:53" pos:end="71:59"><expr pos:start="71:53" pos:end="71:59"><name pos:start="71:53" pos:end="71:59">td_addr</name></expr></argument>, <argument pos:start="71:62" pos:end="71:68"><expr pos:start="71:62" pos:end="71:68"><name pos:start="71:62" pos:end="71:68">queuing</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="71:72" pos:end="77:9">{<block_content pos:start="73:13" pos:end="75:21">
+
+            <expr_stmt pos:start="73:13" pos:end="73:51"><expr pos:start="73:13" pos:end="73:50"><call pos:start="73:13" pos:end="73:50"><name pos:start="73:13" pos:end="73:27">uhci_queue_free</name><argument_list pos:start="73:28" pos:end="73:50">(<argument pos:start="73:29" pos:end="73:29"><expr pos:start="73:29" pos:end="73:29"><name pos:start="73:29" pos:end="73:29">q</name></expr></argument>, <argument pos:start="73:32" pos:end="73:49"><expr pos:start="73:32" pos:end="73:49"><literal type="string" pos:start="73:32" pos:end="73:49">"guest re-used qh"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="75:13" pos:end="75:21"><expr pos:start="75:13" pos:end="75:20"><name pos:start="75:13" pos:end="75:13">q</name> <operator pos:start="75:15" pos:end="75:15">=</operator> <name pos:start="75:17" pos:end="75:20">NULL</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="83:5" pos:end="87:5"><if pos:start="83:5" pos:end="87:5">if <condition pos:start="83:8" pos:end="83:10">(<expr pos:start="83:9" pos:end="83:9"><name pos:start="83:9" pos:end="83:9">q</name></expr>)</condition> <block pos:start="83:12" pos:end="87:5">{<block_content pos:start="85:9" pos:end="85:28">
+
+        <expr_stmt pos:start="85:9" pos:end="85:28"><expr pos:start="85:9" pos:end="85:27"><name pos:start="85:9" pos:end="85:16"><name pos:start="85:9" pos:end="85:9">q</name><operator pos:start="85:10" pos:end="85:11">-&gt;</operator><name pos:start="85:12" pos:end="85:16">valid</name></name> <operator pos:start="85:18" pos:end="85:18">=</operator> <name pos:start="85:20" pos:end="85:27">QH_VALID</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="91:5" pos:end="91:21">/* Is active ? */</comment>
+
+    <if_stmt pos:start="93:5" pos:end="119:5"><if pos:start="93:5" pos:end="119:5">if <condition pos:start="93:8" pos:end="93:37">(<expr pos:start="93:9" pos:end="93:36"><operator pos:start="93:9" pos:end="93:9">!</operator><operator pos:start="93:10" pos:end="93:10">(</operator><name pos:start="93:11" pos:end="93:18"><name pos:start="93:11" pos:end="93:12">td</name><operator pos:start="93:13" pos:end="93:14">-&gt;</operator><name pos:start="93:15" pos:end="93:18">ctrl</name></name> <operator pos:start="93:20" pos:end="93:20">&amp;</operator> <name pos:start="93:22" pos:end="93:35">TD_CTRL_ACTIVE</name><operator pos:start="93:36" pos:end="93:36">)</operator></expr>)</condition> <block pos:start="93:39" pos:end="119:5">{<block_content pos:start="95:9" pos:end="117:33">
+
+        <if_stmt pos:start="95:9" pos:end="101:9"><if pos:start="95:9" pos:end="101:9">if <condition pos:start="95:12" pos:end="95:18">(<expr pos:start="95:13" pos:end="95:17"><name pos:start="95:13" pos:end="95:17">async</name></expr>)</condition> <block pos:start="95:20" pos:end="101:9">{<block_content pos:start="99:13" pos:end="99:67">
+
+            <comment type="block" pos:start="97:13" pos:end="97:72">/* Guest marked a pending td non-active, cancel the queue */</comment>
+
+            <expr_stmt pos:start="99:13" pos:end="99:67"><expr pos:start="99:13" pos:end="99:66"><call pos:start="99:13" pos:end="99:66"><name pos:start="99:13" pos:end="99:27">uhci_queue_free</name><argument_list pos:start="99:28" pos:end="99:66">(<argument pos:start="99:29" pos:end="99:40"><expr pos:start="99:29" pos:end="99:40"><name pos:start="99:29" pos:end="99:40"><name pos:start="99:29" pos:end="99:33">async</name><operator pos:start="99:34" pos:end="99:35">-&gt;</operator><name pos:start="99:36" pos:end="99:40">queue</name></name></expr></argument>, <argument pos:start="99:43" pos:end="99:65"><expr pos:start="99:43" pos:end="99:65"><literal type="string" pos:start="99:43" pos:end="99:65">"pending td non-active"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <comment type="block" pos:start="103:9" pos:end="109:11">/*
+
+         * ehci11d spec page 22: "Even if the Active bit in the TD is already
+
+         * cleared when the TD is fetched ... an IOC interrupt is generated"
+
+         */</comment>
+
+        <if_stmt pos:start="111:9" pos:end="115:9"><if pos:start="111:9" pos:end="115:9">if <condition pos:start="111:12" pos:end="111:35">(<expr pos:start="111:13" pos:end="111:34"><name pos:start="111:13" pos:end="111:20"><name pos:start="111:13" pos:end="111:14">td</name><operator pos:start="111:15" pos:end="111:16">-&gt;</operator><name pos:start="111:17" pos:end="111:20">ctrl</name></name> <operator pos:start="111:22" pos:end="111:22">&amp;</operator> <name pos:start="111:24" pos:end="111:34">TD_CTRL_IOC</name></expr>)</condition> <block pos:start="111:37" pos:end="115:9">{<block_content pos:start="113:17" pos:end="113:34">
+
+                <expr_stmt pos:start="113:17" pos:end="113:34"><expr pos:start="113:17" pos:end="113:33"><operator pos:start="113:17" pos:end="113:17">*</operator><name pos:start="113:18" pos:end="113:25">int_mask</name> <operator pos:start="113:27" pos:end="113:28">|=</operator> <literal type="number" pos:start="113:30" pos:end="113:33">0x01</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <return pos:start="117:9" pos:end="117:33">return <expr pos:start="117:16" pos:end="117:32"><name pos:start="117:16" pos:end="117:32">TD_RESULT_NEXT_QH</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="123:5" pos:end="167:5"><if pos:start="123:5" pos:end="167:5">if <condition pos:start="123:8" pos:end="123:14">(<expr pos:start="123:9" pos:end="123:13"><name pos:start="123:9" pos:end="123:13">async</name></expr>)</condition> <block pos:start="123:16" pos:end="167:5">{<block_content pos:start="125:9" pos:end="165:18">
+
+        <if_stmt pos:start="125:9" pos:end="135:9"><if pos:start="125:9" pos:end="135:9">if <condition pos:start="125:12" pos:end="125:20">(<expr pos:start="125:13" pos:end="125:19"><name pos:start="125:13" pos:end="125:19">queuing</name></expr>)</condition> <block pos:start="125:22" pos:end="135:9">{<block_content pos:start="133:13" pos:end="133:40">
+
+            <comment type="block" pos:start="127:13" pos:end="131:32">/* we are busy filling the queue, we are not prepared
+
+               to consume completed packages then, just leave them
+
+               in async state */</comment>
+
+            <return pos:start="133:13" pos:end="133:40">return <expr pos:start="133:20" pos:end="133:39"><name pos:start="133:20" pos:end="133:39">TD_RESULT_ASYNC_CONT</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <if_stmt pos:start="137:9" pos:end="161:9"><if pos:start="137:9" pos:end="161:9">if <condition pos:start="137:12" pos:end="137:25">(<expr pos:start="137:13" pos:end="137:24"><operator pos:start="137:13" pos:end="137:13">!</operator><name pos:start="137:14" pos:end="137:24"><name pos:start="137:14" pos:end="137:18">async</name><operator pos:start="137:19" pos:end="137:20">-&gt;</operator><name pos:start="137:21" pos:end="137:24">done</name></name></expr>)</condition> <block pos:start="137:27" pos:end="161:9">{<block_content pos:start="139:13" pos:end="159:40">
+
+            <decl_stmt pos:start="139:13" pos:end="139:28"><decl pos:start="139:13" pos:end="139:27"><type pos:start="139:13" pos:end="139:19"><name pos:start="139:13" pos:end="139:19">UHCI_TD</name></type> <name pos:start="139:21" pos:end="139:27">last_td</name></decl>;</decl_stmt>
+
+            <decl_stmt pos:start="141:13" pos:end="141:78"><decl pos:start="141:13" pos:end="141:77"><type pos:start="141:13" pos:end="141:23"><name pos:start="141:13" pos:end="141:21">UHCIAsync</name> <modifier pos:start="141:23" pos:end="141:23">*</modifier></type><name pos:start="141:24" pos:end="141:27">last</name> <init pos:start="141:29" pos:end="141:77">= <expr pos:start="141:31" pos:end="141:77"><call pos:start="141:31" pos:end="141:77"><name pos:start="141:31" pos:end="141:41">QTAILQ_LAST</name><argument_list pos:start="141:42" pos:end="141:77">(<argument pos:start="141:43" pos:end="141:63"><expr pos:start="141:43" pos:end="141:63"><operator pos:start="141:43" pos:end="141:43">&amp;</operator><name pos:start="141:44" pos:end="141:63"><name pos:start="141:44" pos:end="141:48">async</name><operator pos:start="141:49" pos:end="141:50">-&gt;</operator><name pos:start="141:51" pos:end="141:55">queue</name><operator pos:start="141:56" pos:end="141:57">-&gt;</operator><name pos:start="141:58" pos:end="141:63">asyncs</name></name></expr></argument>, <argument pos:start="141:66" pos:end="141:76"><expr pos:start="141:66" pos:end="141:76"><name pos:start="141:66" pos:end="141:76">asyncs_head</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+            <comment type="block" pos:start="143:13" pos:end="151:15">/*
+
+             * While we are waiting for the current td to complete, the guest
+
+             * may have added more tds to the queue. Note we re-read the td
+
+             * rather then caching it, as we want to see guest made changes!
+
+             */</comment>
+
+            <expr_stmt pos:start="153:13" pos:end="153:53"><expr pos:start="153:13" pos:end="153:52"><call pos:start="153:13" pos:end="153:52"><name pos:start="153:13" pos:end="153:24">uhci_read_td</name><argument_list pos:start="153:25" pos:end="153:52">(<argument pos:start="153:26" pos:end="153:26"><expr pos:start="153:26" pos:end="153:26"><name pos:start="153:26" pos:end="153:26">s</name></expr></argument>, <argument pos:start="153:29" pos:end="153:36"><expr pos:start="153:29" pos:end="153:36"><operator pos:start="153:29" pos:end="153:29">&amp;</operator><name pos:start="153:30" pos:end="153:36">last_td</name></expr></argument>, <argument pos:start="153:39" pos:end="153:51"><expr pos:start="153:39" pos:end="153:51"><name pos:start="153:39" pos:end="153:51"><name pos:start="153:39" pos:end="153:42">last</name><operator pos:start="153:43" pos:end="153:44">-&gt;</operator><name pos:start="153:45" pos:end="153:51">td_addr</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="155:13" pos:end="155:52"><expr pos:start="155:13" pos:end="155:51"><call pos:start="155:13" pos:end="155:51"><name pos:start="155:13" pos:end="155:27">uhci_queue_fill</name><argument_list pos:start="155:28" pos:end="155:51">(<argument pos:start="155:29" pos:end="155:40"><expr pos:start="155:29" pos:end="155:40"><name pos:start="155:29" pos:end="155:40"><name pos:start="155:29" pos:end="155:33">async</name><operator pos:start="155:34" pos:end="155:35">-&gt;</operator><name pos:start="155:36" pos:end="155:40">queue</name></name></expr></argument>, <argument pos:start="155:43" pos:end="155:50"><expr pos:start="155:43" pos:end="155:50"><operator pos:start="155:43" pos:end="155:43">&amp;</operator><name pos:start="155:44" pos:end="155:50">last_td</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+            <return pos:start="159:13" pos:end="159:40">return <expr pos:start="159:20" pos:end="159:39"><name pos:start="159:20" pos:end="159:39">TD_RESULT_ASYNC_CONT</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="163:9" pos:end="163:33"><expr pos:start="163:9" pos:end="163:32"><call pos:start="163:9" pos:end="163:32"><name pos:start="163:9" pos:end="163:25">uhci_async_unlink</name><argument_list pos:start="163:26" pos:end="163:32">(<argument pos:start="163:27" pos:end="163:31"><expr pos:start="163:27" pos:end="163:31"><name pos:start="163:27" pos:end="163:31">async</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <goto pos:start="165:9" pos:end="165:18">goto <name pos:start="165:14" pos:end="165:17">done</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="171:5" pos:end="175:5"><if pos:start="171:5" pos:end="175:5">if <condition pos:start="171:8" pos:end="171:28">(<expr pos:start="171:9" pos:end="171:27"><name pos:start="171:9" pos:end="171:27"><name pos:start="171:9" pos:end="171:9">s</name><operator pos:start="171:10" pos:end="171:11">-&gt;</operator><name pos:start="171:12" pos:end="171:27">completions_only</name></name></expr>)</condition> <block pos:start="171:30" pos:end="175:5">{<block_content pos:start="173:9" pos:end="173:36">
+
+        <return pos:start="173:9" pos:end="173:36">return <expr pos:start="173:16" pos:end="173:35"><name pos:start="173:16" pos:end="173:35">TD_RESULT_ASYNC_CONT</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="179:5" pos:end="179:29">/* Allocate new packet */</comment>
+
+    <if_stmt pos:start="181:5" pos:end="199:5"><if pos:start="181:5" pos:end="199:5">if <condition pos:start="181:8" pos:end="181:18">(<expr pos:start="181:9" pos:end="181:17"><name pos:start="181:9" pos:end="181:9">q</name> <operator pos:start="181:11" pos:end="181:12">==</operator> <name pos:start="181:14" pos:end="181:17">NULL</name></expr>)</condition> <block pos:start="181:20" pos:end="199:5">{<block_content pos:start="183:9" pos:end="197:47">
+
+        <decl_stmt pos:start="183:9" pos:end="183:70"><decl pos:start="183:9" pos:end="183:69"><type pos:start="183:9" pos:end="183:19"><name pos:start="183:9" pos:end="183:17">USBDevice</name> <modifier pos:start="183:19" pos:end="183:19">*</modifier></type><name pos:start="183:20" pos:end="183:22">dev</name> <init pos:start="183:24" pos:end="183:69">= <expr pos:start="183:26" pos:end="183:69"><call pos:start="183:26" pos:end="183:69"><name pos:start="183:26" pos:end="183:41">uhci_find_device</name><argument_list pos:start="183:42" pos:end="183:69">(<argument pos:start="183:43" pos:end="183:43"><expr pos:start="183:43" pos:end="183:43"><name pos:start="183:43" pos:end="183:43">s</name></expr></argument>, <argument pos:start="183:46" pos:end="183:68"><expr pos:start="183:46" pos:end="183:68"><operator pos:start="183:46" pos:end="183:46">(</operator><name pos:start="183:47" pos:end="183:55"><name pos:start="183:47" pos:end="183:48">td</name><operator pos:start="183:49" pos:end="183:50">-&gt;</operator><name pos:start="183:51" pos:end="183:55">token</name></name> <operator pos:start="183:57" pos:end="183:58">&gt;&gt;</operator> <literal type="number" pos:start="183:60" pos:end="183:60">8</literal><operator pos:start="183:61" pos:end="183:61">)</operator> <operator pos:start="183:63" pos:end="183:63">&amp;</operator> <literal type="number" pos:start="183:65" pos:end="183:68">0x7f</literal></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="185:9" pos:end="185:72"><decl pos:start="185:9" pos:end="185:71"><type pos:start="185:9" pos:end="185:21"><name pos:start="185:9" pos:end="185:19">USBEndpoint</name> <modifier pos:start="185:21" pos:end="185:21">*</modifier></type><name pos:start="185:22" pos:end="185:23">ep</name> <init pos:start="185:25" pos:end="185:71">= <expr pos:start="185:27" pos:end="185:71"><call pos:start="185:27" pos:end="185:71"><name pos:start="185:27" pos:end="185:36">usb_ep_get</name><argument_list pos:start="185:37" pos:end="185:71">(<argument pos:start="185:38" pos:end="185:40"><expr pos:start="185:38" pos:end="185:40"><name pos:start="185:38" pos:end="185:40">dev</name></expr></argument>, <argument pos:start="185:43" pos:end="185:45"><expr pos:start="185:43" pos:end="185:45"><name pos:start="185:43" pos:end="185:45">pid</name></expr></argument>, <argument pos:start="185:48" pos:end="185:70"><expr pos:start="185:48" pos:end="185:70"><operator pos:start="185:48" pos:end="185:48">(</operator><name pos:start="185:49" pos:end="185:57"><name pos:start="185:49" pos:end="185:50">td</name><operator pos:start="185:51" pos:end="185:52">-&gt;</operator><name pos:start="185:53" pos:end="185:57">token</name></name> <operator pos:start="185:59" pos:end="185:60">&gt;&gt;</operator> <literal type="number" pos:start="185:62" pos:end="185:63">15</literal><operator pos:start="185:64" pos:end="185:64">)</operator> <operator pos:start="185:66" pos:end="185:66">&amp;</operator> <literal type="number" pos:start="185:68" pos:end="185:70">0xf</literal></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+
+
+        <if_stmt pos:start="189:9" pos:end="195:9"><if pos:start="189:9" pos:end="195:9">if <condition pos:start="189:12" pos:end="189:23">(<expr pos:start="189:13" pos:end="189:22"><name pos:start="189:13" pos:end="189:14">ep</name> <operator pos:start="189:16" pos:end="189:17">==</operator> <name pos:start="189:19" pos:end="189:22">NULL</name></expr>)</condition> <block pos:start="189:25" pos:end="195:9">{<block_content pos:start="191:13" pos:end="193:50">
+
+            <return pos:start="191:13" pos:end="193:50">return <expr pos:start="191:20" pos:end="193:49"><call pos:start="191:20" pos:end="193:49"><name pos:start="191:20" pos:end="191:39">uhci_handle_td_error</name><argument_list pos:start="191:40" pos:end="193:49">(<argument pos:start="191:41" pos:end="191:41"><expr pos:start="191:41" pos:end="191:41"><name pos:start="191:41" pos:end="191:41">s</name></expr></argument>, <argument pos:start="191:44" pos:end="191:45"><expr pos:start="191:44" pos:end="191:45"><name pos:start="191:44" pos:end="191:45">td</name></expr></argument>, <argument pos:start="191:48" pos:end="191:54"><expr pos:start="191:48" pos:end="191:54"><name pos:start="191:48" pos:end="191:54">td_addr</name></expr></argument>, <argument pos:start="191:57" pos:end="191:69"><expr pos:start="191:57" pos:end="191:69"><name pos:start="191:57" pos:end="191:69">USB_RET_NODEV</name></expr></argument>,
+
+                                        <argument pos:start="193:41" pos:end="193:48"><expr pos:start="193:41" pos:end="193:48"><name pos:start="193:41" pos:end="193:48">int_mask</name></expr></argument>)</argument_list></call></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="197:9" pos:end="197:47"><expr pos:start="197:9" pos:end="197:46"><name pos:start="197:9" pos:end="197:9">q</name> <operator pos:start="197:11" pos:end="197:11">=</operator> <call pos:start="197:13" pos:end="197:46"><name pos:start="197:13" pos:end="197:26">uhci_queue_new</name><argument_list pos:start="197:27" pos:end="197:46">(<argument pos:start="197:28" pos:end="197:28"><expr pos:start="197:28" pos:end="197:28"><name pos:start="197:28" pos:end="197:28">s</name></expr></argument>, <argument pos:start="197:31" pos:end="197:37"><expr pos:start="197:31" pos:end="197:37"><name pos:start="197:31" pos:end="197:37">qh_addr</name></expr></argument>, <argument pos:start="197:40" pos:end="197:41"><expr pos:start="197:40" pos:end="197:41"><name pos:start="197:40" pos:end="197:41">td</name></expr></argument>, <argument pos:start="197:44" pos:end="197:45"><expr pos:start="197:44" pos:end="197:45"><name pos:start="197:44" pos:end="197:45">ep</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <expr_stmt pos:start="201:5" pos:end="201:41"><expr pos:start="201:5" pos:end="201:40"><name pos:start="201:5" pos:end="201:9">async</name> <operator pos:start="201:11" pos:end="201:11">=</operator> <call pos:start="201:13" pos:end="201:40"><name pos:start="201:13" pos:end="201:28">uhci_async_alloc</name><argument_list pos:start="201:29" pos:end="201:40">(<argument pos:start="201:30" pos:end="201:30"><expr pos:start="201:30" pos:end="201:30"><name pos:start="201:30" pos:end="201:30">q</name></expr></argument>, <argument pos:start="201:33" pos:end="201:39"><expr pos:start="201:33" pos:end="201:39"><name pos:start="201:33" pos:end="201:39">td_addr</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="205:5" pos:end="205:46"><expr pos:start="205:5" pos:end="205:45"><name pos:start="205:5" pos:end="205:11">max_len</name> <operator pos:start="205:13" pos:end="205:13">=</operator> <operator pos:start="205:15" pos:end="205:15">(</operator><operator pos:start="205:16" pos:end="205:16">(</operator><name pos:start="205:17" pos:end="205:25"><name pos:start="205:17" pos:end="205:18">td</name><operator pos:start="205:19" pos:end="205:20">-&gt;</operator><name pos:start="205:21" pos:end="205:25">token</name></name> <operator pos:start="205:27" pos:end="205:28">&gt;&gt;</operator> <literal type="number" pos:start="205:30" pos:end="205:31">21</literal><operator pos:start="205:32" pos:end="205:32">)</operator> <operator pos:start="205:34" pos:end="205:34">+</operator> <literal type="number" pos:start="205:36" pos:end="205:36">1</literal><operator pos:start="205:37" pos:end="205:37">)</operator> <operator pos:start="205:39" pos:end="205:39">&amp;</operator> <literal type="number" pos:start="205:41" pos:end="205:45">0x7ff</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="207:5" pos:end="207:65"><expr pos:start="207:5" pos:end="207:64"><name pos:start="207:5" pos:end="207:7">spd</name> <operator pos:start="207:9" pos:end="207:9">=</operator> <operator pos:start="207:11" pos:end="207:11">(</operator><name pos:start="207:12" pos:end="207:14">pid</name> <operator pos:start="207:16" pos:end="207:17">==</operator> <name pos:start="207:19" pos:end="207:30">USB_TOKEN_IN</name> <operator pos:start="207:32" pos:end="207:33">&amp;&amp;</operator> <operator pos:start="207:35" pos:end="207:35">(</operator><name pos:start="207:36" pos:end="207:43"><name pos:start="207:36" pos:end="207:37">td</name><operator pos:start="207:38" pos:end="207:39">-&gt;</operator><name pos:start="207:40" pos:end="207:43">ctrl</name></name> <operator pos:start="207:45" pos:end="207:45">&amp;</operator> <name pos:start="207:47" pos:end="207:57">TD_CTRL_SPD</name><operator pos:start="207:58" pos:end="207:58">)</operator> <operator pos:start="207:60" pos:end="207:61">!=</operator> <literal type="number" pos:start="207:63" pos:end="207:63">0</literal><operator pos:start="207:64" pos:end="207:64">)</operator></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="209:5" pos:end="211:52"><expr pos:start="209:5" pos:end="211:51"><call pos:start="209:5" pos:end="211:51"><name pos:start="209:5" pos:end="209:20">usb_packet_setup</name><argument_list pos:start="209:21" pos:end="211:51">(<argument pos:start="209:22" pos:end="209:35"><expr pos:start="209:22" pos:end="209:35"><operator pos:start="209:22" pos:end="209:22">&amp;</operator><name pos:start="209:23" pos:end="209:35"><name pos:start="209:23" pos:end="209:27">async</name><operator pos:start="209:28" pos:end="209:29">-&gt;</operator><name pos:start="209:30" pos:end="209:35">packet</name></name></expr></argument>, <argument pos:start="209:38" pos:end="209:40"><expr pos:start="209:38" pos:end="209:40"><name pos:start="209:38" pos:end="209:40">pid</name></expr></argument>, <argument pos:start="209:43" pos:end="209:47"><expr pos:start="209:43" pos:end="209:47"><name pos:start="209:43" pos:end="209:47"><name pos:start="209:43" pos:end="209:43">q</name><operator pos:start="209:44" pos:end="209:45">-&gt;</operator><name pos:start="209:46" pos:end="209:47">ep</name></name></expr></argument>, <argument pos:start="209:50" pos:end="209:50"><expr pos:start="209:50" pos:end="209:50"><literal type="number" pos:start="209:50" pos:end="209:50">0</literal></expr></argument>, <argument pos:start="209:53" pos:end="209:59"><expr pos:start="209:53" pos:end="209:59"><name pos:start="209:53" pos:end="209:59">td_addr</name></expr></argument>, <argument pos:start="209:62" pos:end="209:64"><expr pos:start="209:62" pos:end="209:64"><name pos:start="209:62" pos:end="209:64">spd</name></expr></argument>,
+
+                     <argument pos:start="211:22" pos:end="211:50"><expr pos:start="211:22" pos:end="211:50"><operator pos:start="211:22" pos:end="211:22">(</operator><name pos:start="211:23" pos:end="211:30"><name pos:start="211:23" pos:end="211:24">td</name><operator pos:start="211:25" pos:end="211:26">-&gt;</operator><name pos:start="211:27" pos:end="211:30">ctrl</name></name> <operator pos:start="211:32" pos:end="211:32">&amp;</operator> <name pos:start="211:34" pos:end="211:44">TD_CTRL_IOC</name><operator pos:start="211:45" pos:end="211:45">)</operator> <operator pos:start="211:47" pos:end="211:48">!=</operator> <literal type="number" pos:start="211:50" pos:end="211:50">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="213:5" pos:end="221:5"><if pos:start="213:5" pos:end="217:5">if <condition pos:start="213:8" pos:end="213:45">(<expr pos:start="213:9" pos:end="213:44"><name pos:start="213:9" pos:end="213:15">max_len</name> <operator pos:start="213:17" pos:end="213:18">&lt;=</operator> <sizeof pos:start="213:20" pos:end="213:44">sizeof<argument_list pos:start="213:26" pos:end="213:44">(<argument pos:start="213:27" pos:end="213:43"><expr pos:start="213:27" pos:end="213:43"><name pos:start="213:27" pos:end="213:43"><name pos:start="213:27" pos:end="213:31">async</name><operator pos:start="213:32" pos:end="213:33">-&gt;</operator><name pos:start="213:34" pos:end="213:43">static_buf</name></name></expr></argument>)</argument_list></sizeof></expr>)</condition> <block pos:start="213:47" pos:end="217:5">{<block_content pos:start="215:9" pos:end="215:39">
+
+        <expr_stmt pos:start="215:9" pos:end="215:39"><expr pos:start="215:9" pos:end="215:38"><name pos:start="215:9" pos:end="215:18"><name pos:start="215:9" pos:end="215:13">async</name><operator pos:start="215:14" pos:end="215:15">-&gt;</operator><name pos:start="215:16" pos:end="215:18">buf</name></name> <operator pos:start="215:20" pos:end="215:20">=</operator> <name pos:start="215:22" pos:end="215:38"><name pos:start="215:22" pos:end="215:26">async</name><operator pos:start="215:27" pos:end="215:28">-&gt;</operator><name pos:start="215:29" pos:end="215:38">static_buf</name></name></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="217:7" pos:end="221:5">else <block pos:start="217:12" pos:end="221:5">{<block_content pos:start="219:9" pos:end="219:39">
+
+        <expr_stmt pos:start="219:9" pos:end="219:39"><expr pos:start="219:9" pos:end="219:38"><name pos:start="219:9" pos:end="219:18"><name pos:start="219:9" pos:end="219:13">async</name><operator pos:start="219:14" pos:end="219:15">-&gt;</operator><name pos:start="219:16" pos:end="219:18">buf</name></name> <operator pos:start="219:20" pos:end="219:20">=</operator> <call pos:start="219:22" pos:end="219:38"><name pos:start="219:22" pos:end="219:29">g_malloc</name><argument_list pos:start="219:30" pos:end="219:38">(<argument pos:start="219:31" pos:end="219:37"><expr pos:start="219:31" pos:end="219:37"><name pos:start="219:31" pos:end="219:37">max_len</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+    <expr_stmt pos:start="223:5" pos:end="223:59"><expr pos:start="223:5" pos:end="223:58"><call pos:start="223:5" pos:end="223:58"><name pos:start="223:5" pos:end="223:21">usb_packet_addbuf</name><argument_list pos:start="223:22" pos:end="223:58">(<argument pos:start="223:23" pos:end="223:36"><expr pos:start="223:23" pos:end="223:36"><operator pos:start="223:23" pos:end="223:23">&amp;</operator><name pos:start="223:24" pos:end="223:36"><name pos:start="223:24" pos:end="223:28">async</name><operator pos:start="223:29" pos:end="223:30">-&gt;</operator><name pos:start="223:31" pos:end="223:36">packet</name></name></expr></argument>, <argument pos:start="223:39" pos:end="223:48"><expr pos:start="223:39" pos:end="223:48"><name pos:start="223:39" pos:end="223:48"><name pos:start="223:39" pos:end="223:43">async</name><operator pos:start="223:44" pos:end="223:45">-&gt;</operator><name pos:start="223:46" pos:end="223:48">buf</name></name></expr></argument>, <argument pos:start="223:51" pos:end="223:57"><expr pos:start="223:51" pos:end="223:57"><name pos:start="223:51" pos:end="223:57">max_len</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <switch pos:start="227:5" pos:end="259:5">switch<condition pos:start="227:11" pos:end="227:15">(<expr pos:start="227:12" pos:end="227:14"><name pos:start="227:12" pos:end="227:14">pid</name></expr>)</condition> <block pos:start="227:17" pos:end="259:5">{<block_content pos:start="229:5" pos:end="257:16">
+
+    <case pos:start="229:5" pos:end="229:23">case <expr pos:start="229:10" pos:end="229:22"><name pos:start="229:10" pos:end="229:22">USB_TOKEN_OUT</name></expr>:</case>
+
+    <case pos:start="231:5" pos:end="231:25">case <expr pos:start="231:10" pos:end="231:24"><name pos:start="231:10" pos:end="231:24">USB_TOKEN_SETUP</name></expr>:</case>
+
+        <expr_stmt pos:start="233:9" pos:end="233:63"><expr pos:start="233:9" pos:end="233:62"><call pos:start="233:9" pos:end="233:62"><name pos:start="233:9" pos:end="233:20">pci_dma_read</name><argument_list pos:start="233:21" pos:end="233:62">(<argument pos:start="233:22" pos:end="233:28"><expr pos:start="233:22" pos:end="233:28"><operator pos:start="233:22" pos:end="233:22">&amp;</operator><name pos:start="233:23" pos:end="233:28"><name pos:start="233:23" pos:end="233:23">s</name><operator pos:start="233:24" pos:end="233:25">-&gt;</operator><name pos:start="233:26" pos:end="233:28">dev</name></name></expr></argument>, <argument pos:start="233:31" pos:end="233:40"><expr pos:start="233:31" pos:end="233:40"><name pos:start="233:31" pos:end="233:40"><name pos:start="233:31" pos:end="233:32">td</name><operator pos:start="233:33" pos:end="233:34">-&gt;</operator><name pos:start="233:35" pos:end="233:40">buffer</name></name></expr></argument>, <argument pos:start="233:43" pos:end="233:52"><expr pos:start="233:43" pos:end="233:52"><name pos:start="233:43" pos:end="233:52"><name pos:start="233:43" pos:end="233:47">async</name><operator pos:start="233:48" pos:end="233:49">-&gt;</operator><name pos:start="233:50" pos:end="233:52">buf</name></name></expr></argument>, <argument pos:start="233:55" pos:end="233:61"><expr pos:start="233:55" pos:end="233:61"><name pos:start="233:55" pos:end="233:61">max_len</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="235:9" pos:end="235:54"><expr pos:start="235:9" pos:end="235:53"><call pos:start="235:9" pos:end="235:53"><name pos:start="235:9" pos:end="235:25">usb_handle_packet</name><argument_list pos:start="235:26" pos:end="235:53">(<argument pos:start="235:27" pos:end="235:36"><expr pos:start="235:27" pos:end="235:36"><name pos:start="235:27" pos:end="235:36"><name pos:start="235:27" pos:end="235:27">q</name><operator pos:start="235:28" pos:end="235:29">-&gt;</operator><name pos:start="235:30" pos:end="235:31">ep</name><operator pos:start="235:32" pos:end="235:33">-&gt;</operator><name pos:start="235:34" pos:end="235:36">dev</name></name></expr></argument>, <argument pos:start="235:39" pos:end="235:52"><expr pos:start="235:39" pos:end="235:52"><operator pos:start="235:39" pos:end="235:39">&amp;</operator><name pos:start="235:40" pos:end="235:52"><name pos:start="235:40" pos:end="235:44">async</name><operator pos:start="235:45" pos:end="235:46">-&gt;</operator><name pos:start="235:47" pos:end="235:52">packet</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="237:9" pos:end="241:9"><if pos:start="237:9" pos:end="241:9">if <condition pos:start="237:12" pos:end="237:52">(<expr pos:start="237:13" pos:end="237:51"><name pos:start="237:13" pos:end="237:32"><name pos:start="237:13" pos:end="237:17">async</name><operator pos:start="237:18" pos:end="237:19">-&gt;</operator><name pos:start="237:20" pos:end="237:25">packet</name><operator pos:start="237:26" pos:end="237:26">.</operator><name pos:start="237:27" pos:end="237:32">status</name></name> <operator pos:start="237:34" pos:end="237:35">==</operator> <name pos:start="237:37" pos:end="237:51">USB_RET_SUCCESS</name></expr>)</condition> <block pos:start="237:54" pos:end="241:9">{<block_content pos:start="239:13" pos:end="239:50">
+
+            <expr_stmt pos:start="239:13" pos:end="239:50"><expr pos:start="239:13" pos:end="239:49"><name pos:start="239:13" pos:end="239:39"><name pos:start="239:13" pos:end="239:17">async</name><operator pos:start="239:18" pos:end="239:19">-&gt;</operator><name pos:start="239:20" pos:end="239:25">packet</name><operator pos:start="239:26" pos:end="239:26">.</operator><name pos:start="239:27" pos:end="239:39">actual_length</name></name> <operator pos:start="239:41" pos:end="239:41">=</operator> <name pos:start="239:43" pos:end="239:49">max_len</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <break pos:start="243:9" pos:end="243:14">break;</break>
+
+
+
+    <case pos:start="247:5" pos:end="247:22">case <expr pos:start="247:10" pos:end="247:21"><name pos:start="247:10" pos:end="247:21">USB_TOKEN_IN</name></expr>:</case>
+
+        <expr_stmt pos:start="249:9" pos:end="249:54"><expr pos:start="249:9" pos:end="249:53"><call pos:start="249:9" pos:end="249:53"><name pos:start="249:9" pos:end="249:25">usb_handle_packet</name><argument_list pos:start="249:26" pos:end="249:53">(<argument pos:start="249:27" pos:end="249:36"><expr pos:start="249:27" pos:end="249:36"><name pos:start="249:27" pos:end="249:36"><name pos:start="249:27" pos:end="249:27">q</name><operator pos:start="249:28" pos:end="249:29">-&gt;</operator><name pos:start="249:30" pos:end="249:31">ep</name><operator pos:start="249:32" pos:end="249:33">-&gt;</operator><name pos:start="249:34" pos:end="249:36">dev</name></name></expr></argument>, <argument pos:start="249:39" pos:end="249:52"><expr pos:start="249:39" pos:end="249:52"><operator pos:start="249:39" pos:end="249:39">&amp;</operator><name pos:start="249:40" pos:end="249:52"><name pos:start="249:40" pos:end="249:44">async</name><operator pos:start="249:45" pos:end="249:46">-&gt;</operator><name pos:start="249:47" pos:end="249:52">packet</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <break pos:start="251:9" pos:end="251:14">break;</break>
+
+
+
+    <default pos:start="255:5" pos:end="255:12">default:</default>
+
+        <expr_stmt pos:start="257:9" pos:end="257:16"><expr pos:start="257:9" pos:end="257:15"><call pos:start="257:9" pos:end="257:15"><name pos:start="257:9" pos:end="257:13">abort</name><argument_list pos:start="257:14" pos:end="257:15">()</argument_list></call></expr>;</expr_stmt> <comment type="block" pos:start="257:18" pos:end="257:39">/* Never to execute */</comment>
+
+    </block_content>}</block></switch>
+
+
+
+    <if_stmt pos:start="263:5" pos:end="275:5"><if pos:start="263:5" pos:end="275:5">if <condition pos:start="263:8" pos:end="263:46">(<expr pos:start="263:9" pos:end="263:45"><name pos:start="263:9" pos:end="263:28"><name pos:start="263:9" pos:end="263:13">async</name><operator pos:start="263:14" pos:end="263:15">-&gt;</operator><name pos:start="263:16" pos:end="263:21">packet</name><operator pos:start="263:22" pos:end="263:22">.</operator><name pos:start="263:23" pos:end="263:28">status</name></name> <operator pos:start="263:30" pos:end="263:31">==</operator> <name pos:start="263:33" pos:end="263:45">USB_RET_ASYNC</name></expr>)</condition> <block pos:start="263:48" pos:end="275:5">{<block_content pos:start="265:9" pos:end="273:37">
+
+        <expr_stmt pos:start="265:9" pos:end="265:31"><expr pos:start="265:9" pos:end="265:30"><call pos:start="265:9" pos:end="265:30"><name pos:start="265:9" pos:end="265:23">uhci_async_link</name><argument_list pos:start="265:24" pos:end="265:30">(<argument pos:start="265:25" pos:end="265:29"><expr pos:start="265:25" pos:end="265:29"><name pos:start="265:25" pos:end="265:29">async</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="267:9" pos:end="271:9"><if pos:start="267:9" pos:end="271:9">if <condition pos:start="267:12" pos:end="267:21">(<expr pos:start="267:13" pos:end="267:20"><operator pos:start="267:13" pos:end="267:13">!</operator><name pos:start="267:14" pos:end="267:20">queuing</name></expr>)</condition> <block pos:start="267:23" pos:end="271:9">{<block_content pos:start="269:13" pos:end="269:35">
+
+            <expr_stmt pos:start="269:13" pos:end="269:35"><expr pos:start="269:13" pos:end="269:34"><call pos:start="269:13" pos:end="269:34"><name pos:start="269:13" pos:end="269:27">uhci_queue_fill</name><argument_list pos:start="269:28" pos:end="269:34">(<argument pos:start="269:29" pos:end="269:29"><expr pos:start="269:29" pos:end="269:29"><name pos:start="269:29" pos:end="269:29">q</name></expr></argument>, <argument pos:start="269:32" pos:end="269:33"><expr pos:start="269:32" pos:end="269:33"><name pos:start="269:32" pos:end="269:33">td</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <return pos:start="273:9" pos:end="273:37">return <expr pos:start="273:16" pos:end="273:36"><name pos:start="273:16" pos:end="273:36">TD_RESULT_ASYNC_START</name></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+<label pos:start="279:1" pos:end="279:5"><name pos:start="279:1" pos:end="279:4">done</name>:</label>
+
+    <expr_stmt pos:start="281:5" pos:end="281:51"><expr pos:start="281:5" pos:end="281:50"><name pos:start="281:5" pos:end="281:7">ret</name> <operator pos:start="281:9" pos:end="281:9">=</operator> <call pos:start="281:11" pos:end="281:50"><name pos:start="281:11" pos:end="281:26">uhci_complete_td</name><argument_list pos:start="281:27" pos:end="281:50">(<argument pos:start="281:28" pos:end="281:28"><expr pos:start="281:28" pos:end="281:28"><name pos:start="281:28" pos:end="281:28">s</name></expr></argument>, <argument pos:start="281:31" pos:end="281:32"><expr pos:start="281:31" pos:end="281:32"><name pos:start="281:31" pos:end="281:32">td</name></expr></argument>, <argument pos:start="281:35" pos:end="281:39"><expr pos:start="281:35" pos:end="281:39"><name pos:start="281:35" pos:end="281:39">async</name></expr></argument>, <argument pos:start="281:42" pos:end="281:49"><expr pos:start="281:42" pos:end="281:49"><name pos:start="281:42" pos:end="281:49">int_mask</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="283:5" pos:end="283:27"><expr pos:start="283:5" pos:end="283:26"><call pos:start="283:5" pos:end="283:26"><name pos:start="283:5" pos:end="283:19">uhci_async_free</name><argument_list pos:start="283:20" pos:end="283:26">(<argument pos:start="283:21" pos:end="283:25"><expr pos:start="283:21" pos:end="283:25"><name pos:start="283:21" pos:end="283:25">async</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <return pos:start="285:5" pos:end="285:15">return <expr pos:start="285:12" pos:end="285:14"><name pos:start="285:12" pos:end="285:14">ret</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

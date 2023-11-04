@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/27180.c" pos:tabs="8"><function pos:start="1:1" pos:end="101:1"><type pos:start="1:1" pos:end="1:23"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name> <name pos:start="1:12" pos:end="1:23">coroutine_fn</name></type> <name pos:start="1:25" pos:end="1:43">qed_aio_write_alloc</name><parameter_list pos:start="1:44" pos:end="1:70">(<parameter pos:start="1:45" pos:end="1:57"><decl pos:start="1:45" pos:end="1:57"><type pos:start="1:45" pos:end="1:57"><name pos:start="1:45" pos:end="1:52">QEDAIOCB</name> <modifier pos:start="1:54" pos:end="1:54">*</modifier></type><name pos:start="1:55" pos:end="1:57">acb</name></decl></parameter>, <parameter pos:start="1:60" pos:end="1:69"><decl pos:start="1:60" pos:end="1:69"><type pos:start="1:60" pos:end="1:69"><name pos:start="1:60" pos:end="1:65">size_t</name></type> <name pos:start="1:67" pos:end="1:69">len</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="101:1">{<block_content pos:start="5:5" pos:end="99:58">
+
+    <decl_stmt pos:start="5:5" pos:end="5:36"><decl pos:start="5:5" pos:end="5:35"><type pos:start="5:5" pos:end="5:18"><name pos:start="5:5" pos:end="5:16">BDRVQEDState</name> <modifier pos:start="5:18" pos:end="5:18">*</modifier></type><name pos:start="5:19" pos:end="5:19">s</name> <init pos:start="5:21" pos:end="5:35">= <expr pos:start="5:23" pos:end="5:35"><call pos:start="5:23" pos:end="5:35"><name pos:start="5:23" pos:end="5:30">acb_to_s</name><argument_list pos:start="5:31" pos:end="5:35">(<argument pos:start="5:32" pos:end="5:34"><expr pos:start="5:32" pos:end="5:34"><name pos:start="5:32" pos:end="5:34">acb</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:12"><decl pos:start="7:5" pos:end="7:11"><type pos:start="7:5" pos:end="7:7"><name pos:start="7:5" pos:end="7:7">int</name></type> <name pos:start="7:9" pos:end="7:11">ret</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="11:5" pos:end="11:65">/* Cancel timer when the first allocating request comes in */</comment>
+
+    <if_stmt pos:start="13:5" pos:end="17:5"><if pos:start="13:5" pos:end="17:5">if <condition pos:start="13:8" pos:end="13:34">(<expr pos:start="13:9" pos:end="13:33"><name pos:start="13:9" pos:end="13:25"><name pos:start="13:9" pos:end="13:9">s</name><operator pos:start="13:10" pos:end="13:11">-&gt;</operator><name pos:start="13:12" pos:end="13:25">allocating_acb</name></name> <operator pos:start="13:27" pos:end="13:28">==</operator> <name pos:start="13:30" pos:end="13:33">NULL</name></expr>)</condition> <block pos:start="13:36" pos:end="17:5">{<block_content pos:start="15:9" pos:end="15:39">
+
+        <expr_stmt pos:start="15:9" pos:end="15:39"><expr pos:start="15:9" pos:end="15:38"><call pos:start="15:9" pos:end="15:38"><name pos:start="15:9" pos:end="15:35">qed_cancel_need_check_timer</name><argument_list pos:start="15:36" pos:end="15:38">(<argument pos:start="15:37" pos:end="15:37"><expr pos:start="15:37" pos:end="15:37"><name pos:start="15:37" pos:end="15:37">s</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="21:5" pos:end="21:72">/* Freeze this request if another allocating write is in progress */</comment>
+
+    <if_stmt pos:start="23:5" pos:end="37:5"><if pos:start="23:5" pos:end="37:5">if <condition pos:start="23:8" pos:end="23:69">(<expr pos:start="23:9" pos:end="23:68"><name pos:start="23:9" pos:end="23:25"><name pos:start="23:9" pos:end="23:9">s</name><operator pos:start="23:10" pos:end="23:11">-&gt;</operator><name pos:start="23:12" pos:end="23:25">allocating_acb</name></name> <operator pos:start="23:27" pos:end="23:28">!=</operator> <name pos:start="23:30" pos:end="23:32">acb</name> <operator pos:start="23:34" pos:end="23:35">||</operator> <name pos:start="23:37" pos:end="23:68"><name pos:start="23:37" pos:end="23:37">s</name><operator pos:start="23:38" pos:end="23:39">-&gt;</operator><name pos:start="23:40" pos:end="23:68">allocating_write_reqs_plugged</name></name></expr>)</condition> <block pos:start="23:71" pos:end="37:5">{<block_content pos:start="25:9" pos:end="35:23">
+
+        <if_stmt pos:start="25:9" pos:end="31:9"><if pos:start="25:9" pos:end="31:9">if <condition pos:start="25:12" pos:end="25:38">(<expr pos:start="25:13" pos:end="25:37"><name pos:start="25:13" pos:end="25:29"><name pos:start="25:13" pos:end="25:13">s</name><operator pos:start="25:14" pos:end="25:15">-&gt;</operator><name pos:start="25:16" pos:end="25:29">allocating_acb</name></name> <operator pos:start="25:31" pos:end="25:32">!=</operator> <name pos:start="25:34" pos:end="25:37">NULL</name></expr>)</condition> <block pos:start="25:40" pos:end="31:9">{<block_content pos:start="27:13" pos:end="29:46">
+
+            <expr_stmt pos:start="27:13" pos:end="27:64"><expr pos:start="27:13" pos:end="27:63"><call pos:start="27:13" pos:end="27:63"><name pos:start="27:13" pos:end="27:30">qemu_co_queue_wait</name><argument_list pos:start="27:31" pos:end="27:63">(<argument pos:start="27:32" pos:end="27:56"><expr pos:start="27:32" pos:end="27:56"><operator pos:start="27:32" pos:end="27:32">&amp;</operator><name pos:start="27:33" pos:end="27:56"><name pos:start="27:33" pos:end="27:33">s</name><operator pos:start="27:34" pos:end="27:35">-&gt;</operator><name pos:start="27:36" pos:end="27:56">allocating_write_reqs</name></name></expr></argument>, <argument pos:start="27:59" pos:end="27:62"><expr pos:start="27:59" pos:end="27:62"><name pos:start="27:59" pos:end="27:62">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="29:13" pos:end="29:46"><expr pos:start="29:13" pos:end="29:45"><call pos:start="29:13" pos:end="29:45"><name pos:start="29:13" pos:end="29:18">assert</name><argument_list pos:start="29:19" pos:end="29:45">(<argument pos:start="29:20" pos:end="29:44"><expr pos:start="29:20" pos:end="29:44"><name pos:start="29:20" pos:end="29:36"><name pos:start="29:20" pos:end="29:20">s</name><operator pos:start="29:21" pos:end="29:22">-&gt;</operator><name pos:start="29:23" pos:end="29:36">allocating_acb</name></name> <operator pos:start="29:38" pos:end="29:39">==</operator> <name pos:start="29:41" pos:end="29:44">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="33:9" pos:end="33:32"><expr pos:start="33:9" pos:end="33:31"><name pos:start="33:9" pos:end="33:25"><name pos:start="33:9" pos:end="33:9">s</name><operator pos:start="33:10" pos:end="33:11">-&gt;</operator><name pos:start="33:12" pos:end="33:25">allocating_acb</name></name> <operator pos:start="33:27" pos:end="33:27">=</operator> <name pos:start="33:29" pos:end="33:31">acb</name></expr>;</expr_stmt>
+
+        <return pos:start="35:9" pos:end="35:23">return <expr pos:start="35:16" pos:end="35:22"><operator pos:start="35:16" pos:end="35:16">-</operator><name pos:start="35:17" pos:end="35:22">EAGAIN</name></expr>;</return> <comment type="block" pos:start="35:25" pos:end="35:70">/* start over with looking up table entries */</comment>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="41:5" pos:end="43:60"><expr pos:start="41:5" pos:end="43:59"><name pos:start="41:5" pos:end="41:22"><name pos:start="41:5" pos:end="41:7">acb</name><operator pos:start="41:8" pos:end="41:9">-&gt;</operator><name pos:start="41:10" pos:end="41:22">cur_nclusters</name></name> <operator pos:start="41:24" pos:end="41:24">=</operator> <call pos:start="41:26" pos:end="43:59"><name pos:start="41:26" pos:end="41:46">qed_bytes_to_clusters</name><argument_list pos:start="41:47" pos:end="43:59">(<argument pos:start="41:48" pos:end="41:48"><expr pos:start="41:48" pos:end="41:48"><name pos:start="41:48" pos:end="41:48">s</name></expr></argument>,
+
+            <argument pos:start="43:13" pos:end="43:58"><expr pos:start="43:13" pos:end="43:58"><call pos:start="43:13" pos:end="43:52"><name pos:start="43:13" pos:end="43:35">qed_offset_into_cluster</name><argument_list pos:start="43:36" pos:end="43:52">(<argument pos:start="43:37" pos:end="43:37"><expr pos:start="43:37" pos:end="43:37"><name pos:start="43:37" pos:end="43:37">s</name></expr></argument>, <argument pos:start="43:40" pos:end="43:51"><expr pos:start="43:40" pos:end="43:51"><name pos:start="43:40" pos:end="43:51"><name pos:start="43:40" pos:end="43:42">acb</name><operator pos:start="43:43" pos:end="43:44">-&gt;</operator><name pos:start="43:45" pos:end="43:51">cur_pos</name></name></expr></argument>)</argument_list></call> <operator pos:start="43:54" pos:end="43:54">+</operator> <name pos:start="43:56" pos:end="43:58">len</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="45:5" pos:end="45:72"><expr pos:start="45:5" pos:end="45:71"><call pos:start="45:5" pos:end="45:71"><name pos:start="45:5" pos:end="45:21">qemu_iovec_concat</name><argument_list pos:start="45:22" pos:end="45:71">(<argument pos:start="45:23" pos:end="45:36"><expr pos:start="45:23" pos:end="45:36"><operator pos:start="45:23" pos:end="45:23">&amp;</operator><name pos:start="45:24" pos:end="45:36"><name pos:start="45:24" pos:end="45:26">acb</name><operator pos:start="45:27" pos:end="45:28">-&gt;</operator><name pos:start="45:29" pos:end="45:36">cur_qiov</name></name></expr></argument>, <argument pos:start="45:39" pos:end="45:47"><expr pos:start="45:39" pos:end="45:47"><name pos:start="45:39" pos:end="45:47"><name pos:start="45:39" pos:end="45:41">acb</name><operator pos:start="45:42" pos:end="45:43">-&gt;</operator><name pos:start="45:44" pos:end="45:47">qiov</name></name></expr></argument>, <argument pos:start="45:50" pos:end="45:65"><expr pos:start="45:50" pos:end="45:65"><name pos:start="45:50" pos:end="45:65"><name pos:start="45:50" pos:end="45:52">acb</name><operator pos:start="45:53" pos:end="45:54">-&gt;</operator><name pos:start="45:55" pos:end="45:65">qiov_offset</name></name></expr></argument>, <argument pos:start="45:68" pos:end="45:70"><expr pos:start="45:68" pos:end="45:70"><name pos:start="45:68" pos:end="45:70">len</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="49:5" pos:end="65:5"><if pos:start="49:5" pos:end="61:5">if <condition pos:start="49:8" pos:end="49:36">(<expr pos:start="49:9" pos:end="49:35"><name pos:start="49:9" pos:end="49:18"><name pos:start="49:9" pos:end="49:11">acb</name><operator pos:start="49:12" pos:end="49:13">-&gt;</operator><name pos:start="49:14" pos:end="49:18">flags</name></name> <operator pos:start="49:20" pos:end="49:20">&amp;</operator> <name pos:start="49:22" pos:end="49:35">QED_AIOCB_ZERO</name></expr>)</condition> <block pos:start="49:38" pos:end="61:5">{<block_content pos:start="53:9" pos:end="59:29">
+
+        <comment type="block" pos:start="51:9" pos:end="51:57">/* Skip ahead if the clusters are already zero */</comment>
+
+        <if_stmt pos:start="53:9" pos:end="57:9"><if pos:start="53:9" pos:end="57:9">if <condition pos:start="53:12" pos:end="53:54">(<expr pos:start="53:13" pos:end="53:53"><name pos:start="53:13" pos:end="53:33"><name pos:start="53:13" pos:end="53:15">acb</name><operator pos:start="53:16" pos:end="53:17">-&gt;</operator><name pos:start="53:18" pos:end="53:33">find_cluster_ret</name></name> <operator pos:start="53:35" pos:end="53:36">==</operator> <name pos:start="53:38" pos:end="53:53">QED_CLUSTER_ZERO</name></expr>)</condition> <block pos:start="53:56" pos:end="57:9">{<block_content pos:start="55:13" pos:end="55:21">
+
+            <return pos:start="55:13" pos:end="55:21">return <expr pos:start="55:20" pos:end="55:20"><literal type="number" pos:start="55:20" pos:end="55:20">0</literal></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="59:9" pos:end="59:29"><expr pos:start="59:9" pos:end="59:28"><name pos:start="59:9" pos:end="59:24"><name pos:start="59:9" pos:end="59:11">acb</name><operator pos:start="59:12" pos:end="59:13">-&gt;</operator><name pos:start="59:14" pos:end="59:24">cur_cluster</name></name> <operator pos:start="59:26" pos:end="59:26">=</operator> <literal type="number" pos:start="59:28" pos:end="59:28">1</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="61:7" pos:end="65:5">else <block pos:start="61:12" pos:end="65:5">{<block_content pos:start="63:9" pos:end="63:69">
+
+        <expr_stmt pos:start="63:9" pos:end="63:69"><expr pos:start="63:9" pos:end="63:68"><name pos:start="63:9" pos:end="63:24"><name pos:start="63:9" pos:end="63:11">acb</name><operator pos:start="63:12" pos:end="63:13">-&gt;</operator><name pos:start="63:14" pos:end="63:24">cur_cluster</name></name> <operator pos:start="63:26" pos:end="63:26">=</operator> <call pos:start="63:28" pos:end="63:68"><name pos:start="63:28" pos:end="63:45">qed_alloc_clusters</name><argument_list pos:start="63:46" pos:end="63:68">(<argument pos:start="63:47" pos:end="63:47"><expr pos:start="63:47" pos:end="63:47"><name pos:start="63:47" pos:end="63:47">s</name></expr></argument>, <argument pos:start="63:50" pos:end="63:67"><expr pos:start="63:50" pos:end="63:67"><name pos:start="63:50" pos:end="63:67"><name pos:start="63:50" pos:end="63:52">acb</name><operator pos:start="63:53" pos:end="63:54">-&gt;</operator><name pos:start="63:55" pos:end="63:67">cur_nclusters</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <if_stmt pos:start="69:5" pos:end="81:5"><if pos:start="69:5" pos:end="81:5">if <condition pos:start="69:8" pos:end="69:37">(<expr pos:start="69:9" pos:end="69:36"><call pos:start="69:9" pos:end="69:36"><name pos:start="69:9" pos:end="69:33">qed_should_set_need_check</name><argument_list pos:start="69:34" pos:end="69:36">(<argument pos:start="69:35" pos:end="69:35"><expr pos:start="69:35" pos:end="69:35"><name pos:start="69:35" pos:end="69:35">s</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="69:39" pos:end="81:5">{<block_content pos:start="71:9" pos:end="79:9">
+
+        <expr_stmt pos:start="71:9" pos:end="71:47"><expr pos:start="71:9" pos:end="71:46"><name pos:start="71:9" pos:end="71:26"><name pos:start="71:9" pos:end="71:9">s</name><operator pos:start="71:10" pos:end="71:11">-&gt;</operator><name pos:start="71:12" pos:end="71:17">header</name><operator pos:start="71:18" pos:end="71:18">.</operator><name pos:start="71:19" pos:end="71:26">features</name></name> <operator pos:start="71:28" pos:end="71:29">|=</operator> <name pos:start="71:31" pos:end="71:46">QED_F_NEED_CHECK</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="73:9" pos:end="73:34"><expr pos:start="73:9" pos:end="73:33"><name pos:start="73:9" pos:end="73:11">ret</name> <operator pos:start="73:13" pos:end="73:13">=</operator> <call pos:start="73:15" pos:end="73:33"><name pos:start="73:15" pos:end="73:30">qed_write_header</name><argument_list pos:start="73:31" pos:end="73:33">(<argument pos:start="73:32" pos:end="73:32"><expr pos:start="73:32" pos:end="73:32"><name pos:start="73:32" pos:end="73:32">s</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="75:9" pos:end="79:9"><if pos:start="75:9" pos:end="79:9">if <condition pos:start="75:12" pos:end="75:20">(<expr pos:start="75:13" pos:end="75:19"><name pos:start="75:13" pos:end="75:15">ret</name> <operator pos:start="75:17" pos:end="75:17">&lt;</operator> <literal type="number" pos:start="75:19" pos:end="75:19">0</literal></expr>)</condition> <block pos:start="75:22" pos:end="79:9">{<block_content pos:start="77:13" pos:end="77:23">
+
+            <return pos:start="77:13" pos:end="77:23">return <expr pos:start="77:20" pos:end="77:22"><name pos:start="77:20" pos:end="77:22">ret</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="85:5" pos:end="95:5"><if pos:start="85:5" pos:end="95:5">if <condition pos:start="85:8" pos:end="85:39">(<expr pos:start="85:9" pos:end="85:38"><operator pos:start="85:9" pos:end="85:9">!</operator><operator pos:start="85:10" pos:end="85:10">(</operator><name pos:start="85:11" pos:end="85:20"><name pos:start="85:11" pos:end="85:13">acb</name><operator pos:start="85:14" pos:end="85:15">-&gt;</operator><name pos:start="85:16" pos:end="85:20">flags</name></name> <operator pos:start="85:22" pos:end="85:22">&amp;</operator> <name pos:start="85:24" pos:end="85:37">QED_AIOCB_ZERO</name><operator pos:start="85:38" pos:end="85:38">)</operator></expr>)</condition> <block pos:start="85:41" pos:end="95:5">{<block_content pos:start="87:9" pos:end="93:9">
+
+        <expr_stmt pos:start="87:9" pos:end="87:37"><expr pos:start="87:9" pos:end="87:36"><name pos:start="87:9" pos:end="87:11">ret</name> <operator pos:start="87:13" pos:end="87:13">=</operator> <call pos:start="87:15" pos:end="87:36"><name pos:start="87:15" pos:end="87:31">qed_aio_write_cow</name><argument_list pos:start="87:32" pos:end="87:36">(<argument pos:start="87:33" pos:end="87:35"><expr pos:start="87:33" pos:end="87:35"><name pos:start="87:33" pos:end="87:35">acb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="89:9" pos:end="93:9"><if pos:start="89:9" pos:end="93:9">if <condition pos:start="89:12" pos:end="89:20">(<expr pos:start="89:13" pos:end="89:19"><name pos:start="89:13" pos:end="89:15">ret</name> <operator pos:start="89:17" pos:end="89:17">&lt;</operator> <literal type="number" pos:start="89:19" pos:end="89:19">0</literal></expr>)</condition> <block pos:start="89:22" pos:end="93:9">{<block_content pos:start="91:13" pos:end="91:23">
+
+            <return pos:start="91:13" pos:end="91:23">return <expr pos:start="91:20" pos:end="91:22"><name pos:start="91:20" pos:end="91:22">ret</name></expr>;</return>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <return pos:start="99:5" pos:end="99:58">return <expr pos:start="99:12" pos:end="99:57"><call pos:start="99:12" pos:end="99:57"><name pos:start="99:12" pos:end="99:34">qed_aio_write_l2_update</name><argument_list pos:start="99:35" pos:end="99:57">(<argument pos:start="99:36" pos:end="99:38"><expr pos:start="99:36" pos:end="99:38"><name pos:start="99:36" pos:end="99:38">acb</name></expr></argument>, <argument pos:start="99:41" pos:end="99:56"><expr pos:start="99:41" pos:end="99:56"><name pos:start="99:41" pos:end="99:56"><name pos:start="99:41" pos:end="99:43">acb</name><operator pos:start="99:44" pos:end="99:45">-&gt;</operator><name pos:start="99:46" pos:end="99:56">cur_cluster</name></name></expr></argument>)</argument_list></call></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

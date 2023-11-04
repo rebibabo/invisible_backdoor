@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/18151.c" pos:tabs="8"><function pos:start="1:1" pos:end="137:1"><type pos:start="1:1" pos:end="1:4"><name pos:start="1:1" pos:end="1:4">void</name></type> <name pos:start="1:6" pos:end="1:21">spapr_drc_detach</name><parameter_list pos:start="1:22" pos:end="1:74">(<parameter pos:start="1:23" pos:end="1:43"><decl pos:start="1:23" pos:end="1:43"><type pos:start="1:23" pos:end="1:43"><name pos:start="1:23" pos:end="1:38">sPAPRDRConnector</name> <modifier pos:start="1:40" pos:end="1:40">*</modifier></type><name pos:start="1:41" pos:end="1:43">drc</name></decl></parameter>, <parameter pos:start="1:46" pos:end="1:59"><decl pos:start="1:46" pos:end="1:59"><type pos:start="1:46" pos:end="1:59"><name pos:start="1:46" pos:end="1:56">DeviceState</name> <modifier pos:start="1:58" pos:end="1:58">*</modifier></type><name pos:start="1:59" pos:end="1:59">d</name></decl></parameter>, <parameter pos:start="1:62" pos:end="1:73"><decl pos:start="1:62" pos:end="1:73"><type pos:start="1:62" pos:end="1:73"><name pos:start="1:62" pos:end="1:66">Error</name> <modifier pos:start="1:68" pos:end="1:68">*</modifier><modifier pos:start="1:69" pos:end="1:69">*</modifier></type><name pos:start="1:70" pos:end="1:73">errp</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="137:1">{<block_content pos:start="5:5" pos:end="135:20">
+
+    <expr_stmt pos:start="5:5" pos:end="5:49"><expr pos:start="5:5" pos:end="5:48"><call pos:start="5:5" pos:end="5:48"><name pos:start="5:5" pos:end="5:26">trace_spapr_drc_detach</name><argument_list pos:start="5:27" pos:end="5:48">(<argument pos:start="5:28" pos:end="5:47"><expr pos:start="5:28" pos:end="5:47"><call pos:start="5:28" pos:end="5:47"><name pos:start="5:28" pos:end="5:42">spapr_drc_index</name><argument_list pos:start="5:43" pos:end="5:47">(<argument pos:start="5:44" pos:end="5:46"><expr pos:start="5:44" pos:end="5:46"><name pos:start="5:44" pos:end="5:46">drc</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="9:5" pos:end="33:7">/* if we've signalled device presence to the guest, or if the guest
+
+     * has gone ahead and configured the device (via manually-executed
+
+     * device add via drmgr in guest, namely), we need to wait
+
+     * for the guest to quiesce the device before completing detach.
+
+     * Otherwise, we can assume the guest hasn't seen it and complete the
+
+     * detach immediately. Note that there is a small race window
+
+     * just before, or during, configuration, which is this context
+
+     * refers mainly to fetching the device tree via RTAS.
+
+     * During this window the device access will be arbitrated by
+
+     * associated DRC, which will simply fail the RTAS calls as invalid.
+
+     * This is recoverable within guest and current implementations of
+
+     * drmgr should be able to cope.
+
+     */</comment>
+
+    <if_stmt pos:start="35:5" pos:end="45:5"><if pos:start="35:5" pos:end="45:5">if <condition pos:start="35:8" pos:end="35:44">(<expr pos:start="35:9" pos:end="35:43"><operator pos:start="35:9" pos:end="35:9">!</operator><name pos:start="35:10" pos:end="35:23"><name pos:start="35:10" pos:end="35:12">drc</name><operator pos:start="35:13" pos:end="35:14">-&gt;</operator><name pos:start="35:15" pos:end="35:23">signalled</name></name> <operator pos:start="35:25" pos:end="35:26">&amp;&amp;</operator> <operator pos:start="35:28" pos:end="35:28">!</operator><name pos:start="35:29" pos:end="35:43"><name pos:start="35:29" pos:end="35:31">drc</name><operator pos:start="35:32" pos:end="35:33">-&gt;</operator><name pos:start="35:34" pos:end="35:43">configured</name></name></expr>)</condition> <block pos:start="35:46" pos:end="45:5">{<block_content pos:start="43:9" pos:end="43:65">
+
+        <comment type="block" pos:start="37:9" pos:end="41:11">/* if the guest hasn't seen the device we can't rely on it to
+
+         * set it back to an isolated state via RTAS, so do it here manually
+
+         */</comment>
+
+        <expr_stmt pos:start="43:9" pos:end="43:65"><expr pos:start="43:9" pos:end="43:64"><name pos:start="43:9" pos:end="43:28"><name pos:start="43:9" pos:end="43:11">drc</name><operator pos:start="43:12" pos:end="43:13">-&gt;</operator><name pos:start="43:14" pos:end="43:28">isolation_state</name></name> <operator pos:start="43:30" pos:end="43:30">=</operator> <name pos:start="43:32" pos:end="43:64">SPAPR_DR_ISOLATION_STATE_ISOLATED</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="49:5" pos:end="57:5"><if pos:start="49:5" pos:end="57:5">if <condition pos:start="49:8" pos:end="49:66">(<expr pos:start="49:9" pos:end="49:65"><name pos:start="49:9" pos:end="49:28"><name pos:start="49:9" pos:end="49:11">drc</name><operator pos:start="49:12" pos:end="49:13">-&gt;</operator><name pos:start="49:14" pos:end="49:28">isolation_state</name></name> <operator pos:start="49:30" pos:end="49:31">!=</operator> <name pos:start="49:33" pos:end="49:65">SPAPR_DR_ISOLATION_STATE_ISOLATED</name></expr>)</condition> <block pos:start="49:68" pos:end="57:5">{<block_content pos:start="51:9" pos:end="55:15">
+
+        <expr_stmt pos:start="51:9" pos:end="51:64"><expr pos:start="51:9" pos:end="51:63"><call pos:start="51:9" pos:end="51:63"><name pos:start="51:9" pos:end="51:41">trace_spapr_drc_awaiting_isolated</name><argument_list pos:start="51:42" pos:end="51:63">(<argument pos:start="51:43" pos:end="51:62"><expr pos:start="51:43" pos:end="51:62"><call pos:start="51:43" pos:end="51:62"><name pos:start="51:43" pos:end="51:57">spapr_drc_index</name><argument_list pos:start="51:58" pos:end="51:62">(<argument pos:start="51:59" pos:end="51:61"><expr pos:start="51:59" pos:end="51:61"><name pos:start="51:59" pos:end="51:61">drc</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="53:9" pos:end="53:37"><expr pos:start="53:9" pos:end="53:36"><name pos:start="53:9" pos:end="53:29"><name pos:start="53:9" pos:end="53:11">drc</name><operator pos:start="53:12" pos:end="53:13">-&gt;</operator><name pos:start="53:14" pos:end="53:29">awaiting_release</name></name> <operator pos:start="53:31" pos:end="53:31">=</operator> <name pos:start="53:33" pos:end="53:36">true</name></expr>;</expr_stmt>
+
+        <return pos:start="55:9" pos:end="55:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="61:5" pos:end="71:5"><if pos:start="61:5" pos:end="71:5">if <condition pos:start="61:8" pos:end="63:68">(<expr pos:start="61:9" pos:end="63:67"><call pos:start="61:9" pos:end="61:27"><name pos:start="61:9" pos:end="61:22">spapr_drc_type</name><argument_list pos:start="61:23" pos:end="61:27">(<argument pos:start="61:24" pos:end="61:26"><expr pos:start="61:24" pos:end="61:26"><name pos:start="61:24" pos:end="61:26">drc</name></expr></argument>)</argument_list></call> <operator pos:start="61:29" pos:end="61:30">!=</operator> <name pos:start="61:32" pos:end="61:58">SPAPR_DR_CONNECTOR_TYPE_PCI</name> <operator pos:start="61:60" pos:end="61:61">&amp;&amp;</operator>
+
+        <name pos:start="63:9" pos:end="63:29"><name pos:start="63:9" pos:end="63:11">drc</name><operator pos:start="63:12" pos:end="63:13">-&gt;</operator><name pos:start="63:14" pos:end="63:29">allocation_state</name></name> <operator pos:start="63:31" pos:end="63:32">!=</operator> <name pos:start="63:34" pos:end="63:67">SPAPR_DR_ALLOCATION_STATE_UNUSABLE</name></expr>)</condition> <block pos:start="63:70" pos:end="71:5">{<block_content pos:start="65:9" pos:end="69:15">
+
+        <expr_stmt pos:start="65:9" pos:end="65:64"><expr pos:start="65:9" pos:end="65:63"><call pos:start="65:9" pos:end="65:63"><name pos:start="65:9" pos:end="65:41">trace_spapr_drc_awaiting_unusable</name><argument_list pos:start="65:42" pos:end="65:63">(<argument pos:start="65:43" pos:end="65:62"><expr pos:start="65:43" pos:end="65:62"><call pos:start="65:43" pos:end="65:62"><name pos:start="65:43" pos:end="65:57">spapr_drc_index</name><argument_list pos:start="65:58" pos:end="65:62">(<argument pos:start="65:59" pos:end="65:61"><expr pos:start="65:59" pos:end="65:61"><name pos:start="65:59" pos:end="65:61">drc</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="67:9" pos:end="67:37"><expr pos:start="67:9" pos:end="67:36"><name pos:start="67:9" pos:end="67:29"><name pos:start="67:9" pos:end="67:11">drc</name><operator pos:start="67:12" pos:end="67:13">-&gt;</operator><name pos:start="67:14" pos:end="67:29">awaiting_release</name></name> <operator pos:start="67:31" pos:end="67:31">=</operator> <name pos:start="67:33" pos:end="67:36">true</name></expr>;</expr_stmt>
+
+        <return pos:start="69:9" pos:end="69:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="75:5" pos:end="83:5"><if pos:start="75:5" pos:end="83:5">if <condition pos:start="75:8" pos:end="75:33">(<expr pos:start="75:9" pos:end="75:32"><name pos:start="75:9" pos:end="75:32"><name pos:start="75:9" pos:end="75:11">drc</name><operator pos:start="75:12" pos:end="75:13">-&gt;</operator><name pos:start="75:14" pos:end="75:32">awaiting_allocation</name></name></expr>)</condition> <block pos:start="75:35" pos:end="83:5">{<block_content pos:start="77:9" pos:end="81:15">
+
+        <expr_stmt pos:start="77:9" pos:end="77:37"><expr pos:start="77:9" pos:end="77:36"><name pos:start="77:9" pos:end="77:29"><name pos:start="77:9" pos:end="77:11">drc</name><operator pos:start="77:12" pos:end="77:13">-&gt;</operator><name pos:start="77:14" pos:end="77:29">awaiting_release</name></name> <operator pos:start="77:31" pos:end="77:31">=</operator> <name pos:start="77:33" pos:end="77:36">true</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="79:9" pos:end="79:66"><expr pos:start="79:9" pos:end="79:65"><call pos:start="79:9" pos:end="79:65"><name pos:start="79:9" pos:end="79:43">trace_spapr_drc_awaiting_allocation</name><argument_list pos:start="79:44" pos:end="79:65">(<argument pos:start="79:45" pos:end="79:64"><expr pos:start="79:45" pos:end="79:64"><call pos:start="79:45" pos:end="79:64"><name pos:start="79:45" pos:end="79:59">spapr_drc_index</name><argument_list pos:start="79:60" pos:end="79:64">(<argument pos:start="79:61" pos:end="79:63"><expr pos:start="79:61" pos:end="79:63"><name pos:start="79:61" pos:end="79:63">drc</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <return pos:start="81:9" pos:end="81:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="87:5" pos:end="87:52"><expr pos:start="87:5" pos:end="87:51"><name pos:start="87:5" pos:end="87:21"><name pos:start="87:5" pos:end="87:7">drc</name><operator pos:start="87:8" pos:end="87:9">-&gt;</operator><name pos:start="87:10" pos:end="87:21">dr_indicator</name></name> <operator pos:start="87:23" pos:end="87:23">=</operator> <name pos:start="87:25" pos:end="87:51">SPAPR_DR_INDICATOR_INACTIVE</name></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="91:5" pos:end="91:65">/* Calling release callbacks based on spapr_drc_type(drc). */</comment>
+
+    <switch pos:start="93:5" pos:end="121:5">switch <condition pos:start="93:12" pos:end="93:32">(<expr pos:start="93:13" pos:end="93:31"><call pos:start="93:13" pos:end="93:31"><name pos:start="93:13" pos:end="93:26">spapr_drc_type</name><argument_list pos:start="93:27" pos:end="93:31">(<argument pos:start="93:28" pos:end="93:30"><expr pos:start="93:28" pos:end="93:30"><name pos:start="93:28" pos:end="93:30">drc</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="93:34" pos:end="121:5">{<block_content pos:start="95:5" pos:end="119:24">
+
+    <case pos:start="95:5" pos:end="95:37">case <expr pos:start="95:10" pos:end="95:36"><name pos:start="95:10" pos:end="95:36">SPAPR_DR_CONNECTOR_TYPE_CPU</name></expr>:</case>
+
+        <expr_stmt pos:start="97:9" pos:end="97:37"><expr pos:start="97:9" pos:end="97:36"><call pos:start="97:9" pos:end="97:36"><name pos:start="97:9" pos:end="97:26">spapr_core_release</name><argument_list pos:start="97:27" pos:end="97:36">(<argument pos:start="97:28" pos:end="97:35"><expr pos:start="97:28" pos:end="97:35"><name pos:start="97:28" pos:end="97:35"><name pos:start="97:28" pos:end="97:30">drc</name><operator pos:start="97:31" pos:end="97:32">-&gt;</operator><name pos:start="97:33" pos:end="97:35">dev</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <break pos:start="99:9" pos:end="99:14">break;</break>
+
+    <case pos:start="101:5" pos:end="101:37">case <expr pos:start="101:10" pos:end="101:36"><name pos:start="101:10" pos:end="101:36">SPAPR_DR_CONNECTOR_TYPE_PCI</name></expr>:</case>
+
+        <expr_stmt pos:start="103:9" pos:end="103:49"><expr pos:start="103:9" pos:end="103:48"><call pos:start="103:9" pos:end="103:48"><name pos:start="103:9" pos:end="103:38">spapr_phb_remove_pci_device_cb</name><argument_list pos:start="103:39" pos:end="103:48">(<argument pos:start="103:40" pos:end="103:47"><expr pos:start="103:40" pos:end="103:47"><name pos:start="103:40" pos:end="103:47"><name pos:start="103:40" pos:end="103:42">drc</name><operator pos:start="103:43" pos:end="103:44">-&gt;</operator><name pos:start="103:45" pos:end="103:47">dev</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <break pos:start="105:9" pos:end="105:14">break;</break>
+
+    <case pos:start="107:5" pos:end="107:37">case <expr pos:start="107:10" pos:end="107:36"><name pos:start="107:10" pos:end="107:36">SPAPR_DR_CONNECTOR_TYPE_LMB</name></expr>:</case>
+
+        <expr_stmt pos:start="109:9" pos:end="109:36"><expr pos:start="109:9" pos:end="109:35"><call pos:start="109:9" pos:end="109:35"><name pos:start="109:9" pos:end="109:25">spapr_lmb_release</name><argument_list pos:start="109:26" pos:end="109:35">(<argument pos:start="109:27" pos:end="109:34"><expr pos:start="109:27" pos:end="109:34"><name pos:start="109:27" pos:end="109:34"><name pos:start="109:27" pos:end="109:29">drc</name><operator pos:start="109:30" pos:end="109:31">-&gt;</operator><name pos:start="109:32" pos:end="109:34">dev</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <break pos:start="111:9" pos:end="111:14">break;</break>
+
+    <case pos:start="113:5" pos:end="113:37">case <expr pos:start="113:10" pos:end="113:36"><name pos:start="113:10" pos:end="113:36">SPAPR_DR_CONNECTOR_TYPE_PHB</name></expr>:</case>
+
+    <case pos:start="115:5" pos:end="115:37">case <expr pos:start="115:10" pos:end="115:36"><name pos:start="115:10" pos:end="115:36">SPAPR_DR_CONNECTOR_TYPE_VIO</name></expr>:</case>
+
+    <default pos:start="117:5" pos:end="117:12">default:</default>
+
+        <expr_stmt pos:start="119:9" pos:end="119:24"><expr pos:start="119:9" pos:end="119:23"><call pos:start="119:9" pos:end="119:23"><name pos:start="119:9" pos:end="119:16">g_assert</name><argument_list pos:start="119:17" pos:end="119:23">(<argument pos:start="119:18" pos:end="119:22"><expr pos:start="119:18" pos:end="119:22"><name pos:start="119:18" pos:end="119:22">false</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></switch>
+
+
+
+    <expr_stmt pos:start="125:5" pos:end="125:34"><expr pos:start="125:5" pos:end="125:33"><name pos:start="125:5" pos:end="125:25"><name pos:start="125:5" pos:end="125:7">drc</name><operator pos:start="125:8" pos:end="125:9">-&gt;</operator><name pos:start="125:10" pos:end="125:25">awaiting_release</name></name> <operator pos:start="125:27" pos:end="125:27">=</operator> <name pos:start="125:29" pos:end="125:33">false</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="127:5" pos:end="127:21"><expr pos:start="127:5" pos:end="127:20"><call pos:start="127:5" pos:end="127:20"><name pos:start="127:5" pos:end="127:10">g_free</name><argument_list pos:start="127:11" pos:end="127:20">(<argument pos:start="127:12" pos:end="127:19"><expr pos:start="127:12" pos:end="127:19"><name pos:start="127:12" pos:end="127:19"><name pos:start="127:12" pos:end="127:14">drc</name><operator pos:start="127:15" pos:end="127:16">-&gt;</operator><name pos:start="127:17" pos:end="127:19">fdt</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="129:5" pos:end="129:20"><expr pos:start="129:5" pos:end="129:19"><name pos:start="129:5" pos:end="129:12"><name pos:start="129:5" pos:end="129:7">drc</name><operator pos:start="129:8" pos:end="129:9">-&gt;</operator><name pos:start="129:10" pos:end="129:12">fdt</name></name> <operator pos:start="129:14" pos:end="129:14">=</operator> <name pos:start="129:16" pos:end="129:19">NULL</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="131:5" pos:end="131:30"><expr pos:start="131:5" pos:end="131:29"><name pos:start="131:5" pos:end="131:25"><name pos:start="131:5" pos:end="131:7">drc</name><operator pos:start="131:8" pos:end="131:9">-&gt;</operator><name pos:start="131:10" pos:end="131:25">fdt_start_offset</name></name> <operator pos:start="131:27" pos:end="131:27">=</operator> <literal type="number" pos:start="131:29" pos:end="131:29">0</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="133:5" pos:end="133:53"><expr pos:start="133:5" pos:end="133:52"><call pos:start="133:5" pos:end="133:52"><name pos:start="133:5" pos:end="133:23">object_property_del</name><argument_list pos:start="133:24" pos:end="133:52">(<argument pos:start="133:25" pos:end="133:35"><expr pos:start="133:25" pos:end="133:35"><call pos:start="133:25" pos:end="133:35"><name pos:start="133:25" pos:end="133:30">OBJECT</name><argument_list pos:start="133:31" pos:end="133:35">(<argument pos:start="133:32" pos:end="133:34"><expr pos:start="133:32" pos:end="133:34"><name pos:start="133:32" pos:end="133:34">drc</name></expr></argument>)</argument_list></call></expr></argument>, <argument pos:start="133:38" pos:end="133:45"><expr pos:start="133:38" pos:end="133:45"><literal type="string" pos:start="133:38" pos:end="133:45">"device"</literal></expr></argument>, <argument pos:start="133:48" pos:end="133:51"><expr pos:start="133:48" pos:end="133:51"><name pos:start="133:48" pos:end="133:51">NULL</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="135:5" pos:end="135:20"><expr pos:start="135:5" pos:end="135:19"><name pos:start="135:5" pos:end="135:12"><name pos:start="135:5" pos:end="135:7">drc</name><operator pos:start="135:8" pos:end="135:9">-&gt;</operator><name pos:start="135:10" pos:end="135:12">dev</name></name> <operator pos:start="135:14" pos:end="135:14">=</operator> <name pos:start="135:16" pos:end="135:19">NULL</name></expr>;</expr_stmt>
+
+</block_content>}</block></function>
+</unit>

@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/26475.c" pos:tabs="8"><function pos:start="1:1" pos:end="249:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:36">truemotion1_decode_16bit</name><parameter_list pos:start="1:37" pos:end="1:59">(<parameter pos:start="1:38" pos:end="1:58"><decl pos:start="1:38" pos:end="1:58"><type pos:start="1:38" pos:end="1:57"><name pos:start="1:38" pos:end="1:55">TrueMotion1Context</name> <modifier pos:start="1:57" pos:end="1:57">*</modifier></type><name pos:start="1:58" pos:end="1:58">s</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="249:1">{<block_content pos:start="5:5" pos:end="247:5">
+
+    <decl_stmt pos:start="5:5" pos:end="5:10"><decl pos:start="5:5" pos:end="5:9"><type pos:start="5:5" pos:end="5:7"><name pos:start="5:5" pos:end="5:7">int</name></type> <name pos:start="5:9" pos:end="5:9">y</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:20"><decl pos:start="7:5" pos:end="7:19"><type pos:start="7:5" pos:end="7:7"><name pos:start="7:5" pos:end="7:7">int</name></type> <name pos:start="7:9" pos:end="7:19">pixels_left</name></decl>;</decl_stmt>  <comment type="block" pos:start="7:23" pos:end="7:57">/* remaining pixels on this line */</comment>
+
+    <decl_stmt pos:start="9:5" pos:end="9:32"><decl pos:start="9:5" pos:end="9:31"><type pos:start="9:5" pos:end="9:16"><name pos:start="9:5" pos:end="9:12">unsigned</name> <name pos:start="9:14" pos:end="9:16">int</name></type> <name pos:start="9:18" pos:end="9:31">predictor_pair</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:28"><decl pos:start="11:5" pos:end="11:27"><type pos:start="11:5" pos:end="11:16"><name pos:start="11:5" pos:end="11:12">unsigned</name> <name pos:start="11:14" pos:end="11:16">int</name></type> <name pos:start="11:18" pos:end="11:27">horiz_pred</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:28"><decl pos:start="13:5" pos:end="13:27"><type pos:start="13:5" pos:end="13:18"><name pos:start="13:5" pos:end="13:12">unsigned</name> <name pos:start="13:14" pos:end="13:16">int</name> <modifier pos:start="13:18" pos:end="13:18">*</modifier></type><name pos:start="13:19" pos:end="13:27">vert_pred</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:37"><decl pos:start="15:5" pos:end="15:36"><type pos:start="15:5" pos:end="15:18"><name pos:start="15:5" pos:end="15:12">unsigned</name> <name pos:start="15:14" pos:end="15:16">int</name> <modifier pos:start="15:18" pos:end="15:18">*</modifier></type><name pos:start="15:19" pos:end="15:36">current_pixel_pair</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="17:5" pos:end="17:52"><decl pos:start="17:5" pos:end="17:51"><type pos:start="17:5" pos:end="17:19"><name pos:start="17:5" pos:end="17:12">unsigned</name> <name pos:start="17:14" pos:end="17:17">char</name> <modifier pos:start="17:19" pos:end="17:19">*</modifier></type><name pos:start="17:20" pos:end="17:31">current_line</name> <init pos:start="17:33" pos:end="17:51">= <expr pos:start="17:35" pos:end="17:51"><name pos:start="17:35" pos:end="17:51"><name pos:start="17:35" pos:end="17:35">s</name><operator pos:start="17:36" pos:end="17:37">-&gt;</operator><name pos:start="17:38" pos:end="17:42">frame</name><operator pos:start="17:43" pos:end="17:44">-&gt;</operator><name pos:start="17:45" pos:end="17:48">data</name><index pos:start="17:49" pos:end="17:51">[<expr pos:start="17:50" pos:end="17:50"><literal type="number" pos:start="17:50" pos:end="17:50">0</literal></expr>]</index></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:44"><decl pos:start="19:5" pos:end="19:43"><type pos:start="19:5" pos:end="19:7"><name pos:start="19:5" pos:end="19:7">int</name></type> <name pos:start="19:9" pos:end="19:16">keyframe</name> <init pos:start="19:18" pos:end="19:43">= <expr pos:start="19:20" pos:end="19:43"><name pos:start="19:20" pos:end="19:27"><name pos:start="19:20" pos:end="19:20">s</name><operator pos:start="19:21" pos:end="19:22">-&gt;</operator><name pos:start="19:23" pos:end="19:27">flags</name></name> <operator pos:start="19:29" pos:end="19:29">&amp;</operator> <name pos:start="19:31" pos:end="19:43">FLAG_KEYFRAME</name></expr></init></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="23:5" pos:end="23:79">/* these variables are for managing the stream of macroblock change bits */</comment>
+
+    <decl_stmt pos:start="25:5" pos:end="25:60"><decl pos:start="25:5" pos:end="25:59"><type pos:start="25:5" pos:end="25:25"><specifier pos:start="25:5" pos:end="25:9">const</specifier> <name pos:start="25:11" pos:end="25:18">unsigned</name> <name pos:start="25:20" pos:end="25:23">char</name> <modifier pos:start="25:25" pos:end="25:25">*</modifier></type><name pos:start="25:26" pos:end="25:39">mb_change_bits</name> <init pos:start="25:41" pos:end="25:59">= <expr pos:start="25:43" pos:end="25:59"><name pos:start="25:43" pos:end="25:59"><name pos:start="25:43" pos:end="25:43">s</name><operator pos:start="25:44" pos:end="25:45">-&gt;</operator><name pos:start="25:46" pos:end="25:59">mb_change_bits</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="27:5" pos:end="27:33"><decl pos:start="27:5" pos:end="27:32"><type pos:start="27:5" pos:end="27:17"><name pos:start="27:5" pos:end="27:12">unsigned</name> <name pos:start="27:14" pos:end="27:17">char</name></type> <name pos:start="27:19" pos:end="27:32">mb_change_byte</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="29:5" pos:end="29:38"><decl pos:start="29:5" pos:end="29:37"><type pos:start="29:5" pos:end="29:17"><name pos:start="29:5" pos:end="29:12">unsigned</name> <name pos:start="29:14" pos:end="29:17">char</name></type> <name pos:start="29:19" pos:end="29:37">mb_change_byte_mask</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="31:5" pos:end="31:24"><decl pos:start="31:5" pos:end="31:23"><type pos:start="31:5" pos:end="31:7"><name pos:start="31:5" pos:end="31:7">int</name></type> <name pos:start="31:9" pos:end="31:23">mb_change_index</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="35:5" pos:end="35:64">/* these variables are for managing the main index stream */</comment>
+
+    <decl_stmt pos:start="37:5" pos:end="37:31"><decl pos:start="37:5" pos:end="37:30"><type pos:start="37:5" pos:end="37:7"><name pos:start="37:5" pos:end="37:7">int</name></type> <name pos:start="37:9" pos:end="37:26">index_stream_index</name> <init pos:start="37:28" pos:end="37:30">= <expr pos:start="37:30" pos:end="37:30"><literal type="number" pos:start="37:30" pos:end="37:30">0</literal></expr></init></decl>;</decl_stmt>  <comment type="block" pos:start="37:34" pos:end="37:75">/* yes, the index into the index stream */</comment>
+
+    <decl_stmt pos:start="39:5" pos:end="39:14"><decl pos:start="39:5" pos:end="39:13"><type pos:start="39:5" pos:end="39:7"><name pos:start="39:5" pos:end="39:7">int</name></type> <name pos:start="39:9" pos:end="39:13">index</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="43:5" pos:end="43:35">/* clean out the line buffer */</comment>
+
+    <expr_stmt pos:start="45:5" pos:end="45:68"><expr pos:start="45:5" pos:end="45:67"><call pos:start="45:5" pos:end="45:67"><name pos:start="45:5" pos:end="45:10">memset</name><argument_list pos:start="45:11" pos:end="45:67">(<argument pos:start="45:12" pos:end="45:23"><expr pos:start="45:12" pos:end="45:23"><name pos:start="45:12" pos:end="45:23"><name pos:start="45:12" pos:end="45:12">s</name><operator pos:start="45:13" pos:end="45:14">-&gt;</operator><name pos:start="45:15" pos:end="45:23">vert_pred</name></name></expr></argument>, <argument pos:start="45:26" pos:end="45:26"><expr pos:start="45:26" pos:end="45:26"><literal type="number" pos:start="45:26" pos:end="45:26">0</literal></expr></argument>, <argument pos:start="45:29" pos:end="45:66"><expr pos:start="45:29" pos:end="45:66"><name pos:start="45:29" pos:end="45:43"><name pos:start="45:29" pos:end="45:29">s</name><operator pos:start="45:30" pos:end="45:31">-&gt;</operator><name pos:start="45:32" pos:end="45:36">avctx</name><operator pos:start="45:37" pos:end="45:38">-&gt;</operator><name pos:start="45:39" pos:end="45:43">width</name></name> <operator pos:start="45:45" pos:end="45:45">*</operator> sizeof<operator pos:start="45:53" pos:end="45:53">(</operator><name pos:start="45:54" pos:end="45:61">unsigned</name> <name pos:start="45:63" pos:end="45:65">int</name><operator pos:start="45:66" pos:end="45:66">)</operator></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="49:5" pos:end="49:21"><expr pos:start="49:5" pos:end="49:20"><call pos:start="49:5" pos:end="49:20"><name pos:start="49:5" pos:end="49:18">GET_NEXT_INDEX</name><argument_list pos:start="49:19" pos:end="49:20">()</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <for pos:start="53:5" pos:end="247:5">for <control pos:start="53:9" pos:end="53:42">(<init pos:start="53:10" pos:end="53:15"><expr pos:start="53:10" pos:end="53:14"><name pos:start="53:10" pos:end="53:10">y</name> <operator pos:start="53:12" pos:end="53:12">=</operator> <literal type="number" pos:start="53:14" pos:end="53:14">0</literal></expr>;</init> <condition pos:start="53:17" pos:end="53:37"><expr pos:start="53:17" pos:end="53:36"><name pos:start="53:17" pos:end="53:17">y</name> <operator pos:start="53:19" pos:end="53:19">&lt;</operator> <name pos:start="53:21" pos:end="53:36"><name pos:start="53:21" pos:end="53:21">s</name><operator pos:start="53:22" pos:end="53:23">-&gt;</operator><name pos:start="53:24" pos:end="53:28">avctx</name><operator pos:start="53:29" pos:end="53:30">-&gt;</operator><name pos:start="53:31" pos:end="53:36">height</name></name></expr>;</condition> <incr pos:start="53:39" pos:end="53:41"><expr pos:start="53:39" pos:end="53:41"><name pos:start="53:39" pos:end="53:39">y</name><operator pos:start="53:40" pos:end="53:41">++</operator></expr></incr>)</control> <block pos:start="53:44" pos:end="247:5">{<block_content pos:start="59:9" pos:end="245:46">
+
+
+
+        <comment type="block" pos:start="57:9" pos:end="57:59">/* re-init variables for the next line iteration */</comment>
+
+        <expr_stmt pos:start="59:9" pos:end="59:23"><expr pos:start="59:9" pos:end="59:22"><name pos:start="59:9" pos:end="59:18">horiz_pred</name> <operator pos:start="59:20" pos:end="59:20">=</operator> <literal type="number" pos:start="59:22" pos:end="59:22">0</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="61:9" pos:end="61:58"><expr pos:start="61:9" pos:end="61:57"><name pos:start="61:9" pos:end="61:26">current_pixel_pair</name> <operator pos:start="61:28" pos:end="61:28">=</operator> <operator pos:start="61:30" pos:end="61:30">(</operator><name pos:start="61:31" pos:end="61:38">unsigned</name> <name pos:start="61:40" pos:end="61:42">int</name> <operator pos:start="61:44" pos:end="61:44">*</operator><operator pos:start="61:45" pos:end="61:45">)</operator><name pos:start="61:46" pos:end="61:57">current_line</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="63:9" pos:end="63:33"><expr pos:start="63:9" pos:end="63:32"><name pos:start="63:9" pos:end="63:17">vert_pred</name> <operator pos:start="63:19" pos:end="63:19">=</operator> <name pos:start="63:21" pos:end="63:32"><name pos:start="63:21" pos:end="63:21">s</name><operator pos:start="63:22" pos:end="63:23">-&gt;</operator><name pos:start="63:24" pos:end="63:32">vert_pred</name></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="65:9" pos:end="65:28"><expr pos:start="65:9" pos:end="65:27"><name pos:start="65:9" pos:end="65:23">mb_change_index</name> <operator pos:start="65:25" pos:end="65:25">=</operator> <literal type="number" pos:start="65:27" pos:end="65:27">0</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="67:9" pos:end="67:59"><expr pos:start="67:9" pos:end="67:58"><name pos:start="67:9" pos:end="67:22">mb_change_byte</name> <operator pos:start="67:24" pos:end="67:24">=</operator> <name pos:start="67:26" pos:end="67:58"><name pos:start="67:26" pos:end="67:39">mb_change_bits</name><index pos:start="67:40" pos:end="67:58">[<expr pos:start="67:41" pos:end="67:57"><name pos:start="67:41" pos:end="67:55">mb_change_index</name><operator pos:start="67:56" pos:end="67:57">++</operator></expr>]</index></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="69:9" pos:end="69:35"><expr pos:start="69:9" pos:end="69:34"><name pos:start="69:9" pos:end="69:27">mb_change_byte_mask</name> <operator pos:start="69:29" pos:end="69:29">=</operator> <literal type="number" pos:start="69:31" pos:end="69:34">0x01</literal></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="71:9" pos:end="71:38"><expr pos:start="71:9" pos:end="71:37"><name pos:start="71:9" pos:end="71:19">pixels_left</name> <operator pos:start="71:21" pos:end="71:21">=</operator> <name pos:start="71:23" pos:end="71:37"><name pos:start="71:23" pos:end="71:23">s</name><operator pos:start="71:24" pos:end="71:25">-&gt;</operator><name pos:start="71:26" pos:end="71:30">avctx</name><operator pos:start="71:31" pos:end="71:32">-&gt;</operator><name pos:start="71:33" pos:end="71:37">width</name></name></expr>;</expr_stmt>
+
+
+
+        <while pos:start="75:9" pos:end="233:9">while <condition pos:start="75:15" pos:end="75:31">(<expr pos:start="75:16" pos:end="75:30"><name pos:start="75:16" pos:end="75:26">pixels_left</name> <operator pos:start="75:28" pos:end="75:28">&gt;</operator> <literal type="number" pos:start="75:30" pos:end="75:30">0</literal></expr>)</condition> <block pos:start="75:33" pos:end="233:9">{<block_content pos:start="79:13" pos:end="231:29">
+
+
+
+            <if_stmt pos:start="79:13" pos:end="207:13"><if pos:start="79:13" pos:end="191:13">if <condition pos:start="79:16" pos:end="79:74">(<expr pos:start="79:17" pos:end="79:73"><name pos:start="79:17" pos:end="79:24">keyframe</name> <operator pos:start="79:26" pos:end="79:27">||</operator> <operator pos:start="79:29" pos:end="79:29">(</operator><operator pos:start="79:30" pos:end="79:30">(</operator><name pos:start="79:31" pos:end="79:44">mb_change_byte</name> <operator pos:start="79:46" pos:end="79:46">&amp;</operator> <name pos:start="79:48" pos:end="79:66">mb_change_byte_mask</name><operator pos:start="79:67" pos:end="79:67">)</operator> <operator pos:start="79:69" pos:end="79:70">==</operator> <literal type="number" pos:start="79:72" pos:end="79:72">0</literal><operator pos:start="79:73" pos:end="79:73">)</operator></expr>)</condition> <block pos:start="79:76" pos:end="191:13">{<block_content pos:start="83:17" pos:end="187:17">
+
+
+
+                <switch pos:start="83:17" pos:end="187:17">switch <condition pos:start="83:24" pos:end="83:30">(<expr pos:start="83:25" pos:end="83:29"><name pos:start="83:25" pos:end="83:25">y</name> <operator pos:start="83:27" pos:end="83:27">&amp;</operator> <literal type="number" pos:start="83:29" pos:end="83:29">3</literal></expr>)</condition> <block pos:start="83:32" pos:end="187:17">{<block_content pos:start="85:17" pos:end="185:26">
+
+                <case pos:start="85:17" pos:end="85:23">case <expr pos:start="85:22" pos:end="85:22"><literal type="number" pos:start="85:22" pos:end="85:22">0</literal></expr>:</case>
+
+                    <comment type="block" pos:start="87:21" pos:end="89:37">/* if macroblock width is 2, apply C-Y-C-Y; else
+
+                     * apply C-Y-Y */</comment>
+
+                    <if_stmt pos:start="91:21" pos:end="117:21"><if pos:start="91:21" pos:end="105:21">if <condition pos:start="91:24" pos:end="91:44">(<expr pos:start="91:25" pos:end="91:43"><name pos:start="91:25" pos:end="91:38"><name pos:start="91:25" pos:end="91:25">s</name><operator pos:start="91:26" pos:end="91:27">-&gt;</operator><name pos:start="91:28" pos:end="91:38">block_width</name></name> <operator pos:start="91:40" pos:end="91:41">==</operator> <literal type="number" pos:start="91:43" pos:end="91:43">2</literal></expr>)</condition> <block pos:start="91:46" pos:end="105:21">{<block_content pos:start="93:25" pos:end="103:44">
+
+                        <expr_stmt pos:start="93:25" pos:end="93:44"><expr pos:start="93:25" pos:end="93:43"><call pos:start="93:25" pos:end="93:43"><name pos:start="93:25" pos:end="93:41">APPLY_C_PREDICTOR</name><argument_list pos:start="93:42" pos:end="93:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="95:25" pos:end="95:44"><expr pos:start="95:25" pos:end="95:43"><call pos:start="95:25" pos:end="95:43"><name pos:start="95:25" pos:end="95:41">APPLY_Y_PREDICTOR</name><argument_list pos:start="95:42" pos:end="95:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="97:25" pos:end="97:44"><expr pos:start="97:25" pos:end="97:43"><call pos:start="97:25" pos:end="97:43"><name pos:start="97:25" pos:end="97:41">OUTPUT_PIXEL_PAIR</name><argument_list pos:start="97:42" pos:end="97:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="99:25" pos:end="99:44"><expr pos:start="99:25" pos:end="99:43"><call pos:start="99:25" pos:end="99:43"><name pos:start="99:25" pos:end="99:41">APPLY_C_PREDICTOR</name><argument_list pos:start="99:42" pos:end="99:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="101:25" pos:end="101:44"><expr pos:start="101:25" pos:end="101:43"><call pos:start="101:25" pos:end="101:43"><name pos:start="101:25" pos:end="101:41">APPLY_Y_PREDICTOR</name><argument_list pos:start="101:42" pos:end="101:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="103:25" pos:end="103:44"><expr pos:start="103:25" pos:end="103:43"><call pos:start="103:25" pos:end="103:43"><name pos:start="103:25" pos:end="103:41">OUTPUT_PIXEL_PAIR</name><argument_list pos:start="103:42" pos:end="103:43">()</argument_list></call></expr>;</expr_stmt>
+
+                    </block_content>}</block></if> <else pos:start="105:23" pos:end="117:21">else <block pos:start="105:28" pos:end="117:21">{<block_content pos:start="107:25" pos:end="115:44">
+
+                        <expr_stmt pos:start="107:25" pos:end="107:44"><expr pos:start="107:25" pos:end="107:43"><call pos:start="107:25" pos:end="107:43"><name pos:start="107:25" pos:end="107:41">APPLY_C_PREDICTOR</name><argument_list pos:start="107:42" pos:end="107:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="109:25" pos:end="109:44"><expr pos:start="109:25" pos:end="109:43"><call pos:start="109:25" pos:end="109:43"><name pos:start="109:25" pos:end="109:41">APPLY_Y_PREDICTOR</name><argument_list pos:start="109:42" pos:end="109:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="111:25" pos:end="111:44"><expr pos:start="111:25" pos:end="111:43"><call pos:start="111:25" pos:end="111:43"><name pos:start="111:25" pos:end="111:41">OUTPUT_PIXEL_PAIR</name><argument_list pos:start="111:42" pos:end="111:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="113:25" pos:end="113:44"><expr pos:start="113:25" pos:end="113:43"><call pos:start="113:25" pos:end="113:43"><name pos:start="113:25" pos:end="113:41">APPLY_Y_PREDICTOR</name><argument_list pos:start="113:42" pos:end="113:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="115:25" pos:end="115:44"><expr pos:start="115:25" pos:end="115:43"><call pos:start="115:25" pos:end="115:43"><name pos:start="115:25" pos:end="115:41">OUTPUT_PIXEL_PAIR</name><argument_list pos:start="115:42" pos:end="115:43">()</argument_list></call></expr>;</expr_stmt>
+
+                    </block_content>}</block></else></if_stmt>
+
+                    <break pos:start="119:21" pos:end="119:26">break;</break>
+
+
+
+                <case pos:start="123:17" pos:end="123:23">case <expr pos:start="123:22" pos:end="123:22"><literal type="number" pos:start="123:22" pos:end="123:22">1</literal></expr>:</case>
+
+                <case pos:start="125:17" pos:end="125:23">case <expr pos:start="125:22" pos:end="125:22"><literal type="number" pos:start="125:22" pos:end="125:22">3</literal></expr>:</case>
+
+                    <comment type="block" pos:start="127:21" pos:end="127:73">/* always apply 2 Y predictors on these iterations */</comment>
+
+                    <expr_stmt pos:start="129:21" pos:end="129:40"><expr pos:start="129:21" pos:end="129:39"><call pos:start="129:21" pos:end="129:39"><name pos:start="129:21" pos:end="129:37">APPLY_Y_PREDICTOR</name><argument_list pos:start="129:38" pos:end="129:39">()</argument_list></call></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="131:21" pos:end="131:40"><expr pos:start="131:21" pos:end="131:39"><call pos:start="131:21" pos:end="131:39"><name pos:start="131:21" pos:end="131:37">OUTPUT_PIXEL_PAIR</name><argument_list pos:start="131:38" pos:end="131:39">()</argument_list></call></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="133:21" pos:end="133:40"><expr pos:start="133:21" pos:end="133:39"><call pos:start="133:21" pos:end="133:39"><name pos:start="133:21" pos:end="133:37">APPLY_Y_PREDICTOR</name><argument_list pos:start="133:38" pos:end="133:39">()</argument_list></call></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="135:21" pos:end="135:40"><expr pos:start="135:21" pos:end="135:39"><call pos:start="135:21" pos:end="135:39"><name pos:start="135:21" pos:end="135:37">OUTPUT_PIXEL_PAIR</name><argument_list pos:start="135:38" pos:end="135:39">()</argument_list></call></expr>;</expr_stmt>
+
+                    <break pos:start="137:21" pos:end="137:26">break;</break>
+
+
+
+                <case pos:start="141:17" pos:end="141:23">case <expr pos:start="141:22" pos:end="141:22"><literal type="number" pos:start="141:22" pos:end="141:22">2</literal></expr>:</case>
+
+                    <comment type="block" pos:start="143:21" pos:end="145:58">/* this iteration might be C-Y-C-Y, Y-Y, or C-Y-Y
+
+                     * depending on the macroblock type */</comment>
+
+                    <if_stmt pos:start="147:21" pos:end="183:21"><if pos:start="147:21" pos:end="161:21">if <condition pos:start="147:24" pos:end="147:51">(<expr pos:start="147:25" pos:end="147:50"><name pos:start="147:25" pos:end="147:37"><name pos:start="147:25" pos:end="147:25">s</name><operator pos:start="147:26" pos:end="147:27">-&gt;</operator><name pos:start="147:28" pos:end="147:37">block_type</name></name> <operator pos:start="147:39" pos:end="147:40">==</operator> <name pos:start="147:42" pos:end="147:50">BLOCK_2x2</name></expr>)</condition> <block pos:start="147:53" pos:end="161:21">{<block_content pos:start="149:25" pos:end="159:44">
+
+                        <expr_stmt pos:start="149:25" pos:end="149:44"><expr pos:start="149:25" pos:end="149:43"><call pos:start="149:25" pos:end="149:43"><name pos:start="149:25" pos:end="149:41">APPLY_C_PREDICTOR</name><argument_list pos:start="149:42" pos:end="149:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="151:25" pos:end="151:44"><expr pos:start="151:25" pos:end="151:43"><call pos:start="151:25" pos:end="151:43"><name pos:start="151:25" pos:end="151:41">APPLY_Y_PREDICTOR</name><argument_list pos:start="151:42" pos:end="151:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="153:25" pos:end="153:44"><expr pos:start="153:25" pos:end="153:43"><call pos:start="153:25" pos:end="153:43"><name pos:start="153:25" pos:end="153:41">OUTPUT_PIXEL_PAIR</name><argument_list pos:start="153:42" pos:end="153:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="155:25" pos:end="155:44"><expr pos:start="155:25" pos:end="155:43"><call pos:start="155:25" pos:end="155:43"><name pos:start="155:25" pos:end="155:41">APPLY_C_PREDICTOR</name><argument_list pos:start="155:42" pos:end="155:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="157:25" pos:end="157:44"><expr pos:start="157:25" pos:end="157:43"><call pos:start="157:25" pos:end="157:43"><name pos:start="157:25" pos:end="157:41">APPLY_Y_PREDICTOR</name><argument_list pos:start="157:42" pos:end="157:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="159:25" pos:end="159:44"><expr pos:start="159:25" pos:end="159:43"><call pos:start="159:25" pos:end="159:43"><name pos:start="159:25" pos:end="159:41">OUTPUT_PIXEL_PAIR</name><argument_list pos:start="159:42" pos:end="159:43">()</argument_list></call></expr>;</expr_stmt>
+
+                    </block_content>}</block></if> <if type="elseif" pos:start="161:23" pos:end="173:21">else if <condition pos:start="161:31" pos:end="161:58">(<expr pos:start="161:32" pos:end="161:57"><name pos:start="161:32" pos:end="161:44"><name pos:start="161:32" pos:end="161:32">s</name><operator pos:start="161:33" pos:end="161:34">-&gt;</operator><name pos:start="161:35" pos:end="161:44">block_type</name></name> <operator pos:start="161:46" pos:end="161:47">==</operator> <name pos:start="161:49" pos:end="161:57">BLOCK_4x2</name></expr>)</condition> <block pos:start="161:60" pos:end="173:21">{<block_content pos:start="163:25" pos:end="171:44">
+
+                        <expr_stmt pos:start="163:25" pos:end="163:44"><expr pos:start="163:25" pos:end="163:43"><call pos:start="163:25" pos:end="163:43"><name pos:start="163:25" pos:end="163:41">APPLY_C_PREDICTOR</name><argument_list pos:start="163:42" pos:end="163:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="165:25" pos:end="165:44"><expr pos:start="165:25" pos:end="165:43"><call pos:start="165:25" pos:end="165:43"><name pos:start="165:25" pos:end="165:41">APPLY_Y_PREDICTOR</name><argument_list pos:start="165:42" pos:end="165:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="167:25" pos:end="167:44"><expr pos:start="167:25" pos:end="167:43"><call pos:start="167:25" pos:end="167:43"><name pos:start="167:25" pos:end="167:41">OUTPUT_PIXEL_PAIR</name><argument_list pos:start="167:42" pos:end="167:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="169:25" pos:end="169:44"><expr pos:start="169:25" pos:end="169:43"><call pos:start="169:25" pos:end="169:43"><name pos:start="169:25" pos:end="169:41">APPLY_Y_PREDICTOR</name><argument_list pos:start="169:42" pos:end="169:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="171:25" pos:end="171:44"><expr pos:start="171:25" pos:end="171:43"><call pos:start="171:25" pos:end="171:43"><name pos:start="171:25" pos:end="171:41">OUTPUT_PIXEL_PAIR</name><argument_list pos:start="171:42" pos:end="171:43">()</argument_list></call></expr>;</expr_stmt>
+
+                    </block_content>}</block></if> <else pos:start="173:23" pos:end="183:21">else <block pos:start="173:28" pos:end="183:21">{<block_content pos:start="175:25" pos:end="181:44">
+
+                        <expr_stmt pos:start="175:25" pos:end="175:44"><expr pos:start="175:25" pos:end="175:43"><call pos:start="175:25" pos:end="175:43"><name pos:start="175:25" pos:end="175:41">APPLY_Y_PREDICTOR</name><argument_list pos:start="175:42" pos:end="175:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="177:25" pos:end="177:44"><expr pos:start="177:25" pos:end="177:43"><call pos:start="177:25" pos:end="177:43"><name pos:start="177:25" pos:end="177:41">OUTPUT_PIXEL_PAIR</name><argument_list pos:start="177:42" pos:end="177:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="179:25" pos:end="179:44"><expr pos:start="179:25" pos:end="179:43"><call pos:start="179:25" pos:end="179:43"><name pos:start="179:25" pos:end="179:41">APPLY_Y_PREDICTOR</name><argument_list pos:start="179:42" pos:end="179:43">()</argument_list></call></expr>;</expr_stmt>
+
+                        <expr_stmt pos:start="181:25" pos:end="181:44"><expr pos:start="181:25" pos:end="181:43"><call pos:start="181:25" pos:end="181:43"><name pos:start="181:25" pos:end="181:41">OUTPUT_PIXEL_PAIR</name><argument_list pos:start="181:42" pos:end="181:43">()</argument_list></call></expr>;</expr_stmt>
+
+                    </block_content>}</block></else></if_stmt>
+
+                    <break pos:start="185:21" pos:end="185:26">break;</break>
+
+                </block_content>}</block></switch>
+
+
+
+            </block_content>}</block></if> <else pos:start="191:15" pos:end="207:13">else <block pos:start="191:20" pos:end="207:13">{<block_content pos:start="199:17" pos:end="203:53">
+
+
+
+                <comment type="block" pos:start="195:17" pos:end="197:31">/* skip (copy) four pixels, but reassign the horizontal
+
+                 * predictor */</comment>
+
+                <expr_stmt pos:start="199:17" pos:end="199:53"><expr pos:start="199:17" pos:end="199:52"><operator pos:start="199:17" pos:end="199:17">*</operator><name pos:start="199:18" pos:end="199:26">vert_pred</name><operator pos:start="199:27" pos:end="199:28">++</operator> <operator pos:start="199:30" pos:end="199:30">=</operator> <operator pos:start="199:32" pos:end="199:32">*</operator><name pos:start="199:33" pos:end="199:50">current_pixel_pair</name><operator pos:start="199:51" pos:end="199:52">++</operator></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="201:17" pos:end="201:62"><expr pos:start="201:17" pos:end="201:61"><name pos:start="201:17" pos:end="201:26">horiz_pred</name> <operator pos:start="201:28" pos:end="201:28">=</operator> <operator pos:start="201:30" pos:end="201:30">*</operator><name pos:start="201:31" pos:end="201:48">current_pixel_pair</name> <operator pos:start="201:50" pos:end="201:50">-</operator> <operator pos:start="201:52" pos:end="201:52">*</operator><name pos:start="201:53" pos:end="201:61">vert_pred</name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="203:17" pos:end="203:53"><expr pos:start="203:17" pos:end="203:52"><operator pos:start="203:17" pos:end="203:17">*</operator><name pos:start="203:18" pos:end="203:26">vert_pred</name><operator pos:start="203:27" pos:end="203:28">++</operator> <operator pos:start="203:30" pos:end="203:30">=</operator> <operator pos:start="203:32" pos:end="203:32">*</operator><name pos:start="203:33" pos:end="203:50">current_pixel_pair</name><operator pos:start="203:51" pos:end="203:52">++</operator></expr>;</expr_stmt>
+
+
+
+            </block_content>}</block></else></if_stmt>
+
+
+
+            <if_stmt pos:start="211:13" pos:end="227:13"><if pos:start="211:13" pos:end="227:13">if <condition pos:start="211:16" pos:end="211:26">(<expr pos:start="211:17" pos:end="211:25"><operator pos:start="211:17" pos:end="211:17">!</operator><name pos:start="211:18" pos:end="211:25">keyframe</name></expr>)</condition> <block pos:start="211:28" pos:end="227:13">{<block_content pos:start="213:17" pos:end="225:17">
+
+                <expr_stmt pos:start="213:17" pos:end="213:42"><expr pos:start="213:17" pos:end="213:41"><name pos:start="213:17" pos:end="213:35">mb_change_byte_mask</name> <operator pos:start="213:37" pos:end="213:39">&lt;&lt;=</operator> <literal type="number" pos:start="213:41" pos:end="213:41">1</literal></expr>;</expr_stmt>
+
+
+
+                <comment type="block" pos:start="217:17" pos:end="217:31">/* next byte */</comment>
+
+                <if_stmt pos:start="219:17" pos:end="225:17"><if pos:start="219:17" pos:end="225:17">if <condition pos:start="219:20" pos:end="219:41">(<expr pos:start="219:21" pos:end="219:40"><operator pos:start="219:21" pos:end="219:21">!</operator><name pos:start="219:22" pos:end="219:40">mb_change_byte_mask</name></expr>)</condition> <block pos:start="219:43" pos:end="225:17">{<block_content pos:start="221:21" pos:end="223:47">
+
+                    <expr_stmt pos:start="221:21" pos:end="221:71"><expr pos:start="221:21" pos:end="221:70"><name pos:start="221:21" pos:end="221:34">mb_change_byte</name> <operator pos:start="221:36" pos:end="221:36">=</operator> <name pos:start="221:38" pos:end="221:70"><name pos:start="221:38" pos:end="221:51">mb_change_bits</name><index pos:start="221:52" pos:end="221:70">[<expr pos:start="221:53" pos:end="221:69"><name pos:start="221:53" pos:end="221:67">mb_change_index</name><operator pos:start="221:68" pos:end="221:69">++</operator></expr>]</index></name></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="223:21" pos:end="223:47"><expr pos:start="223:21" pos:end="223:46"><name pos:start="223:21" pos:end="223:39">mb_change_byte_mask</name> <operator pos:start="223:41" pos:end="223:41">=</operator> <literal type="number" pos:start="223:43" pos:end="223:46">0x01</literal></expr>;</expr_stmt>
+
+                </block_content>}</block></if></if_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+
+
+            <expr_stmt pos:start="231:13" pos:end="231:29"><expr pos:start="231:13" pos:end="231:28"><name pos:start="231:13" pos:end="231:23">pixels_left</name> <operator pos:start="231:25" pos:end="231:26">-=</operator> <literal type="number" pos:start="231:28" pos:end="231:28">4</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></while>
+
+
+
+        <comment type="block" pos:start="237:9" pos:end="237:29">/* next change row */</comment>
+
+        <if_stmt pos:start="239:9" pos:end="241:57"><if pos:start="239:9" pos:end="241:57">if <condition pos:start="239:12" pos:end="239:31">(<expr pos:start="239:13" pos:end="239:30"><operator pos:start="239:13" pos:end="239:13">(</operator><operator pos:start="239:14" pos:end="239:14">(</operator><name pos:start="239:15" pos:end="239:15">y</name> <operator pos:start="239:17" pos:end="239:17">+</operator> <literal type="number" pos:start="239:19" pos:end="239:19">1</literal><operator pos:start="239:20" pos:end="239:20">)</operator> <operator pos:start="239:22" pos:end="239:22">&amp;</operator> <literal type="number" pos:start="239:24" pos:end="239:24">3</literal><operator pos:start="239:25" pos:end="239:25">)</operator> <operator pos:start="239:27" pos:end="239:28">==</operator> <literal type="number" pos:start="239:30" pos:end="239:30">0</literal></expr>)</condition><block type="pseudo" pos:start="241:13" pos:end="241:57"><block_content pos:start="241:13" pos:end="241:57">
+
+            <expr_stmt pos:start="241:13" pos:end="241:57"><expr pos:start="241:13" pos:end="241:56"><name pos:start="241:13" pos:end="241:26">mb_change_bits</name> <operator pos:start="241:28" pos:end="241:29">+=</operator> <name pos:start="241:31" pos:end="241:56"><name pos:start="241:31" pos:end="241:31">s</name><operator pos:start="241:32" pos:end="241:33">-&gt;</operator><name pos:start="241:34" pos:end="241:56">mb_change_bits_row_size</name></name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="245:9" pos:end="245:46"><expr pos:start="245:9" pos:end="245:45"><name pos:start="245:9" pos:end="245:20">current_line</name> <operator pos:start="245:22" pos:end="245:23">+=</operator> <name pos:start="245:25" pos:end="245:45"><name pos:start="245:25" pos:end="245:25">s</name><operator pos:start="245:26" pos:end="245:27">-&gt;</operator><name pos:start="245:28" pos:end="245:32">frame</name><operator pos:start="245:33" pos:end="245:34">-&gt;</operator><name pos:start="245:35" pos:end="245:42">linesize</name><index pos:start="245:43" pos:end="245:45">[<expr pos:start="245:44" pos:end="245:44"><literal type="number" pos:start="245:44" pos:end="245:44">0</literal></expr>]</index></name></expr>;</expr_stmt>
+
+    </block_content>}</block></for>
+
+</block_content>}</block></function>
+</unit>

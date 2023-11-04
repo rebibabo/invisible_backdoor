@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/2087.c" pos:tabs="8"><function pos:start="1:1" pos:end="49:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:36">bdrv_io_limits_intercept</name><parameter_list pos:start="1:37" pos:end="5:51">(<parameter pos:start="1:38" pos:end="1:57"><decl pos:start="1:38" pos:end="1:57"><type pos:start="1:38" pos:end="1:57"><name pos:start="1:38" pos:end="1:53">BlockDriverState</name> <modifier pos:start="1:55" pos:end="1:55">*</modifier></type><name pos:start="1:56" pos:end="1:57">bs</name></decl></parameter>,
+
+                                     <parameter pos:start="3:38" pos:end="3:55"><decl pos:start="3:38" pos:end="3:55"><type pos:start="3:38" pos:end="3:55"><name pos:start="3:38" pos:end="3:45">unsigned</name> <name pos:start="3:47" pos:end="3:49">int</name></type> <name pos:start="3:51" pos:end="3:55">bytes</name></decl></parameter>,
+
+                                     <parameter pos:start="5:38" pos:end="5:50"><decl pos:start="5:38" pos:end="5:50"><type pos:start="5:38" pos:end="5:50"><name pos:start="5:38" pos:end="5:41">bool</name></type> <name pos:start="5:43" pos:end="5:50">is_write</name></decl></parameter>)</parameter_list>
+
+<block pos:start="7:1" pos:end="49:1">{<block_content pos:start="11:5" pos:end="47:54">
+
+    <comment type="block" pos:start="9:5" pos:end="9:32">/* does this io must wait */</comment>
+
+    <decl_stmt pos:start="11:5" pos:end="11:76"><decl pos:start="11:5" pos:end="11:75"><type pos:start="11:5" pos:end="11:8"><name pos:start="11:5" pos:end="11:8">bool</name></type> <name pos:start="11:10" pos:end="11:18">must_wait</name> <init pos:start="11:20" pos:end="11:75">= <expr pos:start="11:22" pos:end="11:75"><call pos:start="11:22" pos:end="11:75"><name pos:start="11:22" pos:end="11:44">throttle_schedule_timer</name><argument_list pos:start="11:45" pos:end="11:75">(<argument pos:start="11:46" pos:end="11:64"><expr pos:start="11:46" pos:end="11:64"><operator pos:start="11:46" pos:end="11:46">&amp;</operator><name pos:start="11:47" pos:end="11:64"><name pos:start="11:47" pos:end="11:48">bs</name><operator pos:start="11:49" pos:end="11:50">-&gt;</operator><name pos:start="11:51" pos:end="11:64">throttle_state</name></name></expr></argument>, <argument pos:start="11:67" pos:end="11:74"><expr pos:start="11:67" pos:end="11:74"><name pos:start="11:67" pos:end="11:74">is_write</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="15:5" pos:end="15:73">/* if must wait or any request of this type throttled queue the IO */</comment>
+
+    <if_stmt pos:start="17:5" pos:end="23:5"><if pos:start="17:5" pos:end="23:5">if <condition pos:start="17:8" pos:end="19:60">(<expr pos:start="17:9" pos:end="19:59"><name pos:start="17:9" pos:end="17:17">must_wait</name> <operator pos:start="17:19" pos:end="17:20">||</operator>
+
+        <operator pos:start="19:9" pos:end="19:9">!</operator><call pos:start="19:10" pos:end="19:59"><name pos:start="19:10" pos:end="19:28">qemu_co_queue_empty</name><argument_list pos:start="19:29" pos:end="19:59">(<argument pos:start="19:30" pos:end="19:58"><expr pos:start="19:30" pos:end="19:58"><operator pos:start="19:30" pos:end="19:30">&amp;</operator><name pos:start="19:31" pos:end="19:58"><name pos:start="19:31" pos:end="19:32">bs</name><operator pos:start="19:33" pos:end="19:34">-&gt;</operator><name pos:start="19:35" pos:end="19:48">throttled_reqs</name><index pos:start="19:49" pos:end="19:58">[<expr pos:start="19:50" pos:end="19:57"><name pos:start="19:50" pos:end="19:57">is_write</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="19:62" pos:end="23:5">{<block_content pos:start="21:9" pos:end="21:58">
+
+        <expr_stmt pos:start="21:9" pos:end="21:58"><expr pos:start="21:9" pos:end="21:57"><call pos:start="21:9" pos:end="21:57"><name pos:start="21:9" pos:end="21:26">qemu_co_queue_wait</name><argument_list pos:start="21:27" pos:end="21:57">(<argument pos:start="21:28" pos:end="21:56"><expr pos:start="21:28" pos:end="21:56"><operator pos:start="21:28" pos:end="21:28">&amp;</operator><name pos:start="21:29" pos:end="21:56"><name pos:start="21:29" pos:end="21:30">bs</name><operator pos:start="21:31" pos:end="21:32">-&gt;</operator><name pos:start="21:33" pos:end="21:46">throttled_reqs</name><index pos:start="21:47" pos:end="21:56">[<expr pos:start="21:48" pos:end="21:55"><name pos:start="21:48" pos:end="21:55">is_write</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="27:5" pos:end="27:52">/* the IO will be executed, do the accounting */</comment>
+
+    <expr_stmt pos:start="29:5" pos:end="29:59"><expr pos:start="29:5" pos:end="29:58"><call pos:start="29:5" pos:end="29:58"><name pos:start="29:5" pos:end="29:20">throttle_account</name><argument_list pos:start="29:21" pos:end="29:58">(<argument pos:start="29:22" pos:end="29:40"><expr pos:start="29:22" pos:end="29:40"><operator pos:start="29:22" pos:end="29:22">&amp;</operator><name pos:start="29:23" pos:end="29:40"><name pos:start="29:23" pos:end="29:24">bs</name><operator pos:start="29:25" pos:end="29:26">-&gt;</operator><name pos:start="29:27" pos:end="29:40">throttle_state</name></name></expr></argument>, <argument pos:start="29:43" pos:end="29:50"><expr pos:start="29:43" pos:end="29:50"><name pos:start="29:43" pos:end="29:50">is_write</name></expr></argument>, <argument pos:start="29:53" pos:end="29:57"><expr pos:start="29:53" pos:end="29:57"><name pos:start="29:53" pos:end="29:57">bytes</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+
+
+    <comment type="block" pos:start="35:5" pos:end="35:53">/* if the next request must wait -&gt; do nothing */</comment>
+
+    <if_stmt pos:start="37:5" pos:end="41:5"><if pos:start="37:5" pos:end="41:5">if <condition pos:start="37:8" pos:end="37:63">(<expr pos:start="37:9" pos:end="37:62"><call pos:start="37:9" pos:end="37:62"><name pos:start="37:9" pos:end="37:31">throttle_schedule_timer</name><argument_list pos:start="37:32" pos:end="37:62">(<argument pos:start="37:33" pos:end="37:51"><expr pos:start="37:33" pos:end="37:51"><operator pos:start="37:33" pos:end="37:33">&amp;</operator><name pos:start="37:34" pos:end="37:51"><name pos:start="37:34" pos:end="37:35">bs</name><operator pos:start="37:36" pos:end="37:37">-&gt;</operator><name pos:start="37:38" pos:end="37:51">throttle_state</name></name></expr></argument>, <argument pos:start="37:54" pos:end="37:61"><expr pos:start="37:54" pos:end="37:61"><name pos:start="37:54" pos:end="37:61">is_write</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="37:65" pos:end="41:5">{<block_content pos:start="39:9" pos:end="39:15">
+
+        <return pos:start="39:9" pos:end="39:15">return;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <comment type="block" pos:start="45:5" pos:end="45:47">/* else queue next request for execution */</comment>
+
+    <expr_stmt pos:start="47:5" pos:end="47:54"><expr pos:start="47:5" pos:end="47:53"><call pos:start="47:5" pos:end="47:53"><name pos:start="47:5" pos:end="47:22">qemu_co_queue_next</name><argument_list pos:start="47:23" pos:end="47:53">(<argument pos:start="47:24" pos:end="47:52"><expr pos:start="47:24" pos:end="47:52"><operator pos:start="47:24" pos:end="47:24">&amp;</operator><name pos:start="47:25" pos:end="47:52"><name pos:start="47:25" pos:end="47:26">bs</name><operator pos:start="47:27" pos:end="47:28">-&gt;</operator><name pos:start="47:29" pos:end="47:42">throttled_reqs</name><index pos:start="47:43" pos:end="47:52">[<expr pos:start="47:44" pos:end="47:51"><name pos:start="47:44" pos:end="47:51">is_write</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+</block_content>}</block></function>
+</unit>

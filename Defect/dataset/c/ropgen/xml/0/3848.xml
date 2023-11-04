@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/3848.c" pos:tabs="8"><function pos:start="1:1" pos:end="41:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:25">cpu_unlink_tb</name><parameter_list pos:start="1:26" pos:end="1:40">(<parameter pos:start="1:27" pos:end="1:39"><decl pos:start="1:27" pos:end="1:39"><type pos:start="1:27" pos:end="1:36"><name pos:start="1:27" pos:end="1:34">CPUState</name> <modifier pos:start="1:36" pos:end="1:36">*</modifier></type><name pos:start="1:37" pos:end="1:39">env</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="41:1">{<block_content pos:start="17:5" pos:end="40:0">
+
+<cpp:if pos:start="5:1" pos:end="5:28">#<cpp:directive pos:start="5:2" pos:end="5:3">if</cpp:directive> <expr pos:start="5:5" pos:end="5:28"><call pos:start="5:5" pos:end="5:28"><name pos:start="5:5" pos:end="5:11">defined</name><argument_list pos:start="5:12" pos:end="5:28">(<argument pos:start="5:13" pos:end="5:27"><expr pos:start="5:13" pos:end="5:27"><name pos:start="5:13" pos:end="5:27">CONFIG_USE_NPTL</name></expr></argument>)</argument_list></call></expr></cpp:if>
+
+    <comment type="block" pos:start="7:5" pos:end="13:69">/* FIXME: TB unchaining isn't SMP safe.  For now just ignore the
+
+       problem and hope the cpu will stop of its own accord.  For userspace
+
+       emulation this often isn't actually as bad as it sounds.  Often
+
+       signals are used primarily to interrupt blocking syscalls.  */</comment>
+
+<cpp:else pos:start="15:1" pos:end="15:5">#<cpp:directive pos:start="15:2" pos:end="15:5">else</cpp:directive></cpp:else>
+
+    <decl_stmt pos:start="17:5" pos:end="17:25"><decl pos:start="17:5" pos:end="17:24"><type pos:start="17:5" pos:end="17:22"><name pos:start="17:5" pos:end="17:20">TranslationBlock</name> <modifier pos:start="17:22" pos:end="17:22">*</modifier></type><name pos:start="17:23" pos:end="17:24">tb</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:58"><decl pos:start="19:5" pos:end="19:57"><type pos:start="19:5" pos:end="19:21"><specifier pos:start="19:5" pos:end="19:10">static</specifier> <name pos:start="19:12" pos:end="19:21">spinlock_t</name></type> <name pos:start="19:23" pos:end="19:36">interrupt_lock</name> <init pos:start="19:38" pos:end="19:57">= <expr pos:start="19:40" pos:end="19:57"><name pos:start="19:40" pos:end="19:57">SPIN_LOCK_UNLOCKED</name></expr></init></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="23:5" pos:end="23:25"><expr pos:start="23:5" pos:end="23:24"><name pos:start="23:5" pos:end="23:6">tb</name> <operator pos:start="23:8" pos:end="23:8">=</operator> <name pos:start="23:10" pos:end="23:24"><name pos:start="23:10" pos:end="23:12">env</name><operator pos:start="23:13" pos:end="23:14">-&gt;</operator><name pos:start="23:15" pos:end="23:24">current_tb</name></name></expr>;</expr_stmt>
+
+    <comment type="block" pos:start="25:5" pos:end="27:42">/* if the cpu is currently executing code, we must unlink it and
+
+       all the potentially executing TB */</comment>
+
+    <if_stmt pos:start="29:5" pos:end="40:0"><if pos:start="29:5" pos:end="40:0">if <condition pos:start="29:8" pos:end="29:43">(<expr pos:start="29:9" pos:end="29:42"><name pos:start="29:9" pos:end="29:10">tb</name> <operator pos:start="29:12" pos:end="29:13">&amp;&amp;</operator> <operator pos:start="29:15" pos:end="29:15">!</operator><call pos:start="29:16" pos:end="29:42"><name pos:start="29:16" pos:end="29:25">testandset</name><argument_list pos:start="29:26" pos:end="29:42">(<argument pos:start="29:27" pos:end="29:41"><expr pos:start="29:27" pos:end="29:41"><operator pos:start="29:27" pos:end="29:27">&amp;</operator><name pos:start="29:28" pos:end="29:41">interrupt_lock</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="29:45" pos:end="40:0">{<block_content pos:start="31:9" pos:end="35:35">
+
+        <expr_stmt pos:start="31:9" pos:end="31:31"><expr pos:start="31:9" pos:end="31:30"><name pos:start="31:9" pos:end="31:23"><name pos:start="31:9" pos:end="31:11">env</name><operator pos:start="31:12" pos:end="31:13">-&gt;</operator><name pos:start="31:14" pos:end="31:23">current_tb</name></name> <operator pos:start="31:25" pos:end="31:25">=</operator> <name pos:start="31:27" pos:end="31:30">NULL</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="33:9" pos:end="33:36"><expr pos:start="33:9" pos:end="33:35"><call pos:start="33:9" pos:end="33:35"><name pos:start="33:9" pos:end="33:31">tb_reset_jump_recursive</name><argument_list pos:start="33:32" pos:end="33:35">(<argument pos:start="33:33" pos:end="33:34"><expr pos:start="33:33" pos:end="33:34"><name pos:start="33:33" pos:end="33:34">tb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="35:9" pos:end="35:35"><expr pos:start="35:9" pos:end="35:34"><call pos:start="35:9" pos:end="35:34"><name pos:start="35:9" pos:end="35:17">resetlock</name><argument_list pos:start="35:18" pos:end="35:34">(<argument pos:start="35:19" pos:end="35:33"><expr pos:start="35:19" pos:end="35:33"><operator pos:start="35:19" pos:end="35:19">&amp;</operator><name pos:start="35:20" pos:end="35:33">interrupt_lock</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+<cpp:endif pos:start="39:1" pos:end="39:6">#<cpp:directive pos:start="39:2" pos:end="39:6">endif</cpp:directive></cpp:endif>
+
+</block_content>}</block></function>
+</unit>

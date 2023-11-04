@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/22121.c" pos:tabs="8"><function pos:start="1:1" pos:end="119:1"><type pos:start="1:1" pos:end="1:20"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:20">IOMMUTLBEntry</name></type> <name pos:start="1:22" pos:end="1:44">typhoon_translate_iommu</name><parameter_list pos:start="1:45" pos:end="3:59">(<parameter pos:start="1:46" pos:end="1:64"><decl pos:start="1:46" pos:end="1:64"><type pos:start="1:46" pos:end="1:64"><name pos:start="1:46" pos:end="1:57">MemoryRegion</name> <modifier pos:start="1:59" pos:end="1:59">*</modifier></type><name pos:start="1:60" pos:end="1:64">iommu</name></decl></parameter>, <parameter pos:start="1:67" pos:end="1:77"><decl pos:start="1:67" pos:end="1:77"><type pos:start="1:67" pos:end="1:77"><name pos:start="1:67" pos:end="1:72">hwaddr</name></type> <name pos:start="1:74" pos:end="1:77">addr</name></decl></parameter>,
+
+                                             <parameter pos:start="3:46" pos:end="3:58"><decl pos:start="3:46" pos:end="3:58"><type pos:start="3:46" pos:end="3:58"><name pos:start="3:46" pos:end="3:49">bool</name></type> <name pos:start="3:51" pos:end="3:58">is_write</name></decl></parameter>)</parameter_list>
+
+<block pos:start="5:1" pos:end="119:1">{<block_content pos:start="7:5" pos:end="117:15">
+
+    <decl_stmt pos:start="7:5" pos:end="7:67"><decl pos:start="7:5" pos:end="7:66"><type pos:start="7:5" pos:end="7:18"><name pos:start="7:5" pos:end="7:16">TyphoonPchip</name> <modifier pos:start="7:18" pos:end="7:18">*</modifier></type><name pos:start="7:19" pos:end="7:23">pchip</name> <init pos:start="7:25" pos:end="7:66">= <expr pos:start="7:27" pos:end="7:66"><call pos:start="7:27" pos:end="7:66"><name pos:start="7:27" pos:end="7:38">container_of</name><argument_list pos:start="7:39" pos:end="7:66">(<argument pos:start="7:40" pos:end="7:44"><expr pos:start="7:40" pos:end="7:44"><name pos:start="7:40" pos:end="7:44">iommu</name></expr></argument>, <argument pos:start="7:47" pos:end="7:58"><expr pos:start="7:47" pos:end="7:58"><name pos:start="7:47" pos:end="7:58">TyphoonPchip</name></expr></argument>, <argument pos:start="7:61" pos:end="7:65"><expr pos:start="7:61" pos:end="7:65"><name pos:start="7:61" pos:end="7:65">iommu</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:22"><decl pos:start="9:5" pos:end="9:21"><type pos:start="9:5" pos:end="9:17"><name pos:start="9:5" pos:end="9:17">IOMMUTLBEntry</name></type> <name pos:start="9:19" pos:end="9:21">ret</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:10"><decl pos:start="11:5" pos:end="11:9"><type pos:start="11:5" pos:end="11:7"><name pos:start="11:5" pos:end="11:7">int</name></type> <name pos:start="11:9" pos:end="11:9">i</name></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="15:5" pos:end="107:5"><if pos:start="15:5" pos:end="59:5">if <condition pos:start="15:8" pos:end="15:28">(<expr pos:start="15:9" pos:end="15:27"><name pos:start="15:9" pos:end="15:12">addr</name> <operator pos:start="15:14" pos:end="15:15">&lt;=</operator> <literal type="number" pos:start="15:17" pos:end="15:27">0xffffffffu</literal></expr>)</condition> <block pos:start="15:30" pos:end="59:5">{<block_content pos:start="23:9" pos:end="57:9">
+
+        <comment type="block" pos:start="17:9" pos:end="17:36">/* Single-address cycle.  */</comment>
+
+
+
+        <comment type="block" pos:start="21:9" pos:end="21:62">/* Check for the Window Hole, inhibiting matching.  */</comment>
+
+        <if_stmt pos:start="23:9" pos:end="31:9"><if pos:start="23:9" pos:end="31:9">if <condition pos:start="23:12" pos:end="27:31">(<expr pos:start="23:13" pos:end="27:30"><operator pos:start="23:13" pos:end="23:13">(</operator><name pos:start="23:14" pos:end="23:23"><name pos:start="23:14" pos:end="23:18">pchip</name><operator pos:start="23:19" pos:end="23:20">-&gt;</operator><name pos:start="23:21" pos:end="23:23">ctl</name></name> <operator pos:start="23:25" pos:end="23:25">&amp;</operator> <literal type="number" pos:start="23:27" pos:end="23:30">0x20</literal><operator pos:start="23:31" pos:end="23:31">)</operator>
+
+            <operator pos:start="25:13" pos:end="25:14">&amp;&amp;</operator> <name pos:start="25:16" pos:end="25:19">addr</name> <operator pos:start="25:21" pos:end="25:22">&gt;=</operator> <literal type="number" pos:start="25:24" pos:end="25:30">0x80000</literal>
+
+            <operator pos:start="27:13" pos:end="27:14">&amp;&amp;</operator> <name pos:start="27:16" pos:end="27:19">addr</name> <operator pos:start="27:21" pos:end="27:22">&lt;=</operator> <literal type="number" pos:start="27:24" pos:end="27:30">0xfffff</literal></expr>)</condition> <block pos:start="27:33" pos:end="31:9">{<block_content pos:start="29:13" pos:end="29:25">
+
+            <goto pos:start="29:13" pos:end="29:25">goto <name pos:start="29:18" pos:end="29:24">failure</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <comment type="block" pos:start="35:9" pos:end="35:45">/* Check the first three windows.  */</comment>
+
+        <for pos:start="37:9" pos:end="45:9">for <control pos:start="37:13" pos:end="37:31">(<init pos:start="37:14" pos:end="37:19"><expr pos:start="37:14" pos:end="37:18"><name pos:start="37:14" pos:end="37:14">i</name> <operator pos:start="37:16" pos:end="37:16">=</operator> <literal type="number" pos:start="37:18" pos:end="37:18">0</literal></expr>;</init> <condition pos:start="37:21" pos:end="37:26"><expr pos:start="37:21" pos:end="37:25"><name pos:start="37:21" pos:end="37:21">i</name> <operator pos:start="37:23" pos:end="37:23">&lt;</operator> <literal type="number" pos:start="37:25" pos:end="37:25">3</literal></expr>;</condition> <incr pos:start="37:28" pos:end="37:30"><expr pos:start="37:28" pos:end="37:30"><operator pos:start="37:28" pos:end="37:29">++</operator><name pos:start="37:30" pos:end="37:30">i</name></expr></incr>)</control> <block pos:start="37:33" pos:end="45:9">{<block_content pos:start="39:13" pos:end="43:13">
+
+            <if_stmt pos:start="39:13" pos:end="43:13"><if pos:start="39:13" pos:end="43:13">if <condition pos:start="39:16" pos:end="39:61">(<expr pos:start="39:17" pos:end="39:60"><call pos:start="39:17" pos:end="39:60"><name pos:start="39:17" pos:end="39:32">window_translate</name><argument_list pos:start="39:33" pos:end="39:60">(<argument pos:start="39:34" pos:end="39:47"><expr pos:start="39:34" pos:end="39:47"><operator pos:start="39:34" pos:end="39:34">&amp;</operator><name pos:start="39:35" pos:end="39:47"><name pos:start="39:35" pos:end="39:39">pchip</name><operator pos:start="39:40" pos:end="39:41">-&gt;</operator><name pos:start="39:42" pos:end="39:44">win</name><index pos:start="39:45" pos:end="39:47">[<expr pos:start="39:46" pos:end="39:46"><name pos:start="39:46" pos:end="39:46">i</name></expr>]</index></name></expr></argument>, <argument pos:start="39:50" pos:end="39:53"><expr pos:start="39:50" pos:end="39:53"><name pos:start="39:50" pos:end="39:53">addr</name></expr></argument>, <argument pos:start="39:56" pos:end="39:59"><expr pos:start="39:56" pos:end="39:59"><operator pos:start="39:56" pos:end="39:56">&amp;</operator><name pos:start="39:57" pos:end="39:59">ret</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="39:63" pos:end="43:13">{<block_content pos:start="41:17" pos:end="41:29">
+
+                <goto pos:start="41:17" pos:end="41:29">goto <name pos:start="41:22" pos:end="41:28">success</name>;</goto>
+
+            </block_content>}</block></if></if_stmt>
+
+        </block_content>}</block></for>
+
+
+
+        <comment type="block" pos:start="49:9" pos:end="49:55">/* Check the fourth window for DAC disable.  */</comment>
+
+        <if_stmt pos:start="51:9" pos:end="57:9"><if pos:start="51:9" pos:end="57:9">if <condition pos:start="51:12" pos:end="53:60">(<expr pos:start="51:13" pos:end="53:59"><operator pos:start="51:13" pos:end="51:13">(</operator><name pos:start="51:14" pos:end="51:26"><name pos:start="51:14" pos:end="51:18">pchip</name><operator pos:start="51:19" pos:end="51:20">-&gt;</operator><name pos:start="51:21" pos:end="51:23">win</name><index pos:start="51:24" pos:end="51:26">[<expr pos:start="51:25" pos:end="51:25"><literal type="number" pos:start="51:25" pos:end="51:25">3</literal></expr>]</index></name><operator pos:start="51:27" pos:end="51:27">.</operator><name pos:start="51:28" pos:end="51:30">wba</name> <operator pos:start="51:32" pos:end="51:32">&amp;</operator> <literal type="number" pos:start="51:34" pos:end="51:49">0x80000000000ull</literal><operator pos:start="51:50" pos:end="51:50">)</operator> <operator pos:start="51:52" pos:end="51:53">==</operator> <literal type="number" pos:start="51:55" pos:end="51:55">0</literal>
+
+	    <operator pos:start="53:13" pos:end="53:14">&amp;&amp;</operator> <call pos:start="53:16" pos:end="53:59"><name pos:start="53:16" pos:end="53:31">window_translate</name><argument_list pos:start="53:32" pos:end="53:59">(<argument pos:start="53:33" pos:end="53:46"><expr pos:start="53:33" pos:end="53:46"><operator pos:start="53:33" pos:end="53:33">&amp;</operator><name pos:start="53:34" pos:end="53:46"><name pos:start="53:34" pos:end="53:38">pchip</name><operator pos:start="53:39" pos:end="53:40">-&gt;</operator><name pos:start="53:41" pos:end="53:43">win</name><index pos:start="53:44" pos:end="53:46">[<expr pos:start="53:45" pos:end="53:45"><literal type="number" pos:start="53:45" pos:end="53:45">3</literal></expr>]</index></name></expr></argument>, <argument pos:start="53:49" pos:end="53:52"><expr pos:start="53:49" pos:end="53:52"><name pos:start="53:49" pos:end="53:52">addr</name></expr></argument>, <argument pos:start="53:55" pos:end="53:58"><expr pos:start="53:55" pos:end="53:58"><operator pos:start="53:55" pos:end="53:55">&amp;</operator><name pos:start="53:56" pos:end="53:58">ret</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="53:62" pos:end="57:9">{<block_content pos:start="55:13" pos:end="55:25">
+
+            <goto pos:start="55:13" pos:end="55:25">goto <name pos:start="55:18" pos:end="55:24">success</name>;</goto>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if> <else pos:start="59:7" pos:end="107:5">else <block pos:start="59:12" pos:end="107:5">{<block_content pos:start="65:9" pos:end="105:9">
+
+        <comment type="block" pos:start="61:9" pos:end="61:36">/* Double-address cycle.  */</comment>
+
+
+
+        <if_stmt pos:start="65:9" pos:end="79:9"><if pos:start="65:9" pos:end="79:9">if <condition pos:start="65:12" pos:end="65:64">(<expr pos:start="65:13" pos:end="65:63"><name pos:start="65:13" pos:end="65:16">addr</name> <operator pos:start="65:18" pos:end="65:19">&gt;=</operator> <literal type="number" pos:start="65:21" pos:end="65:36">0x10000000000ull</literal> <operator pos:start="65:38" pos:end="65:39">&amp;&amp;</operator> <name pos:start="65:41" pos:end="65:44">addr</name> <operator pos:start="65:46" pos:end="65:46">&lt;</operator> <literal type="number" pos:start="65:48" pos:end="65:63">0x20000000000ull</literal></expr>)</condition> <block pos:start="65:66" pos:end="79:9">{<block_content pos:start="69:13" pos:end="77:13">
+
+            <comment type="block" pos:start="67:13" pos:end="67:52">/* Check for the DMA monster window.  */</comment>
+
+            <if_stmt pos:start="69:13" pos:end="77:13"><if pos:start="69:13" pos:end="77:13">if <condition pos:start="69:16" pos:end="69:34">(<expr pos:start="69:17" pos:end="69:33"><name pos:start="69:17" pos:end="69:26"><name pos:start="69:17" pos:end="69:21">pchip</name><operator pos:start="69:22" pos:end="69:23">-&gt;</operator><name pos:start="69:24" pos:end="69:26">ctl</name></name> <operator pos:start="69:28" pos:end="69:28">&amp;</operator> <literal type="number" pos:start="69:30" pos:end="69:33">0x40</literal></expr>)</condition> <block pos:start="69:36" pos:end="77:13">{<block_content pos:start="73:17" pos:end="75:29">
+
+                <comment type="block" pos:start="71:17" pos:end="71:70">/* See 10.1.4.4; in particular &lt;39:35&gt; is ignored.  */</comment>
+
+                <expr_stmt pos:start="73:17" pos:end="73:59"><expr pos:start="73:17" pos:end="73:58"><call pos:start="73:17" pos:end="73:58"><name pos:start="73:17" pos:end="73:31">make_iommu_tlbe</name><argument_list pos:start="73:32" pos:end="73:58">(<argument pos:start="73:33" pos:end="73:33"><expr pos:start="73:33" pos:end="73:33"><literal type="number" pos:start="73:33" pos:end="73:33">0</literal></expr></argument>, <argument pos:start="73:36" pos:end="73:51"><expr pos:start="73:36" pos:end="73:51"><literal type="number" pos:start="73:36" pos:end="73:51">0x007ffffffffull</literal></expr></argument>, <argument pos:start="73:54" pos:end="73:57"><expr pos:start="73:54" pos:end="73:57"><operator pos:start="73:54" pos:end="73:54">&amp;</operator><name pos:start="73:55" pos:end="73:57">ret</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+		<goto pos:start="75:17" pos:end="75:29">goto <name pos:start="75:22" pos:end="75:28">success</name>;</goto>
+
+            </block_content>}</block></if></if_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <if_stmt pos:start="83:9" pos:end="105:9"><if pos:start="83:9" pos:end="105:9">if <condition pos:start="83:12" pos:end="83:65">(<expr pos:start="83:13" pos:end="83:64"><name pos:start="83:13" pos:end="83:16">addr</name> <operator pos:start="83:18" pos:end="83:19">&gt;=</operator> <literal type="number" pos:start="83:21" pos:end="83:36">0x80000000000ull</literal> <operator pos:start="83:38" pos:end="83:39">&amp;&amp;</operator> <name pos:start="83:41" pos:end="83:44">addr</name> <operator pos:start="83:46" pos:end="83:47">&lt;=</operator> <literal type="number" pos:start="83:49" pos:end="83:64">0xfffffffffffull</literal></expr>)</condition> <block pos:start="83:67" pos:end="105:9">{<block_content pos:start="87:13" pos:end="103:13">
+
+            <comment type="block" pos:start="85:13" pos:end="85:76">/* Check the fourth window for DAC enable and window enable.  */</comment>
+
+            <if_stmt pos:start="87:13" pos:end="103:13"><if pos:start="87:13" pos:end="103:13">if <condition pos:start="87:16" pos:end="87:75">(<expr pos:start="87:17" pos:end="87:74"><operator pos:start="87:17" pos:end="87:17">(</operator><name pos:start="87:18" pos:end="87:30"><name pos:start="87:18" pos:end="87:22">pchip</name><operator pos:start="87:23" pos:end="87:24">-&gt;</operator><name pos:start="87:25" pos:end="87:27">win</name><index pos:start="87:28" pos:end="87:30">[<expr pos:start="87:29" pos:end="87:29"><literal type="number" pos:start="87:29" pos:end="87:29">3</literal></expr>]</index></name><operator pos:start="87:31" pos:end="87:31">.</operator><name pos:start="87:32" pos:end="87:34">wba</name> <operator pos:start="87:36" pos:end="87:36">&amp;</operator> <literal type="number" pos:start="87:38" pos:end="87:53">0x80000000001ull</literal><operator pos:start="87:54" pos:end="87:54">)</operator> <operator pos:start="87:56" pos:end="87:57">==</operator> <literal type="number" pos:start="87:59" pos:end="87:74">0x80000000001ull</literal></expr>)</condition> <block pos:start="87:77" pos:end="103:13">{<block_content pos:start="89:17" pos:end="101:17">
+
+                <decl_stmt pos:start="89:17" pos:end="89:34"><decl pos:start="89:17" pos:end="89:33"><type pos:start="89:17" pos:end="89:24"><name pos:start="89:17" pos:end="89:24">uint64_t</name></type> <name pos:start="89:26" pos:end="89:33">pte_addr</name></decl>;</decl_stmt>
+
+
+
+                <expr_stmt pos:start="93:17" pos:end="93:63"><expr pos:start="93:17" pos:end="93:62"><name pos:start="93:17" pos:end="93:24">pte_addr</name>  <operator pos:start="93:27" pos:end="93:27">=</operator> <name pos:start="93:29" pos:end="93:41"><name pos:start="93:29" pos:end="93:33">pchip</name><operator pos:start="93:34" pos:end="93:35">-&gt;</operator><name pos:start="93:36" pos:end="93:38">win</name><index pos:start="93:39" pos:end="93:41">[<expr pos:start="93:40" pos:end="93:40"><literal type="number" pos:start="93:40" pos:end="93:40">3</literal></expr>]</index></name><operator pos:start="93:42" pos:end="93:42">.</operator><name pos:start="93:43" pos:end="93:45">tba</name> <operator pos:start="93:47" pos:end="93:47">&amp;</operator> <literal type="number" pos:start="93:49" pos:end="93:62">0x7ffc00000ull</literal></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="95:17" pos:end="95:55"><expr pos:start="95:17" pos:end="95:54"><name pos:start="95:17" pos:end="95:24">pte_addr</name> <operator pos:start="95:26" pos:end="95:27">|=</operator> <operator pos:start="95:29" pos:end="95:29">(</operator><name pos:start="95:30" pos:end="95:33">addr</name> <operator pos:start="95:35" pos:end="95:35">&amp;</operator> <literal type="number" pos:start="95:37" pos:end="95:47">0xffffe000u</literal><operator pos:start="95:48" pos:end="95:48">)</operator> <operator pos:start="95:50" pos:end="95:51">&gt;&gt;</operator> <literal type="number" pos:start="95:53" pos:end="95:54">10</literal></expr>;</expr_stmt>
+
+                <if_stmt pos:start="97:17" pos:end="101:17"><if pos:start="97:17" pos:end="101:17">if <condition pos:start="97:20" pos:end="97:50">(<expr pos:start="97:21" pos:end="97:49"><call pos:start="97:21" pos:end="97:49"><name pos:start="97:21" pos:end="97:33">pte_translate</name><argument_list pos:start="97:34" pos:end="97:49">(<argument pos:start="97:35" pos:end="97:42"><expr pos:start="97:35" pos:end="97:42"><name pos:start="97:35" pos:end="97:42">pte_addr</name></expr></argument>, <argument pos:start="97:45" pos:end="97:48"><expr pos:start="97:45" pos:end="97:48"><operator pos:start="97:45" pos:end="97:45">&amp;</operator><name pos:start="97:46" pos:end="97:48">ret</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="97:52" pos:end="101:17">{<block_content pos:start="99:25" pos:end="99:37">
+
+			<goto pos:start="99:25" pos:end="99:37">goto <name pos:start="99:30" pos:end="99:36">success</name>;</goto>
+
+		</block_content>}</block></if></if_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+ <label pos:start="111:2" pos:end="111:9"><name pos:start="111:2" pos:end="111:8">failure</name>:</label>
+
+    <expr_stmt pos:start="113:5" pos:end="113:49"><expr pos:start="113:5" pos:end="113:48"><name pos:start="113:5" pos:end="113:7">ret</name> <operator pos:start="113:9" pos:end="113:9">=</operator> <operator pos:start="113:11" pos:end="113:11">(</operator><name pos:start="113:12" pos:end="113:24">IOMMUTLBEntry</name><operator pos:start="113:25" pos:end="113:25">)</operator> <block pos:start="113:27" pos:end="113:48">{ <expr pos:start="113:29" pos:end="113:46"><operator pos:start="113:29" pos:end="113:29">.</operator><name pos:start="113:30" pos:end="113:33">perm</name> <operator pos:start="113:35" pos:end="113:35">=</operator> <name pos:start="113:37" pos:end="113:46">IOMMU_NONE</name></expr> }</block></expr>;</expr_stmt>
+
+ <label pos:start="115:2" pos:end="115:9"><name pos:start="115:2" pos:end="115:8">success</name>:</label>
+
+    <return pos:start="117:5" pos:end="117:15">return <expr pos:start="117:12" pos:end="117:14"><name pos:start="117:12" pos:end="117:14">ret</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

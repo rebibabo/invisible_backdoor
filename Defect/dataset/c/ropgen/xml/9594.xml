@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/9594.c" pos:tabs="8"><function pos:start="1:1" pos:end="85:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:27">vector_fmul_vfp</name><parameter_list pos:start="1:28" pos:end="1:66">(<parameter pos:start="1:29" pos:end="1:38"><decl pos:start="1:29" pos:end="1:38"><type pos:start="1:29" pos:end="1:38"><name pos:start="1:29" pos:end="1:33">float</name> <modifier pos:start="1:35" pos:end="1:35">*</modifier></type><name pos:start="1:36" pos:end="1:38">dst</name></decl></parameter>, <parameter pos:start="1:41" pos:end="1:56"><decl pos:start="1:41" pos:end="1:56"><type pos:start="1:41" pos:end="1:56"><specifier pos:start="1:41" pos:end="1:45">const</specifier> <name pos:start="1:47" pos:end="1:51">float</name> <modifier pos:start="1:53" pos:end="1:53">*</modifier></type><name pos:start="1:54" pos:end="1:56">src</name></decl></parameter>, <parameter pos:start="1:59" pos:end="1:65"><decl pos:start="1:59" pos:end="1:65"><type pos:start="1:59" pos:end="1:65"><name pos:start="1:59" pos:end="1:61">int</name></type> <name pos:start="1:63" pos:end="1:65">len</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="85:1">{<block_content pos:start="5:5" pos:end="83:26">
+
+    <decl_stmt pos:start="5:5" pos:end="5:12"><decl pos:start="5:5" pos:end="5:11"><type pos:start="5:5" pos:end="5:7"><name pos:start="5:5" pos:end="5:7">int</name></type> <name pos:start="5:9" pos:end="5:11">tmp</name></decl>;</decl_stmt>
+
+    <asm pos:start="7:5" pos:end="83:26">asm <specifier pos:start="7:9" pos:end="7:16">volatile</specifier>(
+
+        "fmrx       %[tmp], fpscr\n\t"
+
+        "orr        %[tmp], %[tmp], #(3 &lt;&lt; 16)\n\t" <comment type="block" pos:start="11:53" pos:end="11:78">/* set vector size to 4 */</comment>
+
+        "fmxr       fpscr, %[tmp]\n\t"
+
+
+
+        "fldmias    %[dst_r]!, {s0-s3}\n\t"
+
+        "fldmias    %[src]!, {s8-s11}\n\t"
+
+        "fldmias    %[dst_r]!, {s4-s7}\n\t"
+
+        "fldmias    %[src]!, {s12-s15}\n\t"
+
+        "fmuls      s8, s0, s8\n\t"
+
+    "1:\n\t"
+
+        "subs       %[len], %[len], #16\n\t"
+
+        "fmuls      s12, s4, s12\n\t"
+
+        "fldmiasge  %[dst_r]!, {s16-s19}\n\t"
+
+        "fldmiasge  %[src]!, {s24-s27}\n\t"
+
+        "fldmiasge  %[dst_r]!, {s20-s23}\n\t"
+
+        "fldmiasge  %[src]!, {s28-s31}\n\t"
+
+        "fmulsge    s24, s16, s24\n\t"
+
+        "fstmias    %[dst_w]!, {s8-s11}\n\t"
+
+        "fstmias    %[dst_w]!, {s12-s15}\n\t"
+
+        "fmulsge    s28, s20, s28\n\t"
+
+        "fldmiasgt  %[dst_r]!, {s0-s3}\n\t"
+
+        "fldmiasgt  %[src]!, {s8-s11}\n\t"
+
+        "fldmiasgt  %[dst_r]!, {s4-s7}\n\t"
+
+        "fldmiasgt  %[src]!, {s12-s15}\n\t"
+
+        "fmulsge    s8, s0, s8\n\t"
+
+        "fstmiasge  %[dst_w]!, {s24-s27}\n\t"
+
+        "fstmiasge  %[dst_w]!, {s28-s31}\n\t"
+
+        "bgt        1b\n\t"
+
+
+
+        "bic        %[tmp], %[tmp], #(7 &lt;&lt; 16)\n\t" <comment type="block" pos:start="67:53" pos:end="67:83">/* set vector size back to 1 */</comment>
+
+        "fmxr       fpscr, %[tmp]\n\t"
+
+        : [dst_w] "+&amp;r" (dst), [dst_r] "+&amp;r" (dst), [src] "+&amp;r" (src), [len] "+&amp;r" (len), [tmp] "=&amp;r" (tmp)
+
+        :
+
+        : "s0",  "s1",  "s2",  "s3",  "s4",  "s5",  "s6",  "s7",
+
+          "s8",  "s9",  "s10", "s11", "s12", "s13", "s14", "s15",
+
+          "s16", "s17", "s18", "s19", "s20", "s21", "s22", "s23",
+
+          "s24", "s25", "s26", "s27", "s28", "s29", "s30", "s31",
+
+          "cc", "memory");</asm>
+
+</block_content>}</block></function>
+</unit>

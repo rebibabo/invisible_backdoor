@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/24605.c" pos:tabs="8"><macro pos:start="1:1" pos:end="1:29"><name pos:start="1:1" pos:end="1:9">HELPER_LD</name><argument_list pos:start="1:10" pos:end="1:29">(<argument pos:start="1:11" pos:end="1:13">lbu</argument>, <argument pos:start="1:16" pos:end="1:19">ldub</argument>, <argument pos:start="1:22" pos:end="1:28">uint8_t</argument>)</argument_list></macro>
+
+<macro pos:start="3:1" pos:end="3:30"><name pos:start="3:1" pos:end="3:9">HELPER_LD</name><argument_list pos:start="3:10" pos:end="3:30">(<argument pos:start="3:11" pos:end="3:13">lhu</argument>, <argument pos:start="3:16" pos:end="3:19">lduw</argument>, <argument pos:start="3:22" pos:end="3:29">uint16_t</argument>)</argument_list></macro>
+
+<macro pos:start="5:1" pos:end="5:27"><name pos:start="5:1" pos:end="5:9">HELPER_LD</name><argument_list pos:start="5:10" pos:end="5:27">(<argument pos:start="5:11" pos:end="5:12">lw</argument>, <argument pos:start="5:15" pos:end="5:17">ldl</argument>, <argument pos:start="5:20" pos:end="5:26">int32_t</argument>)</argument_list></macro>
+
+<macro pos:start="7:1" pos:end="54:0"><name pos:start="7:1" pos:end="7:9">HELPER_LD</name><argument_list pos:start="7:10" pos:end="54:0">(<argument pos:start="7:11" pos:end="7:12">ld</argument>, <argument pos:start="7:15" pos:end="7:17">ldq</argument>, <argument pos:start="7:20" pos:end="7:26">int64_t</argument>)</argument_list></macro>
+
+<cpp:undef pos:start="9:1" pos:end="9:16">#<cpp:directive pos:start="9:2" pos:end="9:6">undef</cpp:directive> <name pos:start="9:8" pos:end="9:16">HELPER_LD</name></cpp:undef>
+
+
+
+<cpp:if pos:start="13:1" pos:end="13:29">#<cpp:directive pos:start="13:2" pos:end="13:3">if</cpp:directive> <expr pos:start="13:5" pos:end="13:29"><call pos:start="13:5" pos:end="13:29"><name pos:start="13:5" pos:end="13:11">defined</name><argument_list pos:start="13:12" pos:end="13:29">(<argument pos:start="13:13" pos:end="13:28"><expr pos:start="13:13" pos:end="13:28"><name pos:start="13:13" pos:end="13:28">CONFIG_USER_ONLY</name></expr></argument>)</argument_list></call></expr></cpp:if>
+
+<cpp:define pos:start="15:1" pos:end="25:1">#<cpp:directive pos:start="15:2" pos:end="15:7">define</cpp:directive> <cpp:macro pos:start="15:9" pos:end="15:35"><name pos:start="15:9" pos:end="15:17">HELPER_ST</name><parameter_list pos:start="15:18" pos:end="15:35">(<parameter pos:start="15:19" pos:end="15:22"><type pos:start="15:19" pos:end="15:22"><name pos:start="15:19" pos:end="15:22">name</name></type></parameter>, <parameter pos:start="15:25" pos:end="15:28"><type pos:start="15:25" pos:end="15:28"><name pos:start="15:25" pos:end="15:28">insn</name></type></parameter>, <parameter pos:start="15:31" pos:end="15:34"><type pos:start="15:31" pos:end="15:34"><name pos:start="15:31" pos:end="15:34">type</name></type></parameter>)</parameter_list></cpp:macro>                                     \
+
+<cpp:value pos:start="17:1" pos:end="25:1">static inline void do_##name(CPUMIPSState *env, target_ulong addr,      \
+
+                             type val, int mem_idx)                     \
+
+{                                                                       \
+
+    cpu_##insn##_data(env, addr, val);                                  \
+
+}</cpp:value></cpp:define>
+
+<cpp:else pos:start="27:1" pos:end="27:5">#<cpp:directive pos:start="27:2" pos:end="27:5">else</cpp:directive></cpp:else>
+
+<cpp:define pos:start="29:1" pos:end="51:1">#<cpp:directive pos:start="29:2" pos:end="29:7">define</cpp:directive> <cpp:macro pos:start="29:9" pos:end="29:35"><name pos:start="29:9" pos:end="29:17">HELPER_ST</name><parameter_list pos:start="29:18" pos:end="29:35">(<parameter pos:start="29:19" pos:end="29:22"><type pos:start="29:19" pos:end="29:22"><name pos:start="29:19" pos:end="29:22">name</name></type></parameter>, <parameter pos:start="29:25" pos:end="29:28"><type pos:start="29:25" pos:end="29:28"><name pos:start="29:25" pos:end="29:28">insn</name></type></parameter>, <parameter pos:start="29:31" pos:end="29:34"><type pos:start="29:31" pos:end="29:34"><name pos:start="29:31" pos:end="29:34">type</name></type></parameter>)</parameter_list></cpp:macro>                                     \
+
+<cpp:value pos:start="31:1" pos:end="51:1">static inline void do_##name(CPUMIPSState *env, target_ulong addr,      \
+
+                             type val, int mem_idx)                     \
+
+{                                                                       \
+
+    switch (mem_idx)                                                    \
+
+    {                                                                   \
+
+    case 0: cpu_##insn##_kernel(env, addr, val); break;                 \
+
+    case 1: cpu_##insn##_super(env, addr, val); break;                  \
+
+    default:                                                            \
+
+    case 2: cpu_##insn##_user(env, addr, val); break;                   \
+
+    }                                                                   \
+
+}</cpp:value></cpp:define>
+
+<cpp:endif pos:start="53:1" pos:end="53:6">#<cpp:directive pos:start="53:2" pos:end="53:6">endif</cpp:directive></cpp:endif>
+
+<macro pos:start="55:1" pos:end="55:27"><name pos:start="55:1" pos:end="55:9">HELPER_ST</name><argument_list pos:start="55:10" pos:end="55:27">(<argument pos:start="55:11" pos:end="55:12">sb</argument>, <argument pos:start="55:15" pos:end="55:17">stb</argument>, <argument pos:start="55:20" pos:end="55:26">uint8_t</argument>)</argument_list></macro>
+
+<macro pos:start="57:1" pos:end="57:28"><name pos:start="57:1" pos:end="57:9">HELPER_ST</name><argument_list pos:start="57:10" pos:end="57:28">(<argument pos:start="57:11" pos:end="57:12">sh</argument>, <argument pos:start="57:15" pos:end="57:17">stw</argument>, <argument pos:start="57:20" pos:end="57:27">uint16_t</argument>)</argument_list></macro>
+
+<macro pos:start="59:1" pos:end="59:28"><name pos:start="59:1" pos:end="59:9">HELPER_ST</name><argument_list pos:start="59:10" pos:end="59:28">(<argument pos:start="59:11" pos:end="59:12">sw</argument>, <argument pos:start="59:15" pos:end="59:17">stl</argument>, <argument pos:start="59:20" pos:end="59:27">uint32_t</argument>)</argument_list></macro>
+
+<macro pos:start="61:1" pos:end="64:0"><name pos:start="61:1" pos:end="61:9">HELPER_ST</name><argument_list pos:start="61:10" pos:end="64:0">(<argument pos:start="61:11" pos:end="61:12">sd</argument>, <argument pos:start="61:15" pos:end="61:17">stq</argument>, <argument pos:start="61:20" pos:end="61:27">uint64_t</argument>)</argument_list></macro>
+
+<cpp:undef pos:start="63:1" pos:end="63:16">#<cpp:directive pos:start="63:2" pos:end="63:6">undef</cpp:directive> <name pos:start="63:8" pos:end="63:16">HELPER_ST</name></cpp:undef>
+
+
+
+<function pos:start="67:1" pos:end="73:1"><type pos:start="67:1" pos:end="67:12"><name pos:start="67:1" pos:end="67:12">target_ulong</name></type> <name pos:start="67:14" pos:end="67:23">helper_clo</name> <parameter_list pos:start="67:25" pos:end="67:43">(<parameter pos:start="67:26" pos:end="67:42"><decl pos:start="67:26" pos:end="67:42"><type pos:start="67:26" pos:end="67:37"><name pos:start="67:26" pos:end="67:37">target_ulong</name></type> <name pos:start="67:39" pos:end="67:42">arg1</name></decl></parameter>)</parameter_list>
+
+<block pos:start="69:1" pos:end="73:1">{<block_content pos:start="71:5" pos:end="71:23">
+
+    <return pos:start="71:5" pos:end="71:23">return <expr pos:start="71:12" pos:end="71:22"><call pos:start="71:12" pos:end="71:22"><name pos:start="71:12" pos:end="71:16">clo32</name><argument_list pos:start="71:17" pos:end="71:22">(<argument pos:start="71:18" pos:end="71:21"><expr pos:start="71:18" pos:end="71:21"><name pos:start="71:18" pos:end="71:21">arg1</name></expr></argument>)</argument_list></call></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

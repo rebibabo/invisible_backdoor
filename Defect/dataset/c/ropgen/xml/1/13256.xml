@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/13256.c" pos:tabs="8"><function pos:start="1:1" pos:end="91:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:23">copy_sectors</name><parameter_list pos:start="1:24" pos:end="3:72">(<parameter pos:start="1:25" pos:end="1:44"><decl pos:start="1:25" pos:end="1:44"><type pos:start="1:25" pos:end="1:44"><name pos:start="1:25" pos:end="1:40">BlockDriverState</name> <modifier pos:start="1:42" pos:end="1:42">*</modifier></type><name pos:start="1:43" pos:end="1:44">bs</name></decl></parameter>, <parameter pos:start="1:47" pos:end="1:65"><decl pos:start="1:47" pos:end="1:65"><type pos:start="1:47" pos:end="1:65"><name pos:start="1:47" pos:end="1:54">uint64_t</name></type> <name pos:start="1:56" pos:end="1:65">start_sect</name></decl></parameter>,
+
+                        <parameter pos:start="3:25" pos:end="3:47"><decl pos:start="3:25" pos:end="3:47"><type pos:start="3:25" pos:end="3:47"><name pos:start="3:25" pos:end="3:32">uint64_t</name></type> <name pos:start="3:34" pos:end="3:47">cluster_offset</name></decl></parameter>, <parameter pos:start="3:50" pos:end="3:60"><decl pos:start="3:50" pos:end="3:60"><type pos:start="3:50" pos:end="3:60"><name pos:start="3:50" pos:end="3:52">int</name></type> <name pos:start="3:54" pos:end="3:60">n_start</name></decl></parameter>, <parameter pos:start="3:63" pos:end="3:71"><decl pos:start="3:63" pos:end="3:71"><type pos:start="3:63" pos:end="3:71"><name pos:start="3:63" pos:end="3:65">int</name></type> <name pos:start="3:67" pos:end="3:71">n_end</name></decl></parameter>)</parameter_list>
+
+<block pos:start="5:1" pos:end="91:1">{<block_content pos:start="7:5" pos:end="89:15">
+
+    <decl_stmt pos:start="7:5" pos:end="7:34"><decl pos:start="7:5" pos:end="7:33"><type pos:start="7:5" pos:end="7:19"><name pos:start="7:5" pos:end="7:17">BDRVQcowState</name> <modifier pos:start="7:19" pos:end="7:19">*</modifier></type><name pos:start="7:20" pos:end="7:20">s</name> <init pos:start="7:22" pos:end="7:33">= <expr pos:start="7:24" pos:end="7:33"><name pos:start="7:24" pos:end="7:33"><name pos:start="7:24" pos:end="7:25">bs</name><operator pos:start="7:26" pos:end="7:27">-&gt;</operator><name pos:start="7:28" pos:end="7:33">opaque</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:15"><decl pos:start="9:5" pos:end="9:9"><type pos:start="9:5" pos:end="9:7"><name pos:start="9:5" pos:end="9:7">int</name></type> <name pos:start="9:9" pos:end="9:9">n</name></decl>, <decl pos:start="9:12" pos:end="9:14"><type ref="prev" pos:start="9:5" pos:end="9:7"/><name pos:start="9:12" pos:end="9:14">ret</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:14"><decl pos:start="11:5" pos:end="11:13"><type pos:start="11:5" pos:end="11:10"><name pos:start="11:5" pos:end="11:8">void</name> <modifier pos:start="11:10" pos:end="11:10">*</modifier></type><name pos:start="11:11" pos:end="11:13">buf</name></decl>;</decl_stmt>
+
+
+
+    <comment type="block" pos:start="15:5" pos:end="23:7">/*
+
+     * If this is the last cluster and it is only partially used, we must only
+
+     * copy until the end of the image, or bdrv_check_request will fail for the
+
+     * bdrv_read/write calls below.
+
+     */</comment>
+
+    <if_stmt pos:start="25:5" pos:end="29:5"><if pos:start="25:5" pos:end="29:5">if <condition pos:start="25:8" pos:end="25:47">(<expr pos:start="25:9" pos:end="25:46"><name pos:start="25:9" pos:end="25:18">start_sect</name> <operator pos:start="25:20" pos:end="25:20">+</operator> <name pos:start="25:22" pos:end="25:26">n_end</name> <operator pos:start="25:28" pos:end="25:28">&gt;</operator> <name pos:start="25:30" pos:end="25:46"><name pos:start="25:30" pos:end="25:31">bs</name><operator pos:start="25:32" pos:end="25:33">-&gt;</operator><name pos:start="25:34" pos:end="25:46">total_sectors</name></name></expr>)</condition> <block pos:start="25:49" pos:end="29:5">{<block_content pos:start="27:9" pos:end="27:47">
+
+        <expr_stmt pos:start="27:9" pos:end="27:47"><expr pos:start="27:9" pos:end="27:46"><name pos:start="27:9" pos:end="27:13">n_end</name> <operator pos:start="27:15" pos:end="27:15">=</operator> <name pos:start="27:17" pos:end="27:33"><name pos:start="27:17" pos:end="27:18">bs</name><operator pos:start="27:19" pos:end="27:20">-&gt;</operator><name pos:start="27:21" pos:end="27:33">total_sectors</name></name> <operator pos:start="27:35" pos:end="27:35">-</operator> <name pos:start="27:37" pos:end="27:46">start_sect</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="33:5" pos:end="33:24"><expr pos:start="33:5" pos:end="33:23"><name pos:start="33:5" pos:end="33:5">n</name> <operator pos:start="33:7" pos:end="33:7">=</operator> <name pos:start="33:9" pos:end="33:13">n_end</name> <operator pos:start="33:15" pos:end="33:15">-</operator> <name pos:start="33:17" pos:end="33:23">n_start</name></expr>;</expr_stmt>
+
+    <if_stmt pos:start="35:5" pos:end="39:5"><if pos:start="35:5" pos:end="39:5">if <condition pos:start="35:8" pos:end="35:15">(<expr pos:start="35:9" pos:end="35:14"><name pos:start="35:9" pos:end="35:9">n</name> <operator pos:start="35:11" pos:end="35:12">&lt;=</operator> <literal type="number" pos:start="35:14" pos:end="35:14">0</literal></expr>)</condition> <block pos:start="35:17" pos:end="39:5">{<block_content pos:start="37:9" pos:end="37:17">
+
+        <return pos:start="37:9" pos:end="37:17">return <expr pos:start="37:16" pos:end="37:16"><literal type="number" pos:start="37:16" pos:end="37:16">0</literal></expr>;</return>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="43:5" pos:end="43:52"><expr pos:start="43:5" pos:end="43:51"><name pos:start="43:5" pos:end="43:7">buf</name> <operator pos:start="43:9" pos:end="43:9">=</operator> <call pos:start="43:11" pos:end="43:51"><name pos:start="43:11" pos:end="43:25">qemu_blockalign</name><argument_list pos:start="43:26" pos:end="43:51">(<argument pos:start="43:27" pos:end="43:28"><expr pos:start="43:27" pos:end="43:28"><name pos:start="43:27" pos:end="43:28">bs</name></expr></argument>, <argument pos:start="43:31" pos:end="43:50"><expr pos:start="43:31" pos:end="43:50"><name pos:start="43:31" pos:end="43:31">n</name> <operator pos:start="43:33" pos:end="43:33">*</operator> <name pos:start="43:35" pos:end="43:50">BDRV_SECTOR_SIZE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="47:5" pos:end="47:44"><expr pos:start="47:5" pos:end="47:43"><call pos:start="47:5" pos:end="47:43"><name pos:start="47:5" pos:end="47:16">BLKDBG_EVENT</name><argument_list pos:start="47:17" pos:end="47:43">(<argument pos:start="47:18" pos:end="47:25"><expr pos:start="47:18" pos:end="47:25"><name pos:start="47:18" pos:end="47:25"><name pos:start="47:18" pos:end="47:19">bs</name><operator pos:start="47:20" pos:end="47:21">-&gt;</operator><name pos:start="47:22" pos:end="47:25">file</name></name></expr></argument>, <argument pos:start="47:28" pos:end="47:42"><expr pos:start="47:28" pos:end="47:42"><name pos:start="47:28" pos:end="47:42">BLKDBG_COW_READ</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="49:5" pos:end="49:54"><expr pos:start="49:5" pos:end="49:53"><name pos:start="49:5" pos:end="49:7">ret</name> <operator pos:start="49:9" pos:end="49:9">=</operator> <call pos:start="49:11" pos:end="49:53"><name pos:start="49:11" pos:end="49:19">bdrv_read</name><argument_list pos:start="49:20" pos:end="49:53">(<argument pos:start="49:21" pos:end="49:22"><expr pos:start="49:21" pos:end="49:22"><name pos:start="49:21" pos:end="49:22">bs</name></expr></argument>, <argument pos:start="49:25" pos:end="49:44"><expr pos:start="49:25" pos:end="49:44"><name pos:start="49:25" pos:end="49:34">start_sect</name> <operator pos:start="49:36" pos:end="49:36">+</operator> <name pos:start="49:38" pos:end="49:44">n_start</name></expr></argument>, <argument pos:start="49:47" pos:end="49:49"><expr pos:start="49:47" pos:end="49:49"><name pos:start="49:47" pos:end="49:49">buf</name></expr></argument>, <argument pos:start="49:52" pos:end="49:52"><expr pos:start="49:52" pos:end="49:52"><name pos:start="49:52" pos:end="49:52">n</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="51:5" pos:end="55:5"><if pos:start="51:5" pos:end="55:5">if <condition pos:start="51:8" pos:end="51:16">(<expr pos:start="51:9" pos:end="51:15"><name pos:start="51:9" pos:end="51:11">ret</name> <operator pos:start="51:13" pos:end="51:13">&lt;</operator> <literal type="number" pos:start="51:15" pos:end="51:15">0</literal></expr>)</condition> <block pos:start="51:18" pos:end="55:5">{<block_content pos:start="53:9" pos:end="53:17">
+
+        <goto pos:start="53:9" pos:end="53:17">goto <name pos:start="53:14" pos:end="53:16">out</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <if_stmt pos:start="59:5" pos:end="67:5"><if pos:start="59:5" pos:end="67:5">if <condition pos:start="59:8" pos:end="59:24">(<expr pos:start="59:9" pos:end="59:23"><name pos:start="59:9" pos:end="59:23"><name pos:start="59:9" pos:end="59:9">s</name><operator pos:start="59:10" pos:end="59:11">-&gt;</operator><name pos:start="59:12" pos:end="59:23">crypt_method</name></name></expr>)</condition> <block pos:start="59:26" pos:end="67:5">{<block_content pos:start="61:9" pos:end="65:45">
+
+        <expr_stmt pos:start="61:9" pos:end="65:45"><expr pos:start="61:9" pos:end="65:44"><call pos:start="61:9" pos:end="65:44"><name pos:start="61:9" pos:end="61:29">qcow2_encrypt_sectors</name><argument_list pos:start="61:30" pos:end="65:44">(<argument pos:start="61:31" pos:end="61:31"><expr pos:start="61:31" pos:end="61:31"><name pos:start="61:31" pos:end="61:31">s</name></expr></argument>, <argument pos:start="61:34" pos:end="61:53"><expr pos:start="61:34" pos:end="61:53"><name pos:start="61:34" pos:end="61:43">start_sect</name> <operator pos:start="61:45" pos:end="61:45">+</operator> <name pos:start="61:47" pos:end="61:53">n_start</name></expr></argument>,
+
+                        <argument pos:start="63:25" pos:end="63:27"><expr pos:start="63:25" pos:end="63:27"><name pos:start="63:25" pos:end="63:27">buf</name></expr></argument>, <argument pos:start="63:30" pos:end="63:32"><expr pos:start="63:30" pos:end="63:32"><name pos:start="63:30" pos:end="63:32">buf</name></expr></argument>, <argument pos:start="63:35" pos:end="63:35"><expr pos:start="63:35" pos:end="63:35"><name pos:start="63:35" pos:end="63:35">n</name></expr></argument>, <argument pos:start="63:38" pos:end="63:38"><expr pos:start="63:38" pos:end="63:38"><literal type="number" pos:start="63:38" pos:end="63:38">1</literal></expr></argument>,
+
+                        <argument pos:start="65:25" pos:end="65:43"><expr pos:start="65:25" pos:end="65:43"><operator pos:start="65:25" pos:end="65:25">&amp;</operator><name pos:start="65:26" pos:end="65:43"><name pos:start="65:26" pos:end="65:26">s</name><operator pos:start="65:27" pos:end="65:28">-&gt;</operator><name pos:start="65:29" pos:end="65:43">aes_encrypt_key</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="71:5" pos:end="71:45"><expr pos:start="71:5" pos:end="71:44"><call pos:start="71:5" pos:end="71:44"><name pos:start="71:5" pos:end="71:16">BLKDBG_EVENT</name><argument_list pos:start="71:17" pos:end="71:44">(<argument pos:start="71:18" pos:end="71:25"><expr pos:start="71:18" pos:end="71:25"><name pos:start="71:18" pos:end="71:25"><name pos:start="71:18" pos:end="71:19">bs</name><operator pos:start="71:20" pos:end="71:21">-&gt;</operator><name pos:start="71:22" pos:end="71:25">file</name></name></expr></argument>, <argument pos:start="71:28" pos:end="71:43"><expr pos:start="71:28" pos:end="71:43"><name pos:start="71:28" pos:end="71:43">BLKDBG_COW_WRITE</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="73:5" pos:end="73:72"><expr pos:start="73:5" pos:end="73:71"><name pos:start="73:5" pos:end="73:7">ret</name> <operator pos:start="73:9" pos:end="73:9">=</operator> <call pos:start="73:11" pos:end="73:71"><name pos:start="73:11" pos:end="73:20">bdrv_write</name><argument_list pos:start="73:21" pos:end="73:71">(<argument pos:start="73:22" pos:end="73:29"><expr pos:start="73:22" pos:end="73:29"><name pos:start="73:22" pos:end="73:29"><name pos:start="73:22" pos:end="73:23">bs</name><operator pos:start="73:24" pos:end="73:25">-&gt;</operator><name pos:start="73:26" pos:end="73:29">file</name></name></expr></argument>, <argument pos:start="73:32" pos:end="73:62"><expr pos:start="73:32" pos:end="73:62"><operator pos:start="73:32" pos:end="73:32">(</operator><name pos:start="73:33" pos:end="73:46">cluster_offset</name> <operator pos:start="73:48" pos:end="73:49">&gt;&gt;</operator> <literal type="number" pos:start="73:51" pos:end="73:51">9</literal><operator pos:start="73:52" pos:end="73:52">)</operator> <operator pos:start="73:54" pos:end="73:54">+</operator> <name pos:start="73:56" pos:end="73:62">n_start</name></expr></argument>, <argument pos:start="73:65" pos:end="73:67"><expr pos:start="73:65" pos:end="73:67"><name pos:start="73:65" pos:end="73:67">buf</name></expr></argument>, <argument pos:start="73:70" pos:end="73:70"><expr pos:start="73:70" pos:end="73:70"><name pos:start="73:70" pos:end="73:70">n</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <if_stmt pos:start="75:5" pos:end="79:5"><if pos:start="75:5" pos:end="79:5">if <condition pos:start="75:8" pos:end="75:16">(<expr pos:start="75:9" pos:end="75:15"><name pos:start="75:9" pos:end="75:11">ret</name> <operator pos:start="75:13" pos:end="75:13">&lt;</operator> <literal type="number" pos:start="75:15" pos:end="75:15">0</literal></expr>)</condition> <block pos:start="75:18" pos:end="79:5">{<block_content pos:start="77:9" pos:end="77:17">
+
+        <goto pos:start="77:9" pos:end="77:17">goto <name pos:start="77:14" pos:end="77:16">out</name>;</goto>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="83:5" pos:end="83:12"><expr pos:start="83:5" pos:end="83:11"><name pos:start="83:5" pos:end="83:7">ret</name> <operator pos:start="83:9" pos:end="83:9">=</operator> <literal type="number" pos:start="83:11" pos:end="83:11">0</literal></expr>;</expr_stmt>
+
+<label pos:start="85:1" pos:end="85:4"><name pos:start="85:1" pos:end="85:3">out</name>:</label>
+
+    <expr_stmt pos:start="87:5" pos:end="87:20"><expr pos:start="87:5" pos:end="87:19"><call pos:start="87:5" pos:end="87:19"><name pos:start="87:5" pos:end="87:14">qemu_vfree</name><argument_list pos:start="87:15" pos:end="87:19">(<argument pos:start="87:16" pos:end="87:18"><expr pos:start="87:16" pos:end="87:18"><name pos:start="87:16" pos:end="87:18">buf</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <return pos:start="89:5" pos:end="89:15">return <expr pos:start="89:12" pos:end="89:14"><name pos:start="89:12" pos:end="89:14">ret</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

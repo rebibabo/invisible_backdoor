@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/7736.c" pos:tabs="8"><macro pos:start="1:1" pos:end="11:38"><name pos:start="1:1" pos:end="1:22">vnc_display_setup_auth</name><argument_list pos:start="1:23" pos:end="11:38">(<argument pos:start="1:24" pos:end="1:37">VncDisplay *vs</argument>,
+
+                       <argument pos:start="3:24" pos:end="3:36">bool password</argument>,
+
+                       <argument pos:start="5:24" pos:end="5:32">bool sasl</argument>,
+
+                       <argument pos:start="7:24" pos:end="7:31">bool tls</argument>,
+
+                       <argument pos:start="9:24" pos:end="9:32">bool x509</argument>,
+
+                       <argument pos:start="11:24" pos:end="11:37">bool websocket</argument>)</argument_list></macro>
+
+<block pos:start="13:1" pos:end="249:1">{<block_content pos:start="109:5" pos:end="247:5">
+
+    <comment type="block" pos:start="15:5" pos:end="107:7">/*
+
+     * We have a choice of 3 authentication options
+
+     *
+
+     *   1. none
+
+     *   2. vnc
+
+     *   3. sasl
+
+     *
+
+     * The channel can be run in 2 modes
+
+     *
+
+     *   1. clear
+
+     *   2. tls
+
+     *
+
+     * And TLS can use 2 types of credentials
+
+     *
+
+     *   1. anon
+
+     *   2. x509
+
+     *
+
+     * We thus have 9 possible logical combinations
+
+     *
+
+     *   1. clear + none
+
+     *   2. clear + vnc
+
+     *   3. clear + sasl
+
+     *   4. tls + anon + none
+
+     *   5. tls + anon + vnc
+
+     *   6. tls + anon + sasl
+
+     *   7. tls + x509 + none
+
+     *   8. tls + x509 + vnc
+
+     *   9. tls + x509 + sasl
+
+     *
+
+     * These need to be mapped into the VNC auth schemes
+
+     * in an appropriate manner. In regular VNC, all the
+
+     * TLS options get mapped into VNC_AUTH_VENCRYPT
+
+     * sub-auth types.
+
+     *
+
+     * In websockets, the https:// protocol already provides
+
+     * TLS support, so there is no need to make use of the
+
+     * VeNCrypt extension. Furthermore, websockets browser
+
+     * clients could not use VeNCrypt even if they wanted to,
+
+     * as they cannot control when the TLS handshake takes
+
+     * place. Thus there is no option but to rely on https://,
+
+     * meaning combinations 4-&gt;6 and 7-&gt;9 will be mapped to
+
+     * VNC auth schemes in the same way as combos 1-&gt;3.
+
+     *
+
+     * Regardless of fact that we have a different mapping to
+
+     * VNC auth mechs for plain VNC vs websockets VNC, the end
+
+     * result has the same security characteristics.
+
+     */</comment>
+
+    <if_stmt pos:start="109:5" pos:end="247:5"><if pos:start="109:5" pos:end="155:5">if <condition pos:start="109:8" pos:end="109:17">(<expr pos:start="109:9" pos:end="109:16"><name pos:start="109:9" pos:end="109:16">password</name></expr>)</condition> <block pos:start="109:19" pos:end="155:5">{<block_content pos:start="111:9" pos:end="153:9">
+
+        <if_stmt pos:start="111:9" pos:end="143:9"><if pos:start="111:9" pos:end="135:9">if <condition pos:start="111:12" pos:end="111:16">(<expr pos:start="111:13" pos:end="111:15"><name pos:start="111:13" pos:end="111:15">tls</name></expr>)</condition> <block pos:start="111:18" pos:end="135:9">{<block_content pos:start="113:13" pos:end="133:13">
+
+            <expr_stmt pos:start="113:13" pos:end="113:41"><expr pos:start="113:13" pos:end="113:40"><name pos:start="113:13" pos:end="113:20"><name pos:start="113:13" pos:end="113:14">vs</name><operator pos:start="113:15" pos:end="113:16">-&gt;</operator><name pos:start="113:17" pos:end="113:20">auth</name></name> <operator pos:start="113:22" pos:end="113:22">=</operator> <name pos:start="113:24" pos:end="113:40">VNC_AUTH_VENCRYPT</name></expr>;</expr_stmt>
+
+            <if_stmt pos:start="115:13" pos:end="119:13"><if pos:start="115:13" pos:end="119:13">if <condition pos:start="115:16" pos:end="115:26">(<expr pos:start="115:17" pos:end="115:25"><name pos:start="115:17" pos:end="115:25">websocket</name></expr>)</condition> <block pos:start="115:28" pos:end="119:13">{<block_content pos:start="117:17" pos:end="117:34">
+
+                <expr_stmt pos:start="117:17" pos:end="117:34"><expr pos:start="117:17" pos:end="117:33"><name pos:start="117:17" pos:end="117:26"><name pos:start="117:17" pos:end="117:18">vs</name><operator pos:start="117:19" pos:end="117:20">-&gt;</operator><name pos:start="117:21" pos:end="117:26">ws_tls</name></name> <operator pos:start="117:28" pos:end="117:28">=</operator> <name pos:start="117:30" pos:end="117:33">true</name></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <if_stmt pos:start="121:13" pos:end="133:13"><if pos:start="121:13" pos:end="127:13">if <condition pos:start="121:16" pos:end="121:21">(<expr pos:start="121:17" pos:end="121:20"><name pos:start="121:17" pos:end="121:20">x509</name></expr>)</condition> <block pos:start="121:23" pos:end="127:13">{<block_content pos:start="123:17" pos:end="125:56">
+
+                <expr_stmt pos:start="123:17" pos:end="123:79"><expr pos:start="123:17" pos:end="123:78"><call pos:start="123:17" pos:end="123:78"><name pos:start="123:17" pos:end="123:25">VNC_DEBUG</name><argument_list pos:start="123:26" pos:end="123:78">(<argument pos:start="123:27" pos:end="123:77"><expr pos:start="123:27" pos:end="123:77"><literal type="string" pos:start="123:27" pos:end="123:77">"Initializing VNC server with x509 password auth\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="125:17" pos:end="125:56"><expr pos:start="125:17" pos:end="125:55"><name pos:start="125:17" pos:end="125:27"><name pos:start="125:17" pos:end="125:18">vs</name><operator pos:start="125:19" pos:end="125:20">-&gt;</operator><name pos:start="125:21" pos:end="125:27">subauth</name></name> <operator pos:start="125:29" pos:end="125:29">=</operator> <name pos:start="125:31" pos:end="125:55">VNC_AUTH_VENCRYPT_X509VNC</name></expr>;</expr_stmt>
+
+            </block_content>}</block></if> <else pos:start="127:15" pos:end="133:13">else <block pos:start="127:20" pos:end="133:13">{<block_content pos:start="129:17" pos:end="131:55">
+
+                <expr_stmt pos:start="129:17" pos:end="129:78"><expr pos:start="129:17" pos:end="129:77"><call pos:start="129:17" pos:end="129:77"><name pos:start="129:17" pos:end="129:25">VNC_DEBUG</name><argument_list pos:start="129:26" pos:end="129:77">(<argument pos:start="129:27" pos:end="129:76"><expr pos:start="129:27" pos:end="129:76"><literal type="string" pos:start="129:27" pos:end="129:76">"Initializing VNC server with TLS password auth\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="131:17" pos:end="131:55"><expr pos:start="131:17" pos:end="131:54"><name pos:start="131:17" pos:end="131:27"><name pos:start="131:17" pos:end="131:18">vs</name><operator pos:start="131:19" pos:end="131:20">-&gt;</operator><name pos:start="131:21" pos:end="131:27">subauth</name></name> <operator pos:start="131:29" pos:end="131:29">=</operator> <name pos:start="131:31" pos:end="131:54">VNC_AUTH_VENCRYPT_TLSVNC</name></expr>;</expr_stmt>
+
+            </block_content>}</block></else></if_stmt>
+
+        </block_content>}</block></if> <else pos:start="135:11" pos:end="143:9">else <block pos:start="135:16" pos:end="143:9">{<block_content pos:start="137:13" pos:end="141:43">
+
+            <expr_stmt pos:start="137:13" pos:end="137:70"><expr pos:start="137:13" pos:end="137:69"><call pos:start="137:13" pos:end="137:69"><name pos:start="137:13" pos:end="137:21">VNC_DEBUG</name><argument_list pos:start="137:22" pos:end="137:69">(<argument pos:start="137:23" pos:end="137:68"><expr pos:start="137:23" pos:end="137:68"><literal type="string" pos:start="137:23" pos:end="137:68">"Initializing VNC server with password auth\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="139:13" pos:end="139:36"><expr pos:start="139:13" pos:end="139:35"><name pos:start="139:13" pos:end="139:20"><name pos:start="139:13" pos:end="139:14">vs</name><operator pos:start="139:15" pos:end="139:16">-&gt;</operator><name pos:start="139:17" pos:end="139:20">auth</name></name> <operator pos:start="139:22" pos:end="139:22">=</operator> <name pos:start="139:24" pos:end="139:35">VNC_AUTH_VNC</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="141:13" pos:end="141:43"><expr pos:start="141:13" pos:end="141:42"><name pos:start="141:13" pos:end="141:23"><name pos:start="141:13" pos:end="141:14">vs</name><operator pos:start="141:15" pos:end="141:16">-&gt;</operator><name pos:start="141:17" pos:end="141:23">subauth</name></name> <operator pos:start="141:25" pos:end="141:25">=</operator> <name pos:start="141:27" pos:end="141:42">VNC_AUTH_INVALID</name></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+        <if_stmt pos:start="145:9" pos:end="153:9"><if pos:start="145:9" pos:end="149:9">if <condition pos:start="145:12" pos:end="145:22">(<expr pos:start="145:13" pos:end="145:21"><name pos:start="145:13" pos:end="145:21">websocket</name></expr>)</condition> <block pos:start="145:24" pos:end="149:9">{<block_content pos:start="147:13" pos:end="147:39">
+
+            <expr_stmt pos:start="147:13" pos:end="147:39"><expr pos:start="147:13" pos:end="147:38"><name pos:start="147:13" pos:end="147:23"><name pos:start="147:13" pos:end="147:14">vs</name><operator pos:start="147:15" pos:end="147:16">-&gt;</operator><name pos:start="147:17" pos:end="147:23">ws_auth</name></name> <operator pos:start="147:25" pos:end="147:25">=</operator> <name pos:start="147:27" pos:end="147:38">VNC_AUTH_VNC</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="149:11" pos:end="153:9">else <block pos:start="149:16" pos:end="153:9">{<block_content pos:start="151:13" pos:end="151:43">
+
+            <expr_stmt pos:start="151:13" pos:end="151:43"><expr pos:start="151:13" pos:end="151:42"><name pos:start="151:13" pos:end="151:23"><name pos:start="151:13" pos:end="151:14">vs</name><operator pos:start="151:15" pos:end="151:16">-&gt;</operator><name pos:start="151:17" pos:end="151:23">ws_auth</name></name> <operator pos:start="151:25" pos:end="151:25">=</operator> <name pos:start="151:27" pos:end="151:42">VNC_AUTH_INVALID</name></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+    </block_content>}</block></if> <if type="elseif" pos:start="155:7" pos:end="201:5">else if <condition pos:start="155:15" pos:end="155:20">(<expr pos:start="155:16" pos:end="155:19"><name pos:start="155:16" pos:end="155:19">sasl</name></expr>)</condition> <block pos:start="155:22" pos:end="201:5">{<block_content pos:start="157:9" pos:end="199:9">
+
+        <if_stmt pos:start="157:9" pos:end="189:9"><if pos:start="157:9" pos:end="181:9">if <condition pos:start="157:12" pos:end="157:16">(<expr pos:start="157:13" pos:end="157:15"><name pos:start="157:13" pos:end="157:15">tls</name></expr>)</condition> <block pos:start="157:18" pos:end="181:9">{<block_content pos:start="159:13" pos:end="179:13">
+
+            <expr_stmt pos:start="159:13" pos:end="159:41"><expr pos:start="159:13" pos:end="159:40"><name pos:start="159:13" pos:end="159:20"><name pos:start="159:13" pos:end="159:14">vs</name><operator pos:start="159:15" pos:end="159:16">-&gt;</operator><name pos:start="159:17" pos:end="159:20">auth</name></name> <operator pos:start="159:22" pos:end="159:22">=</operator> <name pos:start="159:24" pos:end="159:40">VNC_AUTH_VENCRYPT</name></expr>;</expr_stmt>
+
+            <if_stmt pos:start="161:13" pos:end="165:13"><if pos:start="161:13" pos:end="165:13">if <condition pos:start="161:16" pos:end="161:26">(<expr pos:start="161:17" pos:end="161:25"><name pos:start="161:17" pos:end="161:25">websocket</name></expr>)</condition> <block pos:start="161:28" pos:end="165:13">{<block_content pos:start="163:17" pos:end="163:34">
+
+                <expr_stmt pos:start="163:17" pos:end="163:34"><expr pos:start="163:17" pos:end="163:33"><name pos:start="163:17" pos:end="163:26"><name pos:start="163:17" pos:end="163:18">vs</name><operator pos:start="163:19" pos:end="163:20">-&gt;</operator><name pos:start="163:21" pos:end="163:26">ws_tls</name></name> <operator pos:start="163:28" pos:end="163:28">=</operator> <name pos:start="163:30" pos:end="163:33">true</name></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <if_stmt pos:start="167:13" pos:end="179:13"><if pos:start="167:13" pos:end="173:13">if <condition pos:start="167:16" pos:end="167:21">(<expr pos:start="167:17" pos:end="167:20"><name pos:start="167:17" pos:end="167:20">x509</name></expr>)</condition> <block pos:start="167:23" pos:end="173:13">{<block_content pos:start="169:17" pos:end="171:57">
+
+                <expr_stmt pos:start="169:17" pos:end="169:75"><expr pos:start="169:17" pos:end="169:74"><call pos:start="169:17" pos:end="169:74"><name pos:start="169:17" pos:end="169:25">VNC_DEBUG</name><argument_list pos:start="169:26" pos:end="169:74">(<argument pos:start="169:27" pos:end="169:73"><expr pos:start="169:27" pos:end="169:73"><literal type="string" pos:start="169:27" pos:end="169:73">"Initializing VNC server with x509 SASL auth\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="171:17" pos:end="171:57"><expr pos:start="171:17" pos:end="171:56"><name pos:start="171:17" pos:end="171:27"><name pos:start="171:17" pos:end="171:18">vs</name><operator pos:start="171:19" pos:end="171:20">-&gt;</operator><name pos:start="171:21" pos:end="171:27">subauth</name></name> <operator pos:start="171:29" pos:end="171:29">=</operator> <name pos:start="171:31" pos:end="171:56">VNC_AUTH_VENCRYPT_X509SASL</name></expr>;</expr_stmt>
+
+            </block_content>}</block></if> <else pos:start="173:15" pos:end="179:13">else <block pos:start="173:20" pos:end="179:13">{<block_content pos:start="175:17" pos:end="177:56">
+
+                <expr_stmt pos:start="175:17" pos:end="175:74"><expr pos:start="175:17" pos:end="175:73"><call pos:start="175:17" pos:end="175:73"><name pos:start="175:17" pos:end="175:25">VNC_DEBUG</name><argument_list pos:start="175:26" pos:end="175:73">(<argument pos:start="175:27" pos:end="175:72"><expr pos:start="175:27" pos:end="175:72"><literal type="string" pos:start="175:27" pos:end="175:72">"Initializing VNC server with TLS SASL auth\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="177:17" pos:end="177:56"><expr pos:start="177:17" pos:end="177:55"><name pos:start="177:17" pos:end="177:27"><name pos:start="177:17" pos:end="177:18">vs</name><operator pos:start="177:19" pos:end="177:20">-&gt;</operator><name pos:start="177:21" pos:end="177:27">subauth</name></name> <operator pos:start="177:29" pos:end="177:29">=</operator> <name pos:start="177:31" pos:end="177:55">VNC_AUTH_VENCRYPT_TLSSASL</name></expr>;</expr_stmt>
+
+            </block_content>}</block></else></if_stmt>
+
+        </block_content>}</block></if> <else pos:start="181:11" pos:end="189:9">else <block pos:start="181:16" pos:end="189:9">{<block_content pos:start="183:13" pos:end="187:43">
+
+            <expr_stmt pos:start="183:13" pos:end="183:66"><expr pos:start="183:13" pos:end="183:65"><call pos:start="183:13" pos:end="183:65"><name pos:start="183:13" pos:end="183:21">VNC_DEBUG</name><argument_list pos:start="183:22" pos:end="183:65">(<argument pos:start="183:23" pos:end="183:64"><expr pos:start="183:23" pos:end="183:64"><literal type="string" pos:start="183:23" pos:end="183:64">"Initializing VNC server with SASL auth\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="185:13" pos:end="185:37"><expr pos:start="185:13" pos:end="185:36"><name pos:start="185:13" pos:end="185:20"><name pos:start="185:13" pos:end="185:14">vs</name><operator pos:start="185:15" pos:end="185:16">-&gt;</operator><name pos:start="185:17" pos:end="185:20">auth</name></name> <operator pos:start="185:22" pos:end="185:22">=</operator> <name pos:start="185:24" pos:end="185:36">VNC_AUTH_SASL</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="187:13" pos:end="187:43"><expr pos:start="187:13" pos:end="187:42"><name pos:start="187:13" pos:end="187:23"><name pos:start="187:13" pos:end="187:14">vs</name><operator pos:start="187:15" pos:end="187:16">-&gt;</operator><name pos:start="187:17" pos:end="187:23">subauth</name></name> <operator pos:start="187:25" pos:end="187:25">=</operator> <name pos:start="187:27" pos:end="187:42">VNC_AUTH_INVALID</name></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+        <if_stmt pos:start="191:9" pos:end="199:9"><if pos:start="191:9" pos:end="195:9">if <condition pos:start="191:12" pos:end="191:22">(<expr pos:start="191:13" pos:end="191:21"><name pos:start="191:13" pos:end="191:21">websocket</name></expr>)</condition> <block pos:start="191:24" pos:end="195:9">{<block_content pos:start="193:13" pos:end="193:40">
+
+            <expr_stmt pos:start="193:13" pos:end="193:40"><expr pos:start="193:13" pos:end="193:39"><name pos:start="193:13" pos:end="193:23"><name pos:start="193:13" pos:end="193:14">vs</name><operator pos:start="193:15" pos:end="193:16">-&gt;</operator><name pos:start="193:17" pos:end="193:23">ws_auth</name></name> <operator pos:start="193:25" pos:end="193:25">=</operator> <name pos:start="193:27" pos:end="193:39">VNC_AUTH_SASL</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="195:11" pos:end="199:9">else <block pos:start="195:16" pos:end="199:9">{<block_content pos:start="197:13" pos:end="197:43">
+
+            <expr_stmt pos:start="197:13" pos:end="197:43"><expr pos:start="197:13" pos:end="197:42"><name pos:start="197:13" pos:end="197:23"><name pos:start="197:13" pos:end="197:14">vs</name><operator pos:start="197:15" pos:end="197:16">-&gt;</operator><name pos:start="197:17" pos:end="197:23">ws_auth</name></name> <operator pos:start="197:25" pos:end="197:25">=</operator> <name pos:start="197:27" pos:end="197:42">VNC_AUTH_INVALID</name></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+    </block_content>}</block></if> <else pos:start="201:7" pos:end="247:5">else <block pos:start="201:12" pos:end="247:5">{<block_content pos:start="203:9" pos:end="245:9">
+
+        <if_stmt pos:start="203:9" pos:end="235:9"><if pos:start="203:9" pos:end="227:9">if <condition pos:start="203:12" pos:end="203:16">(<expr pos:start="203:13" pos:end="203:15"><name pos:start="203:13" pos:end="203:15">tls</name></expr>)</condition> <block pos:start="203:18" pos:end="227:9">{<block_content pos:start="205:13" pos:end="225:13">
+
+            <expr_stmt pos:start="205:13" pos:end="205:41"><expr pos:start="205:13" pos:end="205:40"><name pos:start="205:13" pos:end="205:20"><name pos:start="205:13" pos:end="205:14">vs</name><operator pos:start="205:15" pos:end="205:16">-&gt;</operator><name pos:start="205:17" pos:end="205:20">auth</name></name> <operator pos:start="205:22" pos:end="205:22">=</operator> <name pos:start="205:24" pos:end="205:40">VNC_AUTH_VENCRYPT</name></expr>;</expr_stmt>
+
+            <if_stmt pos:start="207:13" pos:end="211:13"><if pos:start="207:13" pos:end="211:13">if <condition pos:start="207:16" pos:end="207:26">(<expr pos:start="207:17" pos:end="207:25"><name pos:start="207:17" pos:end="207:25">websocket</name></expr>)</condition> <block pos:start="207:28" pos:end="211:13">{<block_content pos:start="209:17" pos:end="209:34">
+
+                <expr_stmt pos:start="209:17" pos:end="209:34"><expr pos:start="209:17" pos:end="209:33"><name pos:start="209:17" pos:end="209:26"><name pos:start="209:17" pos:end="209:18">vs</name><operator pos:start="209:19" pos:end="209:20">-&gt;</operator><name pos:start="209:21" pos:end="209:26">ws_tls</name></name> <operator pos:start="209:28" pos:end="209:28">=</operator> <name pos:start="209:30" pos:end="209:33">true</name></expr>;</expr_stmt>
+
+            </block_content>}</block></if></if_stmt>
+
+            <if_stmt pos:start="213:13" pos:end="225:13"><if pos:start="213:13" pos:end="219:13">if <condition pos:start="213:16" pos:end="213:21">(<expr pos:start="213:17" pos:end="213:20"><name pos:start="213:17" pos:end="213:20">x509</name></expr>)</condition> <block pos:start="213:23" pos:end="219:13">{<block_content pos:start="215:17" pos:end="217:57">
+
+                <expr_stmt pos:start="215:17" pos:end="215:73"><expr pos:start="215:17" pos:end="215:72"><call pos:start="215:17" pos:end="215:72"><name pos:start="215:17" pos:end="215:25">VNC_DEBUG</name><argument_list pos:start="215:26" pos:end="215:72">(<argument pos:start="215:27" pos:end="215:71"><expr pos:start="215:27" pos:end="215:71"><literal type="string" pos:start="215:27" pos:end="215:71">"Initializing VNC server with x509 no auth\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="217:17" pos:end="217:57"><expr pos:start="217:17" pos:end="217:56"><name pos:start="217:17" pos:end="217:27"><name pos:start="217:17" pos:end="217:18">vs</name><operator pos:start="217:19" pos:end="217:20">-&gt;</operator><name pos:start="217:21" pos:end="217:27">subauth</name></name> <operator pos:start="217:29" pos:end="217:29">=</operator> <name pos:start="217:31" pos:end="217:56">VNC_AUTH_VENCRYPT_X509NONE</name></expr>;</expr_stmt>
+
+            </block_content>}</block></if> <else pos:start="219:15" pos:end="225:13">else <block pos:start="219:20" pos:end="225:13">{<block_content pos:start="221:17" pos:end="223:56">
+
+                <expr_stmt pos:start="221:17" pos:end="221:72"><expr pos:start="221:17" pos:end="221:71"><call pos:start="221:17" pos:end="221:71"><name pos:start="221:17" pos:end="221:25">VNC_DEBUG</name><argument_list pos:start="221:26" pos:end="221:71">(<argument pos:start="221:27" pos:end="221:70"><expr pos:start="221:27" pos:end="221:70"><literal type="string" pos:start="221:27" pos:end="221:70">"Initializing VNC server with TLS no auth\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="223:17" pos:end="223:56"><expr pos:start="223:17" pos:end="223:55"><name pos:start="223:17" pos:end="223:27"><name pos:start="223:17" pos:end="223:18">vs</name><operator pos:start="223:19" pos:end="223:20">-&gt;</operator><name pos:start="223:21" pos:end="223:27">subauth</name></name> <operator pos:start="223:29" pos:end="223:29">=</operator> <name pos:start="223:31" pos:end="223:55">VNC_AUTH_VENCRYPT_TLSNONE</name></expr>;</expr_stmt>
+
+            </block_content>}</block></else></if_stmt>
+
+        </block_content>}</block></if> <else pos:start="227:11" pos:end="235:9">else <block pos:start="227:16" pos:end="235:9">{<block_content pos:start="229:13" pos:end="233:43">
+
+            <expr_stmt pos:start="229:13" pos:end="229:64"><expr pos:start="229:13" pos:end="229:63"><call pos:start="229:13" pos:end="229:63"><name pos:start="229:13" pos:end="229:21">VNC_DEBUG</name><argument_list pos:start="229:22" pos:end="229:63">(<argument pos:start="229:23" pos:end="229:62"><expr pos:start="229:23" pos:end="229:62"><literal type="string" pos:start="229:23" pos:end="229:62">"Initializing VNC server with no auth\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="231:13" pos:end="231:37"><expr pos:start="231:13" pos:end="231:36"><name pos:start="231:13" pos:end="231:20"><name pos:start="231:13" pos:end="231:14">vs</name><operator pos:start="231:15" pos:end="231:16">-&gt;</operator><name pos:start="231:17" pos:end="231:20">auth</name></name> <operator pos:start="231:22" pos:end="231:22">=</operator> <name pos:start="231:24" pos:end="231:36">VNC_AUTH_NONE</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="233:13" pos:end="233:43"><expr pos:start="233:13" pos:end="233:42"><name pos:start="233:13" pos:end="233:23"><name pos:start="233:13" pos:end="233:14">vs</name><operator pos:start="233:15" pos:end="233:16">-&gt;</operator><name pos:start="233:17" pos:end="233:23">subauth</name></name> <operator pos:start="233:25" pos:end="233:25">=</operator> <name pos:start="233:27" pos:end="233:42">VNC_AUTH_INVALID</name></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+        <if_stmt pos:start="237:9" pos:end="245:9"><if pos:start="237:9" pos:end="241:9">if <condition pos:start="237:12" pos:end="237:22">(<expr pos:start="237:13" pos:end="237:21"><name pos:start="237:13" pos:end="237:21">websocket</name></expr>)</condition> <block pos:start="237:24" pos:end="241:9">{<block_content pos:start="239:13" pos:end="239:40">
+
+            <expr_stmt pos:start="239:13" pos:end="239:40"><expr pos:start="239:13" pos:end="239:39"><name pos:start="239:13" pos:end="239:23"><name pos:start="239:13" pos:end="239:14">vs</name><operator pos:start="239:15" pos:end="239:16">-&gt;</operator><name pos:start="239:17" pos:end="239:23">ws_auth</name></name> <operator pos:start="239:25" pos:end="239:25">=</operator> <name pos:start="239:27" pos:end="239:39">VNC_AUTH_NONE</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="241:11" pos:end="245:9">else <block pos:start="241:16" pos:end="245:9">{<block_content pos:start="243:13" pos:end="243:43">
+
+            <expr_stmt pos:start="243:13" pos:end="243:43"><expr pos:start="243:13" pos:end="243:42"><name pos:start="243:13" pos:end="243:23"><name pos:start="243:13" pos:end="243:14">vs</name><operator pos:start="243:15" pos:end="243:16">-&gt;</operator><name pos:start="243:17" pos:end="243:23">ws_auth</name></name> <operator pos:start="243:25" pos:end="243:25">=</operator> <name pos:start="243:27" pos:end="243:42">VNC_AUTH_INVALID</name></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+</block_content>}</block>
+</unit>

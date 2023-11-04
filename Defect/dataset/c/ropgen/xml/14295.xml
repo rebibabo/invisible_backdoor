@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/14295.c" pos:tabs="8"><function pos:start="1:1" pos:end="407:1"><type pos:start="1:1" pos:end="1:11"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:11">void</name></type> <name pos:start="1:13" pos:end="1:34">adpcm_compress_trellis</name><parameter_list pos:start="1:35" pos:end="5:76">(<parameter pos:start="1:36" pos:end="1:56"><decl pos:start="1:36" pos:end="1:56"><type pos:start="1:36" pos:end="1:56"><name pos:start="1:36" pos:end="1:49">AVCodecContext</name> <modifier pos:start="1:51" pos:end="1:51">*</modifier></type><name pos:start="1:52" pos:end="1:56">avctx</name></decl></parameter>,
+
+                                   <parameter pos:start="3:36" pos:end="3:57"><decl pos:start="3:36" pos:end="3:57"><type pos:start="3:36" pos:end="3:57"><specifier pos:start="3:36" pos:end="3:40">const</specifier> <name pos:start="3:42" pos:end="3:48">int16_t</name> <modifier pos:start="3:50" pos:end="3:50">*</modifier></type><name pos:start="3:51" pos:end="3:57">samples</name></decl></parameter>, <parameter pos:start="3:60" pos:end="3:71"><decl pos:start="3:60" pos:end="3:71"><type pos:start="3:60" pos:end="3:71"><name pos:start="3:60" pos:end="3:66">uint8_t</name> <modifier pos:start="3:68" pos:end="3:68">*</modifier></type><name pos:start="3:69" pos:end="3:71">dst</name></decl></parameter>,
+
+                                   <parameter pos:start="5:36" pos:end="5:56"><decl pos:start="5:36" pos:end="5:56"><type pos:start="5:36" pos:end="5:56"><name pos:start="5:36" pos:end="5:53">ADPCMChannelStatus</name> <modifier pos:start="5:55" pos:end="5:55">*</modifier></type><name pos:start="5:56" pos:end="5:56">c</name></decl></parameter>, <parameter pos:start="5:59" pos:end="5:63"><decl pos:start="5:59" pos:end="5:63"><type pos:start="5:59" pos:end="5:63"><name pos:start="5:59" pos:end="5:61">int</name></type> <name pos:start="5:63" pos:end="5:63">n</name></decl></parameter>, <parameter pos:start="5:66" pos:end="5:75"><decl pos:start="5:66" pos:end="5:75"><type pos:start="5:66" pos:end="5:75"><name pos:start="5:66" pos:end="5:68">int</name></type> <name pos:start="5:70" pos:end="5:75">stride</name></decl></parameter>)</parameter_list>
+
+<block pos:start="7:1" pos:end="407:1">{<block_content pos:start="11:5" pos:end="405:35">
+
+    <comment type="line" pos:start="9:5" pos:end="9:60">//FIXME 6% faster if frontier is a compile-time constant</comment>
+
+    <decl_stmt pos:start="11:5" pos:end="11:45"><decl pos:start="11:5" pos:end="11:44"><type pos:start="11:5" pos:end="11:24"><name pos:start="11:5" pos:end="11:22">ADPCMEncodeContext</name> <modifier pos:start="11:24" pos:end="11:24">*</modifier></type><name pos:start="11:25" pos:end="11:25">s</name> <init pos:start="11:27" pos:end="11:44">= <expr pos:start="11:29" pos:end="11:44"><name pos:start="11:29" pos:end="11:44"><name pos:start="11:29" pos:end="11:33">avctx</name><operator pos:start="11:34" pos:end="11:35">-&gt;</operator><name pos:start="11:36" pos:end="11:44">priv_data</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:45"><decl pos:start="13:5" pos:end="13:44"><type pos:start="13:5" pos:end="13:13"><specifier pos:start="13:5" pos:end="13:9">const</specifier> <name pos:start="13:11" pos:end="13:13">int</name></type> <name pos:start="13:15" pos:end="13:22">frontier</name> <init pos:start="13:24" pos:end="13:44">= <expr pos:start="13:26" pos:end="13:44"><literal type="number" pos:start="13:26" pos:end="13:26">1</literal> <operator pos:start="13:28" pos:end="13:29">&lt;&lt;</operator> <name pos:start="13:31" pos:end="13:44"><name pos:start="13:31" pos:end="13:35">avctx</name><operator pos:start="13:36" pos:end="13:37">-&gt;</operator><name pos:start="13:38" pos:end="13:44">trellis</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:42"><decl pos:start="15:5" pos:end="15:41"><type pos:start="15:5" pos:end="15:13"><specifier pos:start="15:5" pos:end="15:9">const</specifier> <name pos:start="15:11" pos:end="15:13">int</name></type> <name pos:start="15:15" pos:end="15:21">version</name>  <init pos:start="15:24" pos:end="15:41">= <expr pos:start="15:26" pos:end="15:41"><name pos:start="15:26" pos:end="15:41"><name pos:start="15:26" pos:end="15:30">avctx</name><operator pos:start="15:31" pos:end="15:32">-&gt;</operator><name pos:start="15:33" pos:end="15:37">codec</name><operator pos:start="15:38" pos:end="15:39">-&gt;</operator><name pos:start="15:40" pos:end="15:41">id</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="17:5" pos:end="17:44"><decl pos:start="17:5" pos:end="17:39"><type pos:start="17:5" pos:end="17:17"><name pos:start="17:5" pos:end="17:15">TrellisPath</name> <modifier pos:start="17:17" pos:end="17:17">*</modifier></type><name pos:start="17:18" pos:end="17:22">paths</name>       <init pos:start="17:30" pos:end="17:39">= <expr pos:start="17:32" pos:end="17:39"><name pos:start="17:32" pos:end="17:39"><name pos:start="17:32" pos:end="17:32">s</name><operator pos:start="17:33" pos:end="17:34">-&gt;</operator><name pos:start="17:35" pos:end="17:39">paths</name></name></expr></init></decl>, <decl pos:start="17:42" pos:end="17:43"><type ref="prev" pos:start="17:5" pos:end="17:17"><modifier pos:start="17:42" pos:end="17:42">*</modifier></type><name pos:start="17:43" pos:end="17:43">p</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:43"><decl pos:start="19:5" pos:end="19:42"><type pos:start="19:5" pos:end="19:17"><name pos:start="19:5" pos:end="19:15">TrellisNode</name> <modifier pos:start="19:17" pos:end="19:17">*</modifier></type><name pos:start="19:18" pos:end="19:25">node_buf</name>    <init pos:start="19:30" pos:end="19:42">= <expr pos:start="19:32" pos:end="19:42"><name pos:start="19:32" pos:end="19:42"><name pos:start="19:32" pos:end="19:32">s</name><operator pos:start="19:33" pos:end="19:34">-&gt;</operator><name pos:start="19:35" pos:end="19:42">node_buf</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="21:5" pos:end="21:44"><decl pos:start="21:5" pos:end="21:43"><type pos:start="21:5" pos:end="21:18"><name pos:start="21:5" pos:end="21:15">TrellisNode</name> <modifier pos:start="21:17" pos:end="21:17">*</modifier><modifier pos:start="21:18" pos:end="21:18">*</modifier></type><name pos:start="21:19" pos:end="21:27">nodep_buf</name>  <init pos:start="21:30" pos:end="21:43">= <expr pos:start="21:32" pos:end="21:43"><name pos:start="21:32" pos:end="21:43"><name pos:start="21:32" pos:end="21:32">s</name><operator pos:start="21:33" pos:end="21:34">-&gt;</operator><name pos:start="21:35" pos:end="21:43">nodep_buf</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="23:5" pos:end="23:41"><decl pos:start="23:5" pos:end="23:40"><type pos:start="23:5" pos:end="23:18"><name pos:start="23:5" pos:end="23:15">TrellisNode</name> <modifier pos:start="23:17" pos:end="23:17">*</modifier><modifier pos:start="23:18" pos:end="23:18">*</modifier></type><name pos:start="23:19" pos:end="23:23">nodes</name>      <init pos:start="23:30" pos:end="23:40">= <expr pos:start="23:32" pos:end="23:40"><name pos:start="23:32" pos:end="23:40">nodep_buf</name></expr></init></decl>;</decl_stmt> <comment type="line" pos:start="23:43" pos:end="23:77">// nodes[] is always sorted by .ssd</comment>
+
+    <decl_stmt pos:start="25:5" pos:end="25:52"><decl pos:start="25:5" pos:end="25:51"><type pos:start="25:5" pos:end="25:18"><name pos:start="25:5" pos:end="25:15">TrellisNode</name> <modifier pos:start="25:17" pos:end="25:17">*</modifier><modifier pos:start="25:18" pos:end="25:18">*</modifier></type><name pos:start="25:19" pos:end="25:28">nodes_next</name> <init pos:start="25:30" pos:end="25:51">= <expr pos:start="25:32" pos:end="25:51"><name pos:start="25:32" pos:end="25:40">nodep_buf</name> <operator pos:start="25:42" pos:end="25:42">+</operator> <name pos:start="25:44" pos:end="25:51">frontier</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="27:5" pos:end="27:55"><decl pos:start="27:5" pos:end="27:17"><type pos:start="27:5" pos:end="27:7"><name pos:start="27:5" pos:end="27:7">int</name></type> <name pos:start="27:9" pos:end="27:13">pathn</name> <init pos:start="27:15" pos:end="27:17">= <expr pos:start="27:17" pos:end="27:17"><literal type="number" pos:start="27:17" pos:end="27:17">0</literal></expr></init></decl>, <decl pos:start="27:20" pos:end="27:29"><type ref="prev" pos:start="27:5" pos:end="27:7"/><name pos:start="27:20" pos:end="27:24">froze</name> <init pos:start="27:26" pos:end="27:29">= <expr pos:start="27:28" pos:end="27:29"><operator pos:start="27:28" pos:end="27:28">-</operator><literal type="number" pos:start="27:29" pos:end="27:29">1</literal></expr></init></decl>, <decl pos:start="27:32" pos:end="27:32"><type ref="prev" pos:start="27:5" pos:end="27:7"/><name pos:start="27:32" pos:end="27:32">i</name></decl>, <decl pos:start="27:35" pos:end="27:35"><type ref="prev" pos:start="27:5" pos:end="27:7"/><name pos:start="27:35" pos:end="27:35">j</name></decl>, <decl pos:start="27:38" pos:end="27:38"><type ref="prev" pos:start="27:5" pos:end="27:7"/><name pos:start="27:38" pos:end="27:38">k</name></decl>, <decl pos:start="27:41" pos:end="27:54"><type ref="prev" pos:start="27:5" pos:end="27:7"/><name pos:start="27:41" pos:end="27:50">generation</name> <init pos:start="27:52" pos:end="27:54">= <expr pos:start="27:54" pos:end="27:54"><literal type="number" pos:start="27:54" pos:end="27:54">0</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="29:5" pos:end="29:36"><decl pos:start="29:5" pos:end="29:35"><type pos:start="29:5" pos:end="29:13"><name pos:start="29:5" pos:end="29:11">uint8_t</name> <modifier pos:start="29:13" pos:end="29:13">*</modifier></type><name pos:start="29:14" pos:end="29:17">hash</name> <init pos:start="29:19" pos:end="29:35">= <expr pos:start="29:21" pos:end="29:35"><name pos:start="29:21" pos:end="29:35"><name pos:start="29:21" pos:end="29:21">s</name><operator pos:start="29:22" pos:end="29:23">-&gt;</operator><name pos:start="29:24" pos:end="29:35">trellis_hash</name></name></expr></init></decl>;</decl_stmt>
+
+    <expr_stmt pos:start="31:5" pos:end="31:46"><expr pos:start="31:5" pos:end="31:45"><call pos:start="31:5" pos:end="31:45"><name pos:start="31:5" pos:end="31:10">memset</name><argument_list pos:start="31:11" pos:end="31:45">(<argument pos:start="31:12" pos:end="31:15"><expr pos:start="31:12" pos:end="31:15"><name pos:start="31:12" pos:end="31:15">hash</name></expr></argument>, <argument pos:start="31:18" pos:end="31:21"><expr pos:start="31:18" pos:end="31:21"><literal type="number" pos:start="31:18" pos:end="31:21">0xff</literal></expr></argument>, <argument pos:start="31:24" pos:end="31:44"><expr pos:start="31:24" pos:end="31:44"><literal type="number" pos:start="31:24" pos:end="31:28">65536</literal> <operator pos:start="31:30" pos:end="31:30">*</operator> <sizeof pos:start="31:32" pos:end="31:44">sizeof<argument_list pos:start="31:38" pos:end="31:44">(<argument pos:start="31:39" pos:end="31:43"><expr pos:start="31:39" pos:end="31:43"><operator pos:start="31:39" pos:end="31:39">*</operator><name pos:start="31:40" pos:end="31:43">hash</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="35:5" pos:end="35:60"><expr pos:start="35:5" pos:end="35:59"><call pos:start="35:5" pos:end="35:59"><name pos:start="35:5" pos:end="35:10">memset</name><argument_list pos:start="35:11" pos:end="35:59">(<argument pos:start="35:12" pos:end="35:20"><expr pos:start="35:12" pos:end="35:20"><name pos:start="35:12" pos:end="35:20">nodep_buf</name></expr></argument>, <argument pos:start="35:23" pos:end="35:23"><expr pos:start="35:23" pos:end="35:23"><literal type="number" pos:start="35:23" pos:end="35:23">0</literal></expr></argument>, <argument pos:start="35:26" pos:end="35:58"><expr pos:start="35:26" pos:end="35:58"><literal type="number" pos:start="35:26" pos:end="35:26">2</literal> <operator pos:start="35:28" pos:end="35:28">*</operator> <name pos:start="35:30" pos:end="35:37">frontier</name> <operator pos:start="35:39" pos:end="35:39">*</operator> <sizeof pos:start="35:41" pos:end="35:58">sizeof<argument_list pos:start="35:47" pos:end="35:58">(<argument pos:start="35:48" pos:end="35:57"><expr pos:start="35:48" pos:end="35:57"><operator pos:start="35:48" pos:end="35:48">*</operator><name pos:start="35:49" pos:end="35:57">nodep_buf</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="37:5" pos:end="37:44"><expr pos:start="37:5" pos:end="37:43"><name pos:start="37:5" pos:end="37:12"><name pos:start="37:5" pos:end="37:9">nodes</name><index pos:start="37:10" pos:end="37:12">[<expr pos:start="37:11" pos:end="37:11"><literal type="number" pos:start="37:11" pos:end="37:11">0</literal></expr>]</index></name>          <operator pos:start="37:23" pos:end="37:23">=</operator> <name pos:start="37:25" pos:end="37:32">node_buf</name> <operator pos:start="37:34" pos:end="37:34">+</operator> <name pos:start="37:36" pos:end="37:43">frontier</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="39:5" pos:end="39:26"><expr pos:start="39:5" pos:end="39:25"><name pos:start="39:5" pos:end="39:12"><name pos:start="39:5" pos:end="39:9">nodes</name><index pos:start="39:10" pos:end="39:12">[<expr pos:start="39:11" pos:end="39:11"><literal type="number" pos:start="39:11" pos:end="39:11">0</literal></expr>]</index></name><operator pos:start="39:13" pos:end="39:14">-&gt;</operator><name pos:start="39:15" pos:end="39:17">ssd</name>     <operator pos:start="39:23" pos:end="39:23">=</operator> <literal type="number" pos:start="39:25" pos:end="39:25">0</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="41:5" pos:end="41:26"><expr pos:start="41:5" pos:end="41:25"><name pos:start="41:5" pos:end="41:12"><name pos:start="41:5" pos:end="41:9">nodes</name><index pos:start="41:10" pos:end="41:12">[<expr pos:start="41:11" pos:end="41:11"><literal type="number" pos:start="41:11" pos:end="41:11">0</literal></expr>]</index></name><operator pos:start="41:13" pos:end="41:14">-&gt;</operator><name pos:start="41:15" pos:end="41:18">path</name>    <operator pos:start="41:23" pos:end="41:23">=</operator> <literal type="number" pos:start="41:25" pos:end="41:25">0</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="43:5" pos:end="43:38"><expr pos:start="43:5" pos:end="43:37"><name pos:start="43:5" pos:end="43:12"><name pos:start="43:5" pos:end="43:9">nodes</name><index pos:start="43:10" pos:end="43:12">[<expr pos:start="43:11" pos:end="43:11"><literal type="number" pos:start="43:11" pos:end="43:11">0</literal></expr>]</index></name><operator pos:start="43:13" pos:end="43:14">-&gt;</operator><name pos:start="43:15" pos:end="43:18">step</name>    <operator pos:start="43:23" pos:end="43:23">=</operator> <name pos:start="43:25" pos:end="43:37"><name pos:start="43:25" pos:end="43:25">c</name><operator pos:start="43:26" pos:end="43:27">-&gt;</operator><name pos:start="43:28" pos:end="43:37">step_index</name></name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="45:5" pos:end="45:35"><expr pos:start="45:5" pos:end="45:34"><name pos:start="45:5" pos:end="45:12"><name pos:start="45:5" pos:end="45:9">nodes</name><index pos:start="45:10" pos:end="45:12">[<expr pos:start="45:11" pos:end="45:11"><literal type="number" pos:start="45:11" pos:end="45:11">0</literal></expr>]</index></name><operator pos:start="45:13" pos:end="45:14">-&gt;</operator><name pos:start="45:15" pos:end="45:21">sample1</name> <operator pos:start="45:23" pos:end="45:23">=</operator> <name pos:start="45:25" pos:end="45:34"><name pos:start="45:25" pos:end="45:25">c</name><operator pos:start="45:26" pos:end="45:27">-&gt;</operator><name pos:start="45:28" pos:end="45:34">sample1</name></name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="47:5" pos:end="47:35"><expr pos:start="47:5" pos:end="47:34"><name pos:start="47:5" pos:end="47:12"><name pos:start="47:5" pos:end="47:9">nodes</name><index pos:start="47:10" pos:end="47:12">[<expr pos:start="47:11" pos:end="47:11"><literal type="number" pos:start="47:11" pos:end="47:11">0</literal></expr>]</index></name><operator pos:start="47:13" pos:end="47:14">-&gt;</operator><name pos:start="47:15" pos:end="47:21">sample2</name> <operator pos:start="47:23" pos:end="47:23">=</operator> <name pos:start="47:25" pos:end="47:34"><name pos:start="47:25" pos:end="47:25">c</name><operator pos:start="47:26" pos:end="47:27">-&gt;</operator><name pos:start="47:28" pos:end="47:34">sample2</name></name></expr>;</expr_stmt>
+
+    <if_stmt pos:start="49:5" pos:end="55:43"><if pos:start="49:5" pos:end="55:43">if <condition pos:start="49:8" pos:end="53:41">(<expr pos:start="49:9" pos:end="53:40"><name pos:start="49:9" pos:end="49:15">version</name> <operator pos:start="49:17" pos:end="49:18">==</operator> <name pos:start="49:20" pos:end="49:44">AV_CODEC_ID_ADPCM_IMA_WAV</name> <operator pos:start="49:46" pos:end="49:47">||</operator>
+
+        <name pos:start="51:9" pos:end="51:15">version</name> <operator pos:start="51:17" pos:end="51:18">==</operator> <name pos:start="51:20" pos:end="51:43">AV_CODEC_ID_ADPCM_IMA_QT</name>  <operator pos:start="51:46" pos:end="51:47">||</operator>
+
+        <name pos:start="53:9" pos:end="53:15">version</name> <operator pos:start="53:17" pos:end="53:18">==</operator> <name pos:start="53:20" pos:end="53:40">AV_CODEC_ID_ADPCM_SWF</name></expr>)</condition><block type="pseudo" pos:start="55:9" pos:end="55:43"><block_content pos:start="55:9" pos:end="55:43">
+
+        <expr_stmt pos:start="55:9" pos:end="55:43"><expr pos:start="55:9" pos:end="55:42"><name pos:start="55:9" pos:end="55:16"><name pos:start="55:9" pos:end="55:13">nodes</name><index pos:start="55:14" pos:end="55:16">[<expr pos:start="55:15" pos:end="55:15"><literal type="number" pos:start="55:15" pos:end="55:15">0</literal></expr>]</index></name><operator pos:start="55:17" pos:end="55:18">-&gt;</operator><name pos:start="55:19" pos:end="55:25">sample1</name> <operator pos:start="55:27" pos:end="55:27">=</operator> <name pos:start="55:29" pos:end="55:42"><name pos:start="55:29" pos:end="55:29">c</name><operator pos:start="55:30" pos:end="55:31">-&gt;</operator><name pos:start="55:32" pos:end="55:42">prev_sample</name></name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+    <if_stmt pos:start="57:5" pos:end="59:35"><if pos:start="57:5" pos:end="59:35">if <condition pos:start="57:8" pos:end="57:40">(<expr pos:start="57:9" pos:end="57:39"><name pos:start="57:9" pos:end="57:15">version</name> <operator pos:start="57:17" pos:end="57:18">==</operator> <name pos:start="57:20" pos:end="57:39">AV_CODEC_ID_ADPCM_MS</name></expr>)</condition><block type="pseudo" pos:start="59:9" pos:end="59:35"><block_content pos:start="59:9" pos:end="59:35">
+
+        <expr_stmt pos:start="59:9" pos:end="59:35"><expr pos:start="59:9" pos:end="59:34"><name pos:start="59:9" pos:end="59:16"><name pos:start="59:9" pos:end="59:13">nodes</name><index pos:start="59:14" pos:end="59:16">[<expr pos:start="59:15" pos:end="59:15"><literal type="number" pos:start="59:15" pos:end="59:15">0</literal></expr>]</index></name><operator pos:start="59:17" pos:end="59:18">-&gt;</operator><name pos:start="59:19" pos:end="59:22">step</name> <operator pos:start="59:24" pos:end="59:24">=</operator> <name pos:start="59:26" pos:end="59:34"><name pos:start="59:26" pos:end="59:26">c</name><operator pos:start="59:27" pos:end="59:28">-&gt;</operator><name pos:start="59:29" pos:end="59:34">idelta</name></name></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+    <if_stmt pos:start="61:5" pos:end="77:5"><if pos:start="61:5" pos:end="77:5">if <condition pos:start="61:8" pos:end="61:44">(<expr pos:start="61:9" pos:end="61:43"><name pos:start="61:9" pos:end="61:15">version</name> <operator pos:start="61:17" pos:end="61:18">==</operator> <name pos:start="61:20" pos:end="61:43">AV_CODEC_ID_ADPCM_YAMAHA</name></expr>)</condition> <block pos:start="61:46" pos:end="77:5">{<block_content pos:start="63:9" pos:end="75:9">
+
+        <if_stmt pos:start="63:9" pos:end="75:9"><if pos:start="63:9" pos:end="69:9">if <condition pos:start="63:12" pos:end="63:25">(<expr pos:start="63:13" pos:end="63:24"><name pos:start="63:13" pos:end="63:19"><name pos:start="63:13" pos:end="63:13">c</name><operator pos:start="63:14" pos:end="63:15">-&gt;</operator><name pos:start="63:16" pos:end="63:19">step</name></name> <operator pos:start="63:21" pos:end="63:22">==</operator> <literal type="number" pos:start="63:24" pos:end="63:24">0</literal></expr>)</condition> <block pos:start="63:27" pos:end="69:9">{<block_content pos:start="65:13" pos:end="67:34">
+
+            <expr_stmt pos:start="65:13" pos:end="65:36"><expr pos:start="65:13" pos:end="65:35"><name pos:start="65:13" pos:end="65:20"><name pos:start="65:13" pos:end="65:17">nodes</name><index pos:start="65:18" pos:end="65:20">[<expr pos:start="65:19" pos:end="65:19"><literal type="number" pos:start="65:19" pos:end="65:19">0</literal></expr>]</index></name><operator pos:start="65:21" pos:end="65:22">-&gt;</operator><name pos:start="65:23" pos:end="65:26">step</name>    <operator pos:start="65:31" pos:end="65:31">=</operator> <literal type="number" pos:start="65:33" pos:end="65:35">127</literal></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="67:13" pos:end="67:34"><expr pos:start="67:13" pos:end="67:33"><name pos:start="67:13" pos:end="67:20"><name pos:start="67:13" pos:end="67:17">nodes</name><index pos:start="67:18" pos:end="67:20">[<expr pos:start="67:19" pos:end="67:19"><literal type="number" pos:start="67:19" pos:end="67:19">0</literal></expr>]</index></name><operator pos:start="67:21" pos:end="67:22">-&gt;</operator><name pos:start="67:23" pos:end="67:29">sample1</name> <operator pos:start="67:31" pos:end="67:31">=</operator> <literal type="number" pos:start="67:33" pos:end="67:33">0</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if> <else pos:start="69:11" pos:end="75:9">else <block pos:start="69:16" pos:end="75:9">{<block_content pos:start="71:13" pos:end="73:45">
+
+            <expr_stmt pos:start="71:13" pos:end="71:40"><expr pos:start="71:13" pos:end="71:39"><name pos:start="71:13" pos:end="71:20"><name pos:start="71:13" pos:end="71:17">nodes</name><index pos:start="71:18" pos:end="71:20">[<expr pos:start="71:19" pos:end="71:19"><literal type="number" pos:start="71:19" pos:end="71:19">0</literal></expr>]</index></name><operator pos:start="71:21" pos:end="71:22">-&gt;</operator><name pos:start="71:23" pos:end="71:26">step</name>    <operator pos:start="71:31" pos:end="71:31">=</operator> <name pos:start="71:33" pos:end="71:39"><name pos:start="71:33" pos:end="71:33">c</name><operator pos:start="71:34" pos:end="71:35">-&gt;</operator><name pos:start="71:36" pos:end="71:39">step</name></name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="73:13" pos:end="73:45"><expr pos:start="73:13" pos:end="73:44"><name pos:start="73:13" pos:end="73:20"><name pos:start="73:13" pos:end="73:17">nodes</name><index pos:start="73:18" pos:end="73:20">[<expr pos:start="73:19" pos:end="73:19"><literal type="number" pos:start="73:19" pos:end="73:19">0</literal></expr>]</index></name><operator pos:start="73:21" pos:end="73:22">-&gt;</operator><name pos:start="73:23" pos:end="73:29">sample1</name> <operator pos:start="73:31" pos:end="73:31">=</operator> <name pos:start="73:33" pos:end="73:44"><name pos:start="73:33" pos:end="73:33">c</name><operator pos:start="73:34" pos:end="73:35">-&gt;</operator><name pos:start="73:36" pos:end="73:44">predictor</name></name></expr>;</expr_stmt>
+
+        </block_content>}</block></else></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <for pos:start="81:5" pos:end="379:5">for <control pos:start="81:9" pos:end="81:27">(<init pos:start="81:10" pos:end="81:15"><expr pos:start="81:10" pos:end="81:14"><name pos:start="81:10" pos:end="81:10">i</name> <operator pos:start="81:12" pos:end="81:12">=</operator> <literal type="number" pos:start="81:14" pos:end="81:14">0</literal></expr>;</init> <condition pos:start="81:17" pos:end="81:22"><expr pos:start="81:17" pos:end="81:21"><name pos:start="81:17" pos:end="81:17">i</name> <operator pos:start="81:19" pos:end="81:19">&lt;</operator> <name pos:start="81:21" pos:end="81:21">n</name></expr>;</condition> <incr pos:start="81:24" pos:end="81:26"><expr pos:start="81:24" pos:end="81:26"><name pos:start="81:24" pos:end="81:24">i</name><operator pos:start="81:25" pos:end="81:26">++</operator></expr></incr>)</control> <block pos:start="81:29" pos:end="379:5">{<block_content pos:start="83:9" pos:end="377:9">
+
+        <decl_stmt pos:start="83:9" pos:end="83:51"><decl pos:start="83:9" pos:end="83:50"><type pos:start="83:9" pos:end="83:21"><name pos:start="83:9" pos:end="83:19">TrellisNode</name> <modifier pos:start="83:21" pos:end="83:21">*</modifier></type><name pos:start="83:22" pos:end="83:22">t</name> <init pos:start="83:24" pos:end="83:50">= <expr pos:start="83:26" pos:end="83:50"><name pos:start="83:26" pos:end="83:33">node_buf</name> <operator pos:start="83:35" pos:end="83:35">+</operator> <name pos:start="83:37" pos:end="83:44">frontier</name><operator pos:start="83:45" pos:end="83:45">*</operator><operator pos:start="83:46" pos:end="83:46">(</operator><name pos:start="83:47" pos:end="83:47">i</name><operator pos:start="83:48" pos:end="83:48">&amp;</operator><literal type="number" pos:start="83:49" pos:end="83:49">1</literal><operator pos:start="83:50" pos:end="83:50">)</operator></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="85:9" pos:end="85:24"><decl pos:start="85:9" pos:end="85:23"><type pos:start="85:9" pos:end="85:22"><name pos:start="85:9" pos:end="85:19">TrellisNode</name> <modifier pos:start="85:21" pos:end="85:21">*</modifier><modifier pos:start="85:22" pos:end="85:22">*</modifier></type><name pos:start="85:23" pos:end="85:23">u</name></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="87:9" pos:end="87:43"><decl pos:start="87:9" pos:end="87:42"><type pos:start="87:9" pos:end="87:11"><name pos:start="87:9" pos:end="87:11">int</name></type> <name pos:start="87:13" pos:end="87:18">sample</name>   <init pos:start="87:22" pos:end="87:42">= <expr pos:start="87:24" pos:end="87:42"><name pos:start="87:24" pos:end="87:42"><name pos:start="87:24" pos:end="87:30">samples</name><index pos:start="87:31" pos:end="87:42">[<expr pos:start="87:32" pos:end="87:41"><name pos:start="87:32" pos:end="87:32">i</name> <operator pos:start="87:34" pos:end="87:34">*</operator> <name pos:start="87:36" pos:end="87:41">stride</name></expr>]</index></name></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt pos:start="89:9" pos:end="89:25"><decl pos:start="89:9" pos:end="89:24"><type pos:start="89:9" pos:end="89:11"><name pos:start="89:9" pos:end="89:11">int</name></type> <name pos:start="89:13" pos:end="89:20">heap_pos</name> <init pos:start="89:22" pos:end="89:24">= <expr pos:start="89:24" pos:end="89:24"><literal type="number" pos:start="89:24" pos:end="89:24">0</literal></expr></init></decl>;</decl_stmt>
+
+        <expr_stmt pos:start="91:9" pos:end="91:63"><expr pos:start="91:9" pos:end="91:62"><call pos:start="91:9" pos:end="91:62"><name pos:start="91:9" pos:end="91:14">memset</name><argument_list pos:start="91:15" pos:end="91:62">(<argument pos:start="91:16" pos:end="91:25"><expr pos:start="91:16" pos:end="91:25"><name pos:start="91:16" pos:end="91:25">nodes_next</name></expr></argument>, <argument pos:start="91:28" pos:end="91:28"><expr pos:start="91:28" pos:end="91:28"><literal type="number" pos:start="91:28" pos:end="91:28">0</literal></expr></argument>, <argument pos:start="91:31" pos:end="91:61"><expr pos:start="91:31" pos:end="91:61"><name pos:start="91:31" pos:end="91:38">frontier</name> <operator pos:start="91:40" pos:end="91:40">*</operator> <sizeof pos:start="91:42" pos:end="91:61">sizeof<argument_list pos:start="91:48" pos:end="91:61">(<argument pos:start="91:49" pos:end="91:60"><expr pos:start="91:49" pos:end="91:60"><name pos:start="91:49" pos:end="91:59">TrellisNode</name><operator pos:start="91:60" pos:end="91:60">*</operator></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <for pos:start="93:9" pos:end="313:9">for <control pos:start="93:13" pos:end="93:50">(<init pos:start="93:14" pos:end="93:19"><expr pos:start="93:14" pos:end="93:18"><name pos:start="93:14" pos:end="93:14">j</name> <operator pos:start="93:16" pos:end="93:16">=</operator> <literal type="number" pos:start="93:18" pos:end="93:18">0</literal></expr>;</init> <condition pos:start="93:21" pos:end="93:45"><expr pos:start="93:21" pos:end="93:44"><name pos:start="93:21" pos:end="93:21">j</name> <operator pos:start="93:23" pos:end="93:23">&lt;</operator> <name pos:start="93:25" pos:end="93:32">frontier</name> <operator pos:start="93:34" pos:end="93:35">&amp;&amp;</operator> <name pos:start="93:37" pos:end="93:44"><name pos:start="93:37" pos:end="93:41">nodes</name><index pos:start="93:42" pos:end="93:44">[<expr pos:start="93:43" pos:end="93:43"><name pos:start="93:43" pos:end="93:43">j</name></expr>]</index></name></expr>;</condition> <incr pos:start="93:47" pos:end="93:49"><expr pos:start="93:47" pos:end="93:49"><name pos:start="93:47" pos:end="93:47">j</name><operator pos:start="93:48" pos:end="93:49">++</operator></expr></incr>)</control> <block pos:start="93:52" pos:end="313:9">{<block_content pos:start="99:13" pos:end="311:13">
+
+            <comment type="line" pos:start="95:13" pos:end="95:66">// higher j have higher ssd already, so they're likely</comment>
+
+            <comment type="line" pos:start="97:13" pos:end="97:52">// to yield a suboptimal next sample too</comment>
+
+            <decl_stmt pos:start="99:13" pos:end="99:57"><decl pos:start="99:13" pos:end="99:56"><type pos:start="99:13" pos:end="99:21"><specifier pos:start="99:13" pos:end="99:17">const</specifier> <name pos:start="99:19" pos:end="99:21">int</name></type> <name pos:start="99:23" pos:end="99:27">range</name> <init pos:start="99:29" pos:end="99:56">= <expr pos:start="99:31" pos:end="99:56"><ternary pos:start="99:31" pos:end="99:56"><condition pos:start="99:31" pos:end="99:50"><expr pos:start="99:31" pos:end="99:48"><operator pos:start="99:31" pos:end="99:31">(</operator><name pos:start="99:32" pos:end="99:32">j</name> <operator pos:start="99:34" pos:end="99:34">&lt;</operator> <name pos:start="99:36" pos:end="99:43">frontier</name> <operator pos:start="99:45" pos:end="99:45">/</operator> <literal type="number" pos:start="99:47" pos:end="99:47">2</literal><operator pos:start="99:48" pos:end="99:48">)</operator></expr> ?</condition><then pos:start="99:52" pos:end="99:52"> <expr pos:start="99:52" pos:end="99:52"><literal type="number" pos:start="99:52" pos:end="99:52">1</literal></expr> </then><else pos:start="99:54" pos:end="99:56">: <expr pos:start="99:56" pos:end="99:56"><literal type="number" pos:start="99:56" pos:end="99:56">0</literal></expr></else></ternary></expr></init></decl>;</decl_stmt>
+
+            <decl_stmt pos:start="101:13" pos:end="101:45"><decl pos:start="101:13" pos:end="101:44"><type pos:start="101:13" pos:end="101:21"><specifier pos:start="101:13" pos:end="101:17">const</specifier> <name pos:start="101:19" pos:end="101:21">int</name></type> <name pos:start="101:23" pos:end="101:26">step</name>  <init pos:start="101:29" pos:end="101:44">= <expr pos:start="101:31" pos:end="101:44"><name pos:start="101:31" pos:end="101:38"><name pos:start="101:31" pos:end="101:35">nodes</name><index pos:start="101:36" pos:end="101:38">[<expr pos:start="101:37" pos:end="101:37"><name pos:start="101:37" pos:end="101:37">j</name></expr>]</index></name><operator pos:start="101:39" pos:end="101:40">-&gt;</operator><name pos:start="101:41" pos:end="101:44">step</name></expr></init></decl>;</decl_stmt>
+
+            <decl_stmt pos:start="103:13" pos:end="103:21"><decl pos:start="103:13" pos:end="103:20"><type pos:start="103:13" pos:end="103:15"><name pos:start="103:13" pos:end="103:15">int</name></type> <name pos:start="103:17" pos:end="103:20">nidx</name></decl>;</decl_stmt>
+
+            <if_stmt pos:start="105:13" pos:end="311:13"><if pos:start="105:13" pos:end="257:13">if <condition pos:start="105:16" pos:end="105:48">(<expr pos:start="105:17" pos:end="105:47"><name pos:start="105:17" pos:end="105:23">version</name> <operator pos:start="105:25" pos:end="105:26">==</operator> <name pos:start="105:28" pos:end="105:47">AV_CODEC_ID_ADPCM_MS</name></expr>)</condition> <block pos:start="105:50" pos:end="257:13">{<block_content pos:start="107:17" pos:end="255:17">
+
+                <decl_stmt pos:start="107:17" pos:end="109:77"><decl pos:start="107:17" pos:end="109:76"><type pos:start="107:17" pos:end="107:25"><specifier pos:start="107:17" pos:end="107:21">const</specifier> <name pos:start="107:23" pos:end="107:25">int</name></type> <name pos:start="107:27" pos:end="107:35">predictor</name> <init pos:start="107:37" pos:end="109:76">= <expr pos:start="107:39" pos:end="109:76"><operator pos:start="107:39" pos:end="107:39">(</operator><operator pos:start="107:40" pos:end="107:40">(</operator><name pos:start="107:41" pos:end="107:48"><name pos:start="107:41" pos:end="107:45">nodes</name><index pos:start="107:46" pos:end="107:48">[<expr pos:start="107:47" pos:end="107:47"><name pos:start="107:47" pos:end="107:47">j</name></expr>]</index></name><operator pos:start="107:49" pos:end="107:50">-&gt;</operator><name pos:start="107:51" pos:end="107:57">sample1</name> <operator pos:start="107:59" pos:end="107:59">*</operator> <name pos:start="107:61" pos:end="107:69"><name pos:start="107:61" pos:end="107:61">c</name><operator pos:start="107:62" pos:end="107:63">-&gt;</operator><name pos:start="107:64" pos:end="107:69">coeff1</name></name><operator pos:start="107:70" pos:end="107:70">)</operator> <operator pos:start="107:72" pos:end="107:72">+</operator>
+
+                                       <operator pos:start="109:40" pos:end="109:40">(</operator><name pos:start="109:41" pos:end="109:48"><name pos:start="109:41" pos:end="109:45">nodes</name><index pos:start="109:46" pos:end="109:48">[<expr pos:start="109:47" pos:end="109:47"><name pos:start="109:47" pos:end="109:47">j</name></expr>]</index></name><operator pos:start="109:49" pos:end="109:50">-&gt;</operator><name pos:start="109:51" pos:end="109:57">sample2</name> <operator pos:start="109:59" pos:end="109:59">*</operator> <name pos:start="109:61" pos:end="109:69"><name pos:start="109:61" pos:end="109:61">c</name><operator pos:start="109:62" pos:end="109:63">-&gt;</operator><name pos:start="109:64" pos:end="109:69">coeff2</name></name><operator pos:start="109:70" pos:end="109:70">)</operator><operator pos:start="109:71" pos:end="109:71">)</operator> <operator pos:start="109:73" pos:end="109:73">/</operator> <literal type="number" pos:start="109:75" pos:end="109:76">64</literal></expr></init></decl>;</decl_stmt>
+
+                <decl_stmt pos:start="111:17" pos:end="111:61"><decl pos:start="111:17" pos:end="111:60"><type pos:start="111:17" pos:end="111:25"><specifier pos:start="111:17" pos:end="111:21">const</specifier> <name pos:start="111:23" pos:end="111:25">int</name></type> <name pos:start="111:27" pos:end="111:29">div</name>  <init pos:start="111:32" pos:end="111:60">= <expr pos:start="111:34" pos:end="111:60"><operator pos:start="111:34" pos:end="111:34">(</operator><name pos:start="111:35" pos:end="111:40">sample</name> <operator pos:start="111:42" pos:end="111:42">-</operator> <name pos:start="111:44" pos:end="111:52">predictor</name><operator pos:start="111:53" pos:end="111:53">)</operator> <operator pos:start="111:55" pos:end="111:55">/</operator> <name pos:start="111:57" pos:end="111:60">step</name></expr></init></decl>;</decl_stmt>
+
+                <decl_stmt pos:start="113:17" pos:end="113:59"><decl pos:start="113:17" pos:end="113:58"><type pos:start="113:17" pos:end="113:25"><specifier pos:start="113:17" pos:end="113:21">const</specifier> <name pos:start="113:23" pos:end="113:25">int</name></type> <name pos:start="113:27" pos:end="113:30">nmin</name> <init pos:start="113:32" pos:end="113:58">= <expr pos:start="113:34" pos:end="113:58"><call pos:start="113:34" pos:end="113:58"><name pos:start="113:34" pos:end="113:40">av_clip</name><argument_list pos:start="113:41" pos:end="113:58">(<argument pos:start="113:42" pos:end="113:50"><expr pos:start="113:42" pos:end="113:50"><name pos:start="113:42" pos:end="113:44">div</name><operator pos:start="113:45" pos:end="113:45">-</operator><name pos:start="113:46" pos:end="113:50">range</name></expr></argument>, <argument pos:start="113:53" pos:end="113:54"><expr pos:start="113:53" pos:end="113:54"><operator pos:start="113:53" pos:end="113:53">-</operator><literal type="number" pos:start="113:54" pos:end="113:54">8</literal></expr></argument>, <argument pos:start="113:57" pos:end="113:57"><expr pos:start="113:57" pos:end="113:57"><literal type="number" pos:start="113:57" pos:end="113:57">6</literal></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+                <decl_stmt pos:start="115:17" pos:end="115:59"><decl pos:start="115:17" pos:end="115:58"><type pos:start="115:17" pos:end="115:25"><specifier pos:start="115:17" pos:end="115:21">const</specifier> <name pos:start="115:23" pos:end="115:25">int</name></type> <name pos:start="115:27" pos:end="115:30">nmax</name> <init pos:start="115:32" pos:end="115:58">= <expr pos:start="115:34" pos:end="115:58"><call pos:start="115:34" pos:end="115:58"><name pos:start="115:34" pos:end="115:40">av_clip</name><argument_list pos:start="115:41" pos:end="115:58">(<argument pos:start="115:42" pos:end="115:50"><expr pos:start="115:42" pos:end="115:50"><name pos:start="115:42" pos:end="115:44">div</name><operator pos:start="115:45" pos:end="115:45">+</operator><name pos:start="115:46" pos:end="115:50">range</name></expr></argument>, <argument pos:start="115:53" pos:end="115:54"><expr pos:start="115:53" pos:end="115:54"><operator pos:start="115:53" pos:end="115:53">-</operator><literal type="number" pos:start="115:54" pos:end="115:54">7</literal></expr></argument>, <argument pos:start="115:57" pos:end="115:57"><expr pos:start="115:57" pos:end="115:57"><literal type="number" pos:start="115:57" pos:end="115:57">7</literal></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+                <for pos:start="117:17" pos:end="255:17">for <control pos:start="117:21" pos:end="117:55">(<init pos:start="117:22" pos:end="117:33"><expr pos:start="117:22" pos:end="117:32"><name pos:start="117:22" pos:end="117:25">nidx</name> <operator pos:start="117:27" pos:end="117:27">=</operator> <name pos:start="117:29" pos:end="117:32">nmin</name></expr>;</init> <condition pos:start="117:35" pos:end="117:47"><expr pos:start="117:35" pos:end="117:46"><name pos:start="117:35" pos:end="117:38">nidx</name> <operator pos:start="117:40" pos:end="117:41">&lt;=</operator> <name pos:start="117:43" pos:end="117:46">nmax</name></expr>;</condition> <incr pos:start="117:49" pos:end="117:54"><expr pos:start="117:49" pos:end="117:54"><name pos:start="117:49" pos:end="117:52">nidx</name><operator pos:start="117:53" pos:end="117:54">++</operator></expr></incr>)</control> <block pos:start="117:57" pos:end="255:17">{<block_content pos:start="119:21" pos:end="253:80">
+
+                    <decl_stmt pos:start="119:21" pos:end="119:50"><decl pos:start="119:21" pos:end="119:49"><type pos:start="119:21" pos:end="119:29"><specifier pos:start="119:21" pos:end="119:25">const</specifier> <name pos:start="119:27" pos:end="119:29">int</name></type> <name pos:start="119:31" pos:end="119:36">nibble</name> <init pos:start="119:38" pos:end="119:49">= <expr pos:start="119:40" pos:end="119:49"><name pos:start="119:40" pos:end="119:43">nidx</name> <operator pos:start="119:45" pos:end="119:45">&amp;</operator> <literal type="number" pos:start="119:47" pos:end="119:49">0xf</literal></expr></init></decl>;</decl_stmt>
+
+                    <decl_stmt pos:start="121:21" pos:end="250:0"><decl pos:start="121:21" pos:end="121:62"><type pos:start="121:21" pos:end="121:23"><name pos:start="121:21" pos:end="121:23">int</name></type> <name pos:start="121:25" pos:end="121:34">dec_sample</name>   <init pos:start="121:38" pos:end="121:62">= <expr pos:start="121:40" pos:end="121:62"><name pos:start="121:40" pos:end="121:48">predictor</name> <operator pos:start="121:50" pos:end="121:50">+</operator> <name pos:start="121:52" pos:end="121:55">nidx</name> <operator pos:start="121:57" pos:end="121:57">*</operator> <name pos:start="121:59" pos:end="121:62">step</name></expr></init></decl>;</decl_stmt>
+
+<cpp:define pos:start="123:1" pos:end="249:33">#<cpp:directive pos:start="123:2" pos:end="123:7">define</cpp:directive> <cpp:macro pos:start="123:9" pos:end="123:36"><name pos:start="123:9" pos:end="123:18">STORE_NODE</name><parameter_list pos:start="123:19" pos:end="123:36">(<parameter pos:start="123:20" pos:end="123:23"><type pos:start="123:20" pos:end="123:23"><name pos:start="123:20" pos:end="123:23">NAME</name></type></parameter>, <parameter pos:start="123:26" pos:end="123:35"><type pos:start="123:26" pos:end="123:35"><name pos:start="123:26" pos:end="123:35">STEP_INDEX</name></type></parameter>)</parameter_list></cpp:macro>\
+
+                    <cpp:value pos:start="125:21" pos:end="249:33">int d;\
+
+                    uint32_t ssd;\
+
+                    int pos;\
+
+                    TrellisNode *u;\
+
+                    uint8_t *h;\
+
+                    dec_sample = av_clip_int16(dec_sample);\
+
+                    d = sample - dec_sample;\
+
+                    ssd = nodes[j]-&gt;ssd + d*d;\
+
+                    <comment type="block" pos:start="141:21" pos:end="147:51">/* Check for wraparound, skip such samples completely. \
+
+                     * Note, changing ssd to a 64 bit variable would be \
+
+                     * simpler, avoiding this check, but it's slower on \
+
+                     * x86 32 bit at the moment. */</comment>\
+
+                    if (ssd &lt; nodes[j]-&gt;ssd)\
+
+                        goto next_##NAME;\
+
+                    <comment type="block" pos:start="153:21" pos:end="173:74">/* Collapse any two states with the same previous sample value. \
+
+                     * One could also distinguish states by step and by 2nd to last
+
+                     * sample, but the effects of that are negligible.
+
+                     * Since nodes in the previous generation are iterated
+
+                     * through a heap, they're roughly ordered from better to
+
+                     * worse, but not strictly ordered. Therefore, an earlier
+
+                     * node with the same sample value is better in most cases
+
+                     * (and thus the current is skipped), but not strictly
+
+                     * in all cases. Only skipping samples where ssd &gt;=
+
+                     * ssd of the earlier node with the same sample gives
+
+                     * slightly worse quality, though, for some reason. */</comment> \
+
+                    h = &amp;hash[(uint16_t) dec_sample];\
+
+                    if (*h == generation)\
+
+                        goto next_##NAME;\
+
+                    if (heap_pos &lt; frontier) {\
+
+                        pos = heap_pos++;\
+
+                    } else {\
+
+                        <comment type="block" pos:start="187:25" pos:end="189:70">/* Try to replace one of the leaf nodes with the new \
+
+                         * one, but try a different slot each time. */</comment>\
+
+                        pos = (frontier &gt;&gt; 1) +\
+
+                              (heap_pos &amp; ((frontier &gt;&gt; 1) - 1));\
+
+                        if (ssd &gt; nodes_next[pos]-&gt;ssd)\
+
+                            goto next_##NAME;\
+
+                        heap_pos++;\
+
+                    }\
+
+                    *h = generation;\
+
+                    u  = nodes_next[pos];\
+
+                    if (!u) {\
+
+                        av_assert1(pathn &lt; FREEZE_INTERVAL &lt;&lt; avctx-&gt;trellis);\
+
+                        u = t++;\
+
+                        nodes_next[pos] = u;\
+
+                        u-&gt;path = pathn++;\
+
+                    }\
+
+                    u-&gt;ssd  = ssd;\
+
+                    u-&gt;step = STEP_INDEX;\
+
+                    u-&gt;sample2 = nodes[j]-&gt;sample1;\
+
+                    u-&gt;sample1 = dec_sample;\
+
+                    paths[u-&gt;path].nibble = nibble;\
+
+                    paths[u-&gt;path].prev   = nodes[j]-&gt;path;\
+
+                    <comment type="block" pos:start="231:21" pos:end="233:52">/* Sift the newly inserted node up in the heap to \
+
+                     * restore the heap property. */</comment>\
+
+                    while (pos &gt; 0) {\
+
+                        int parent = (pos - 1) &gt;&gt; 1;\
+
+                        if (nodes_next[parent]-&gt;ssd &lt;= ssd)\
+
+                            break;\
+
+                        FFSWAP(TrellisNode*, nodes_next[parent], nodes_next[pos]);\
+
+                        pos = parent;\
+
+                    }\
+
+                    next_##NAME:;</cpp:value></cpp:define>
+
+                    <expr_stmt pos:start="251:21" pos:end="253:80"><expr pos:start="251:21" pos:end="253:79"><call pos:start="251:21" pos:end="253:79"><name pos:start="251:21" pos:end="251:30">STORE_NODE</name><argument_list pos:start="251:31" pos:end="253:79">(<argument pos:start="251:32" pos:end="251:33"><expr pos:start="251:32" pos:end="251:33"><name pos:start="251:32" pos:end="251:33">ms</name></expr></argument>, <argument pos:start="251:36" pos:end="253:78"><expr pos:start="251:36" pos:end="253:78"><call pos:start="251:36" pos:end="253:78"><name pos:start="251:36" pos:end="251:40">FFMAX</name><argument_list pos:start="251:41" pos:end="253:78">(<argument pos:start="251:42" pos:end="251:43"><expr pos:start="251:42" pos:end="251:43"><literal type="number" pos:start="251:42" pos:end="251:43">16</literal></expr></argument>,
+
+                               <argument pos:start="253:32" pos:end="253:77"><expr pos:start="253:32" pos:end="253:77"><operator pos:start="253:32" pos:end="253:32">(</operator><name pos:start="253:33" pos:end="253:64"><name pos:start="253:33" pos:end="253:56">ff_adpcm_AdaptationTable</name><index pos:start="253:57" pos:end="253:64">[<expr pos:start="253:58" pos:end="253:63"><name pos:start="253:58" pos:end="253:63">nibble</name></expr>]</index></name> <operator pos:start="253:66" pos:end="253:66">*</operator> <name pos:start="253:68" pos:end="253:71">step</name><operator pos:start="253:72" pos:end="253:72">)</operator> <operator pos:start="253:74" pos:end="253:75">&gt;&gt;</operator> <literal type="number" pos:start="253:77" pos:end="253:77">8</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                </block_content>}</block></for>
+
+            </block_content>}</block></if> <if type="elseif" pos:start="257:15" pos:end="299:13">else if <condition pos:start="257:23" pos:end="261:56">(<expr pos:start="257:24" pos:end="261:55"><name pos:start="257:24" pos:end="257:30">version</name> <operator pos:start="257:32" pos:end="257:33">==</operator> <name pos:start="257:35" pos:end="257:59">AV_CODEC_ID_ADPCM_IMA_WAV</name> <operator pos:start="257:61" pos:end="257:62">||</operator>
+
+                       <name pos:start="259:24" pos:end="259:30">version</name> <operator pos:start="259:32" pos:end="259:33">==</operator> <name pos:start="259:35" pos:end="259:58">AV_CODEC_ID_ADPCM_IMA_QT</name>  <operator pos:start="259:61" pos:end="259:62">||</operator>
+
+                       <name pos:start="261:24" pos:end="261:30">version</name> <operator pos:start="261:32" pos:end="261:33">==</operator> <name pos:start="261:35" pos:end="261:55">AV_CODEC_ID_ADPCM_SWF</name></expr>)</condition> <block pos:start="261:58" pos:end="299:13">{<block_content pos:start="295:17" pos:end="297:80">
+
+<cpp:define pos:start="263:1" pos:end="293:17">#<cpp:directive pos:start="263:2" pos:end="263:7">define</cpp:directive> <cpp:macro pos:start="263:9" pos:end="263:48"><name pos:start="263:9" pos:end="263:18">LOOP_NODES</name><parameter_list pos:start="263:19" pos:end="263:48">(<parameter pos:start="263:20" pos:end="263:23"><type pos:start="263:20" pos:end="263:23"><name pos:start="263:20" pos:end="263:23">NAME</name></type></parameter>, <parameter pos:start="263:26" pos:end="263:35"><type pos:start="263:26" pos:end="263:35"><name pos:start="263:26" pos:end="263:35">STEP_TABLE</name></type></parameter>, <parameter pos:start="263:38" pos:end="263:47"><type pos:start="263:38" pos:end="263:47"><name pos:start="263:38" pos:end="263:47">STEP_INDEX</name></type></parameter>)</parameter_list></cpp:macro>\
+
+                <cpp:value pos:start="265:17" pos:end="293:17">const int predictor = nodes[j]-&gt;sample1;\
+
+                const int div = (sample - predictor) * 4 / STEP_TABLE;\
+
+                int nmin = av_clip(div - range, -7, 6);\
+
+                int nmax = av_clip(div + range, -6, 7);\
+
+                if (nmin &lt;= 0)\
+
+                    nmin--; <comment type="block" pos:start="275:29" pos:end="275:56">/* distinguish -0 from +0 */</comment>\
+
+                if (nmax &lt; 0)\
+
+                    nmax--;\
+
+                for (nidx = nmin; nidx &lt;= nmax; nidx++) {\
+
+                    const int nibble = nidx &lt; 0 ? 7 - nidx : nidx;\
+
+                    int dec_sample = predictor +\
+
+                                    (STEP_TABLE *\
+
+                                     ff_adpcm_yamaha_difflookup[nibble]) / 8;\
+
+                    STORE_NODE(NAME, STEP_INDEX);\
+
+                }</cpp:value></cpp:define>
+
+                <expr_stmt pos:start="295:17" pos:end="297:80"><expr pos:start="295:17" pos:end="297:79"><call pos:start="295:17" pos:end="297:79"><name pos:start="295:17" pos:end="295:26">LOOP_NODES</name><argument_list pos:start="295:27" pos:end="297:79">(<argument pos:start="295:28" pos:end="295:30"><expr pos:start="295:28" pos:end="295:30"><name pos:start="295:28" pos:end="295:30">ima</name></expr></argument>, <argument pos:start="295:33" pos:end="295:57"><expr pos:start="295:33" pos:end="295:57"><name pos:start="295:33" pos:end="295:57"><name pos:start="295:33" pos:end="295:51">ff_adpcm_step_table</name><index pos:start="295:52" pos:end="295:57">[<expr pos:start="295:53" pos:end="295:56"><name pos:start="295:53" pos:end="295:56">step</name></expr>]</index></name></expr></argument>,
+
+                           <argument pos:start="297:28" pos:end="297:78"><expr pos:start="297:28" pos:end="297:78"><call pos:start="297:28" pos:end="297:78"><name pos:start="297:28" pos:end="297:34">av_clip</name><argument_list pos:start="297:35" pos:end="297:78">(<argument pos:start="297:36" pos:end="297:70"><expr pos:start="297:36" pos:end="297:70"><name pos:start="297:36" pos:end="297:39">step</name> <operator pos:start="297:41" pos:end="297:41">+</operator> <name pos:start="297:43" pos:end="297:70"><name pos:start="297:43" pos:end="297:62">ff_adpcm_index_table</name><index pos:start="297:63" pos:end="297:70">[<expr pos:start="297:64" pos:end="297:69"><name pos:start="297:64" pos:end="297:69">nibble</name></expr>]</index></name></expr></argument>, <argument pos:start="297:73" pos:end="297:73"><expr pos:start="297:73" pos:end="297:73"><literal type="number" pos:start="297:73" pos:end="297:73">0</literal></expr></argument>, <argument pos:start="297:76" pos:end="297:77"><expr pos:start="297:76" pos:end="297:77"><literal type="number" pos:start="297:76" pos:end="297:77">88</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            </block_content>}</block></if> <else pos:start="299:15" pos:end="311:13">else <block pos:start="299:20" pos:end="311:13">{<block_content pos:start="301:17" pos:end="310:0"> <comment type="line" pos:start="299:22" pos:end="299:47">//AV_CODEC_ID_ADPCM_YAMAHA</comment>
+
+                <expr_stmt pos:start="301:17" pos:end="310:0"><expr pos:start="301:17" pos:end="305:47"><call pos:start="301:17" pos:end="305:47"><name pos:start="301:17" pos:end="301:26">LOOP_NODES</name><argument_list pos:start="301:27" pos:end="305:47">(<argument pos:start="301:28" pos:end="301:33"><expr pos:start="301:28" pos:end="301:33"><name pos:start="301:28" pos:end="301:33">yamaha</name></expr></argument>, <argument pos:start="301:36" pos:end="301:39"><expr pos:start="301:36" pos:end="301:39"><name pos:start="301:36" pos:end="301:39">step</name></expr></argument>,
+
+                           <argument pos:start="303:28" pos:end="305:46"><expr pos:start="303:28" pos:end="305:46"><call pos:start="303:28" pos:end="305:46"><name pos:start="303:28" pos:end="303:34">av_clip</name><argument_list pos:start="303:35" pos:end="305:46">(<argument pos:start="303:36" pos:end="303:83"><expr pos:start="303:36" pos:end="303:83"><operator pos:start="303:36" pos:end="303:36">(</operator><name pos:start="303:37" pos:end="303:40">step</name> <operator pos:start="303:42" pos:end="303:42">*</operator> <name pos:start="303:44" pos:end="303:77"><name pos:start="303:44" pos:end="303:69">ff_adpcm_yamaha_indexscale</name><index pos:start="303:70" pos:end="303:77">[<expr pos:start="303:71" pos:end="303:76"><name pos:start="303:71" pos:end="303:76">nibble</name></expr>]</index></name><operator pos:start="303:78" pos:end="303:78">)</operator> <operator pos:start="303:80" pos:end="303:81">&gt;&gt;</operator> <literal type="number" pos:start="303:83" pos:end="303:83">8</literal></expr></argument>,
+
+                                   <argument pos:start="305:36" pos:end="305:38"><expr pos:start="305:36" pos:end="305:38"><literal type="number" pos:start="305:36" pos:end="305:38">127</literal></expr></argument>, <argument pos:start="305:41" pos:end="305:45"><expr pos:start="305:41" pos:end="305:45"><literal type="number" pos:start="305:41" pos:end="305:45">24567</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+<cpp:undef pos:start="307:1" pos:end="307:17">#<cpp:directive pos:start="307:2" pos:end="307:6">undef</cpp:directive> <name pos:start="307:8" pos:end="307:17">LOOP_NODES</name></cpp:undef>
+
+<cpp:undef pos:start="309:1" pos:end="309:17">#<cpp:directive pos:start="309:2" pos:end="309:6">undef</cpp:directive> <name pos:start="309:8" pos:end="309:17">STORE_NODE</name></cpp:undef>
+
+            </block_content>}</block></else></if_stmt>
+
+        </block_content>}</block></for>
+
+
+
+        <expr_stmt pos:start="317:9" pos:end="317:18"><expr pos:start="317:9" pos:end="317:17"><name pos:start="317:9" pos:end="317:9">u</name> <operator pos:start="317:11" pos:end="317:11">=</operator> <name pos:start="317:13" pos:end="317:17">nodes</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="319:9" pos:end="319:27"><expr pos:start="319:9" pos:end="319:26"><name pos:start="319:9" pos:end="319:13">nodes</name> <operator pos:start="319:15" pos:end="319:15">=</operator> <name pos:start="319:17" pos:end="319:26">nodes_next</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="321:9" pos:end="321:23"><expr pos:start="321:9" pos:end="321:22"><name pos:start="321:9" pos:end="321:18">nodes_next</name> <operator pos:start="321:20" pos:end="321:20">=</operator> <name pos:start="321:22" pos:end="321:22">u</name></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="325:9" pos:end="325:21"><expr pos:start="325:9" pos:end="325:20"><name pos:start="325:9" pos:end="325:18">generation</name><operator pos:start="325:19" pos:end="325:20">++</operator></expr>;</expr_stmt>
+
+        <if_stmt pos:start="327:9" pos:end="333:9"><if pos:start="327:9" pos:end="333:9">if <condition pos:start="327:12" pos:end="327:30">(<expr pos:start="327:13" pos:end="327:29"><name pos:start="327:13" pos:end="327:22">generation</name> <operator pos:start="327:24" pos:end="327:25">==</operator> <literal type="number" pos:start="327:27" pos:end="327:29">255</literal></expr>)</condition> <block pos:start="327:32" pos:end="333:9">{<block_content pos:start="329:13" pos:end="331:27">
+
+            <expr_stmt pos:start="329:13" pos:end="329:54"><expr pos:start="329:13" pos:end="329:53"><call pos:start="329:13" pos:end="329:53"><name pos:start="329:13" pos:end="329:18">memset</name><argument_list pos:start="329:19" pos:end="329:53">(<argument pos:start="329:20" pos:end="329:23"><expr pos:start="329:20" pos:end="329:23"><name pos:start="329:20" pos:end="329:23">hash</name></expr></argument>, <argument pos:start="329:26" pos:end="329:29"><expr pos:start="329:26" pos:end="329:29"><literal type="number" pos:start="329:26" pos:end="329:29">0xff</literal></expr></argument>, <argument pos:start="329:32" pos:end="329:52"><expr pos:start="329:32" pos:end="329:52"><literal type="number" pos:start="329:32" pos:end="329:36">65536</literal> <operator pos:start="329:38" pos:end="329:38">*</operator> <sizeof pos:start="329:40" pos:end="329:52">sizeof<argument_list pos:start="329:46" pos:end="329:52">(<argument pos:start="329:47" pos:end="329:51"><expr pos:start="329:47" pos:end="329:51"><operator pos:start="329:47" pos:end="329:47">*</operator><name pos:start="329:48" pos:end="329:51">hash</name></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="331:13" pos:end="331:27"><expr pos:start="331:13" pos:end="331:26"><name pos:start="331:13" pos:end="331:22">generation</name> <operator pos:start="331:24" pos:end="331:24">=</operator> <literal type="number" pos:start="331:26" pos:end="331:26">0</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <comment type="line" pos:start="337:9" pos:end="337:27">// prevent overflow</comment>
+
+        <if_stmt pos:start="339:9" pos:end="347:9"><if pos:start="339:9" pos:end="347:9">if <condition pos:start="339:12" pos:end="339:38">(<expr pos:start="339:13" pos:end="339:37"><name pos:start="339:13" pos:end="339:20"><name pos:start="339:13" pos:end="339:17">nodes</name><index pos:start="339:18" pos:end="339:20">[<expr pos:start="339:19" pos:end="339:19"><literal type="number" pos:start="339:19" pos:end="339:19">0</literal></expr>]</index></name><operator pos:start="339:21" pos:end="339:22">-&gt;</operator><name pos:start="339:23" pos:end="339:25">ssd</name> <operator pos:start="339:27" pos:end="339:27">&gt;</operator> <operator pos:start="339:29" pos:end="339:29">(</operator><literal type="number" pos:start="339:30" pos:end="339:30">1</literal> <operator pos:start="339:32" pos:end="339:33">&lt;&lt;</operator> <literal type="number" pos:start="339:35" pos:end="339:36">28</literal><operator pos:start="339:37" pos:end="339:37">)</operator></expr>)</condition> <block pos:start="339:40" pos:end="347:9">{<block_content pos:start="341:13" pos:end="345:30">
+
+            <for pos:start="341:13" pos:end="343:47">for <control pos:start="341:17" pos:end="341:54">(<init pos:start="341:18" pos:end="341:23"><expr pos:start="341:18" pos:end="341:22"><name pos:start="341:18" pos:end="341:18">j</name> <operator pos:start="341:20" pos:end="341:20">=</operator> <literal type="number" pos:start="341:22" pos:end="341:22">1</literal></expr>;</init> <condition pos:start="341:25" pos:end="341:49"><expr pos:start="341:25" pos:end="341:48"><name pos:start="341:25" pos:end="341:25">j</name> <operator pos:start="341:27" pos:end="341:27">&lt;</operator> <name pos:start="341:29" pos:end="341:36">frontier</name> <operator pos:start="341:38" pos:end="341:39">&amp;&amp;</operator> <name pos:start="341:41" pos:end="341:48"><name pos:start="341:41" pos:end="341:45">nodes</name><index pos:start="341:46" pos:end="341:48">[<expr pos:start="341:47" pos:end="341:47"><name pos:start="341:47" pos:end="341:47">j</name></expr>]</index></name></expr>;</condition> <incr pos:start="341:51" pos:end="341:53"><expr pos:start="341:51" pos:end="341:53"><name pos:start="341:51" pos:end="341:51">j</name><operator pos:start="341:52" pos:end="341:53">++</operator></expr></incr>)</control><block type="pseudo" pos:start="343:17" pos:end="343:47"><block_content pos:start="343:17" pos:end="343:47">
+
+                <expr_stmt pos:start="343:17" pos:end="343:47"><expr pos:start="343:17" pos:end="343:46"><name pos:start="343:17" pos:end="343:24"><name pos:start="343:17" pos:end="343:21">nodes</name><index pos:start="343:22" pos:end="343:24">[<expr pos:start="343:23" pos:end="343:23"><name pos:start="343:23" pos:end="343:23">j</name></expr>]</index></name><operator pos:start="343:25" pos:end="343:26">-&gt;</operator><name pos:start="343:27" pos:end="343:29">ssd</name> <operator pos:start="343:31" pos:end="343:32">-=</operator> <name pos:start="343:34" pos:end="343:41"><name pos:start="343:34" pos:end="343:38">nodes</name><index pos:start="343:39" pos:end="343:41">[<expr pos:start="343:40" pos:end="343:40"><literal type="number" pos:start="343:40" pos:end="343:40">0</literal></expr>]</index></name><operator pos:start="343:42" pos:end="343:43">-&gt;</operator><name pos:start="343:44" pos:end="343:46">ssd</name></expr>;</expr_stmt></block_content></block></for>
+
+            <expr_stmt pos:start="345:13" pos:end="345:30"><expr pos:start="345:13" pos:end="345:29"><name pos:start="345:13" pos:end="345:20"><name pos:start="345:13" pos:end="345:17">nodes</name><index pos:start="345:18" pos:end="345:20">[<expr pos:start="345:19" pos:end="345:19"><literal type="number" pos:start="345:19" pos:end="345:19">0</literal></expr>]</index></name><operator pos:start="345:21" pos:end="345:22">-&gt;</operator><name pos:start="345:23" pos:end="345:25">ssd</name> <operator pos:start="345:27" pos:end="345:27">=</operator> <literal type="number" pos:start="345:29" pos:end="345:29">0</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <comment type="line" pos:start="351:9" pos:end="351:41">// merge old paths to save memory</comment>
+
+        <if_stmt pos:start="353:9" pos:end="377:9"><if pos:start="353:9" pos:end="377:9">if <condition pos:start="353:12" pos:end="353:41">(<expr pos:start="353:13" pos:end="353:40"><name pos:start="353:13" pos:end="353:13">i</name> <operator pos:start="353:15" pos:end="353:16">==</operator> <name pos:start="353:18" pos:end="353:22">froze</name> <operator pos:start="353:24" pos:end="353:24">+</operator> <name pos:start="353:26" pos:end="353:40">FREEZE_INTERVAL</name></expr>)</condition> <block pos:start="353:43" pos:end="377:9">{<block_content pos:start="355:13" pos:end="375:72">
+
+            <expr_stmt pos:start="355:13" pos:end="355:39"><expr pos:start="355:13" pos:end="355:38"><name pos:start="355:13" pos:end="355:13">p</name> <operator pos:start="355:15" pos:end="355:15">=</operator> <operator pos:start="355:17" pos:end="355:17">&amp;</operator><name pos:start="355:18" pos:end="355:38"><name pos:start="355:18" pos:end="355:22">paths</name><index pos:start="355:23" pos:end="355:38">[<expr pos:start="355:24" pos:end="355:37"><name pos:start="355:24" pos:end="355:31"><name pos:start="355:24" pos:end="355:28">nodes</name><index pos:start="355:29" pos:end="355:31">[<expr pos:start="355:30" pos:end="355:30"><literal type="number" pos:start="355:30" pos:end="355:30">0</literal></expr>]</index></name><operator pos:start="355:32" pos:end="355:33">-&gt;</operator><name pos:start="355:34" pos:end="355:37">path</name></expr>]</index></name></expr>;</expr_stmt>
+
+            <for pos:start="357:13" pos:end="363:13">for <control pos:start="357:17" pos:end="357:39">(<init pos:start="357:18" pos:end="357:23"><expr pos:start="357:18" pos:end="357:22"><name pos:start="357:18" pos:end="357:18">k</name> <operator pos:start="357:20" pos:end="357:20">=</operator> <name pos:start="357:22" pos:end="357:22">i</name></expr>;</init> <condition pos:start="357:25" pos:end="357:34"><expr pos:start="357:25" pos:end="357:33"><name pos:start="357:25" pos:end="357:25">k</name> <operator pos:start="357:27" pos:end="357:27">&gt;</operator> <name pos:start="357:29" pos:end="357:33">froze</name></expr>;</condition> <incr pos:start="357:36" pos:end="357:38"><expr pos:start="357:36" pos:end="357:38"><name pos:start="357:36" pos:end="357:36">k</name><operator pos:start="357:37" pos:end="357:38">--</operator></expr></incr>)</control> <block pos:start="357:41" pos:end="363:13">{<block_content pos:start="359:17" pos:end="361:36">
+
+                <expr_stmt pos:start="359:17" pos:end="359:35"><expr pos:start="359:17" pos:end="359:34"><name pos:start="359:17" pos:end="359:22"><name pos:start="359:17" pos:end="359:19">dst</name><index pos:start="359:20" pos:end="359:22">[<expr pos:start="359:21" pos:end="359:21"><name pos:start="359:21" pos:end="359:21">k</name></expr>]</index></name> <operator pos:start="359:24" pos:end="359:24">=</operator> <name pos:start="359:26" pos:end="359:34"><name pos:start="359:26" pos:end="359:26">p</name><operator pos:start="359:27" pos:end="359:28">-&gt;</operator><name pos:start="359:29" pos:end="359:34">nibble</name></name></expr>;</expr_stmt>
+
+                <expr_stmt pos:start="361:17" pos:end="361:36"><expr pos:start="361:17" pos:end="361:35"><name pos:start="361:17" pos:end="361:17">p</name> <operator pos:start="361:19" pos:end="361:19">=</operator> <operator pos:start="361:21" pos:end="361:21">&amp;</operator><name pos:start="361:22" pos:end="361:35"><name pos:start="361:22" pos:end="361:26">paths</name><index pos:start="361:27" pos:end="361:35">[<expr pos:start="361:28" pos:end="361:34"><name pos:start="361:28" pos:end="361:34"><name pos:start="361:28" pos:end="361:28">p</name><operator pos:start="361:29" pos:end="361:30">-&gt;</operator><name pos:start="361:31" pos:end="361:34">prev</name></name></expr>]</index></name></expr>;</expr_stmt>
+
+            </block_content>}</block></for>
+
+            <expr_stmt pos:start="365:13" pos:end="365:22"><expr pos:start="365:13" pos:end="365:21"><name pos:start="365:13" pos:end="365:17">froze</name> <operator pos:start="365:19" pos:end="365:19">=</operator> <name pos:start="365:21" pos:end="365:21">i</name></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="367:13" pos:end="367:22"><expr pos:start="367:13" pos:end="367:21"><name pos:start="367:13" pos:end="367:17">pathn</name> <operator pos:start="367:19" pos:end="367:19">=</operator> <literal type="number" pos:start="367:21" pos:end="367:21">0</literal></expr>;</expr_stmt>
+
+            <comment type="line" pos:start="369:13" pos:end="369:83">// other nodes might use paths that don't coincide with the frozen one.</comment>
+
+            <comment type="line" pos:start="371:13" pos:end="371:77">// checking which nodes do so is too slow, so just kill them all.</comment>
+
+            <comment type="line" pos:start="373:13" pos:end="373:73">// this also slightly improves quality, but I don't know why.</comment>
+
+            <expr_stmt pos:start="375:13" pos:end="375:72"><expr pos:start="375:13" pos:end="375:71"><call pos:start="375:13" pos:end="375:71"><name pos:start="375:13" pos:end="375:18">memset</name><argument_list pos:start="375:19" pos:end="375:71">(<argument pos:start="375:20" pos:end="375:28"><expr pos:start="375:20" pos:end="375:28"><name pos:start="375:20" pos:end="375:24">nodes</name> <operator pos:start="375:26" pos:end="375:26">+</operator> <literal type="number" pos:start="375:28" pos:end="375:28">1</literal></expr></argument>, <argument pos:start="375:31" pos:end="375:31"><expr pos:start="375:31" pos:end="375:31"><literal type="number" pos:start="375:31" pos:end="375:31">0</literal></expr></argument>, <argument pos:start="375:34" pos:end="375:70"><expr pos:start="375:34" pos:end="375:70"><operator pos:start="375:34" pos:end="375:34">(</operator><name pos:start="375:35" pos:end="375:42">frontier</name> <operator pos:start="375:44" pos:end="375:44">-</operator> <literal type="number" pos:start="375:46" pos:end="375:46">1</literal><operator pos:start="375:47" pos:end="375:47">)</operator> <operator pos:start="375:49" pos:end="375:49">*</operator> <sizeof pos:start="375:51" pos:end="375:70">sizeof<argument_list pos:start="375:57" pos:end="375:70">(<argument pos:start="375:58" pos:end="375:69"><expr pos:start="375:58" pos:end="375:69"><name pos:start="375:58" pos:end="375:68">TrellisNode</name><operator pos:start="375:69" pos:end="375:69">*</operator></expr></argument>)</argument_list></sizeof></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></for>
+
+
+
+    <expr_stmt pos:start="383:5" pos:end="383:31"><expr pos:start="383:5" pos:end="383:30"><name pos:start="383:5" pos:end="383:5">p</name> <operator pos:start="383:7" pos:end="383:7">=</operator> <operator pos:start="383:9" pos:end="383:9">&amp;</operator><name pos:start="383:10" pos:end="383:30"><name pos:start="383:10" pos:end="383:14">paths</name><index pos:start="383:15" pos:end="383:30">[<expr pos:start="383:16" pos:end="383:29"><name pos:start="383:16" pos:end="383:23"><name pos:start="383:16" pos:end="383:20">nodes</name><index pos:start="383:21" pos:end="383:23">[<expr pos:start="383:22" pos:end="383:22"><literal type="number" pos:start="383:22" pos:end="383:22">0</literal></expr>]</index></name><operator pos:start="383:24" pos:end="383:25">-&gt;</operator><name pos:start="383:26" pos:end="383:29">path</name></expr>]</index></name></expr>;</expr_stmt>
+
+    <for pos:start="385:5" pos:end="391:5">for <control pos:start="385:9" pos:end="385:35">(<init pos:start="385:10" pos:end="385:19"><expr pos:start="385:10" pos:end="385:18"><name pos:start="385:10" pos:end="385:10">i</name> <operator pos:start="385:12" pos:end="385:12">=</operator> <name pos:start="385:14" pos:end="385:14">n</name> <operator pos:start="385:16" pos:end="385:16">-</operator> <literal type="number" pos:start="385:18" pos:end="385:18">1</literal></expr>;</init> <condition pos:start="385:21" pos:end="385:30"><expr pos:start="385:21" pos:end="385:29"><name pos:start="385:21" pos:end="385:21">i</name> <operator pos:start="385:23" pos:end="385:23">&gt;</operator> <name pos:start="385:25" pos:end="385:29">froze</name></expr>;</condition> <incr pos:start="385:32" pos:end="385:34"><expr pos:start="385:32" pos:end="385:34"><name pos:start="385:32" pos:end="385:32">i</name><operator pos:start="385:33" pos:end="385:34">--</operator></expr></incr>)</control> <block pos:start="385:37" pos:end="391:5">{<block_content pos:start="387:9" pos:end="389:28">
+
+        <expr_stmt pos:start="387:9" pos:end="387:27"><expr pos:start="387:9" pos:end="387:26"><name pos:start="387:9" pos:end="387:14"><name pos:start="387:9" pos:end="387:11">dst</name><index pos:start="387:12" pos:end="387:14">[<expr pos:start="387:13" pos:end="387:13"><name pos:start="387:13" pos:end="387:13">i</name></expr>]</index></name> <operator pos:start="387:16" pos:end="387:16">=</operator> <name pos:start="387:18" pos:end="387:26"><name pos:start="387:18" pos:end="387:18">p</name><operator pos:start="387:19" pos:end="387:20">-&gt;</operator><name pos:start="387:21" pos:end="387:26">nibble</name></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="389:9" pos:end="389:28"><expr pos:start="389:9" pos:end="389:27"><name pos:start="389:9" pos:end="389:9">p</name> <operator pos:start="389:11" pos:end="389:11">=</operator> <operator pos:start="389:13" pos:end="389:13">&amp;</operator><name pos:start="389:14" pos:end="389:27"><name pos:start="389:14" pos:end="389:18">paths</name><index pos:start="389:19" pos:end="389:27">[<expr pos:start="389:20" pos:end="389:26"><name pos:start="389:20" pos:end="389:26"><name pos:start="389:20" pos:end="389:20">p</name><operator pos:start="389:21" pos:end="389:22">-&gt;</operator><name pos:start="389:23" pos:end="389:26">prev</name></name></expr>]</index></name></expr>;</expr_stmt>
+
+    </block_content>}</block></for>
+
+
+
+    <expr_stmt pos:start="395:5" pos:end="395:38"><expr pos:start="395:5" pos:end="395:37"><name pos:start="395:5" pos:end="395:16"><name pos:start="395:5" pos:end="395:5">c</name><operator pos:start="395:6" pos:end="395:7">-&gt;</operator><name pos:start="395:8" pos:end="395:16">predictor</name></name>  <operator pos:start="395:19" pos:end="395:19">=</operator> <name pos:start="395:21" pos:end="395:28"><name pos:start="395:21" pos:end="395:25">nodes</name><index pos:start="395:26" pos:end="395:28">[<expr pos:start="395:27" pos:end="395:27"><literal type="number" pos:start="395:27" pos:end="395:27">0</literal></expr>]</index></name><operator pos:start="395:29" pos:end="395:30">-&gt;</operator><name pos:start="395:31" pos:end="395:37">sample1</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="397:5" pos:end="397:38"><expr pos:start="397:5" pos:end="397:37"><name pos:start="397:5" pos:end="397:14"><name pos:start="397:5" pos:end="397:5">c</name><operator pos:start="397:6" pos:end="397:7">-&gt;</operator><name pos:start="397:8" pos:end="397:14">sample1</name></name>    <operator pos:start="397:19" pos:end="397:19">=</operator> <name pos:start="397:21" pos:end="397:28"><name pos:start="397:21" pos:end="397:25">nodes</name><index pos:start="397:26" pos:end="397:28">[<expr pos:start="397:27" pos:end="397:27"><literal type="number" pos:start="397:27" pos:end="397:27">0</literal></expr>]</index></name><operator pos:start="397:29" pos:end="397:30">-&gt;</operator><name pos:start="397:31" pos:end="397:37">sample1</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="399:5" pos:end="399:38"><expr pos:start="399:5" pos:end="399:37"><name pos:start="399:5" pos:end="399:14"><name pos:start="399:5" pos:end="399:5">c</name><operator pos:start="399:6" pos:end="399:7">-&gt;</operator><name pos:start="399:8" pos:end="399:14">sample2</name></name>    <operator pos:start="399:19" pos:end="399:19">=</operator> <name pos:start="399:21" pos:end="399:28"><name pos:start="399:21" pos:end="399:25">nodes</name><index pos:start="399:26" pos:end="399:28">[<expr pos:start="399:27" pos:end="399:27"><literal type="number" pos:start="399:27" pos:end="399:27">0</literal></expr>]</index></name><operator pos:start="399:29" pos:end="399:30">-&gt;</operator><name pos:start="399:31" pos:end="399:37">sample2</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="401:5" pos:end="401:35"><expr pos:start="401:5" pos:end="401:34"><name pos:start="401:5" pos:end="401:17"><name pos:start="401:5" pos:end="401:5">c</name><operator pos:start="401:6" pos:end="401:7">-&gt;</operator><name pos:start="401:8" pos:end="401:17">step_index</name></name> <operator pos:start="401:19" pos:end="401:19">=</operator> <name pos:start="401:21" pos:end="401:28"><name pos:start="401:21" pos:end="401:25">nodes</name><index pos:start="401:26" pos:end="401:28">[<expr pos:start="401:27" pos:end="401:27"><literal type="number" pos:start="401:27" pos:end="401:27">0</literal></expr>]</index></name><operator pos:start="401:29" pos:end="401:30">-&gt;</operator><name pos:start="401:31" pos:end="401:34">step</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="403:5" pos:end="403:35"><expr pos:start="403:5" pos:end="403:34"><name pos:start="403:5" pos:end="403:11"><name pos:start="403:5" pos:end="403:5">c</name><operator pos:start="403:6" pos:end="403:7">-&gt;</operator><name pos:start="403:8" pos:end="403:11">step</name></name>       <operator pos:start="403:19" pos:end="403:19">=</operator> <name pos:start="403:21" pos:end="403:28"><name pos:start="403:21" pos:end="403:25">nodes</name><index pos:start="403:26" pos:end="403:28">[<expr pos:start="403:27" pos:end="403:27"><literal type="number" pos:start="403:27" pos:end="403:27">0</literal></expr>]</index></name><operator pos:start="403:29" pos:end="403:30">-&gt;</operator><name pos:start="403:31" pos:end="403:34">step</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="405:5" pos:end="405:35"><expr pos:start="405:5" pos:end="405:34"><name pos:start="405:5" pos:end="405:13"><name pos:start="405:5" pos:end="405:5">c</name><operator pos:start="405:6" pos:end="405:7">-&gt;</operator><name pos:start="405:8" pos:end="405:13">idelta</name></name>     <operator pos:start="405:19" pos:end="405:19">=</operator> <name pos:start="405:21" pos:end="405:28"><name pos:start="405:21" pos:end="405:25">nodes</name><index pos:start="405:26" pos:end="405:28">[<expr pos:start="405:27" pos:end="405:27"><literal type="number" pos:start="405:27" pos:end="405:27">0</literal></expr>]</index></name><operator pos:start="405:29" pos:end="405:30">-&gt;</operator><name pos:start="405:31" pos:end="405:34">step</name></expr>;</expr_stmt>
+
+</block_content>}</block></function>
+</unit>

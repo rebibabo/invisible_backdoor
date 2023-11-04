@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/1/24243.c" pos:tabs="8"><function pos:start="1:1" pos:end="65:1"><type pos:start="1:1" pos:end="1:10"><specifier pos:start="1:1" pos:end="1:6">static</specifier> <name pos:start="1:8" pos:end="1:10">int</name></type> <name pos:start="1:12" pos:end="1:34">colo_packet_compare_udp</name><parameter_list pos:start="1:35" pos:end="1:62">(<parameter pos:start="1:36" pos:end="1:47"><decl pos:start="1:36" pos:end="1:47"><type pos:start="1:36" pos:end="1:47"><name pos:start="1:36" pos:end="1:41">Packet</name> <modifier pos:start="1:43" pos:end="1:43">*</modifier></type><name pos:start="1:44" pos:end="1:47">spkt</name></decl></parameter>, <parameter pos:start="1:50" pos:end="1:61"><decl pos:start="1:50" pos:end="1:61"><type pos:start="1:50" pos:end="1:61"><name pos:start="1:50" pos:end="1:55">Packet</name> <modifier pos:start="1:57" pos:end="1:57">*</modifier></type><name pos:start="1:58" pos:end="1:61">ppkt</name></decl></parameter>)</parameter_list>
+
+<block pos:start="3:1" pos:end="65:1">{<block_content pos:start="5:5" pos:end="63:15">
+
+    <decl_stmt pos:start="5:5" pos:end="5:12"><decl pos:start="5:5" pos:end="5:11"><type pos:start="5:5" pos:end="5:7"><name pos:start="5:5" pos:end="5:7">int</name></type> <name pos:start="5:9" pos:end="5:11">ret</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="7:5" pos:end="7:52"><decl pos:start="7:5" pos:end="7:51"><type pos:start="7:5" pos:end="7:7"><name pos:start="7:5" pos:end="7:7">int</name></type> <name pos:start="7:9" pos:end="7:29">network_header_length</name> <init pos:start="7:31" pos:end="7:51">= <expr pos:start="7:33" pos:end="7:51"><name pos:start="7:33" pos:end="7:47"><name pos:start="7:33" pos:end="7:36">ppkt</name><operator pos:start="7:37" pos:end="7:38">-&gt;</operator><name pos:start="7:39" pos:end="7:40">ip</name><operator pos:start="7:41" pos:end="7:42">-&gt;</operator><name pos:start="7:43" pos:end="7:47">ip_hl</name></name> <operator pos:start="7:49" pos:end="7:49">*</operator> <literal type="number" pos:start="7:51" pos:end="7:51">4</literal></expr></init></decl>;</decl_stmt>
+
+
+
+    <expr_stmt pos:start="11:5" pos:end="11:43"><expr pos:start="11:5" pos:end="11:42"><call pos:start="11:5" pos:end="11:42"><name pos:start="11:5" pos:end="11:27">trace_colo_compare_main</name><argument_list pos:start="11:28" pos:end="11:42">(<argument pos:start="11:29" pos:end="11:41"><expr pos:start="11:29" pos:end="11:41"><literal type="string" pos:start="11:29" pos:end="11:41">"compare udp"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="15:5" pos:end="33:7">/*
+
+     * Because of ppkt and spkt are both in the same connection,
+
+     * The ppkt's src ip, dst ip, src port, dst port, ip_proto all are
+
+     * same with spkt. In addition, IP header's Identification is a random
+
+     * field, we can handle it in IP fragmentation function later.
+
+     * COLO just concern the response net packet payload from primary guest
+
+     * and secondary guest are same or not, So we ignored all IP header include
+
+     * other field like TOS,TTL,IP Checksum. we only need to compare
+
+     * the ip payload here.
+
+     */</comment>
+
+    <expr_stmt pos:start="35:5" pos:end="37:71"><expr pos:start="35:5" pos:end="37:70"><name pos:start="35:5" pos:end="35:7">ret</name> <operator pos:start="35:9" pos:end="35:9">=</operator> <call pos:start="35:11" pos:end="37:70"><name pos:start="35:11" pos:end="35:36">colo_packet_compare_common</name><argument_list pos:start="35:37" pos:end="37:70">(<argument pos:start="35:38" pos:end="35:41"><expr pos:start="35:38" pos:end="35:41"><name pos:start="35:38" pos:end="35:41">ppkt</name></expr></argument>, <argument pos:start="35:44" pos:end="35:47"><expr pos:start="35:44" pos:end="35:47"><name pos:start="35:44" pos:end="35:47">spkt</name></expr></argument>,
+
+                                     <argument pos:start="37:38" pos:end="37:69"><expr pos:start="37:38" pos:end="37:69"><name pos:start="37:38" pos:end="37:58">network_header_length</name> <operator pos:start="37:60" pos:end="37:60">+</operator> <name pos:start="37:62" pos:end="37:69">ETH_HLEN</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="41:5" pos:end="59:5"><if pos:start="41:5" pos:end="59:5">if <condition pos:start="41:8" pos:end="41:12">(<expr pos:start="41:9" pos:end="41:11"><name pos:start="41:9" pos:end="41:11">ret</name></expr>)</condition> <block pos:start="41:14" pos:end="59:5">{<block_content pos:start="43:9" pos:end="57:9">
+
+        <expr_stmt pos:start="43:9" pos:end="43:74"><expr pos:start="43:9" pos:end="43:73"><call pos:start="43:9" pos:end="43:73"><name pos:start="43:9" pos:end="43:41">trace_colo_compare_udp_miscompare</name><argument_list pos:start="43:42" pos:end="43:73">(<argument pos:start="43:43" pos:end="43:60"><expr pos:start="43:43" pos:end="43:60"><literal type="string" pos:start="43:43" pos:end="43:60">"primary pkt size"</literal></expr></argument>, <argument pos:start="43:63" pos:end="43:72"><expr pos:start="43:63" pos:end="43:72"><name pos:start="43:63" pos:end="43:72"><name pos:start="43:63" pos:end="43:66">ppkt</name><operator pos:start="43:67" pos:end="43:68">-&gt;</operator><name pos:start="43:69" pos:end="43:72">size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="45:9" pos:end="45:76"><expr pos:start="45:9" pos:end="45:75"><call pos:start="45:9" pos:end="45:75"><name pos:start="45:9" pos:end="45:41">trace_colo_compare_udp_miscompare</name><argument_list pos:start="45:42" pos:end="45:75">(<argument pos:start="45:43" pos:end="45:62"><expr pos:start="45:43" pos:end="45:62"><literal type="string" pos:start="45:43" pos:end="45:62">"Secondary pkt size"</literal></expr></argument>, <argument pos:start="45:65" pos:end="45:74"><expr pos:start="45:65" pos:end="45:74"><name pos:start="45:65" pos:end="45:74"><name pos:start="45:65" pos:end="45:68">spkt</name><operator pos:start="45:69" pos:end="45:70">-&gt;</operator><name pos:start="45:71" pos:end="45:74">size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <if_stmt pos:start="47:9" pos:end="57:9"><if pos:start="47:9" pos:end="57:9">if <condition pos:start="47:12" pos:end="47:65">(<expr pos:start="47:13" pos:end="47:64"><call pos:start="47:13" pos:end="47:64"><name pos:start="47:13" pos:end="47:33">trace_event_get_state</name><argument_list pos:start="47:34" pos:end="47:64">(<argument pos:start="47:35" pos:end="47:63"><expr pos:start="47:35" pos:end="47:63"><name pos:start="47:35" pos:end="47:63">TRACE_COLO_COMPARE_MISCOMPARE</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="47:67" pos:end="57:9">{<block_content pos:start="49:13" pos:end="55:37">
+
+            <expr_stmt pos:start="49:13" pos:end="51:37"><expr pos:start="49:13" pos:end="51:36"><call pos:start="49:13" pos:end="51:36"><name pos:start="49:13" pos:end="49:24">qemu_hexdump</name><argument_list pos:start="49:25" pos:end="51:36">(<argument pos:start="49:26" pos:end="49:43"><expr pos:start="49:26" pos:end="49:43"><operator pos:start="49:26" pos:end="49:26">(</operator><name pos:start="49:27" pos:end="49:30">char</name> <operator pos:start="49:32" pos:end="49:32">*</operator><operator pos:start="49:33" pos:end="49:33">)</operator><name pos:start="49:34" pos:end="49:43"><name pos:start="49:34" pos:end="49:37">ppkt</name><operator pos:start="49:38" pos:end="49:39">-&gt;</operator><name pos:start="49:40" pos:end="49:43">data</name></name></expr></argument>, <argument pos:start="49:46" pos:end="49:51"><expr pos:start="49:46" pos:end="49:51"><name pos:start="49:46" pos:end="49:51">stderr</name></expr></argument>, <argument pos:start="49:54" pos:end="49:75"><expr pos:start="49:54" pos:end="49:75"><literal type="string" pos:start="49:54" pos:end="49:75">"colo-compare pri pkt"</literal></expr></argument>,
+
+                         <argument pos:start="51:26" pos:end="51:35"><expr pos:start="51:26" pos:end="51:35"><name pos:start="51:26" pos:end="51:35"><name pos:start="51:26" pos:end="51:29">ppkt</name><operator pos:start="51:30" pos:end="51:31">-&gt;</operator><name pos:start="51:32" pos:end="51:35">size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="53:13" pos:end="55:37"><expr pos:start="53:13" pos:end="55:36"><call pos:start="53:13" pos:end="55:36"><name pos:start="53:13" pos:end="53:24">qemu_hexdump</name><argument_list pos:start="53:25" pos:end="55:36">(<argument pos:start="53:26" pos:end="53:43"><expr pos:start="53:26" pos:end="53:43"><operator pos:start="53:26" pos:end="53:26">(</operator><name pos:start="53:27" pos:end="53:30">char</name> <operator pos:start="53:32" pos:end="53:32">*</operator><operator pos:start="53:33" pos:end="53:33">)</operator><name pos:start="53:34" pos:end="53:43"><name pos:start="53:34" pos:end="53:37">spkt</name><operator pos:start="53:38" pos:end="53:39">-&gt;</operator><name pos:start="53:40" pos:end="53:43">data</name></name></expr></argument>, <argument pos:start="53:46" pos:end="53:51"><expr pos:start="53:46" pos:end="53:51"><name pos:start="53:46" pos:end="53:51">stderr</name></expr></argument>, <argument pos:start="53:54" pos:end="53:75"><expr pos:start="53:54" pos:end="53:75"><literal type="string" pos:start="53:54" pos:end="53:75">"colo-compare sec pkt"</literal></expr></argument>,
+
+                         <argument pos:start="55:26" pos:end="55:35"><expr pos:start="55:26" pos:end="55:35"><name pos:start="55:26" pos:end="55:35"><name pos:start="55:26" pos:end="55:29">spkt</name><operator pos:start="55:30" pos:end="55:31">-&gt;</operator><name pos:start="55:32" pos:end="55:35">size</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <return pos:start="63:5" pos:end="63:15">return <expr pos:start="63:12" pos:end="63:14"><name pos:start="63:12" pos:end="63:14">ret</name></expr>;</return>
+
+</block_content>}</block></function>
+</unit>

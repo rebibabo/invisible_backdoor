@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" xmlns:cpp="http://www.srcML.org/srcML/cpp" xmlns:pos="http://www.srcML.org/srcML/position" revision="1.0.0" language="C" filename="dataset/ropgen/aug/0/14811.c" pos:tabs="8"><macro pos:start="1:1" pos:end="3:46"><name pos:start="1:1" pos:end="1:30">gen_intermediate_code_internal</name><argument_list pos:start="1:31" pos:end="3:46">(<argument pos:start="1:32" pos:end="1:43">CRISCPU *cpu</argument>, <argument pos:start="1:46" pos:end="1:65">TranslationBlock *tb</argument>,
+
+                               <argument pos:start="3:32" pos:end="3:45">bool search_pc</argument>)</argument_list></macro>
+
+<block pos:start="5:1" pos:end="505:1">{<block_content pos:start="7:5" pos:end="504:0">
+
+    <decl_stmt pos:start="7:5" pos:end="7:28"><decl pos:start="7:5" pos:end="7:27"><type pos:start="7:5" pos:end="7:14"><name pos:start="7:5" pos:end="7:12">CPUState</name> <modifier pos:start="7:14" pos:end="7:14">*</modifier></type><name pos:start="7:15" pos:end="7:16">cs</name> <init pos:start="7:18" pos:end="7:27">= <expr pos:start="7:20" pos:end="7:27"><call pos:start="7:20" pos:end="7:27"><name pos:start="7:20" pos:end="7:22">CPU</name><argument_list pos:start="7:23" pos:end="7:27">(<argument pos:start="7:24" pos:end="7:26"><expr pos:start="7:24" pos:end="7:26"><name pos:start="7:24" pos:end="7:26">cpu</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="9:5" pos:end="9:34"><decl pos:start="9:5" pos:end="9:33"><type pos:start="9:5" pos:end="9:18"><name pos:start="9:5" pos:end="9:16">CPUCRISState</name> <modifier pos:start="9:18" pos:end="9:18">*</modifier></type><name pos:start="9:19" pos:end="9:21">env</name> <init pos:start="9:23" pos:end="9:33">= <expr pos:start="9:25" pos:end="9:33"><operator pos:start="9:25" pos:end="9:25">&amp;</operator><name pos:start="9:26" pos:end="9:33"><name pos:start="9:26" pos:end="9:28">cpu</name><operator pos:start="9:29" pos:end="9:30">-&gt;</operator><name pos:start="9:31" pos:end="9:33">env</name></name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="11:5" pos:end="11:22"><decl pos:start="11:5" pos:end="11:21"><type pos:start="11:5" pos:end="11:12"><name pos:start="11:5" pos:end="11:12">uint32_t</name></type> <name pos:start="11:14" pos:end="11:21">pc_start</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="13:5" pos:end="13:26"><decl pos:start="13:5" pos:end="13:25"><type pos:start="13:5" pos:end="13:16"><name pos:start="13:5" pos:end="13:12">unsigned</name> <name pos:start="13:14" pos:end="13:16">int</name></type> <name pos:start="13:18" pos:end="13:25">insn_len</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="15:5" pos:end="15:14"><decl pos:start="15:5" pos:end="15:9"><type pos:start="15:5" pos:end="15:7"><name pos:start="15:5" pos:end="15:7">int</name></type> <name pos:start="15:9" pos:end="15:9">j</name></decl>, <decl pos:start="15:12" pos:end="15:13"><type ref="prev" pos:start="15:5" pos:end="15:7"/><name pos:start="15:12" pos:end="15:13">lj</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="17:5" pos:end="17:28"><decl pos:start="17:5" pos:end="17:27"><type pos:start="17:5" pos:end="17:23"><name pos:start="17:5" pos:end="17:23"><name pos:start="17:5" pos:end="17:10">struct</name> <name pos:start="17:12" pos:end="17:23">DisasContext</name></name></type> <name pos:start="17:25" pos:end="17:27">ctx</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="19:5" pos:end="19:35"><decl pos:start="19:5" pos:end="19:34"><type pos:start="19:5" pos:end="19:25"><name pos:start="19:5" pos:end="19:23"><name pos:start="19:5" pos:end="19:10">struct</name> <name pos:start="19:12" pos:end="19:23">DisasContext</name></name> <modifier pos:start="19:25" pos:end="19:25">*</modifier></type><name pos:start="19:26" pos:end="19:27">dc</name> <init pos:start="19:29" pos:end="19:34">= <expr pos:start="19:31" pos:end="19:34"><operator pos:start="19:31" pos:end="19:31">&amp;</operator><name pos:start="19:32" pos:end="19:34">ctx</name></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="21:5" pos:end="21:29"><decl pos:start="21:5" pos:end="21:28"><type pos:start="21:5" pos:end="21:12"><name pos:start="21:5" pos:end="21:12">uint32_t</name></type> <name pos:start="21:14" pos:end="21:28">next_page_start</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="23:5" pos:end="23:21"><decl pos:start="23:5" pos:end="23:20"><type pos:start="23:5" pos:end="23:16"><name pos:start="23:5" pos:end="23:16">target_ulong</name></type> <name pos:start="23:18" pos:end="23:20">npc</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="25:5" pos:end="25:18"><decl pos:start="25:5" pos:end="25:17"><type pos:start="25:5" pos:end="25:7"><name pos:start="25:5" pos:end="25:7">int</name></type> <name pos:start="25:9" pos:end="25:17">num_insns</name></decl>;</decl_stmt>
+
+    <decl_stmt pos:start="27:5" pos:end="27:18"><decl pos:start="27:5" pos:end="27:17"><type pos:start="27:5" pos:end="27:7"><name pos:start="27:5" pos:end="27:7">int</name></type> <name pos:start="27:9" pos:end="27:17">max_insns</name></decl>;</decl_stmt>
+
+
+
+    <if_stmt pos:start="31:5" pos:end="43:5"><if pos:start="31:5" pos:end="37:5">if <condition pos:start="31:8" pos:end="31:32">(<expr pos:start="31:9" pos:end="31:31"><name pos:start="31:9" pos:end="31:25"><name pos:start="31:9" pos:end="31:11">env</name><operator pos:start="31:12" pos:end="31:13">-&gt;</operator><name pos:start="31:14" pos:end="31:18">pregs</name><index pos:start="31:19" pos:end="31:25">[<expr pos:start="31:20" pos:end="31:24"><name pos:start="31:20" pos:end="31:24">PR_VR</name></expr>]</index></name> <operator pos:start="31:27" pos:end="31:28">==</operator> <literal type="number" pos:start="31:30" pos:end="31:31">32</literal></expr>)</condition> <block pos:start="31:34" pos:end="37:5">{<block_content pos:start="33:9" pos:end="35:33">
+
+        <expr_stmt pos:start="33:9" pos:end="33:38"><expr pos:start="33:9" pos:end="33:37"><name pos:start="33:9" pos:end="33:19"><name pos:start="33:9" pos:end="33:10">dc</name><operator pos:start="33:11" pos:end="33:12">-&gt;</operator><name pos:start="33:13" pos:end="33:19">decoder</name></name> <operator pos:start="33:21" pos:end="33:21">=</operator> <name pos:start="33:23" pos:end="33:37">crisv32_decoder</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="35:9" pos:end="35:33"><expr pos:start="35:9" pos:end="35:32"><name pos:start="35:9" pos:end="35:28"><name pos:start="35:9" pos:end="35:10">dc</name><operator pos:start="35:11" pos:end="35:12">-&gt;</operator><name pos:start="35:13" pos:end="35:28">clear_locked_irq</name></name> <operator pos:start="35:30" pos:end="35:30">=</operator> <literal type="number" pos:start="35:32" pos:end="35:32">0</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="37:7" pos:end="43:5">else <block pos:start="37:12" pos:end="43:5">{<block_content pos:start="39:9" pos:end="41:33">
+
+        <expr_stmt pos:start="39:9" pos:end="39:38"><expr pos:start="39:9" pos:end="39:37"><name pos:start="39:9" pos:end="39:19"><name pos:start="39:9" pos:end="39:10">dc</name><operator pos:start="39:11" pos:end="39:12">-&gt;</operator><name pos:start="39:13" pos:end="39:19">decoder</name></name> <operator pos:start="39:21" pos:end="39:21">=</operator> <name pos:start="39:23" pos:end="39:37">crisv10_decoder</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="41:9" pos:end="41:33"><expr pos:start="41:9" pos:end="41:32"><name pos:start="41:9" pos:end="41:28"><name pos:start="41:9" pos:end="41:10">dc</name><operator pos:start="41:11" pos:end="41:12">-&gt;</operator><name pos:start="41:13" pos:end="41:28">clear_locked_irq</name></name> <operator pos:start="41:30" pos:end="41:30">=</operator> <literal type="number" pos:start="41:32" pos:end="41:32">1</literal></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <comment type="block" pos:start="47:5" pos:end="51:7">/* Odd PC indicates that branch is rexecuting due to exception in the
+
+     * delayslot, like in real hw.
+
+     */</comment>
+
+    <expr_stmt pos:start="53:5" pos:end="53:27"><expr pos:start="53:5" pos:end="53:26"><name pos:start="53:5" pos:end="53:12">pc_start</name> <operator pos:start="53:14" pos:end="53:14">=</operator> <name pos:start="53:16" pos:end="53:21"><name pos:start="53:16" pos:end="53:17">tb</name><operator pos:start="53:18" pos:end="53:19">-&gt;</operator><name pos:start="53:20" pos:end="53:21">pc</name></name> <operator pos:start="53:23" pos:end="53:23">&amp;</operator> <operator pos:start="53:25" pos:end="53:25">~</operator><literal type="number" pos:start="53:26" pos:end="53:26">1</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="55:5" pos:end="55:18"><expr pos:start="55:5" pos:end="55:17"><name pos:start="55:5" pos:end="55:11"><name pos:start="55:5" pos:end="55:6">dc</name><operator pos:start="55:7" pos:end="55:8">-&gt;</operator><name pos:start="55:9" pos:end="55:11">cpu</name></name> <operator pos:start="55:13" pos:end="55:13">=</operator> <name pos:start="55:15" pos:end="55:17">cpu</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="57:5" pos:end="57:16"><expr pos:start="57:5" pos:end="57:15"><name pos:start="57:5" pos:end="57:10"><name pos:start="57:5" pos:end="57:6">dc</name><operator pos:start="57:7" pos:end="57:8">-&gt;</operator><name pos:start="57:9" pos:end="57:10">tb</name></name> <operator pos:start="57:12" pos:end="57:12">=</operator> <name pos:start="57:14" pos:end="57:15">tb</name></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="61:5" pos:end="61:28"><expr pos:start="61:5" pos:end="61:27"><name pos:start="61:5" pos:end="61:14"><name pos:start="61:5" pos:end="61:6">dc</name><operator pos:start="61:7" pos:end="61:8">-&gt;</operator><name pos:start="61:9" pos:end="61:14">is_jmp</name></name> <operator pos:start="61:16" pos:end="61:16">=</operator> <name pos:start="61:18" pos:end="61:27">DISAS_NEXT</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="63:5" pos:end="63:23"><expr pos:start="63:5" pos:end="63:22"><name pos:start="63:5" pos:end="63:11"><name pos:start="63:5" pos:end="63:6">dc</name><operator pos:start="63:7" pos:end="63:8">-&gt;</operator><name pos:start="63:9" pos:end="63:11">ppc</name></name> <operator pos:start="63:13" pos:end="63:13">=</operator> <name pos:start="63:15" pos:end="63:22">pc_start</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="65:5" pos:end="65:22"><expr pos:start="65:5" pos:end="65:21"><name pos:start="65:5" pos:end="65:10"><name pos:start="65:5" pos:end="65:6">dc</name><operator pos:start="65:7" pos:end="65:8">-&gt;</operator><name pos:start="65:9" pos:end="65:10">pc</name></name> <operator pos:start="65:12" pos:end="65:12">=</operator> <name pos:start="65:14" pos:end="65:21">pc_start</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="67:5" pos:end="67:52"><expr pos:start="67:5" pos:end="67:51"><name pos:start="67:5" pos:end="67:26"><name pos:start="67:5" pos:end="67:6">dc</name><operator pos:start="67:7" pos:end="67:8">-&gt;</operator><name pos:start="67:9" pos:end="67:26">singlestep_enabled</name></name> <operator pos:start="67:28" pos:end="67:28">=</operator> <name pos:start="67:30" pos:end="67:51"><name pos:start="67:30" pos:end="67:31">cs</name><operator pos:start="67:32" pos:end="67:33">-&gt;</operator><name pos:start="67:34" pos:end="67:51">singlestep_enabled</name></name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="69:5" pos:end="69:27"><expr pos:start="69:5" pos:end="69:26"><name pos:start="69:5" pos:end="69:22"><name pos:start="69:5" pos:end="69:6">dc</name><operator pos:start="69:7" pos:end="69:8">-&gt;</operator><name pos:start="69:9" pos:end="69:22">flags_uptodate</name></name> <operator pos:start="69:24" pos:end="69:24">=</operator> <literal type="number" pos:start="69:26" pos:end="69:26">1</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="71:5" pos:end="71:24"><expr pos:start="71:5" pos:end="71:23"><name pos:start="71:5" pos:end="71:19"><name pos:start="71:5" pos:end="71:6">dc</name><operator pos:start="71:7" pos:end="71:8">-&gt;</operator><name pos:start="71:9" pos:end="71:19">flagx_known</name></name> <operator pos:start="71:21" pos:end="71:21">=</operator> <literal type="number" pos:start="71:23" pos:end="71:23">1</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="73:5" pos:end="73:37"><expr pos:start="73:5" pos:end="73:36"><name pos:start="73:5" pos:end="73:15"><name pos:start="73:5" pos:end="73:6">dc</name><operator pos:start="73:7" pos:end="73:8">-&gt;</operator><name pos:start="73:9" pos:end="73:15">flags_x</name></name> <operator pos:start="73:17" pos:end="73:17">=</operator> <name pos:start="73:19" pos:end="73:27"><name pos:start="73:19" pos:end="73:20">tb</name><operator pos:start="73:21" pos:end="73:22">-&gt;</operator><name pos:start="73:23" pos:end="73:27">flags</name></name> <operator pos:start="73:29" pos:end="73:29">&amp;</operator> <name pos:start="73:31" pos:end="73:36">X_FLAG</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="75:5" pos:end="75:26"><expr pos:start="75:5" pos:end="75:25"><name pos:start="75:5" pos:end="75:21"><name pos:start="75:5" pos:end="75:6">dc</name><operator pos:start="75:7" pos:end="75:8">-&gt;</operator><name pos:start="75:9" pos:end="75:21">cc_x_uptodate</name></name> <operator pos:start="75:23" pos:end="75:23">=</operator> <literal type="number" pos:start="75:25" pos:end="75:25">0</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="77:5" pos:end="77:20"><expr pos:start="77:5" pos:end="77:19"><name pos:start="77:5" pos:end="77:15"><name pos:start="77:5" pos:end="77:6">dc</name><operator pos:start="77:7" pos:end="77:8">-&gt;</operator><name pos:start="77:9" pos:end="77:15">cc_mask</name></name> <operator pos:start="77:17" pos:end="77:17">=</operator> <literal type="number" pos:start="77:19" pos:end="77:19">0</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="79:5" pos:end="79:22"><expr pos:start="79:5" pos:end="79:21"><name pos:start="79:5" pos:end="79:17"><name pos:start="79:5" pos:end="79:6">dc</name><operator pos:start="79:7" pos:end="79:8">-&gt;</operator><name pos:start="79:9" pos:end="79:17">update_cc</name></name> <operator pos:start="79:19" pos:end="79:19">=</operator> <literal type="number" pos:start="79:21" pos:end="79:21">0</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="81:5" pos:end="81:25"><expr pos:start="81:5" pos:end="81:24"><name pos:start="81:5" pos:end="81:20"><name pos:start="81:5" pos:end="81:6">dc</name><operator pos:start="81:7" pos:end="81:8">-&gt;</operator><name pos:start="81:9" pos:end="81:20">clear_prefix</name></name> <operator pos:start="81:22" pos:end="81:22">=</operator> <literal type="number" pos:start="81:24" pos:end="81:24">0</literal></expr>;</expr_stmt>
+
+
+
+    <expr_stmt pos:start="85:5" pos:end="85:42"><expr pos:start="85:5" pos:end="85:41"><call pos:start="85:5" pos:end="85:41"><name pos:start="85:5" pos:end="85:21">cris_update_cc_op</name><argument_list pos:start="85:22" pos:end="85:41">(<argument pos:start="85:23" pos:end="85:24"><expr pos:start="85:23" pos:end="85:24"><name pos:start="85:23" pos:end="85:24">dc</name></expr></argument>, <argument pos:start="85:27" pos:end="85:37"><expr pos:start="85:27" pos:end="85:37"><name pos:start="85:27" pos:end="85:37">CC_OP_FLAGS</name></expr></argument>, <argument pos:start="85:40" pos:end="85:40"><expr pos:start="85:40" pos:end="85:40"><literal type="number" pos:start="85:40" pos:end="85:40">4</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="87:5" pos:end="87:30"><expr pos:start="87:5" pos:end="87:29"><name pos:start="87:5" pos:end="87:24"><name pos:start="87:5" pos:end="87:6">dc</name><operator pos:start="87:7" pos:end="87:8">-&gt;</operator><name pos:start="87:9" pos:end="87:24">cc_size_uptodate</name></name> <operator pos:start="87:26" pos:end="87:26">=</operator> <operator pos:start="87:28" pos:end="87:28">-</operator><literal type="number" pos:start="87:29" pos:end="87:29">1</literal></expr>;</expr_stmt>
+
+
+
+    <comment type="block" pos:start="91:5" pos:end="91:27">/* Decode TB flags.  */</comment>
+
+    <expr_stmt pos:start="93:5" pos:end="95:34"><expr pos:start="93:5" pos:end="95:33"><name pos:start="93:5" pos:end="93:16"><name pos:start="93:5" pos:end="93:6">dc</name><operator pos:start="93:7" pos:end="93:8">-&gt;</operator><name pos:start="93:9" pos:end="93:16">tb_flags</name></name> <operator pos:start="93:18" pos:end="93:18">=</operator> <name pos:start="93:20" pos:end="93:28"><name pos:start="93:20" pos:end="93:21">tb</name><operator pos:start="93:22" pos:end="93:23">-&gt;</operator><name pos:start="93:24" pos:end="93:28">flags</name></name> <operator pos:start="93:30" pos:end="93:30">&amp;</operator> <operator pos:start="93:32" pos:end="93:32">(</operator><name pos:start="93:33" pos:end="93:38">S_FLAG</name> <operator pos:start="93:40" pos:end="93:40">|</operator> <name pos:start="93:42" pos:end="93:47">P_FLAG</name> <operator pos:start="93:49" pos:end="93:49">|</operator> <name pos:start="93:51" pos:end="93:56">U_FLAG</name> \
+
+            <operator pos:start="95:13" pos:end="95:13">|</operator> <name pos:start="95:15" pos:end="95:20">X_FLAG</name> <operator pos:start="95:22" pos:end="95:22">|</operator> <name pos:start="95:24" pos:end="95:32">PFIX_FLAG</name><operator pos:start="95:33" pos:end="95:33">)</operator></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="97:5" pos:end="97:43"><expr pos:start="97:5" pos:end="97:42"><name pos:start="97:5" pos:end="97:22"><name pos:start="97:5" pos:end="97:6">dc</name><operator pos:start="97:7" pos:end="97:8">-&gt;</operator><name pos:start="97:9" pos:end="97:22">delayed_branch</name></name> <operator pos:start="97:24" pos:end="97:24">=</operator> <operator pos:start="97:26" pos:end="97:26">!</operator><operator pos:start="97:27" pos:end="97:27">!</operator><operator pos:start="97:28" pos:end="97:28">(</operator><name pos:start="97:29" pos:end="97:37"><name pos:start="97:29" pos:end="97:30">tb</name><operator pos:start="97:31" pos:end="97:32">-&gt;</operator><name pos:start="97:33" pos:end="97:37">flags</name></name> <operator pos:start="97:39" pos:end="97:39">&amp;</operator> <literal type="number" pos:start="97:41" pos:end="97:41">7</literal><operator pos:start="97:42" pos:end="97:42">)</operator></expr>;</expr_stmt>
+
+    <if_stmt pos:start="99:5" pos:end="107:5"><if pos:start="99:5" pos:end="103:5">if <condition pos:start="99:8" pos:end="99:27">(<expr pos:start="99:9" pos:end="99:26"><name pos:start="99:9" pos:end="99:26"><name pos:start="99:9" pos:end="99:10">dc</name><operator pos:start="99:11" pos:end="99:12">-&gt;</operator><name pos:start="99:13" pos:end="99:26">delayed_branch</name></name></expr>)</condition> <block pos:start="99:29" pos:end="103:5">{<block_content pos:start="101:9" pos:end="101:31">
+
+        <expr_stmt pos:start="101:9" pos:end="101:31"><expr pos:start="101:9" pos:end="101:30"><name pos:start="101:9" pos:end="101:15"><name pos:start="101:9" pos:end="101:10">dc</name><operator pos:start="101:11" pos:end="101:12">-&gt;</operator><name pos:start="101:13" pos:end="101:15">jmp</name></name> <operator pos:start="101:17" pos:end="101:17">=</operator> <name pos:start="101:19" pos:end="101:30">JMP_INDIRECT</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="103:7" pos:end="107:5">else <block pos:start="103:12" pos:end="107:5">{<block_content pos:start="105:9" pos:end="105:28">
+
+        <expr_stmt pos:start="105:9" pos:end="105:28"><expr pos:start="105:9" pos:end="105:27"><name pos:start="105:9" pos:end="105:15"><name pos:start="105:9" pos:end="105:10">dc</name><operator pos:start="105:11" pos:end="105:12">-&gt;</operator><name pos:start="105:13" pos:end="105:15">jmp</name></name> <operator pos:start="105:17" pos:end="105:17">=</operator> <name pos:start="105:19" pos:end="105:27">JMP_NOJMP</name></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+    <expr_stmt pos:start="111:5" pos:end="111:29"><expr pos:start="111:5" pos:end="111:28"><name pos:start="111:5" pos:end="111:24"><name pos:start="111:5" pos:end="111:6">dc</name><operator pos:start="111:7" pos:end="111:8">-&gt;</operator><name pos:start="111:9" pos:end="111:24">cpustate_changed</name></name> <operator pos:start="111:26" pos:end="111:26">=</operator> <literal type="number" pos:start="111:28" pos:end="111:28">0</literal></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="115:5" pos:end="157:5"><if pos:start="115:5" pos:end="157:5">if <condition pos:start="115:8" pos:end="115:46">(<expr pos:start="115:9" pos:end="115:45"><call pos:start="115:9" pos:end="115:45"><name pos:start="115:9" pos:end="115:26">qemu_loglevel_mask</name><argument_list pos:start="115:27" pos:end="115:45">(<argument pos:start="115:28" pos:end="115:44"><expr pos:start="115:28" pos:end="115:44"><name pos:start="115:28" pos:end="115:44">CPU_LOG_TB_IN_ASM</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="115:48" pos:end="157:5">{<block_content pos:start="117:9" pos:end="155:54">
+
+        <expr_stmt pos:start="117:9" pos:end="151:46"><expr pos:start="117:9" pos:end="151:45"><call pos:start="117:9" pos:end="151:45"><name pos:start="117:9" pos:end="117:16">qemu_log</name><argument_list pos:start="117:17" pos:end="151:45">(
+
+                <argument pos:start="119:17" pos:end="129:31"><expr pos:start="119:17" pos:end="129:31"><literal type="string" pos:start="119:17" pos:end="119:40">"srch=%d pc=%x %x flg=%"</literal> <name pos:start="119:42" pos:end="119:47">PRIx64</name> <literal type="string" pos:start="119:49" pos:end="119:71">" bt=%x ds=%u ccs=%x\n"</literal>
+
+                <literal type="string" pos:start="121:17" pos:end="121:33">"pid=%x usp=%x\n"</literal>
+
+                <literal type="string" pos:start="123:17" pos:end="123:31">"%x.%x.%x.%x\n"</literal>
+
+                <literal type="string" pos:start="125:17" pos:end="125:31">"%x.%x.%x.%x\n"</literal>
+
+                <literal type="string" pos:start="127:17" pos:end="127:31">"%x.%x.%x.%x\n"</literal>
+
+                <literal type="string" pos:start="129:17" pos:end="129:31">"%x.%x.%x.%x\n"</literal></expr></argument>,
+
+                <argument pos:start="131:17" pos:end="131:25"><expr pos:start="131:17" pos:end="131:25"><name pos:start="131:17" pos:end="131:25">search_pc</name></expr></argument>, <argument pos:start="131:28" pos:end="131:33"><expr pos:start="131:28" pos:end="131:33"><name pos:start="131:28" pos:end="131:33"><name pos:start="131:28" pos:end="131:29">dc</name><operator pos:start="131:30" pos:end="131:31">-&gt;</operator><name pos:start="131:32" pos:end="131:33">pc</name></name></expr></argument>, <argument pos:start="131:36" pos:end="131:42"><expr pos:start="131:36" pos:end="131:42"><name pos:start="131:36" pos:end="131:42"><name pos:start="131:36" pos:end="131:37">dc</name><operator pos:start="131:38" pos:end="131:39">-&gt;</operator><name pos:start="131:40" pos:end="131:42">ppc</name></name></expr></argument>,
+
+                <argument pos:start="133:17" pos:end="133:35"><expr pos:start="133:17" pos:end="133:35"><operator pos:start="133:17" pos:end="133:17">(</operator><name pos:start="133:18" pos:end="133:25">uint64_t</name><operator pos:start="133:26" pos:end="133:26">)</operator><name pos:start="133:27" pos:end="133:35"><name pos:start="133:27" pos:end="133:28">tb</name><operator pos:start="133:29" pos:end="133:30">-&gt;</operator><name pos:start="133:31" pos:end="133:35">flags</name></name></expr></argument>,
+
+                <argument pos:start="135:17" pos:end="135:28"><expr pos:start="135:17" pos:end="135:28"><name pos:start="135:17" pos:end="135:28"><name pos:start="135:17" pos:end="135:19">env</name><operator pos:start="135:20" pos:end="135:21">-&gt;</operator><name pos:start="135:22" pos:end="135:28">btarget</name></name></expr></argument>, <argument pos:start="135:31" pos:end="135:53"><expr pos:start="135:31" pos:end="135:53"><operator pos:start="135:31" pos:end="135:31">(</operator><name pos:start="135:32" pos:end="135:39">unsigned</name><operator pos:start="135:40" pos:end="135:40">)</operator><name pos:start="135:41" pos:end="135:49"><name pos:start="135:41" pos:end="135:42">tb</name><operator pos:start="135:43" pos:end="135:44">-&gt;</operator><name pos:start="135:45" pos:end="135:49">flags</name></name> <operator pos:start="135:51" pos:end="135:51">&amp;</operator> <literal type="number" pos:start="135:53" pos:end="135:53">7</literal></expr></argument>,
+
+                <argument pos:start="137:17" pos:end="137:34"><expr pos:start="137:17" pos:end="137:34"><name pos:start="137:17" pos:end="137:34"><name pos:start="137:17" pos:end="137:19">env</name><operator pos:start="137:20" pos:end="137:21">-&gt;</operator><name pos:start="137:22" pos:end="137:26">pregs</name><index pos:start="137:27" pos:end="137:34">[<expr pos:start="137:28" pos:end="137:33"><name pos:start="137:28" pos:end="137:33">PR_CCS</name></expr>]</index></name></expr></argument>,
+
+                <argument pos:start="139:17" pos:end="139:34"><expr pos:start="139:17" pos:end="139:34"><name pos:start="139:17" pos:end="139:34"><name pos:start="139:17" pos:end="139:19">env</name><operator pos:start="139:20" pos:end="139:21">-&gt;</operator><name pos:start="139:22" pos:end="139:26">pregs</name><index pos:start="139:27" pos:end="139:34">[<expr pos:start="139:28" pos:end="139:33"><name pos:start="139:28" pos:end="139:33">PR_PID</name></expr>]</index></name></expr></argument>, <argument pos:start="139:37" pos:end="139:54"><expr pos:start="139:37" pos:end="139:54"><name pos:start="139:37" pos:end="139:54"><name pos:start="139:37" pos:end="139:39">env</name><operator pos:start="139:40" pos:end="139:41">-&gt;</operator><name pos:start="139:42" pos:end="139:46">pregs</name><index pos:start="139:47" pos:end="139:54">[<expr pos:start="139:48" pos:end="139:53"><name pos:start="139:48" pos:end="139:53">PR_USP</name></expr>]</index></name></expr></argument>,
+
+                <argument pos:start="141:17" pos:end="141:28"><expr pos:start="141:17" pos:end="141:28"><name pos:start="141:17" pos:end="141:28"><name pos:start="141:17" pos:end="141:19">env</name><operator pos:start="141:20" pos:end="141:21">-&gt;</operator><name pos:start="141:22" pos:end="141:25">regs</name><index pos:start="141:26" pos:end="141:28">[<expr pos:start="141:27" pos:end="141:27"><literal type="number" pos:start="141:27" pos:end="141:27">0</literal></expr>]</index></name></expr></argument>, <argument pos:start="141:31" pos:end="141:42"><expr pos:start="141:31" pos:end="141:42"><name pos:start="141:31" pos:end="141:42"><name pos:start="141:31" pos:end="141:33">env</name><operator pos:start="141:34" pos:end="141:35">-&gt;</operator><name pos:start="141:36" pos:end="141:39">regs</name><index pos:start="141:40" pos:end="141:42">[<expr pos:start="141:41" pos:end="141:41"><literal type="number" pos:start="141:41" pos:end="141:41">1</literal></expr>]</index></name></expr></argument>, <argument pos:start="141:45" pos:end="141:56"><expr pos:start="141:45" pos:end="141:56"><name pos:start="141:45" pos:end="141:56"><name pos:start="141:45" pos:end="141:47">env</name><operator pos:start="141:48" pos:end="141:49">-&gt;</operator><name pos:start="141:50" pos:end="141:53">regs</name><index pos:start="141:54" pos:end="141:56">[<expr pos:start="141:55" pos:end="141:55"><literal type="number" pos:start="141:55" pos:end="141:55">2</literal></expr>]</index></name></expr></argument>, <argument pos:start="141:59" pos:end="141:70"><expr pos:start="141:59" pos:end="141:70"><name pos:start="141:59" pos:end="141:70"><name pos:start="141:59" pos:end="141:61">env</name><operator pos:start="141:62" pos:end="141:63">-&gt;</operator><name pos:start="141:64" pos:end="141:67">regs</name><index pos:start="141:68" pos:end="141:70">[<expr pos:start="141:69" pos:end="141:69"><literal type="number" pos:start="141:69" pos:end="141:69">3</literal></expr>]</index></name></expr></argument>,
+
+                <argument pos:start="143:17" pos:end="143:28"><expr pos:start="143:17" pos:end="143:28"><name pos:start="143:17" pos:end="143:28"><name pos:start="143:17" pos:end="143:19">env</name><operator pos:start="143:20" pos:end="143:21">-&gt;</operator><name pos:start="143:22" pos:end="143:25">regs</name><index pos:start="143:26" pos:end="143:28">[<expr pos:start="143:27" pos:end="143:27"><literal type="number" pos:start="143:27" pos:end="143:27">4</literal></expr>]</index></name></expr></argument>, <argument pos:start="143:31" pos:end="143:42"><expr pos:start="143:31" pos:end="143:42"><name pos:start="143:31" pos:end="143:42"><name pos:start="143:31" pos:end="143:33">env</name><operator pos:start="143:34" pos:end="143:35">-&gt;</operator><name pos:start="143:36" pos:end="143:39">regs</name><index pos:start="143:40" pos:end="143:42">[<expr pos:start="143:41" pos:end="143:41"><literal type="number" pos:start="143:41" pos:end="143:41">5</literal></expr>]</index></name></expr></argument>, <argument pos:start="143:45" pos:end="143:56"><expr pos:start="143:45" pos:end="143:56"><name pos:start="143:45" pos:end="143:56"><name pos:start="143:45" pos:end="143:47">env</name><operator pos:start="143:48" pos:end="143:49">-&gt;</operator><name pos:start="143:50" pos:end="143:53">regs</name><index pos:start="143:54" pos:end="143:56">[<expr pos:start="143:55" pos:end="143:55"><literal type="number" pos:start="143:55" pos:end="143:55">6</literal></expr>]</index></name></expr></argument>, <argument pos:start="143:59" pos:end="143:70"><expr pos:start="143:59" pos:end="143:70"><name pos:start="143:59" pos:end="143:70"><name pos:start="143:59" pos:end="143:61">env</name><operator pos:start="143:62" pos:end="143:63">-&gt;</operator><name pos:start="143:64" pos:end="143:67">regs</name><index pos:start="143:68" pos:end="143:70">[<expr pos:start="143:69" pos:end="143:69"><literal type="number" pos:start="143:69" pos:end="143:69">7</literal></expr>]</index></name></expr></argument>,
+
+                <argument pos:start="145:17" pos:end="145:28"><expr pos:start="145:17" pos:end="145:28"><name pos:start="145:17" pos:end="145:28"><name pos:start="145:17" pos:end="145:19">env</name><operator pos:start="145:20" pos:end="145:21">-&gt;</operator><name pos:start="145:22" pos:end="145:25">regs</name><index pos:start="145:26" pos:end="145:28">[<expr pos:start="145:27" pos:end="145:27"><literal type="number" pos:start="145:27" pos:end="145:27">8</literal></expr>]</index></name></expr></argument>, <argument pos:start="145:31" pos:end="145:42"><expr pos:start="145:31" pos:end="145:42"><name pos:start="145:31" pos:end="145:42"><name pos:start="145:31" pos:end="145:33">env</name><operator pos:start="145:34" pos:end="145:35">-&gt;</operator><name pos:start="145:36" pos:end="145:39">regs</name><index pos:start="145:40" pos:end="145:42">[<expr pos:start="145:41" pos:end="145:41"><literal type="number" pos:start="145:41" pos:end="145:41">9</literal></expr>]</index></name></expr></argument>,
+
+                <argument pos:start="147:17" pos:end="147:29"><expr pos:start="147:17" pos:end="147:29"><name pos:start="147:17" pos:end="147:29"><name pos:start="147:17" pos:end="147:19">env</name><operator pos:start="147:20" pos:end="147:21">-&gt;</operator><name pos:start="147:22" pos:end="147:25">regs</name><index pos:start="147:26" pos:end="147:29">[<expr pos:start="147:27" pos:end="147:28"><literal type="number" pos:start="147:27" pos:end="147:28">10</literal></expr>]</index></name></expr></argument>, <argument pos:start="147:32" pos:end="147:44"><expr pos:start="147:32" pos:end="147:44"><name pos:start="147:32" pos:end="147:44"><name pos:start="147:32" pos:end="147:34">env</name><operator pos:start="147:35" pos:end="147:36">-&gt;</operator><name pos:start="147:37" pos:end="147:40">regs</name><index pos:start="147:41" pos:end="147:44">[<expr pos:start="147:42" pos:end="147:43"><literal type="number" pos:start="147:42" pos:end="147:43">11</literal></expr>]</index></name></expr></argument>,
+
+                <argument pos:start="149:17" pos:end="149:29"><expr pos:start="149:17" pos:end="149:29"><name pos:start="149:17" pos:end="149:29"><name pos:start="149:17" pos:end="149:19">env</name><operator pos:start="149:20" pos:end="149:21">-&gt;</operator><name pos:start="149:22" pos:end="149:25">regs</name><index pos:start="149:26" pos:end="149:29">[<expr pos:start="149:27" pos:end="149:28"><literal type="number" pos:start="149:27" pos:end="149:28">12</literal></expr>]</index></name></expr></argument>, <argument pos:start="149:32" pos:end="149:44"><expr pos:start="149:32" pos:end="149:44"><name pos:start="149:32" pos:end="149:44"><name pos:start="149:32" pos:end="149:34">env</name><operator pos:start="149:35" pos:end="149:36">-&gt;</operator><name pos:start="149:37" pos:end="149:40">regs</name><index pos:start="149:41" pos:end="149:44">[<expr pos:start="149:42" pos:end="149:43"><literal type="number" pos:start="149:42" pos:end="149:43">13</literal></expr>]</index></name></expr></argument>,
+
+                <argument pos:start="151:17" pos:end="151:29"><expr pos:start="151:17" pos:end="151:29"><name pos:start="151:17" pos:end="151:29"><name pos:start="151:17" pos:end="151:19">env</name><operator pos:start="151:20" pos:end="151:21">-&gt;</operator><name pos:start="151:22" pos:end="151:25">regs</name><index pos:start="151:26" pos:end="151:29">[<expr pos:start="151:27" pos:end="151:28"><literal type="number" pos:start="151:27" pos:end="151:28">14</literal></expr>]</index></name></expr></argument>, <argument pos:start="151:32" pos:end="151:44"><expr pos:start="151:32" pos:end="151:44"><name pos:start="151:32" pos:end="151:44"><name pos:start="151:32" pos:end="151:34">env</name><operator pos:start="151:35" pos:end="151:36">-&gt;</operator><name pos:start="151:37" pos:end="151:40">regs</name><index pos:start="151:41" pos:end="151:44">[<expr pos:start="151:42" pos:end="151:43"><literal type="number" pos:start="151:42" pos:end="151:43">15</literal></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="153:9" pos:end="153:37"><expr pos:start="153:9" pos:end="153:36"><call pos:start="153:9" pos:end="153:36"><name pos:start="153:9" pos:end="153:16">qemu_log</name><argument_list pos:start="153:17" pos:end="153:36">(<argument pos:start="153:18" pos:end="153:35"><expr pos:start="153:18" pos:end="153:35"><literal type="string" pos:start="153:18" pos:end="153:35">"--------------\n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="155:9" pos:end="155:54"><expr pos:start="155:9" pos:end="155:53"><call pos:start="155:9" pos:end="155:53"><name pos:start="155:9" pos:end="155:16">qemu_log</name><argument_list pos:start="155:17" pos:end="155:53">(<argument pos:start="155:18" pos:end="155:27"><expr pos:start="155:18" pos:end="155:27"><literal type="string" pos:start="155:18" pos:end="155:27">"IN: %s\n"</literal></expr></argument>, <argument pos:start="155:30" pos:end="155:52"><expr pos:start="155:30" pos:end="155:52"><call pos:start="155:30" pos:end="155:52"><name pos:start="155:30" pos:end="155:42">lookup_symbol</name><argument_list pos:start="155:43" pos:end="155:52">(<argument pos:start="155:44" pos:end="155:51"><expr pos:start="155:44" pos:end="155:51"><name pos:start="155:44" pos:end="155:51">pc_start</name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="161:5" pos:end="161:71"><expr pos:start="161:5" pos:end="161:70"><name pos:start="161:5" pos:end="161:19">next_page_start</name> <operator pos:start="161:21" pos:end="161:21">=</operator> <operator pos:start="161:23" pos:end="161:23">(</operator><name pos:start="161:24" pos:end="161:31">pc_start</name> <operator pos:start="161:33" pos:end="161:33">&amp;</operator> <name pos:start="161:35" pos:end="161:50">TARGET_PAGE_MASK</name><operator pos:start="161:51" pos:end="161:51">)</operator> <operator pos:start="161:53" pos:end="161:53">+</operator> <name pos:start="161:55" pos:end="161:70">TARGET_PAGE_SIZE</name></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="163:5" pos:end="163:12"><expr pos:start="163:5" pos:end="163:11"><name pos:start="163:5" pos:end="163:6">lj</name> <operator pos:start="163:8" pos:end="163:8">=</operator> <operator pos:start="163:10" pos:end="163:10">-</operator><literal type="number" pos:start="163:11" pos:end="163:11">1</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="165:5" pos:end="165:18"><expr pos:start="165:5" pos:end="165:17"><name pos:start="165:5" pos:end="165:13">num_insns</name> <operator pos:start="165:15" pos:end="165:15">=</operator> <literal type="number" pos:start="165:17" pos:end="165:17">0</literal></expr>;</expr_stmt>
+
+    <expr_stmt pos:start="167:5" pos:end="167:43"><expr pos:start="167:5" pos:end="167:42"><name pos:start="167:5" pos:end="167:13">max_insns</name> <operator pos:start="167:15" pos:end="167:15">=</operator> <name pos:start="167:17" pos:end="167:26"><name pos:start="167:17" pos:end="167:18">tb</name><operator pos:start="167:19" pos:end="167:20">-&gt;</operator><name pos:start="167:21" pos:end="167:26">cflags</name></name> <operator pos:start="167:28" pos:end="167:28">&amp;</operator> <name pos:start="167:30" pos:end="167:42">CF_COUNT_MASK</name></expr>;</expr_stmt>
+
+    <if_stmt pos:start="169:5" pos:end="173:5"><if pos:start="169:5" pos:end="173:5">if <condition pos:start="169:8" pos:end="169:23">(<expr pos:start="169:9" pos:end="169:22"><name pos:start="169:9" pos:end="169:17">max_insns</name> <operator pos:start="169:19" pos:end="169:20">==</operator> <literal type="number" pos:start="169:22" pos:end="169:22">0</literal></expr>)</condition> <block pos:start="169:25" pos:end="173:5">{<block_content pos:start="171:9" pos:end="171:34">
+
+        <expr_stmt pos:start="171:9" pos:end="171:34"><expr pos:start="171:9" pos:end="171:33"><name pos:start="171:9" pos:end="171:17">max_insns</name> <operator pos:start="171:19" pos:end="171:19">=</operator> <name pos:start="171:21" pos:end="171:33">CF_COUNT_MASK</name></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="177:5" pos:end="177:21"><expr pos:start="177:5" pos:end="177:20"><call pos:start="177:5" pos:end="177:20"><name pos:start="177:5" pos:end="177:16">gen_tb_start</name><argument_list pos:start="177:17" pos:end="177:20">(<argument pos:start="177:18" pos:end="177:19"><expr pos:start="177:18" pos:end="177:19"><name pos:start="177:18" pos:end="177:19">tb</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    <do pos:start="179:5" pos:end="361:38">do <block pos:start="179:8" pos:end="353:5">{<block_content pos:start="181:9" pos:end="351:9">
+
+        <expr_stmt pos:start="181:9" pos:end="181:34"><expr pos:start="181:9" pos:end="181:33"><call pos:start="181:9" pos:end="181:33"><name pos:start="181:9" pos:end="181:24">check_breakpoint</name><argument_list pos:start="181:25" pos:end="181:33">(<argument pos:start="181:26" pos:end="181:28"><expr pos:start="181:26" pos:end="181:28"><name pos:start="181:26" pos:end="181:28">env</name></expr></argument>, <argument pos:start="181:31" pos:end="181:32"><expr pos:start="181:31" pos:end="181:32"><name pos:start="181:31" pos:end="181:32">dc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="185:9" pos:end="215:9"><if pos:start="185:9" pos:end="215:9">if <condition pos:start="185:12" pos:end="185:22">(<expr pos:start="185:13" pos:end="185:21"><name pos:start="185:13" pos:end="185:21">search_pc</name></expr>)</condition> <block pos:start="185:24" pos:end="215:9">{<block_content pos:start="187:13" pos:end="213:51">
+
+            <expr_stmt pos:start="187:13" pos:end="187:35"><expr pos:start="187:13" pos:end="187:34"><name pos:start="187:13" pos:end="187:13">j</name> <operator pos:start="187:15" pos:end="187:15">=</operator> <call pos:start="187:17" pos:end="187:34"><name pos:start="187:17" pos:end="187:32">tcg_op_buf_count</name><argument_list pos:start="187:33" pos:end="187:34">()</argument_list></call></expr>;</expr_stmt>
+
+            <if_stmt pos:start="189:13" pos:end="199:13"><if pos:start="189:13" pos:end="199:13">if <condition pos:start="189:16" pos:end="189:23">(<expr pos:start="189:17" pos:end="189:22"><name pos:start="189:17" pos:end="189:18">lj</name> <operator pos:start="189:20" pos:end="189:20">&lt;</operator> <name pos:start="189:22" pos:end="189:22">j</name></expr>)</condition> <block pos:start="189:25" pos:end="199:13">{<block_content pos:start="191:17" pos:end="197:17">
+
+                <expr_stmt pos:start="191:17" pos:end="191:21"><expr pos:start="191:17" pos:end="191:20"><name pos:start="191:17" pos:end="191:18">lj</name><operator pos:start="191:19" pos:end="191:20">++</operator></expr>;</expr_stmt>
+
+                <while pos:start="193:17" pos:end="197:17">while <condition pos:start="193:23" pos:end="193:30">(<expr pos:start="193:24" pos:end="193:29"><name pos:start="193:24" pos:end="193:25">lj</name> <operator pos:start="193:27" pos:end="193:27">&lt;</operator> <name pos:start="193:29" pos:end="193:29">j</name></expr>)</condition> <block pos:start="193:32" pos:end="197:17">{<block_content pos:start="195:21" pos:end="195:58">
+
+                    <expr_stmt pos:start="195:21" pos:end="195:58"><expr pos:start="195:21" pos:end="195:57"><name pos:start="195:21" pos:end="195:53"><name pos:start="195:21" pos:end="195:27">tcg_ctx</name><operator pos:start="195:28" pos:end="195:28">.</operator><name pos:start="195:29" pos:end="195:47">gen_opc_instr_start</name><index pos:start="195:48" pos:end="195:53">[<expr pos:start="195:49" pos:end="195:52"><name pos:start="195:49" pos:end="195:50">lj</name><operator pos:start="195:51" pos:end="195:52">++</operator></expr>]</index></name> <operator pos:start="195:55" pos:end="195:55">=</operator> <literal type="number" pos:start="195:57" pos:end="195:57">0</literal></expr>;</expr_stmt>
+
+                </block_content>}</block></while>
+
+            </block_content>}</block></if></if_stmt>
+
+            <if_stmt pos:start="201:13" pos:end="209:13"><if pos:start="201:13" pos:end="205:13">if <condition pos:start="201:16" pos:end="201:40">(<expr pos:start="201:17" pos:end="201:39"><name pos:start="201:17" pos:end="201:34"><name pos:start="201:17" pos:end="201:18">dc</name><operator pos:start="201:19" pos:end="201:20">-&gt;</operator><name pos:start="201:21" pos:end="201:34">delayed_branch</name></name> <operator pos:start="201:36" pos:end="201:37">==</operator> <literal type="number" pos:start="201:39" pos:end="201:39">1</literal></expr>)</condition> <block pos:start="201:42" pos:end="205:13">{<block_content pos:start="203:17" pos:end="203:53">
+
+                <expr_stmt pos:start="203:17" pos:end="203:53"><expr pos:start="203:17" pos:end="203:52"><name pos:start="203:17" pos:end="203:38"><name pos:start="203:17" pos:end="203:23">tcg_ctx</name><operator pos:start="203:24" pos:end="203:24">.</operator><name pos:start="203:25" pos:end="203:34">gen_opc_pc</name><index pos:start="203:35" pos:end="203:38">[<expr pos:start="203:36" pos:end="203:37"><name pos:start="203:36" pos:end="203:37">lj</name></expr>]</index></name> <operator pos:start="203:40" pos:end="203:40">=</operator> <name pos:start="203:42" pos:end="203:48"><name pos:start="203:42" pos:end="203:43">dc</name><operator pos:start="203:44" pos:end="203:45">-&gt;</operator><name pos:start="203:46" pos:end="203:48">ppc</name></name> <operator pos:start="203:50" pos:end="203:50">|</operator> <literal type="number" pos:start="203:52" pos:end="203:52">1</literal></expr>;</expr_stmt>
+
+            </block_content>}</block></if> <else pos:start="205:15" pos:end="209:13">else <block pos:start="205:20" pos:end="209:13">{<block_content pos:start="207:17" pos:end="207:48">
+
+                <expr_stmt pos:start="207:17" pos:end="207:48"><expr pos:start="207:17" pos:end="207:47"><name pos:start="207:17" pos:end="207:38"><name pos:start="207:17" pos:end="207:23">tcg_ctx</name><operator pos:start="207:24" pos:end="207:24">.</operator><name pos:start="207:25" pos:end="207:34">gen_opc_pc</name><index pos:start="207:35" pos:end="207:38">[<expr pos:start="207:36" pos:end="207:37"><name pos:start="207:36" pos:end="207:37">lj</name></expr>]</index></name> <operator pos:start="207:40" pos:end="207:40">=</operator> <name pos:start="207:42" pos:end="207:47"><name pos:start="207:42" pos:end="207:43">dc</name><operator pos:start="207:44" pos:end="207:45">-&gt;</operator><name pos:start="207:46" pos:end="207:47">pc</name></name></expr>;</expr_stmt>
+
+            </block_content>}</block></else></if_stmt>
+
+            <expr_stmt pos:start="211:13" pos:end="211:48"><expr pos:start="211:13" pos:end="211:47"><name pos:start="211:13" pos:end="211:43"><name pos:start="211:13" pos:end="211:19">tcg_ctx</name><operator pos:start="211:20" pos:end="211:20">.</operator><name pos:start="211:21" pos:end="211:39">gen_opc_instr_start</name><index pos:start="211:40" pos:end="211:43">[<expr pos:start="211:41" pos:end="211:42"><name pos:start="211:41" pos:end="211:42">lj</name></expr>]</index></name> <operator pos:start="211:45" pos:end="211:45">=</operator> <literal type="number" pos:start="211:47" pos:end="211:47">1</literal></expr>;</expr_stmt>
+
+            <expr_stmt pos:start="213:13" pos:end="213:51"><expr pos:start="213:13" pos:end="213:50"><name pos:start="213:13" pos:end="213:38"><name pos:start="213:13" pos:end="213:19">tcg_ctx</name><operator pos:start="213:20" pos:end="213:20">.</operator><name pos:start="213:21" pos:end="213:34">gen_opc_icount</name><index pos:start="213:35" pos:end="213:38">[<expr pos:start="213:36" pos:end="213:37"><name pos:start="213:36" pos:end="213:37">lj</name></expr>]</index></name> <operator pos:start="213:40" pos:end="213:40">=</operator> <name pos:start="213:42" pos:end="213:50">num_insns</name></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <comment type="block" pos:start="219:9" pos:end="219:28">/* Pretty disas.  */</comment>
+
+        <expr_stmt pos:start="221:9" pos:end="221:36"><expr pos:start="221:9" pos:end="221:35"><call pos:start="221:9" pos:end="221:35"><name pos:start="221:9" pos:end="221:15">LOG_DIS</name><argument_list pos:start="221:16" pos:end="221:35">(<argument pos:start="221:17" pos:end="221:26"><expr pos:start="221:17" pos:end="221:26"><literal type="string" pos:start="221:17" pos:end="221:26">"%8.8x:\t"</literal></expr></argument>, <argument pos:start="221:29" pos:end="221:34"><expr pos:start="221:29" pos:end="221:34"><name pos:start="221:29" pos:end="221:34"><name pos:start="221:29" pos:end="221:30">dc</name><operator pos:start="221:31" pos:end="221:32">-&gt;</operator><name pos:start="221:33" pos:end="221:34">pc</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="225:9" pos:end="229:9"><if pos:start="225:9" pos:end="229:9">if <condition pos:start="225:12" pos:end="225:68">(<expr pos:start="225:13" pos:end="225:67"><name pos:start="225:13" pos:end="225:21">num_insns</name> <operator pos:start="225:23" pos:end="225:23">+</operator> <literal type="number" pos:start="225:25" pos:end="225:25">1</literal> <operator pos:start="225:27" pos:end="225:28">==</operator> <name pos:start="225:30" pos:end="225:38">max_insns</name> <operator pos:start="225:40" pos:end="225:41">&amp;&amp;</operator> <operator pos:start="225:43" pos:end="225:43">(</operator><name pos:start="225:44" pos:end="225:53"><name pos:start="225:44" pos:end="225:45">tb</name><operator pos:start="225:46" pos:end="225:47">-&gt;</operator><name pos:start="225:48" pos:end="225:53">cflags</name></name> <operator pos:start="225:55" pos:end="225:55">&amp;</operator> <name pos:start="225:57" pos:end="225:66">CF_LAST_IO</name><operator pos:start="225:67" pos:end="225:67">)</operator></expr>)</condition> <block pos:start="225:70" pos:end="229:9">{<block_content pos:start="227:13" pos:end="227:27">
+
+            <expr_stmt pos:start="227:13" pos:end="227:27"><expr pos:start="227:13" pos:end="227:26"><call pos:start="227:13" pos:end="227:26"><name pos:start="227:13" pos:end="227:24">gen_io_start</name><argument_list pos:start="227:25" pos:end="227:26">()</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="231:9" pos:end="231:24"><expr pos:start="231:9" pos:end="231:23"><name pos:start="231:9" pos:end="231:19"><name pos:start="231:9" pos:end="231:10">dc</name><operator pos:start="231:11" pos:end="231:12">-&gt;</operator><name pos:start="231:13" pos:end="231:19">clear_x</name></name> <operator pos:start="231:21" pos:end="231:21">=</operator> <literal type="number" pos:start="231:23" pos:end="231:23">1</literal></expr>;</expr_stmt>
+
+
+
+        <expr_stmt pos:start="235:9" pos:end="235:40"><expr pos:start="235:9" pos:end="235:39"><name pos:start="235:9" pos:end="235:16">insn_len</name> <operator pos:start="235:18" pos:end="235:18">=</operator> <call pos:start="235:20" pos:end="235:39"><name pos:start="235:20" pos:end="235:30"><name pos:start="235:20" pos:end="235:21">dc</name><operator pos:start="235:22" pos:end="235:23">-&gt;</operator><name pos:start="235:24" pos:end="235:30">decoder</name></name><argument_list pos:start="235:31" pos:end="235:39">(<argument pos:start="235:32" pos:end="235:34"><expr pos:start="235:32" pos:end="235:34"><name pos:start="235:32" pos:end="235:34">env</name></expr></argument>, <argument pos:start="235:37" pos:end="235:38"><expr pos:start="235:37" pos:end="235:38"><name pos:start="235:37" pos:end="235:38">dc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="237:9" pos:end="237:25"><expr pos:start="237:9" pos:end="237:24"><name pos:start="237:9" pos:end="237:15"><name pos:start="237:9" pos:end="237:10">dc</name><operator pos:start="237:11" pos:end="237:12">-&gt;</operator><name pos:start="237:13" pos:end="237:15">ppc</name></name> <operator pos:start="237:17" pos:end="237:17">=</operator> <name pos:start="237:19" pos:end="237:24"><name pos:start="237:19" pos:end="237:20">dc</name><operator pos:start="237:21" pos:end="237:22">-&gt;</operator><name pos:start="237:23" pos:end="237:24">pc</name></name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="239:9" pos:end="239:27"><expr pos:start="239:9" pos:end="239:26"><name pos:start="239:9" pos:end="239:14"><name pos:start="239:9" pos:end="239:10">dc</name><operator pos:start="239:11" pos:end="239:12">-&gt;</operator><name pos:start="239:13" pos:end="239:14">pc</name></name> <operator pos:start="239:16" pos:end="239:17">+=</operator> <name pos:start="239:19" pos:end="239:26">insn_len</name></expr>;</expr_stmt>
+
+        <if_stmt pos:start="241:9" pos:end="245:9"><if pos:start="241:9" pos:end="245:9">if <condition pos:start="241:12" pos:end="241:24">(<expr pos:start="241:13" pos:end="241:23"><name pos:start="241:13" pos:end="241:23"><name pos:start="241:13" pos:end="241:14">dc</name><operator pos:start="241:15" pos:end="241:16">-&gt;</operator><name pos:start="241:17" pos:end="241:23">clear_x</name></name></expr>)</condition> <block pos:start="241:26" pos:end="245:9">{<block_content pos:start="243:13" pos:end="243:34">
+
+            <expr_stmt pos:start="243:13" pos:end="243:34"><expr pos:start="243:13" pos:end="243:33"><call pos:start="243:13" pos:end="243:33"><name pos:start="243:13" pos:end="243:29">cris_clear_x_flag</name><argument_list pos:start="243:30" pos:end="243:33">(<argument pos:start="243:31" pos:end="243:32"><expr pos:start="243:31" pos:end="243:32"><name pos:start="243:31" pos:end="243:32">dc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <expr_stmt pos:start="249:9" pos:end="249:20"><expr pos:start="249:9" pos:end="249:19"><name pos:start="249:9" pos:end="249:17">num_insns</name><operator pos:start="249:18" pos:end="249:19">++</operator></expr>;</expr_stmt>
+
+        <comment type="block" pos:start="251:9" pos:end="255:63">/* Check for delayed branches here. If we do it before
+
+           actually generating any host code, the simulator will just
+
+           loop doing nothing for on this program location.  */</comment>
+
+        <if_stmt pos:start="257:9" pos:end="339:9"><if pos:start="257:9" pos:end="339:9">if <condition pos:start="257:12" pos:end="257:31">(<expr pos:start="257:13" pos:end="257:30"><name pos:start="257:13" pos:end="257:30"><name pos:start="257:13" pos:end="257:14">dc</name><operator pos:start="257:15" pos:end="257:16">-&gt;</operator><name pos:start="257:17" pos:end="257:30">delayed_branch</name></name></expr>)</condition> <block pos:start="257:33" pos:end="339:9">{<block_content pos:start="259:13" pos:end="337:13">
+
+            <expr_stmt pos:start="259:13" pos:end="259:33"><expr pos:start="259:13" pos:end="259:32"><name pos:start="259:13" pos:end="259:30"><name pos:start="259:13" pos:end="259:14">dc</name><operator pos:start="259:15" pos:end="259:16">-&gt;</operator><name pos:start="259:17" pos:end="259:30">delayed_branch</name></name><operator pos:start="259:31" pos:end="259:32">--</operator></expr>;</expr_stmt>
+
+            <if_stmt pos:start="261:13" pos:end="337:13"><if pos:start="261:13" pos:end="337:13">if <condition pos:start="261:16" pos:end="261:40">(<expr pos:start="261:17" pos:end="261:39"><name pos:start="261:17" pos:end="261:34"><name pos:start="261:17" pos:end="261:18">dc</name><operator pos:start="261:19" pos:end="261:20">-&gt;</operator><name pos:start="261:21" pos:end="261:34">delayed_branch</name></name> <operator pos:start="261:36" pos:end="261:37">==</operator> <literal type="number" pos:start="261:39" pos:end="261:39">0</literal></expr>)</condition> <block pos:start="261:42" pos:end="337:13">{<block_content pos:start="263:17" pos:end="335:22">
+
+                <if_stmt pos:start="263:17" pos:end="267:17"><if pos:start="263:17" pos:end="267:17">if <condition pos:start="263:20" pos:end="263:34">(<expr pos:start="263:21" pos:end="263:33"><name pos:start="263:21" pos:end="263:29"><name pos:start="263:21" pos:end="263:22">tb</name><operator pos:start="263:23" pos:end="263:24">-&gt;</operator><name pos:start="263:25" pos:end="263:29">flags</name></name> <operator pos:start="263:31" pos:end="263:31">&amp;</operator> <literal type="number" pos:start="263:33" pos:end="263:33">7</literal></expr>)</condition> <block pos:start="263:36" pos:end="267:17">{<block_content pos:start="265:21" pos:end="265:61">
+
+                    <expr_stmt pos:start="265:21" pos:end="265:61"><expr pos:start="265:21" pos:end="265:60"><call pos:start="265:21" pos:end="265:60"><name pos:start="265:21" pos:end="265:36">t_gen_mov_env_TN</name><argument_list pos:start="265:37" pos:end="265:60">(<argument pos:start="265:38" pos:end="265:42"><expr pos:start="265:38" pos:end="265:42"><name pos:start="265:38" pos:end="265:42">dslot</name></expr></argument>, <argument pos:start="265:45" pos:end="265:59"><expr pos:start="265:45" pos:end="265:59"><call pos:start="265:45" pos:end="265:59"><name pos:start="265:45" pos:end="265:56">tcg_const_tl</name><argument_list pos:start="265:57" pos:end="265:59">(<argument pos:start="265:58" pos:end="265:58"><expr pos:start="265:58" pos:end="265:58"><literal type="number" pos:start="265:58" pos:end="265:58">0</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                </block_content>}</block></if></if_stmt>
+
+                <if_stmt pos:start="269:17" pos:end="275:17"><if pos:start="269:17" pos:end="275:17">if <condition pos:start="269:20" pos:end="271:61">(<expr pos:start="269:21" pos:end="271:60"><name pos:start="269:21" pos:end="269:40"><name pos:start="269:21" pos:end="269:22">dc</name><operator pos:start="269:23" pos:end="269:24">-&gt;</operator><name pos:start="269:25" pos:end="269:40">cpustate_changed</name></name> <operator pos:start="269:42" pos:end="269:43">||</operator> <operator pos:start="269:45" pos:end="269:45">!</operator><name pos:start="269:46" pos:end="269:60"><name pos:start="269:46" pos:end="269:47">dc</name><operator pos:start="269:48" pos:end="269:49">-&gt;</operator><name pos:start="269:50" pos:end="269:60">flagx_known</name></name>
+
+                    <operator pos:start="271:21" pos:end="271:22">||</operator> <operator pos:start="271:24" pos:end="271:24">(</operator><name pos:start="271:25" pos:end="271:35"><name pos:start="271:25" pos:end="271:26">dc</name><operator pos:start="271:27" pos:end="271:28">-&gt;</operator><name pos:start="271:29" pos:end="271:35">flags_x</name></name> <operator pos:start="271:37" pos:end="271:38">!=</operator> <operator pos:start="271:40" pos:end="271:40">(</operator><name pos:start="271:41" pos:end="271:49"><name pos:start="271:41" pos:end="271:42">tb</name><operator pos:start="271:43" pos:end="271:44">-&gt;</operator><name pos:start="271:45" pos:end="271:49">flags</name></name> <operator pos:start="271:51" pos:end="271:51">&amp;</operator> <name pos:start="271:53" pos:end="271:58">X_FLAG</name><operator pos:start="271:59" pos:end="271:59">)</operator><operator pos:start="271:60" pos:end="271:60">)</operator></expr>)</condition> <block pos:start="271:63" pos:end="275:17">{<block_content pos:start="273:21" pos:end="273:46">
+
+                    <expr_stmt pos:start="273:21" pos:end="273:46"><expr pos:start="273:21" pos:end="273:45"><call pos:start="273:21" pos:end="273:45"><name pos:start="273:21" pos:end="273:41">cris_store_direct_jmp</name><argument_list pos:start="273:42" pos:end="273:45">(<argument pos:start="273:43" pos:end="273:44"><expr pos:start="273:43" pos:end="273:44"><name pos:start="273:43" pos:end="273:44">dc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                </block_content>}</block></if></if_stmt>
+
+
+
+                <if_stmt pos:start="279:17" pos:end="285:17"><if pos:start="279:17" pos:end="285:17">if <condition pos:start="279:20" pos:end="279:41">(<expr pos:start="279:21" pos:end="279:40"><name pos:start="279:21" pos:end="279:40"><name pos:start="279:21" pos:end="279:22">dc</name><operator pos:start="279:23" pos:end="279:24">-&gt;</operator><name pos:start="279:25" pos:end="279:40">clear_locked_irq</name></name></expr>)</condition> <block pos:start="279:43" pos:end="285:17">{<block_content pos:start="281:21" pos:end="283:66">
+
+                    <expr_stmt pos:start="281:21" pos:end="281:45"><expr pos:start="281:21" pos:end="281:44"><name pos:start="281:21" pos:end="281:40"><name pos:start="281:21" pos:end="281:22">dc</name><operator pos:start="281:23" pos:end="281:24">-&gt;</operator><name pos:start="281:25" pos:end="281:40">clear_locked_irq</name></name> <operator pos:start="281:42" pos:end="281:42">=</operator> <literal type="number" pos:start="281:44" pos:end="281:44">0</literal></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="283:21" pos:end="283:66"><expr pos:start="283:21" pos:end="283:65"><call pos:start="283:21" pos:end="283:65"><name pos:start="283:21" pos:end="283:36">t_gen_mov_env_TN</name><argument_list pos:start="283:37" pos:end="283:65">(<argument pos:start="283:38" pos:end="283:47"><expr pos:start="283:38" pos:end="283:47"><name pos:start="283:38" pos:end="283:47">locked_irq</name></expr></argument>, <argument pos:start="283:50" pos:end="283:64"><expr pos:start="283:50" pos:end="283:64"><call pos:start="283:50" pos:end="283:64"><name pos:start="283:50" pos:end="283:61">tcg_const_tl</name><argument_list pos:start="283:62" pos:end="283:64">(<argument pos:start="283:63" pos:end="283:63"><expr pos:start="283:63" pos:end="283:63"><literal type="number" pos:start="283:63" pos:end="283:63">0</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                </block_content>}</block></if></if_stmt>
+
+
+
+                <if_stmt pos:start="289:17" pos:end="333:17"><if pos:start="289:17" pos:end="317:17">if <condition pos:start="289:20" pos:end="289:45">(<expr pos:start="289:21" pos:end="289:44"><name pos:start="289:21" pos:end="289:27"><name pos:start="289:21" pos:end="289:22">dc</name><operator pos:start="289:23" pos:end="289:24">-&gt;</operator><name pos:start="289:25" pos:end="289:27">jmp</name></name> <operator pos:start="289:29" pos:end="289:30">==</operator> <name pos:start="289:32" pos:end="289:44">JMP_DIRECT_CC</name></expr>)</condition> <block pos:start="289:47" pos:end="317:17">{<block_content pos:start="291:21" pos:end="315:40">
+
+                    <decl_stmt pos:start="291:21" pos:end="291:27"><decl pos:start="291:21" pos:end="291:26"><type pos:start="291:21" pos:end="291:23"><name pos:start="291:21" pos:end="291:23">int</name></type> <name pos:start="291:25" pos:end="291:26">l1</name></decl>;</decl_stmt>
+
+
+
+                    <expr_stmt pos:start="295:21" pos:end="295:41"><expr pos:start="295:21" pos:end="295:40"><name pos:start="295:21" pos:end="295:22">l1</name> <operator pos:start="295:24" pos:end="295:24">=</operator> <call pos:start="295:26" pos:end="295:40"><name pos:start="295:26" pos:end="295:38">gen_new_label</name><argument_list pos:start="295:39" pos:end="295:40">()</argument_list></call></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="297:21" pos:end="297:44"><expr pos:start="297:21" pos:end="297:43"><call pos:start="297:21" pos:end="297:43"><name pos:start="297:21" pos:end="297:39">cris_evaluate_flags</name><argument_list pos:start="297:40" pos:end="297:43">(<argument pos:start="297:41" pos:end="297:42"><expr pos:start="297:41" pos:end="297:42"><name pos:start="297:41" pos:end="297:42">dc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+                    <comment type="block" pos:start="301:21" pos:end="301:43">/* Conditional jmp.  */</comment>
+
+                    <expr_stmt pos:start="303:21" pos:end="305:50"><expr pos:start="303:21" pos:end="305:49"><call pos:start="303:21" pos:end="305:49"><name pos:start="303:21" pos:end="303:38">tcg_gen_brcondi_tl</name><argument_list pos:start="303:39" pos:end="305:49">(<argument pos:start="303:40" pos:end="303:50"><expr pos:start="303:40" pos:end="303:50"><name pos:start="303:40" pos:end="303:50">TCG_COND_EQ</name></expr></argument>,
+
+                               <argument pos:start="305:32" pos:end="305:41"><expr pos:start="305:32" pos:end="305:41"><name pos:start="305:32" pos:end="305:41">env_btaken</name></expr></argument>, <argument pos:start="305:44" pos:end="305:44"><expr pos:start="305:44" pos:end="305:44"><literal type="number" pos:start="305:44" pos:end="305:44">0</literal></expr></argument>, <argument pos:start="305:47" pos:end="305:48"><expr pos:start="305:47" pos:end="305:48"><name pos:start="305:47" pos:end="305:48">l1</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="307:21" pos:end="307:51"><expr pos:start="307:21" pos:end="307:50"><call pos:start="307:21" pos:end="307:50"><name pos:start="307:21" pos:end="307:31">gen_goto_tb</name><argument_list pos:start="307:32" pos:end="307:50">(<argument pos:start="307:33" pos:end="307:34"><expr pos:start="307:33" pos:end="307:34"><name pos:start="307:33" pos:end="307:34">dc</name></expr></argument>, <argument pos:start="307:37" pos:end="307:37"><expr pos:start="307:37" pos:end="307:37"><literal type="number" pos:start="307:37" pos:end="307:37">1</literal></expr></argument>, <argument pos:start="307:40" pos:end="307:49"><expr pos:start="307:40" pos:end="307:49"><name pos:start="307:40" pos:end="307:49"><name pos:start="307:40" pos:end="307:41">dc</name><operator pos:start="307:42" pos:end="307:43">-&gt;</operator><name pos:start="307:44" pos:end="307:49">jmp_pc</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="309:21" pos:end="309:38"><expr pos:start="309:21" pos:end="309:37"><call pos:start="309:21" pos:end="309:37"><name pos:start="309:21" pos:end="309:33">gen_set_label</name><argument_list pos:start="309:34" pos:end="309:37">(<argument pos:start="309:35" pos:end="309:36"><expr pos:start="309:35" pos:end="309:36"><name pos:start="309:35" pos:end="309:36">l1</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="311:21" pos:end="311:47"><expr pos:start="311:21" pos:end="311:46"><call pos:start="311:21" pos:end="311:46"><name pos:start="311:21" pos:end="311:31">gen_goto_tb</name><argument_list pos:start="311:32" pos:end="311:46">(<argument pos:start="311:33" pos:end="311:34"><expr pos:start="311:33" pos:end="311:34"><name pos:start="311:33" pos:end="311:34">dc</name></expr></argument>, <argument pos:start="311:37" pos:end="311:37"><expr pos:start="311:37" pos:end="311:37"><literal type="number" pos:start="311:37" pos:end="311:37">0</literal></expr></argument>, <argument pos:start="311:40" pos:end="311:45"><expr pos:start="311:40" pos:end="311:45"><name pos:start="311:40" pos:end="311:45"><name pos:start="311:40" pos:end="311:41">dc</name><operator pos:start="311:42" pos:end="311:43">-&gt;</operator><name pos:start="311:44" pos:end="311:45">pc</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="313:21" pos:end="313:47"><expr pos:start="313:21" pos:end="313:46"><name pos:start="313:21" pos:end="313:30"><name pos:start="313:21" pos:end="313:22">dc</name><operator pos:start="313:23" pos:end="313:24">-&gt;</operator><name pos:start="313:25" pos:end="313:30">is_jmp</name></name> <operator pos:start="313:32" pos:end="313:32">=</operator> <name pos:start="313:34" pos:end="313:46">DISAS_TB_JUMP</name></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="315:21" pos:end="315:40"><expr pos:start="315:21" pos:end="315:39"><name pos:start="315:21" pos:end="315:27"><name pos:start="315:21" pos:end="315:22">dc</name><operator pos:start="315:23" pos:end="315:24">-&gt;</operator><name pos:start="315:25" pos:end="315:27">jmp</name></name> <operator pos:start="315:29" pos:end="315:29">=</operator> <name pos:start="315:31" pos:end="315:39">JMP_NOJMP</name></expr>;</expr_stmt>
+
+                </block_content>}</block></if> <if type="elseif" pos:start="317:19" pos:end="327:17">else if <condition pos:start="317:27" pos:end="317:49">(<expr pos:start="317:28" pos:end="317:48"><name pos:start="317:28" pos:end="317:34"><name pos:start="317:28" pos:end="317:29">dc</name><operator pos:start="317:30" pos:end="317:31">-&gt;</operator><name pos:start="317:32" pos:end="317:34">jmp</name></name> <operator pos:start="317:36" pos:end="317:37">==</operator> <name pos:start="317:39" pos:end="317:48">JMP_DIRECT</name></expr>)</condition> <block pos:start="317:51" pos:end="327:17">{<block_content pos:start="319:21" pos:end="325:40">
+
+                    <expr_stmt pos:start="319:21" pos:end="319:44"><expr pos:start="319:21" pos:end="319:43"><call pos:start="319:21" pos:end="319:43"><name pos:start="319:21" pos:end="319:39">cris_evaluate_flags</name><argument_list pos:start="319:40" pos:end="319:43">(<argument pos:start="319:41" pos:end="319:42"><expr pos:start="319:41" pos:end="319:42"><name pos:start="319:41" pos:end="319:42">dc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="321:21" pos:end="321:51"><expr pos:start="321:21" pos:end="321:50"><call pos:start="321:21" pos:end="321:50"><name pos:start="321:21" pos:end="321:31">gen_goto_tb</name><argument_list pos:start="321:32" pos:end="321:50">(<argument pos:start="321:33" pos:end="321:34"><expr pos:start="321:33" pos:end="321:34"><name pos:start="321:33" pos:end="321:34">dc</name></expr></argument>, <argument pos:start="321:37" pos:end="321:37"><expr pos:start="321:37" pos:end="321:37"><literal type="number" pos:start="321:37" pos:end="321:37">0</literal></expr></argument>, <argument pos:start="321:40" pos:end="321:49"><expr pos:start="321:40" pos:end="321:49"><name pos:start="321:40" pos:end="321:49"><name pos:start="321:40" pos:end="321:41">dc</name><operator pos:start="321:42" pos:end="321:43">-&gt;</operator><name pos:start="321:44" pos:end="321:49">jmp_pc</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="323:21" pos:end="323:47"><expr pos:start="323:21" pos:end="323:46"><name pos:start="323:21" pos:end="323:30"><name pos:start="323:21" pos:end="323:22">dc</name><operator pos:start="323:23" pos:end="323:24">-&gt;</operator><name pos:start="323:25" pos:end="323:30">is_jmp</name></name> <operator pos:start="323:32" pos:end="323:32">=</operator> <name pos:start="323:34" pos:end="323:46">DISAS_TB_JUMP</name></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="325:21" pos:end="325:40"><expr pos:start="325:21" pos:end="325:39"><name pos:start="325:21" pos:end="325:27"><name pos:start="325:21" pos:end="325:22">dc</name><operator pos:start="325:23" pos:end="325:24">-&gt;</operator><name pos:start="325:25" pos:end="325:27">jmp</name></name> <operator pos:start="325:29" pos:end="325:29">=</operator> <name pos:start="325:31" pos:end="325:39">JMP_NOJMP</name></expr>;</expr_stmt>
+
+                </block_content>}</block></if> <else pos:start="327:19" pos:end="333:17">else <block pos:start="327:24" pos:end="333:17">{<block_content pos:start="329:21" pos:end="331:44">
+
+                    <expr_stmt pos:start="329:21" pos:end="329:68"><expr pos:start="329:21" pos:end="329:67"><call pos:start="329:21" pos:end="329:67"><name pos:start="329:21" pos:end="329:32">t_gen_cc_jmp</name><argument_list pos:start="329:33" pos:end="329:67">(<argument pos:start="329:34" pos:end="329:44"><expr pos:start="329:34" pos:end="329:44"><name pos:start="329:34" pos:end="329:44">env_btarget</name></expr></argument>, <argument pos:start="329:47" pos:end="329:66"><expr pos:start="329:47" pos:end="329:66"><call pos:start="329:47" pos:end="329:66"><name pos:start="329:47" pos:end="329:58">tcg_const_tl</name><argument_list pos:start="329:59" pos:end="329:66">(<argument pos:start="329:60" pos:end="329:65"><expr pos:start="329:60" pos:end="329:65"><name pos:start="329:60" pos:end="329:65"><name pos:start="329:60" pos:end="329:61">dc</name><operator pos:start="329:62" pos:end="329:63">-&gt;</operator><name pos:start="329:64" pos:end="329:65">pc</name></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+                    <expr_stmt pos:start="331:21" pos:end="331:44"><expr pos:start="331:21" pos:end="331:43"><name pos:start="331:21" pos:end="331:30"><name pos:start="331:21" pos:end="331:22">dc</name><operator pos:start="331:23" pos:end="331:24">-&gt;</operator><name pos:start="331:25" pos:end="331:30">is_jmp</name></name> <operator pos:start="331:32" pos:end="331:32">=</operator> <name pos:start="331:34" pos:end="331:43">DISAS_JUMP</name></expr>;</expr_stmt>
+
+                </block_content>}</block></else></if_stmt>
+
+                <break pos:start="335:17" pos:end="335:22">break;</break>
+
+            </block_content>}</block></if></if_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+
+
+        <comment type="block" pos:start="343:9" pos:end="345:38">/* If we are rexecuting a branch due to exceptions on
+
+           delay slots dont break.  */</comment>
+
+        <if_stmt pos:start="347:9" pos:end="351:9"><if pos:start="347:9" pos:end="351:9">if <condition pos:start="347:12" pos:end="347:52">(<expr pos:start="347:13" pos:end="347:51"><operator pos:start="347:13" pos:end="347:13">!</operator><operator pos:start="347:14" pos:end="347:14">(</operator><name pos:start="347:15" pos:end="347:20"><name pos:start="347:15" pos:end="347:16">tb</name><operator pos:start="347:17" pos:end="347:18">-&gt;</operator><name pos:start="347:19" pos:end="347:20">pc</name></name> <operator pos:start="347:22" pos:end="347:22">&amp;</operator> <literal type="number" pos:start="347:24" pos:end="347:24">1</literal><operator pos:start="347:25" pos:end="347:25">)</operator> <operator pos:start="347:27" pos:end="347:28">&amp;&amp;</operator> <name pos:start="347:30" pos:end="347:51"><name pos:start="347:30" pos:end="347:31">cs</name><operator pos:start="347:32" pos:end="347:33">-&gt;</operator><name pos:start="347:34" pos:end="347:51">singlestep_enabled</name></name></expr>)</condition> <block pos:start="347:54" pos:end="351:9">{<block_content pos:start="349:13" pos:end="349:18">
+
+            <break pos:start="349:13" pos:end="349:18">break;</break>
+
+        </block_content>}</block></if></if_stmt>
+
+    </block_content>}</block> while <condition pos:start="353:13" pos:end="361:37">(<expr pos:start="353:14" pos:end="361:36"><operator pos:start="353:14" pos:end="353:14">!</operator><name pos:start="353:15" pos:end="353:24"><name pos:start="353:15" pos:end="353:16">dc</name><operator pos:start="353:17" pos:end="353:18">-&gt;</operator><name pos:start="353:19" pos:end="353:24">is_jmp</name></name> <operator pos:start="353:26" pos:end="353:27">&amp;&amp;</operator> <operator pos:start="353:29" pos:end="353:29">!</operator><name pos:start="353:30" pos:end="353:49"><name pos:start="353:30" pos:end="353:31">dc</name><operator pos:start="353:32" pos:end="353:33">-&gt;</operator><name pos:start="353:34" pos:end="353:49">cpustate_changed</name></name>
+
+            <operator pos:start="355:13" pos:end="355:14">&amp;&amp;</operator> <operator pos:start="355:16" pos:end="355:16">!</operator><call pos:start="355:17" pos:end="355:33"><name pos:start="355:17" pos:end="355:31">tcg_op_buf_full</name><argument_list pos:start="355:32" pos:end="355:33">()</argument_list></call>
+
+            <operator pos:start="357:13" pos:end="357:14">&amp;&amp;</operator> <operator pos:start="357:16" pos:end="357:16">!</operator><name pos:start="357:17" pos:end="357:26">singlestep</name>
+
+            <operator pos:start="359:13" pos:end="359:14">&amp;&amp;</operator> <operator pos:start="359:16" pos:end="359:16">(</operator><name pos:start="359:17" pos:end="359:22"><name pos:start="359:17" pos:end="359:18">dc</name><operator pos:start="359:19" pos:end="359:20">-&gt;</operator><name pos:start="359:21" pos:end="359:22">pc</name></name> <operator pos:start="359:24" pos:end="359:24">&lt;</operator> <name pos:start="359:26" pos:end="359:40">next_page_start</name><operator pos:start="359:41" pos:end="359:41">)</operator>
+
+            <operator pos:start="361:13" pos:end="361:14">&amp;&amp;</operator> <name pos:start="361:16" pos:end="361:24">num_insns</name> <operator pos:start="361:26" pos:end="361:26">&lt;</operator> <name pos:start="361:28" pos:end="361:36">max_insns</name></expr>)</condition>;</do>
+
+
+
+    <if_stmt pos:start="365:5" pos:end="369:5"><if pos:start="365:5" pos:end="369:5">if <condition pos:start="365:8" pos:end="365:29">(<expr pos:start="365:9" pos:end="365:28"><name pos:start="365:9" pos:end="365:28"><name pos:start="365:9" pos:end="365:10">dc</name><operator pos:start="365:11" pos:end="365:12">-&gt;</operator><name pos:start="365:13" pos:end="365:28">clear_locked_irq</name></name></expr>)</condition> <block pos:start="365:31" pos:end="369:5">{<block_content pos:start="367:9" pos:end="367:54">
+
+        <expr_stmt pos:start="367:9" pos:end="367:54"><expr pos:start="367:9" pos:end="367:53"><call pos:start="367:9" pos:end="367:53"><name pos:start="367:9" pos:end="367:24">t_gen_mov_env_TN</name><argument_list pos:start="367:25" pos:end="367:53">(<argument pos:start="367:26" pos:end="367:35"><expr pos:start="367:26" pos:end="367:35"><name pos:start="367:26" pos:end="367:35">locked_irq</name></expr></argument>, <argument pos:start="367:38" pos:end="367:52"><expr pos:start="367:38" pos:end="367:52"><call pos:start="367:38" pos:end="367:52"><name pos:start="367:38" pos:end="367:49">tcg_const_tl</name><argument_list pos:start="367:50" pos:end="367:52">(<argument pos:start="367:51" pos:end="367:51"><expr pos:start="367:51" pos:end="367:51"><literal type="number" pos:start="367:51" pos:end="367:51">0</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="373:5" pos:end="373:17"><expr pos:start="373:5" pos:end="373:16"><name pos:start="373:5" pos:end="373:7">npc</name> <operator pos:start="373:9" pos:end="373:9">=</operator> <name pos:start="373:11" pos:end="373:16"><name pos:start="373:11" pos:end="373:12">dc</name><operator pos:start="373:13" pos:end="373:14">-&gt;</operator><name pos:start="373:15" pos:end="373:16">pc</name></name></expr>;</expr_stmt>
+
+
+
+        <if_stmt pos:start="377:9" pos:end="379:25"><if pos:start="377:9" pos:end="379:25">if <condition pos:start="377:12" pos:end="377:36">(<expr pos:start="377:13" pos:end="377:35"><name pos:start="377:13" pos:end="377:22"><name pos:start="377:13" pos:end="377:14">tb</name><operator pos:start="377:15" pos:end="377:16">-&gt;</operator><name pos:start="377:17" pos:end="377:22">cflags</name></name> <operator pos:start="377:24" pos:end="377:24">&amp;</operator> <name pos:start="377:26" pos:end="377:35">CF_LAST_IO</name></expr>)</condition><block type="pseudo" pos:start="379:13" pos:end="379:25"><block_content pos:start="379:13" pos:end="379:25">
+
+            <expr_stmt pos:start="379:13" pos:end="379:25"><expr pos:start="379:13" pos:end="379:24"><call pos:start="379:13" pos:end="379:24"><name pos:start="379:13" pos:end="379:22">gen_io_end</name><argument_list pos:start="379:23" pos:end="379:24">()</argument_list></call></expr>;</expr_stmt></block_content></block></if></if_stmt>
+
+    <comment type="block" pos:start="381:5" pos:end="381:63">/* Force an update if the per-tb cpu state has changed.  */</comment>
+
+    <if_stmt pos:start="383:5" pos:end="393:5"><if pos:start="383:5" pos:end="393:5">if <condition pos:start="383:8" pos:end="387:50">(<expr pos:start="383:9" pos:end="387:49"><name pos:start="383:9" pos:end="383:18"><name pos:start="383:9" pos:end="383:10">dc</name><operator pos:start="383:11" pos:end="383:12">-&gt;</operator><name pos:start="383:13" pos:end="383:18">is_jmp</name></name> <operator pos:start="383:20" pos:end="383:21">==</operator> <name pos:start="383:23" pos:end="383:32">DISAS_NEXT</name>
+
+        <operator pos:start="385:9" pos:end="385:10">&amp;&amp;</operator> <operator pos:start="385:12" pos:end="385:12">(</operator><name pos:start="385:13" pos:end="385:32"><name pos:start="385:13" pos:end="385:14">dc</name><operator pos:start="385:15" pos:end="385:16">-&gt;</operator><name pos:start="385:17" pos:end="385:32">cpustate_changed</name></name> <operator pos:start="385:34" pos:end="385:35">||</operator> <operator pos:start="385:37" pos:end="385:37">!</operator><name pos:start="385:38" pos:end="385:52"><name pos:start="385:38" pos:end="385:39">dc</name><operator pos:start="385:40" pos:end="385:41">-&gt;</operator><name pos:start="385:42" pos:end="385:52">flagx_known</name></name>
+
+        <operator pos:start="387:9" pos:end="387:10">||</operator> <operator pos:start="387:12" pos:end="387:12">(</operator><name pos:start="387:13" pos:end="387:23"><name pos:start="387:13" pos:end="387:14">dc</name><operator pos:start="387:15" pos:end="387:16">-&gt;</operator><name pos:start="387:17" pos:end="387:23">flags_x</name></name> <operator pos:start="387:25" pos:end="387:26">!=</operator> <operator pos:start="387:28" pos:end="387:28">(</operator><name pos:start="387:29" pos:end="387:37"><name pos:start="387:29" pos:end="387:30">tb</name><operator pos:start="387:31" pos:end="387:32">-&gt;</operator><name pos:start="387:33" pos:end="387:37">flags</name></name> <operator pos:start="387:39" pos:end="387:39">&amp;</operator> <name pos:start="387:41" pos:end="387:46">X_FLAG</name><operator pos:start="387:47" pos:end="387:47">)</operator><operator pos:start="387:48" pos:end="387:48">)</operator><operator pos:start="387:49" pos:end="387:49">)</operator></expr>)</condition> <block pos:start="387:52" pos:end="393:5">{<block_content pos:start="389:9" pos:end="391:37">
+
+        <expr_stmt pos:start="389:9" pos:end="389:34"><expr pos:start="389:9" pos:end="389:33"><name pos:start="389:9" pos:end="389:18"><name pos:start="389:9" pos:end="389:10">dc</name><operator pos:start="389:11" pos:end="389:12">-&gt;</operator><name pos:start="389:13" pos:end="389:18">is_jmp</name></name> <operator pos:start="389:20" pos:end="389:20">=</operator> <name pos:start="389:22" pos:end="389:33">DISAS_UPDATE</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="391:9" pos:end="391:37"><expr pos:start="391:9" pos:end="391:36"><call pos:start="391:9" pos:end="391:36"><name pos:start="391:9" pos:end="391:23">tcg_gen_movi_tl</name><argument_list pos:start="391:24" pos:end="391:36">(<argument pos:start="391:25" pos:end="391:30"><expr pos:start="391:25" pos:end="391:30"><name pos:start="391:25" pos:end="391:30">env_pc</name></expr></argument>, <argument pos:start="391:33" pos:end="391:35"><expr pos:start="391:33" pos:end="391:35"><name pos:start="391:33" pos:end="391:35">npc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+    <comment type="block" pos:start="395:5" pos:end="395:44">/* Broken branch+delayslot sequence.  */</comment>
+
+    <if_stmt pos:start="397:5" pos:end="405:5"><if pos:start="397:5" pos:end="405:5">if <condition pos:start="397:8" pos:end="397:32">(<expr pos:start="397:9" pos:end="397:31"><name pos:start="397:9" pos:end="397:26"><name pos:start="397:9" pos:end="397:10">dc</name><operator pos:start="397:11" pos:end="397:12">-&gt;</operator><name pos:start="397:13" pos:end="397:26">delayed_branch</name></name> <operator pos:start="397:28" pos:end="397:29">==</operator> <literal type="number" pos:start="397:31" pos:end="397:31">1</literal></expr>)</condition> <block pos:start="397:34" pos:end="405:5">{<block_content pos:start="401:9" pos:end="403:34">
+
+        <comment type="block" pos:start="399:9" pos:end="399:61">/* Set env-&gt;dslot to the size of the branch insn.  */</comment>
+
+        <expr_stmt pos:start="401:9" pos:end="401:64"><expr pos:start="401:9" pos:end="401:63"><call pos:start="401:9" pos:end="401:63"><name pos:start="401:9" pos:end="401:24">t_gen_mov_env_TN</name><argument_list pos:start="401:25" pos:end="401:63">(<argument pos:start="401:26" pos:end="401:30"><expr pos:start="401:26" pos:end="401:30"><name pos:start="401:26" pos:end="401:30">dslot</name></expr></argument>, <argument pos:start="401:33" pos:end="401:62"><expr pos:start="401:33" pos:end="401:62"><call pos:start="401:33" pos:end="401:62"><name pos:start="401:33" pos:end="401:44">tcg_const_tl</name><argument_list pos:start="401:45" pos:end="401:62">(<argument pos:start="401:46" pos:end="401:61"><expr pos:start="401:46" pos:end="401:61"><name pos:start="401:46" pos:end="401:51"><name pos:start="401:46" pos:end="401:47">dc</name><operator pos:start="401:48" pos:end="401:49">-&gt;</operator><name pos:start="401:50" pos:end="401:51">pc</name></name> <operator pos:start="401:53" pos:end="401:53">-</operator> <name pos:start="401:55" pos:end="401:61"><name pos:start="401:55" pos:end="401:56">dc</name><operator pos:start="401:57" pos:end="401:58">-&gt;</operator><name pos:start="401:59" pos:end="401:61">ppc</name></name></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="403:9" pos:end="403:34"><expr pos:start="403:9" pos:end="403:33"><call pos:start="403:9" pos:end="403:33"><name pos:start="403:9" pos:end="403:29">cris_store_direct_jmp</name><argument_list pos:start="403:30" pos:end="403:33">(<argument pos:start="403:31" pos:end="403:32"><expr pos:start="403:31" pos:end="403:32"><name pos:start="403:31" pos:end="403:32">dc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+
+
+    <expr_stmt pos:start="409:5" pos:end="409:28"><expr pos:start="409:5" pos:end="409:27"><call pos:start="409:5" pos:end="409:27"><name pos:start="409:5" pos:end="409:23">cris_evaluate_flags</name><argument_list pos:start="409:24" pos:end="409:27">(<argument pos:start="409:25" pos:end="409:26"><expr pos:start="409:25" pos:end="409:26"><name pos:start="409:25" pos:end="409:26">dc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="413:5" pos:end="457:5"><if pos:start="413:5" pos:end="423:5">if <condition pos:start="413:8" pos:end="413:41">(<expr pos:start="413:9" pos:end="413:40"><call pos:start="413:9" pos:end="413:40"><name pos:start="413:9" pos:end="413:16">unlikely</name><argument_list pos:start="413:17" pos:end="413:40">(<argument pos:start="413:18" pos:end="413:39"><expr pos:start="413:18" pos:end="413:39"><name pos:start="413:18" pos:end="413:39"><name pos:start="413:18" pos:end="413:19">cs</name><operator pos:start="413:20" pos:end="413:21">-&gt;</operator><name pos:start="413:22" pos:end="413:39">singlestep_enabled</name></name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="413:43" pos:end="423:5">{<block_content pos:start="415:9" pos:end="421:42">
+
+        <if_stmt pos:start="415:9" pos:end="419:9"><if pos:start="415:9" pos:end="419:9">if <condition pos:start="415:12" pos:end="415:37">(<expr pos:start="415:13" pos:end="415:36"><name pos:start="415:13" pos:end="415:22"><name pos:start="415:13" pos:end="415:14">dc</name><operator pos:start="415:15" pos:end="415:16">-&gt;</operator><name pos:start="415:17" pos:end="415:22">is_jmp</name></name> <operator pos:start="415:24" pos:end="415:25">==</operator> <name pos:start="415:27" pos:end="415:36">DISAS_NEXT</name></expr>)</condition> <block pos:start="415:39" pos:end="419:9">{<block_content pos:start="417:13" pos:end="417:41">
+
+            <expr_stmt pos:start="417:13" pos:end="417:41"><expr pos:start="417:13" pos:end="417:40"><call pos:start="417:13" pos:end="417:40"><name pos:start="417:13" pos:end="417:27">tcg_gen_movi_tl</name><argument_list pos:start="417:28" pos:end="417:40">(<argument pos:start="417:29" pos:end="417:34"><expr pos:start="417:29" pos:end="417:34"><name pos:start="417:29" pos:end="417:34">env_pc</name></expr></argument>, <argument pos:start="417:37" pos:end="417:39"><expr pos:start="417:37" pos:end="417:39"><name pos:start="417:37" pos:end="417:39">npc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        </block_content>}</block></if></if_stmt>
+
+        <expr_stmt pos:start="421:9" pos:end="421:42"><expr pos:start="421:9" pos:end="421:41"><call pos:start="421:9" pos:end="421:41"><name pos:start="421:9" pos:end="421:29">t_gen_raise_exception</name><argument_list pos:start="421:30" pos:end="421:41">(<argument pos:start="421:31" pos:end="421:40"><expr pos:start="421:31" pos:end="421:40"><name pos:start="421:31" pos:end="421:40">EXCP_DEBUG</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if> <else pos:start="423:7" pos:end="457:5">else <block pos:start="423:12" pos:end="457:5">{<block_content pos:start="425:9" pos:end="455:9">
+
+        <switch pos:start="425:9" pos:end="455:9">switch <condition pos:start="425:16" pos:end="425:27">(<expr pos:start="425:17" pos:end="425:26"><name pos:start="425:17" pos:end="425:26"><name pos:start="425:17" pos:end="425:18">dc</name><operator pos:start="425:19" pos:end="425:20">-&gt;</operator><name pos:start="425:21" pos:end="425:26">is_jmp</name></name></expr>)</condition> <block pos:start="425:29" pos:end="455:9">{<block_content pos:start="427:9" pos:end="453:18">
+
+        <case pos:start="427:9" pos:end="427:24">case <expr pos:start="427:14" pos:end="427:23"><name pos:start="427:14" pos:end="427:23">DISAS_NEXT</name></expr>:</case>
+
+            <expr_stmt pos:start="429:13" pos:end="429:36"><expr pos:start="429:13" pos:end="429:35"><call pos:start="429:13" pos:end="429:35"><name pos:start="429:13" pos:end="429:23">gen_goto_tb</name><argument_list pos:start="429:24" pos:end="429:35">(<argument pos:start="429:25" pos:end="429:26"><expr pos:start="429:25" pos:end="429:26"><name pos:start="429:25" pos:end="429:26">dc</name></expr></argument>, <argument pos:start="429:29" pos:end="429:29"><expr pos:start="429:29" pos:end="429:29"><literal type="number" pos:start="429:29" pos:end="429:29">1</literal></expr></argument>, <argument pos:start="429:32" pos:end="429:34"><expr pos:start="429:32" pos:end="429:34"><name pos:start="429:32" pos:end="429:34">npc</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="431:13" pos:end="431:18">break;</break>
+
+        <default pos:start="433:9" pos:end="433:16">default:</default>
+
+        <case pos:start="435:9" pos:end="435:24">case <expr pos:start="435:14" pos:end="435:23"><name pos:start="435:14" pos:end="435:23">DISAS_JUMP</name></expr>:</case>
+
+        <case pos:start="437:9" pos:end="437:26">case <expr pos:start="437:14" pos:end="437:25"><name pos:start="437:14" pos:end="437:25">DISAS_UPDATE</name></expr>:</case>
+
+            <comment type="block" pos:start="439:13" pos:end="441:41">/* indicate that the hash table must be used
+
+                   to find the next TB */</comment>
+
+            <expr_stmt pos:start="443:13" pos:end="443:31"><expr pos:start="443:13" pos:end="443:30"><call pos:start="443:13" pos:end="443:30"><name pos:start="443:13" pos:end="443:27">tcg_gen_exit_tb</name><argument_list pos:start="443:28" pos:end="443:30">(<argument pos:start="443:29" pos:end="443:29"><expr pos:start="443:29" pos:end="443:29"><literal type="number" pos:start="443:29" pos:end="443:29">0</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+            <break pos:start="445:13" pos:end="445:18">break;</break>
+
+        <case pos:start="447:9" pos:end="447:23">case <expr pos:start="447:14" pos:end="447:22"><name pos:start="447:14" pos:end="447:22">DISAS_SWI</name></expr>:</case>
+
+        <case pos:start="449:9" pos:end="449:27">case <expr pos:start="449:14" pos:end="449:26"><name pos:start="449:14" pos:end="449:26">DISAS_TB_JUMP</name></expr>:</case>
+
+            <comment type="block" pos:start="451:13" pos:end="451:42">/* nothing more to generate */</comment>
+
+            <break pos:start="453:13" pos:end="453:18">break;</break>
+
+        </block_content>}</block></switch>
+
+    </block_content>}</block></else></if_stmt>
+
+    <expr_stmt pos:start="459:5" pos:end="459:30"><expr pos:start="459:5" pos:end="459:29"><call pos:start="459:5" pos:end="459:29"><name pos:start="459:5" pos:end="459:14">gen_tb_end</name><argument_list pos:start="459:15" pos:end="459:29">(<argument pos:start="459:16" pos:end="459:17"><expr pos:start="459:16" pos:end="459:17"><name pos:start="459:16" pos:end="459:17">tb</name></expr></argument>, <argument pos:start="459:20" pos:end="459:28"><expr pos:start="459:20" pos:end="459:28"><name pos:start="459:20" pos:end="459:28">num_insns</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+
+
+    <if_stmt pos:start="463:5" pos:end="488:0"><if pos:start="463:5" pos:end="475:5">if <condition pos:start="463:8" pos:end="463:18">(<expr pos:start="463:9" pos:end="463:17"><name pos:start="463:9" pos:end="463:17">search_pc</name></expr>)</condition> <block pos:start="463:20" pos:end="475:5">{<block_content pos:start="465:9" pos:end="473:9">
+
+        <expr_stmt pos:start="465:9" pos:end="465:31"><expr pos:start="465:9" pos:end="465:30"><name pos:start="465:9" pos:end="465:9">j</name> <operator pos:start="465:11" pos:end="465:11">=</operator> <call pos:start="465:13" pos:end="465:30"><name pos:start="465:13" pos:end="465:28">tcg_op_buf_count</name><argument_list pos:start="465:29" pos:end="465:30">()</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="467:9" pos:end="467:13"><expr pos:start="467:9" pos:end="467:12"><name pos:start="467:9" pos:end="467:10">lj</name><operator pos:start="467:11" pos:end="467:12">++</operator></expr>;</expr_stmt>
+
+        <while pos:start="469:9" pos:end="473:9">while <condition pos:start="469:15" pos:end="469:23">(<expr pos:start="469:16" pos:end="469:22"><name pos:start="469:16" pos:end="469:17">lj</name> <operator pos:start="469:19" pos:end="469:20">&lt;=</operator> <name pos:start="469:22" pos:end="469:22">j</name></expr>)</condition> <block pos:start="469:25" pos:end="473:9">{<block_content pos:start="471:13" pos:end="471:50">
+
+            <expr_stmt pos:start="471:13" pos:end="471:50"><expr pos:start="471:13" pos:end="471:49"><name pos:start="471:13" pos:end="471:45"><name pos:start="471:13" pos:end="471:19">tcg_ctx</name><operator pos:start="471:20" pos:end="471:20">.</operator><name pos:start="471:21" pos:end="471:39">gen_opc_instr_start</name><index pos:start="471:40" pos:end="471:45">[<expr pos:start="471:41" pos:end="471:44"><name pos:start="471:41" pos:end="471:42">lj</name><operator pos:start="471:43" pos:end="471:44">++</operator></expr>]</index></name> <operator pos:start="471:47" pos:end="471:47">=</operator> <literal type="number" pos:start="471:49" pos:end="471:49">0</literal></expr>;</expr_stmt>
+
+        </block_content>}</block></while>
+
+    </block_content>}</block></if> <else pos:start="475:7" pos:end="488:0">else <block pos:start="475:12" pos:end="488:0">{<block_content pos:start="477:9" pos:end="479:31">
+
+        <expr_stmt pos:start="477:9" pos:end="477:37"><expr pos:start="477:9" pos:end="477:36"><name pos:start="477:9" pos:end="477:16"><name pos:start="477:9" pos:end="477:10">tb</name><operator pos:start="477:11" pos:end="477:12">-&gt;</operator><name pos:start="477:13" pos:end="477:16">size</name></name> <operator pos:start="477:18" pos:end="477:18">=</operator> <name pos:start="477:20" pos:end="477:25"><name pos:start="477:20" pos:end="477:21">dc</name><operator pos:start="477:22" pos:end="477:23">-&gt;</operator><name pos:start="477:24" pos:end="477:25">pc</name></name> <operator pos:start="477:27" pos:end="477:27">-</operator> <name pos:start="477:29" pos:end="477:36">pc_start</name></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="479:9" pos:end="479:31"><expr pos:start="479:9" pos:end="479:30"><name pos:start="479:9" pos:end="479:18"><name pos:start="479:9" pos:end="479:10">tb</name><operator pos:start="479:11" pos:end="479:12">-&gt;</operator><name pos:start="479:13" pos:end="479:18">icount</name></name> <operator pos:start="479:20" pos:end="479:20">=</operator> <name pos:start="479:22" pos:end="479:30">num_insns</name></expr>;</expr_stmt>
+
+    </block_content>}</block></else></if_stmt>
+
+
+
+<cpp:ifdef pos:start="485:1" pos:end="485:18">#<cpp:directive pos:start="485:2" pos:end="485:6">ifdef</cpp:directive> <name pos:start="485:8" pos:end="485:18">DEBUG_DISAS</name></cpp:ifdef>
+
+<cpp:if pos:start="487:1" pos:end="487:15">#<cpp:directive pos:start="487:2" pos:end="487:3">if</cpp:directive> <expr pos:start="487:5" pos:end="487:15"><operator pos:start="487:5" pos:end="487:5">!</operator><name pos:start="487:6" pos:end="487:15">DISAS_CRIS</name></expr></cpp:if>
+
+    <if_stmt pos:start="489:5" pos:end="504:0"><if pos:start="489:5" pos:end="504:0">if <condition pos:start="489:8" pos:end="489:46">(<expr pos:start="489:9" pos:end="489:45"><call pos:start="489:9" pos:end="489:45"><name pos:start="489:9" pos:end="489:26">qemu_loglevel_mask</name><argument_list pos:start="489:27" pos:end="489:45">(<argument pos:start="489:28" pos:end="489:44"><expr pos:start="489:28" pos:end="489:44"><name pos:start="489:28" pos:end="489:44">CPU_LOG_TB_IN_ASM</name></expr></argument>)</argument_list></call></expr>)</condition> <block pos:start="489:48" pos:end="504:0">{<block_content pos:start="491:9" pos:end="497:56">
+
+        <expr_stmt pos:start="491:9" pos:end="493:44"><expr pos:start="491:9" pos:end="493:43"><call pos:start="491:9" pos:end="493:43"><name pos:start="491:9" pos:end="491:24">log_target_disas</name><argument_list pos:start="491:25" pos:end="493:43">(<argument pos:start="491:26" pos:end="491:28"><expr pos:start="491:26" pos:end="491:28"><name pos:start="491:26" pos:end="491:28">env</name></expr></argument>, <argument pos:start="491:31" pos:end="491:38"><expr pos:start="491:31" pos:end="491:38"><name pos:start="491:31" pos:end="491:38">pc_start</name></expr></argument>, <argument pos:start="491:41" pos:end="491:57"><expr pos:start="491:41" pos:end="491:57"><name pos:start="491:41" pos:end="491:46"><name pos:start="491:41" pos:end="491:42">dc</name><operator pos:start="491:43" pos:end="491:44">-&gt;</operator><name pos:start="491:45" pos:end="491:46">pc</name></name> <operator pos:start="491:48" pos:end="491:48">-</operator> <name pos:start="491:50" pos:end="491:57">pc_start</name></expr></argument>,
+
+                         <argument pos:start="493:26" pos:end="493:42"><expr pos:start="493:26" pos:end="493:42"><name pos:start="493:26" pos:end="493:42"><name pos:start="493:26" pos:end="493:28">env</name><operator pos:start="493:29" pos:end="493:30">-&gt;</operator><name pos:start="493:31" pos:end="493:35">pregs</name><index pos:start="493:36" pos:end="493:42">[<expr pos:start="493:37" pos:end="493:41"><name pos:start="493:37" pos:end="493:41">PR_VR</name></expr>]</index></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+        <expr_stmt pos:start="495:9" pos:end="497:56"><expr pos:start="495:9" pos:end="497:55"><call pos:start="495:9" pos:end="497:55"><name pos:start="495:9" pos:end="495:16">qemu_log</name><argument_list pos:start="495:17" pos:end="497:55">(<argument pos:start="495:18" pos:end="495:40"><expr pos:start="495:18" pos:end="495:40"><literal type="string" pos:start="495:18" pos:end="495:40">"\nisize=%d osize=%d\n"</literal></expr></argument>,
+
+                 <argument pos:start="497:18" pos:end="497:34"><expr pos:start="497:18" pos:end="497:34"><name pos:start="497:18" pos:end="497:23"><name pos:start="497:18" pos:end="497:19">dc</name><operator pos:start="497:20" pos:end="497:21">-&gt;</operator><name pos:start="497:22" pos:end="497:23">pc</name></name> <operator pos:start="497:25" pos:end="497:25">-</operator> <name pos:start="497:27" pos:end="497:34">pc_start</name></expr></argument>, <argument pos:start="497:37" pos:end="497:54"><expr pos:start="497:37" pos:end="497:54"><call pos:start="497:37" pos:end="497:54"><name pos:start="497:37" pos:end="497:52">tcg_op_buf_count</name><argument_list pos:start="497:53" pos:end="497:54">()</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+
+    </block_content>}</block></if></if_stmt>
+
+<cpp:endif pos:start="501:1" pos:end="501:6">#<cpp:directive pos:start="501:2" pos:end="501:6">endif</cpp:directive></cpp:endif>
+
+<cpp:endif pos:start="503:1" pos:end="503:6">#<cpp:directive pos:start="503:2" pos:end="503:6">endif</cpp:directive></cpp:endif>
+
+</block_content>}</block>
+</unit>
